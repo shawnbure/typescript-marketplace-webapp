@@ -1,2 +1,5 @@
 [context.branch-deploy.environment]
   NODE_ENV = "production"
+
+[context.production]
+  publish = "build/"
