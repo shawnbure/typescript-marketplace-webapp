@@ -1,0 +1,18 @@
+.c-footer {
+
+    
+    background-color: var(--t-background-color);
+    
+    &_link{
+
+        color: var(--t-text-color);
+        
+    }
+
+    &_heart {
+
+        border: none;
+        
+    }
+    
+}

@@ -1,0 +1,80 @@
+@mixin font-face($font-family,
+    $font-filename,
+    $font-weight: normal,
+    $font-style: normal,
+    $font-stretch: normal) {
+    @font-face {
+        font-family: "#{$font-family}";
+        src: url("../../../assets/fonts/#{$font-filename}.ttf") format("truetype");
+    }
+}
+
+@mixin lead-heading() {
+    line-height: $h1-line-height;
+    font-size: $h1-font-size;
+}
+
+@mixin regular-heading($margin: true) {
+    line-height: $h2-line-height;
+    font-size: $h2-font-size;
+
+    @if ($margin) {
+        margin-bottom: $spacing-point-4;
+    }
+}
+
+@mixin medium-heading($margin: true) {
+    line-height: $h3-line-height;
+    font-size: $h3-font-size;
+
+    @if ($margin) {
+        margin-bottom: $spacing-point-4;
+    }
+}
+
+
+@mixin small-heading() {
+    line-height: $h5-line-height;
+    font-size: $h5-font-size;
+}
+
+
+@mixin standard-text($margin: true) {
+
+    line-height: $base-font-line-height;
+    font-size: $base-font-size;
+
+    @if ($margin) {
+        margin: 0 0 $base-font-margin-bottom;
+    }
+
+}
+
+
+@mixin lead-text($margin: true) {
+
+    line-height: $lead-text-line-height;
+    font-size: $lead-text-size;
+
+    @if ($margin) {
+        margin: 0 0 $lead-text-margin-bottom;
+    }
+
+}
+
+@mixin small-text($margin: true) {
+
+    line-height: $small-text-line-height;
+    font-size: $small-text-size;
+
+    @if ($margin) {
+        margin: 0 0 $small-text-margin-bottom;
+    }
+
+}
+
+@mixin visually-hidden() {
+    position: absolute !important;
+    left: -99999px;
+    top: -99999px;
+}

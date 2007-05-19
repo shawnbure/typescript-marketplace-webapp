@@ -1,0 +1,5 @@
+.u-visually-hidden {
+    position: absolute !important; // sass-lint:disable-line no-important
+    left: -99999px;
+    top: -99999px;
+}

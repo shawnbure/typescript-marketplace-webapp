@@ -1,0 +1,16 @@
+.c-header {
+
+    color: var(--t-text-color);
+    background-color: var(--t-background-color);
+    
+
+    &_logo {
+
+        border: none;
+        & * {
+            fill: var(--t-text-color)!important;
+        }
+        
+    }
+    
+}

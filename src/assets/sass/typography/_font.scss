@@ -1,0 +1,21 @@
+@include font-face('Poppins-Bold', './Poppins/Poppins-Bold');
+@include font-face('Poppins-Light', './Poppins/Poppins-Light');
+@include font-face('Poppins-Regular', './Poppins/Poppins-Regular');
+
+@mixin font-family-regular {
+    font-family: 'Poppins-Regular', Arial, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+}
+
+@mixin font-family-bold {
+    font-family: 'Poppins-Bold', Arial, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+}
+
+@mixin font-family-light {
+    font-family: 'Poppins-Light', Arial, sans-serif;
+    font-style: normal;
+    font-weight: lighter;
+}

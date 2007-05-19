@@ -1,0 +1,21 @@
+@import 'themes/elrondRequirements';
+
+@import 'variables/colors';
+@import 'variables/text';
+@import 'variables/dimensions';
+@import 'mixins/mixins';
+@import 'typography/font';
+@import 'typography/basic';
+@import 'utils/utils';
+@import 'themes/default-theme';
+
+
+@import 'modules/app/app';
+@import 'modules/header/header';
+@import 'modules/footer/footer';
+@import 'modules/navbar/navbar';
+
+@import 'pages/homepage/homepage.scss';
+
+
+

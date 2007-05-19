@@ -1,0 +1,82 @@
+.c-navbar {
+
+    display: flex;
+    align-items: center;
+    color: var(--t-text-color);
+    background-color: $dark-blue;
+    justify-content: space-between;
+    padding: 0 $spacing-point-4;
+
+
+    &_icon-link {
+        
+        border: none;
+        height: $spacing-point-4;
+        width: $spacing-point-4;
+
+    }
+
+    &_list {
+
+        display: flex;
+        text-align: center;
+
+        &-item {
+
+            position: relative;
+            padding: $spacing-point-4 $spacing-point-2;
+
+            &--active,
+            &:hover {
+
+                &::after {
+
+                    background-color: var(--t-text-color);
+                    content: "";
+                    bottom: 0;
+                    display: block;
+                    height: 2px;
+                    width: 100%;
+                    position: absolute;
+                    left: 0;
+
+                }
+
+
+            }
+
+        }
+
+        &-link {
+            text-decoration: none;
+            color: rgba($color: var(--t-text-color-rgb), $alpha: 0.75);
+
+            &:hover {
+
+                color: var(--t-text-color-rgb);
+
+            }
+        }
+
+    }
+
+    &_brand {
+
+        display: flex;
+
+        &-name {
+
+            @include small-heading;
+            @include font-family-bold;
+            color: var(--t-text-color);
+            text-decoration: none;
+
+            &:hover {
+
+                color: var(--t-text-color);
+            }
+        }
+
+    }
+
+}

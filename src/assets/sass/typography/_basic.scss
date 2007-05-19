@@ -1,0 +1,102 @@
+// sass-lint:disable-all
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+    -webkit-font-smoothing: antialiased;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, main {
+    display: block;
+}
+
+html,
+body {
+    height: 100%;
+    @include font-family-regular;
+    overflow: hidden;
+}
+
+html {
+    box-sizing: border-box;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    font-size: 16px;
+    overflow-x: hidden;
+}
+
+body {
+
+    @include font-family-regular;
+    overflow-x: hidden;
+    // line-height: 1.5em;
+    margin: 0;
+    padding: 0;
+    -webkit-text-size-adjust: 100%;
+
+    & * {
+        
+        border-style: solid;
+        color: var(--t-text-color);
+        border-color: var(--t-border-color);
+
+    }
+}
+
+main {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+}
+
+em, i {
+    // @include font-family-regular-italic;
+}
+
+b,
+strong {
+    @include font-family-bold;
+}
+
+canvas {
+    max-width: 100%;
+    display: block;
+}
+
+svg title {
+    pointer-events: none;
+}
+
+a {
+    
+    @include font-family-bold;
+    text-decoration: underline;
+    color: rgb(95, 95, 251);
+}
+
+li {
+    list-style: none;
+}
+
+// sass-lint:enable single-line-per-selector, no-universal-selectors, no-vendor-prefixes, pseudo-element

@@ -1,0 +1,27 @@
+:root {
+    
+    --t-text-color: #{$black};
+    --t-border-color: #{$black};
+    --t-background-color: #{$white};
+    --t-background-color-contrast:#{$gray};
+
+    --t-text-color-rgb: #{$black-rgb};
+
+}
+
+.dark-theme {
+    
+    --t-text-color: #{$white};
+    --t-border-color: #{$white};
+    --t-background-color: #{$gray};
+
+    --t-text-color-rgb: #{$white-rgb};
+
+   
+
+}
+
+
+$t-utility-themes: ('0': $black,
+    '1': $white,
+);
