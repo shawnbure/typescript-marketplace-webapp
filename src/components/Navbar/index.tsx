@@ -28,44 +28,66 @@ export const Navbar = () => {
         <>
             <div className="c-navbar">
 
-                <div className="c-navbar_brand">
+                <div className="grid grid-cols-12">
 
-                    <Link to={routePaths.home}>
-                        <img src="/img/logos/erdsea/erdsea-logo-white.svg" image-rendering="optimizeQuality" className="c-navbar_brand-logo" />
-                    </Link>
+                    <div className="col-span-2">
 
-                    <Link to={routePaths.home} className="c-navbar_brand-name">
-                        Erdsea
-                    </Link>
+
+                        <div className="c-navbar_brand">
+
+                            <Link to={routePaths.home}>
+                                <img src="/img/logos/erdsea/erdsea-logo-white.svg" image-rendering="optimizeQuality" className="c-navbar_brand-logo" />
+                            </Link>
+
+                            <Link to={routePaths.home} className="c-navbar_brand-name">
+                                Erdsea
+                            </Link>
+
+                        </div>
+
+
+                    </div>
+
+                    <div className="col-start-4 col-span-4">
+                       <div className="align-items-center flex h-full justify-content-center">
+                       <input type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black  p-2 placeholder-opacity-10 rounded-2 text-white w-full"  />
+                       </div>
+                    </div>
+
+                    <div className="col-start-9 col-span-4">
+
+                        <ul className="c-navbar_list  float-right">
+
+                            <li className="c-navbar_list-item">
+                                <Link to={routePaths.marketplace} className="c-navbar_list-link">
+                                    Explore
+                                </Link>
+                            </li>
+                            {/* <li className="c-navbar_list-item">
+                                <Link to={routePaths.home} className="c-navbar_list-link">
+                                    Stats
+                                </Link>
+                            </li> */}
+                            <li className="c-navbar_list-item">
+                                <Link to={routePaths.resources} target="_blank" className="c-navbar_list-link">
+                                    Resources
+                                </Link>
+                            </li>
+
+                            <li className="c-navbar_list-item" onClick={handleToggleSidebar}>
+                                <span className="c-navbar_list-link">
+                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                </span>
+                            </li>
+
+
+                        </ul>
+
+
+                    </div>
 
                 </div>
 
-                <ul className="c-navbar_list">
-
-                    <li className="c-navbar_list-item">
-                        <Link to={routePaths.marketplace} className="c-navbar_list-link">
-                            Explore
-                        </Link>
-                    </li>
-                    <li className="c-navbar_list-item">
-                        <Link to={routePaths.home} className="c-navbar_list-link">
-                            Stats
-                        </Link>
-                    </li>
-                    <li className="c-navbar_list-item">
-                        <Link to={routePaths.home} className="c-navbar_list-link">
-                            Resources
-                        </Link>
-                    </li>
-
-                    <li className="c-navbar_list-item" onClick={handleToggleSidebar}>
-                        <span className="c-navbar_list-link">
-                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
-                        </span>
-                    </li>
-
-
-                </ul>
 
             </div>
 

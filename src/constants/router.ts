@@ -14,6 +14,7 @@ export const routePaths = {
     collection: "/collection/:collectionId",
     token: "/token/:collectionId/:tokenNonce",
     collectionRegister: "/collection/register",
+    resources: "https://erdseanft.gitbook.io/docs/",
     collectionEdit: '/collection/:collectionId/edit',
     sellToken: "/token/:walletAddress/:collectionId/:tokenNonce/sell",
     unlistedToken: "/token/:walletAddress/:collectionId/:tokenNonce",

@@ -13,7 +13,7 @@ import moment from 'moment';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenOffersMutation, } from "services/tokens";
+import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, } from "services/tokens";
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
@@ -35,8 +35,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [offerAmount, setOfferAmount] = useState<number>(0);
     const [expireOffer, setExpireOffer] = useState<number>(9999999999);
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
-
-    const [tokenTraits, setTokenTraits] = useState([]);
 
     const {
         loggedIn,
@@ -72,6 +70,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     }] = useGetTokenDataMutation();
 
+
+    const [getTokenMetadataTrigger, {
+        data: tokenMetadataData,
+        isUninitialized: isUninitializedGetTokenMetadata
+    }] = useGetTokenMetadataMutation();
+
     const [getTokenOffersTrigger, {
         data: tokenOffersData,
     }] = useGetTokenOffersMutation();
@@ -79,6 +83,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [getTokenBidsTrigger, {
         data: tokenBidsData,
     }] = useGetTokenBidsMutation();
+
+
+    const [getTokenTransactionsTrigger, {
+        data: getTokenTransactionsData,
+    }] = useGetTransactionsMutation();
 
     const [getMakeBidTemplateTrigger] = useGetMakeBidTemplateMutation();
     const [getMakeOfferTemplateTrigger] = useGetMakeOfferTemplateMutation();
@@ -116,6 +125,13 @@ export const TokenPage: (props: any) => any = ({ }) => {
         });
 
         getTokenBidsTrigger({
+            collectionId,
+            tokenNonce,
+            offset: 0,
+            limit: 10,
+        });
+
+        getTokenTransactionsTrigger({
             collectionId,
             tokenNonce,
             offset: 0,
@@ -218,9 +234,19 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
     console.log({
-        metadataLink
+        metadataLink,
+        tokenMetadataData,
+        collectionData,
     });
-    
+
+    if (Boolean(metadataLink) && isUninitializedGetTokenMetadata) {
+
+        getTokenMetadataTrigger({ metadataLink });
+
+    };
+
+
+
 
     // if(!Boolean(tokenTraits.length) && metadataLink){
 
@@ -318,10 +344,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
             className: 'c-table_column',
         }
     ];
-
-
-
-    const descriptionMocked = `Pigselated is a collection of 10101 unique NFT collectibles stored on the Elrond blockchain. \n\n Pixels have been part of our lives since the last century and they're not going away. Everybody loves a good pixel and, you can be sure, pigsels.`;
 
 
     const listingTableColumns = [{
@@ -487,22 +509,33 @@ export const TokenPage: (props: any) => any = ({ }) => {
     });
 
 
-    const mapListingTableData = [{
-        price: '1.54',
-        date: <span className="u-text-theme-gray-mid">2 days ago</span>,
-        from: <a href="#">PinkyBoy</a>,
-        key: `key-${1}`
-    }, {
-        price: '3',
-        date: <span className="u-text-theme-gray-mid">10 days ago</span>,
-        from: <a href="#">cryptolegend</a>,
-        key: `key-${2}`
-    }, {
-        price: '3.14',
-        date: <span className="u-text-theme-gray-mid">22 days ago</span>,
-        from: <a href="#">PinkyBoy</a>,
-        key: `key-${3}`
-    }].map((el) => el);
+    // const mapListingTableData = [{
+    //     price: '1.54',
+    //     date: <span className="u-text-theme-gray-mid">2 days ago</span>,
+    //     from: <a href="#">PinkyBoy</a>,
+    //     key: `key-${1}`
+    // }, {
+    //     price: '3',
+    //     date: <span className="u-text-theme-gray-mid">10 days ago</span>,
+    //     from: <a href="#">cryptolegend</a>,
+    //     key: `key-${2}`
+    // }, {
+    //     price: '3.14',
+    //     date: <span className="u-text-theme-gray-mid">22 days ago</span>,
+    //     from: <a href="#">PinkyBoy</a>,
+    //     key: `key-${3}`
+    // }].map((el) => el);
+
+
+
+    const mapListingTableData = getTokenTransactionsData?.data?.map((transaction: any) => {
+
+        console.log({
+            transaction
+        });
+        
+
+    })
 
 
     const mapBidsTableData = tokenBidsData?.data?.map((offerData: any, index: number) => {
@@ -872,7 +905,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
     console.log({
         mapOffersTableData
     });
-    
+
+
+    const isERD721 = Boolean(tokenMetadataData?.attributes?.length);
 
     return (
 
@@ -917,23 +952,22 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     <div className="c-accordion_content" >
 
 
-                                        {attributesMocked.map((attribute: any) => {
+                                        {tokenMetadataData?.attributes?.map((attribute: any) => {
                                             const {
-                                                type,
+                                                trait_type,
                                                 value,
-                                                rarity
                                             } = attribute;
                                             return (
                                                 <div className="c-property">
                                                     <div className="c-property_type">
-                                                        {type}
+                                                        {trait_type}
                                                     </div>
                                                     <div className="c-property_value">
                                                         {value}
                                                     </div>
-                                                    <div className="c-property_rarity">
-                                                        {rarity}% have this trait
-                                                    </div>
+                                                    {/* <div className="c-property_rarity">
+                                                        {trait_type}% have this trait
+                                                    </div> */}
                                                 </div>
                                             );
                                         })}
@@ -963,13 +997,15 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     <div className="c-accordion_content" >
 
 
-                                        <p className="u-text-small mb-8">
+                                        {collectionData?.data?.collection?.description &&
+                                            <p className="u-text-small mb-8">
 
-                                            <span className="u-text-theme-gray-light">
-                                                {descriptionMocked}
-                                            </span>
+                                                <span className="u-text-theme-gray-light">
+                                                    {collectionData.data.collection.description}
+                                                </span>
 
-                                        </p>
+                                            </p>
+                                        }
                                         {/* 
                                         <ul className="c-icon-band">
                                             {
@@ -1049,20 +1085,21 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     <div className="c-accordion_content" >
 
 
-                                        {/* <p className="flex justify-between u-text-small my-3">
+                                        {collectionData?.data?.creatorWalletAddress &&
+                                            <p className="flex justify-between u-text-small my-3">
 
-                                            <span className="u-text-theme-gray-light">
-                                                Creator Address
-                                            </span>
+                                                <span className="u-text-theme-gray-light">
+                                                    Creator Address
+                                                </span>
 
-                                            <span className="u-text-theme-gray-mid">
-                                                <Link to={'/'}>
-                                                    {creatorShortWalletAddress}
-                                                </Link>
-                                            </span>
+                                                <span className="u-text-theme-gray-mid">
+                                                    <a href={`/${collectionData.data.creatorWalletAddress}`}>
+                                                        {shorterAddress(collectionData.data.creatorWalletAddress, 4, 4)}
+                                                    </a>
+                                                </span>
 
                                             </p>
-                                        */}
+                                        }
 
                                         <p className="flex justify-between u-text-small my-3">
 
@@ -1093,18 +1130,19 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
 
-                                        <p className="flex justify-between u-text-small my-3">
+                                        {isERD721 &&
+                                            <p className="flex justify-between u-text-small my-3">
 
-                                            <span className="u-text-theme-gray-light">
-                                                Token Standard
-                                            </span>
+                                                <span className="u-text-theme-gray-light">
+                                                    Token Standard
+                                                </span>
 
-                                            <span className="u-text-theme-gray-mid">
-                                                {'ERD-721'}
-                                            </span>
+                                                <span className="u-text-theme-gray-mid">
+                                                    {'ERD-721'}
+                                                </span>
 
-                                        </p>
-
+                                            </p>
+                                        }
 
                                         <p className="flex justify-between u-text-small my-3">
 
@@ -1135,7 +1173,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <div className="">
 
                                 {!isErrorGetCollectionData && <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
-                                    <Link to={`/collection/${collectionId}`}>{collectionId}</Link>
+                                    <Link to={`/collection/${collectionId}`}>{collectionData?.data?.collection?.name || collectionId}</Link>
                                 </p>
                                 }
 

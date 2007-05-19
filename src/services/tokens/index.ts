@@ -18,13 +18,13 @@ export const tokensApi = createApi({
 
         getTokenData: builder.mutation<any, any>({
 
-            query: ({collectionId, tokenNonce}): FetchArgs => {
+            query: ({ collectionId, tokenNonce }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
                     method: GET,
                     url: `/${mainPath}/${collectionId}/${tokenNonce}`
-                    
+
                 }
 
                 return customRequestArg;
@@ -35,7 +35,7 @@ export const tokensApi = createApi({
 
         getTokenCollectionAvailablity: builder.mutation<any, any>({
 
-            query: ({indentifier}): FetchArgs => {
+            query: ({ indentifier }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
@@ -44,7 +44,7 @@ export const tokensApi = createApi({
                     body: JSON.stringify({
                         tokens: [indentifier]
                     })
-                    
+
                 }
 
                 return customRequestArg;
@@ -55,7 +55,7 @@ export const tokensApi = createApi({
 
         getTokensCollectionsAvailablity: builder.mutation<any, any>({
 
-            query: ({indentifiers}): FetchArgs => {
+            query: ({ indentifiers }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
@@ -64,7 +64,7 @@ export const tokensApi = createApi({
                     body: JSON.stringify({
                         tokens: indentifiers
                     })
-                    
+
                 }
 
                 return customRequestArg;
@@ -74,46 +74,83 @@ export const tokensApi = createApi({
 
         getTokenOffers: builder.mutation<any, any>({
 
-            query: ({collectionId, tokenNonce, offset, limit}): FetchArgs => {
+            query: ({ collectionId, tokenNonce, offset, limit }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
                     method: GET,
                     url: `${mainPath}/${collectionId}/${tokenNonce}/offers/${offset}/${limit}`
-                    
+
                 }
 
                 return customRequestArg;
 
             },
-            
+
         }),
 
         getTokenBids: builder.mutation<any, any>({
 
-            query: ({collectionId, tokenNonce, offset, limit}): FetchArgs => {
+            query: ({ collectionId, tokenNonce, offset, limit }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
                     method: GET,
                     url: `${mainPath}/${collectionId}/${tokenNonce}/bids/${offset}/${limit}`
-                    
+
                 }
 
                 return customRequestArg;
 
             },
-            
+
         }),
+
+        getTransactions: builder.mutation<any, any>({
+
+            query: ({ collectionId, tokenNonce, offset, limit }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `transactions/token/${collectionId}/${tokenNonce}/${offset}/${limit}`
+
+                }
+
+                return customRequestArg;
+
+            },
+
+        }),
+
+        getTokenMetadata: builder.mutation<any, any>({
+
+            query: ({ metadataLink }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: metadataLink
+
+                }
+
+                return customRequestArg;
+
+            },
+
+        }),
+
 
 
     }),
 })
 
 
-export const { 
+export const {
+    useGetTransactionsMutation,
+    useGetTokenMetadataMutation,
     useGetTokenBidsMutation,
     useGetTokenOffersMutation,
-    useGetTokenDataMutation, 
+    useGetTokenDataMutation,
     useGetTokenCollectionAvailablityMutation,
     useGetTokensCollectionsAvailablityMutation } = tokensApi;
