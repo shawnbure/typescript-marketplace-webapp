@@ -193,12 +193,8 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     const handleListAuction = () => {
 
-        console.log({ userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: startDateSeconds, deadline: endDateSeconds});
-        
-
         signTemplateTransaction({
 
-            // tokenNonce, minBid, startTime, deadline
             succesCallbackRoute: '/account',
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: startDateSeconds, deadline: endDateSeconds},
             getTemplateTrigger: getStartAuctionNftTemplateTrigger,

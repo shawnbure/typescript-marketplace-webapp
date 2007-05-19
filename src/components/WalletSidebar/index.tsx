@@ -161,10 +161,12 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                 <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay"></div>
                 <div className="c-wallet-sidebar_container">
 
-                    <button onClick={(e: any) => { webWalletLogin() }} className="c-button c-button--primary" >
+                   <div className="mt-10">
+                   <button onClick={(e: any) => { webWalletLogin() }} className="c-button c-button--primary " >
                         Login
                     </button>
 
+                   </div>
                 </div>
             </aside>
         );

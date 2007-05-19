@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import Collapsible from 'react-collapsible';
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation, Redirect } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,10 +9,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { shorterAddress } from "utils";
 import { useGetAccountCollectionsMutation, useGetAccountGatewayTokensMutation, useGetAccountMutation, useGetAccountTokensMutation } from "services/accounts";
 import { UrlParameters } from "./interfaces";
+import { routePaths } from "constants/router";
 
 export const ProfilePage: (props: any) => any = ({ }) => {
 
-    const {  walletAddress: walletAddressParam } = useParams<UrlParameters>();
+    const { walletAddress: walletAddressParam } = useParams<UrlParameters>();
+
+    const { pathname } = useLocation();
 
     const {
         loggedIn,
@@ -44,8 +47,9 @@ export const ProfilePage: (props: any) => any = ({ }) => {
         isUninitialized: isUninitializedAccountCollectionsRequest
     }] = useGetAccountCollectionsMutation();
 
+    const isAccountPath = pathname === "/account";
     const userWalletAddress = walletAddressParam ? walletAddressParam : userAddress;
-    const isOwnProfile = userAddress === walletAddressParam;
+    const isOwnProfile = loggedIn && !walletAddressParam && isAccountPath;
 
     const [onSaleNfts, setOnSaleNfts] = useState<Array<any>>([]);
     const [unlistedNfts, setUnlistedNfts] = useState<Array<any>>([]);
@@ -54,6 +58,8 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     const [loadMoreOnSale, setLoadMoreOnSale] = useState<boolean>(true);
     const [loadMoreUnlisted, setLoadMoreUnlisted] = useState<boolean>(true);
+
+    const shouldRedirectHome = !loggedIn && !walletAddressParam;
 
     const getOffsetToLimit = async (getFunction: any, offset: number = 0, limit: number = 20, dataArray: Array<any>, setDataArray: any, flag?: any) => {
 
@@ -111,11 +117,6 @@ export const ProfilePage: (props: any) => any = ({ }) => {
         };
     };
 
-    useEffect(() => {
-
-        getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
-
-    }, []);
 
     const mapCollections = () => {
 
@@ -306,6 +307,21 @@ export const ProfilePage: (props: any) => any = ({ }) => {
     const dateOptions: any = { year: 'numeric', month: 'long', };
     const joinnedDate: Date = new Date(accountData?.data.createdAt * 1000);
     const joinedDateFormated: string = joinnedDate.toLocaleDateString("en-US", dateOptions);
+
+    useEffect(() => {
+
+        getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
+
+    }, []);
+
+    if (shouldRedirectHome) {
+
+        return (
+            <Redirect to={routePaths.home} />
+        );
+
+    };
+
 
     return (
 

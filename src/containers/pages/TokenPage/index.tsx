@@ -83,8 +83,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [getAcceptOfferTemplateTrigger] = useGetAcceptOfferTemplateMutation();
     const [getCancelOfferTemplateTrigger] = useGetCancelOfferTemplateMutation();
 
-
-
     const {
 
         data: egldPriceData,
@@ -93,11 +91,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
         isSuccess: isSuccessEgldPriceQuery,
 
     } = useGetEgldPriceQuery();
-
-    console.log({
-        walletAddressParam,
-        tokenResponseData
-    });
 
 
     const isEgldPriceFetched: boolean = isSuccessEgldPriceQuery && Boolean(egldPriceData);
@@ -109,7 +102,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
     const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
-
 
     useEffect(() => {
 
@@ -1142,242 +1134,245 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
 
-                                <Collapsible
+                                {
+                                    (!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) &&
+                                    <Collapsible
 
-                                    open={true}
-                                    triggerDisabled={true}
-                                    transitionTime={50}
-                                    classParentString="c-accordion"
-                                    trigger={
+                                        open={true}
+                                        triggerDisabled={true}
+                                        transitionTime={50}
+                                        classParentString="c-accordion"
+                                        trigger={
 
-                                        isAuction ?
-                                            <div className="c-accordion_trigger">
-                                                
-                                                <span className="c-accordion_trigger_icon">
-                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.faClock} />
-                                                </span>
+                                            isAuction ?
+                                                <div className="c-accordion_trigger">
 
-                                                {
-                                                    !isAuctionOngoing && <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">Sale has ended</p>
-                                                }
+                                                    <span className="c-accordion_trigger_icon">
+                                                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.faClock} />
+                                                    </span>
 
-                                                <div className="w-full">
-                                                    {!hasAuctionStarted &&
-                                                        <>
-                                                            <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                                Sale starts {auctionStartTimeTitle.format("MMM Do, YYYY HH:mm")}
-                                                            </p>
-                                                        </>
-                                                    }
                                                     {
-                                                        isAuctionOngoing &&
-                                                        <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                            Sale ends {auctionDeadlineTitle.format("MMM Do, YYYY HH:mm")}
-                                                        </p>
+                                                        !isAuctionOngoing && <div className="w-full">  <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">Sale has ended</p> </div>
                                                     }
+
+                                                    <div className="w-full">
+                                                        {!hasAuctionStarted &&
+                                                            <>
+                                                                <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                                    Sale starts {auctionStartTimeTitle.format("MMM Do, YYYY HH:mm")}
+                                                                </p>
+                                                            </>
+                                                        }
+                                                        {
+                                                            isAuctionOngoing &&
+                                                            <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                                Sale ends {auctionDeadlineTitle.format("MMM Do, YYYY HH:mm")}
+                                                            </p>
+                                                        }
+                                                    </div>
+
+                                                </div>
+                                                :
+                                                <div className="c-accordion_trigger">
+
+                                                    {!walletAddressParam && <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                        Fixed price
+                                                    </p>}
+
                                                 </div>
 
-                                            </div>
-                                            :
-                                            <div className="c-accordion_trigger">
-                                                <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                    Fixed price
-                                                </p>
-                                            </div>
+                                        }>
 
-                                    }>
+                                        <div className="c-accordion_content" >
 
-                                    <div className="c-accordion_content" >
+                                            {
+                                                isOnSale &&
+                                                <>
+                                                    <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                        {onSaleText}
+                                                    </p>
+                                                    <p className="u-margin-bottom-spacing-3">
 
-                                        {
-                                            isOnSale &&
-                                            <>
-                                                <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                    {onSaleText}
-                                                </p>
-                                                <p className="u-margin-bottom-spacing-3">
+                                                        <span className="u-regular-heading u-text-bold u-text-theme-gray-light">
+                                                            {tokenPrice} {' '}
+                                                        </span>
+                                                        <span className="u-text-bold u-text-theme-gray-mid">
+                                                            {' '}EGLD {' '}
+                                                        </span>
+                                                        <span className="u-text-theme-gray-mid">
+                                                            (${priceTokenDollarsFixed})
+                                                        </span>
 
-                                                    <span className="u-regular-heading u-text-bold u-text-theme-gray-light">
-                                                        {tokenPrice} {' '}
-                                                    </span>
-                                                    <span className="u-text-bold u-text-theme-gray-mid">
-                                                        {' '}EGLD {' '}
-                                                    </span>
-                                                    <span className="u-text-theme-gray-mid">
-                                                        (${priceTokenDollarsFixed})
-                                                    </span>
+                                                    </p>
+                                                </>
+                                            }
 
-                                                </p>
-                                            </>
-                                        }
-
-                                        {
-                                            !isOnSale &&
-                                            <div>
-                                                <Link to={`/token/${walletAddressParam}/${collectionId}/${tokenNonce}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
-                                                    <span className="u-padding-right-spacing-2">
-                                                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
-                                                    </span>
-                                                    <span>
-                                                        Sale
-                                                    </span>
-                                                </Link>
-                                            </div>
-                                        }
-
-                                        {
-                                            (isOnSale && isCurrentTokenOwner && !(!isAuctionOngoing && hasBidderWinner)) &&
-                                            <button onClick={actionsHandlers[WITHDRAW]} className="c-button c-button--primary u-margin-right-spacing-2">
-                                                <span className="u-padding-right-spacing-2">
-                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
-                                                </span>
-                                                <span>
-                                                    Widthdraw
-                                                </span>
-                                            </button>
-                                        }
-
-                                        {
-
-                                            (shouldDisplayEndAuctionButton) &&
-                                            <button onClick={actionsHandlers[END_AUCTION]} className="c-button c-button--primary u-margin-right-spacing-2">
-                                                <span className="u-padding-right-spacing-2">
-                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
-                                                </span>
-                                                <span>
-                                                    End auction
-                                                </span>
-                                            </button>
-                                        }
-
-                                        {
-                                            (isOnSale && !isCurrentTokenOwner) &&
-                                            <div>
-
-                                                {
-                                                    isListed && <button onClick={actionsHandlers[BUY]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                            {
+                                                !isOnSale &&
+                                                <div>
+                                                    <Link to={`/token/${walletAddressParam}/${collectionId}/${tokenNonce}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
                                                         <span className="u-padding-right-spacing-2">
                                                             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
                                                         </span>
                                                         <span>
-                                                            Buy now
+                                                            Sell
                                                         </span>
-                                                    </button>
-                                                }
+                                                    </Link>
+                                                </div>
+                                            }
 
-                                                {
-                                                    (isAuction && isAuctionOngoing) &&
-                                                    <Popup
-                                                        modal
-                                                        className="c-modal_container"
-                                                        trigger={
-                                                            <button className="c-button c-button--primary u-margin-right-spacing-2">
-                                                                <span className="u-padding-right-spacing-2">
-                                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faTag} />
-                                                                </span>
-                                                                <span>
-                                                                    Place bid
-                                                                </span>
-                                                            </button>
-                                                        }
-                                                    >
-                                                        {(close: any) => (
-                                                            <div className="c-modal rounded-2xl">
+                                            {
+                                                (isOnSale && isCurrentTokenOwner && !(!isAuctionOngoing && hasBidderWinner)) &&
+                                                <button onClick={actionsHandlers[WITHDRAW]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                    <span className="u-padding-right-spacing-2">
+                                                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                    </span>
+                                                    <span>
+                                                        Widthdraw
+                                                    </span>
+                                                </button>
+                                            }
 
-                                                                <div className="text-right px-10">
-                                                                    <button className="c-modal_close text-4xl" onClick={close}>
-                                                                        &times;
-                                                                    </button>
-                                                                </div>
+                                            {
 
-                                                                <div className="c-modal_header text-2xl  pb-6 "> Place bid </div>
-                                                                <div className="c-modal_content">
+                                                (shouldDisplayEndAuctionButton) &&
+                                                <button onClick={actionsHandlers[END_AUCTION]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                    <span className="u-padding-right-spacing-2">
+                                                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                    </span>
+                                                    <span>
+                                                        End auction
+                                                    </span>
+                                                </button>
+                                            }
 
-                                                                    <div className="px-10 pt-8">
+                                            {
+                                                (isOnSale && !isCurrentTokenOwner) &&
+                                                <div>
 
-                                                                        <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Bid amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                    {
+                                                        isListed && <button onClick={actionsHandlers[BUY]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                            <span className="u-padding-right-spacing-2">
+                                                                <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                            </span>
+                                                            <span>
+                                                                Buy now
+                                                            </span>
+                                                        </button>
+                                                    }
 
-                                                                        <div className="text-center">
-                                                                            <button onClick={actionsHandlers[MAKE_BID]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                    {
+                                                        (isAuction && isAuctionOngoing) &&
+                                                        <Popup
+                                                            modal
+                                                            className="c-modal_container"
+                                                            trigger={
+                                                                <button className="c-button c-button--primary u-margin-right-spacing-2">
+                                                                    <span className="u-padding-right-spacing-2">
+                                                                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faTag} />
+                                                                    </span>
+                                                                    <span>
+                                                                        Place bid
+                                                                    </span>
+                                                                </button>
+                                                            }
+                                                        >
+                                                            {(close: any) => (
+                                                                <div className="c-modal rounded-2xl">
 
-                                                                                <span>
-                                                                                    Send bid
-                                                                                </span>
-                                                                            </button>
+                                                                    <div className="text-right px-10">
+                                                                        <button className="c-modal_close text-4xl" onClick={close}>
+                                                                            &times;
+                                                                        </button>
+                                                                    </div>
+
+                                                                    <div className="c-modal_header text-2xl  pb-6 "> Place bid </div>
+                                                                    <div className="c-modal_content">
+
+                                                                        <div className="px-10 pt-8">
+
+                                                                            <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Bid amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+                                                                            <div className="text-center">
+                                                                                <button onClick={actionsHandlers[MAKE_BID]} className="c-button c-button--primary u-margin-right-spacing-2">
+
+                                                                                    <span>
+                                                                                        Send bid
+                                                                                    </span>
+                                                                                </button>
+
+                                                                            </div>
 
                                                                         </div>
 
                                                                     </div>
-
                                                                 </div>
-                                                            </div>
-                                                        )}
-                                                    </Popup>
+                                                            )}
+                                                        </Popup>
 
-                                                }
+                                                    }
 
-                                                {
-                                                    !(isAuction && hasBidderWinner) &&
-                                                    <Popup
-                                                        modal
-                                                        className="c-modal_container"
-                                                        trigger={
-                                                            <button className="c-button  c-button--secondary u-margin-top-spacing-2">
-                                                                <span className="u-padding-right-spacing-2">
-                                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faTag} />
-                                                                </span>
-                                                                <span>
-                                                                    Make offer
-                                                                </span>
-                                                            </button>
-                                                        }
-                                                    >
-                                                        {(close: any) => (
-                                                            <div className="c-modal rounded-2xl">
+                                                    {
+                                                        !(isAuction && hasBidderWinner) &&
+                                                        <Popup
+                                                            modal
+                                                            className="c-modal_container"
+                                                            trigger={
+                                                                <button className="c-button  c-button--secondary u-margin-top-spacing-2">
+                                                                    <span className="u-padding-right-spacing-2">
+                                                                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faTag} />
+                                                                    </span>
+                                                                    <span>
+                                                                        Make offer
+                                                                    </span>
+                                                                </button>
+                                                            }
+                                                        >
+                                                            {(close: any) => (
+                                                                <div className="c-modal rounded-2xl">
 
-                                                                <div className="text-right px-10">
-                                                                    <button className="c-modal_close text-4xl" onClick={close}>
-                                                                        &times;
-                                                                    </button>
-                                                                </div>
+                                                                    <div className="text-right px-10">
+                                                                        <button className="c-modal_close text-4xl" onClick={close}>
+                                                                            &times;
+                                                                        </button>
+                                                                    </div>
 
-                                                                <div className="c-modal_header text-2xl  pb-6 "> Make an offer </div>
-                                                                <div className="c-modal_content">
+                                                                    <div className="c-modal_header text-2xl  pb-6 "> Make an offer </div>
+                                                                    <div className="c-modal_content">
 
-                                                                    <div className="px-10 pt-8">
+                                                                        <div className="px-10 pt-8">
 
-                                                                        <input onChange={(e: any) => { setExpireOffer(e.target.value); }} placeholder="seconds" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
-                                                                        <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Offer amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                                            <input onChange={(e: any) => { setExpireOffer(e.target.value); }} placeholder="seconds" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                                            <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Offer amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
 
-                                                                        <div className="text-center">
-                                                                            <button onClick={actionsHandlers[MAKE_OFFER]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                                            <div className="text-center">
+                                                                                <button onClick={actionsHandlers[MAKE_OFFER]} className="c-button c-button--primary u-margin-right-spacing-2">
 
-                                                                                <span>
-                                                                                    Send Offer
-                                                                                </span>
-                                                                            </button>
+                                                                                    <span>
+                                                                                        Send Offer
+                                                                                    </span>
+                                                                                </button>
+
+                                                                            </div>
 
                                                                         </div>
 
                                                                     </div>
-
                                                                 </div>
-                                                            </div>
-                                                        )}
-                                                    </Popup>
-                                                }
-                                            </div>
-                                        }
+                                                            )}
+                                                        </Popup>
+                                                    }
+                                                </div>
+                                            }
 
 
 
-                                    </div>
+                                        </div>
 
 
-                                </Collapsible>
-
-
+                                    </Collapsible>
+                                }
                             </div>
 
 
@@ -1423,53 +1418,55 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                             </div>
 
-                            <div className="u-border-radius-2 u-overflow-hidden my-10">
+                            {!walletAddressParam &&
+                                <div className="u-border-radius-2 u-overflow-hidden my-10">
 
-                                <Collapsible
-                                    open={true}
-                                    transitionTime={50}
-                                    classParentString="c-accordion c-accordion--no-content-padding"
-                                    trigger={
+                                    <Collapsible
+                                        open={true}
+                                        transitionTime={50}
+                                        classParentString="c-accordion c-accordion--no-content-padding"
+                                        trigger={
 
-                                        <div className="c-accordion_trigger">
-                                            <span className="c-accordion_trigger_icon">
-                                                <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faList} />
-                                            </span>
-                                            <span className="c-accordion_trigger_title">
-                                                Offers
-                                            </span>
+                                            <div className="c-accordion_trigger">
+                                                <span className="c-accordion_trigger_icon">
+                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faList} />
+                                                </span>
+                                                <span className="c-accordion_trigger_title">
+                                                    Offers
+                                                </span>
+                                            </div>
+
+                                        }>
+
+                                        <div className="c-accordion_content" >
+
+                                            {Boolean(mapOffersTableData) ?
+
+                                                <Table className="c-table" rowClassName="c-table_row" columns={offersTableColumns} data={mapOffersTableData} />
+
+                                                : <div className="py-10">
+
+                                                    <p className="u-tac u-margin-bottom-spacing-4">
+
+                                                        <FontAwesomeIcon size="3x" className="u-text-theme-gray-mid" icon={faIcons.faSearchMinus} />
+
+                                                    </p>
+
+                                                    <p className="u-text-small u-tac u-text-theme-gray-mid">No offers yet</p>
+
+                                                </div>
+                                            }
+
+
                                         </div>
 
-                                    }>
 
-                                    <div className="c-accordion_content" >
+                                    </Collapsible>
 
-                                        {Boolean(mapOffersTableData) ?
+                                </div>
+                            }
 
-                                            <Table className="c-table" rowClassName="c-table_row" columns={offersTableColumns} data={mapOffersTableData} />
-
-                                            : <div className="py-10">
-
-                                                <p className="u-tac u-margin-bottom-spacing-4">
-
-                                                    <FontAwesomeIcon size="3x" className="u-text-theme-gray-mid" icon={faIcons.faSearchMinus} />
-
-                                                </p>
-
-                                                <p className="u-text-small u-tac u-text-theme-gray-mid">No offers yet</p>
-
-                                            </div>
-                                        }
-
-
-                                    </div>
-
-
-                                </Collapsible>
-
-                            </div>
-
-                            <div className="u-border-radius-2 u-overflow-hidden my-10">
+                            {!walletAddressParam && <div className="u-border-radius-2 u-overflow-hidden my-10">
 
                                 <Collapsible
                                     open={true}
@@ -1514,7 +1511,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                 </Collapsible>
 
-                            </div>
+                            </div>}
 
 
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
