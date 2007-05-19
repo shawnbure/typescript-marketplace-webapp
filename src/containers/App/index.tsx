@@ -7,8 +7,12 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage} from 'containers/pages';
+import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
+
+
+import 'reactjs-popup/dist/index.css';
+import '@fortawesome/fontawesome-svg-core/styles.css'
 
 
 export const App: () => JSX.Element = () => {
@@ -30,6 +34,31 @@ export const App: () => JSX.Element = () => {
                         <Route path={routePaths.home} exact={true} >
 
                             <HomePage />
+
+                        </Route>
+
+
+                        <Route path={routePaths.token} exact={true} >
+
+                            <TokenPage />
+
+                        </Route>
+
+                        <Route path={routePaths.create} exact={true} >
+
+                            <CreatePage />
+
+                        </Route>
+
+                        <Route path={routePaths.sellToken} exact={true} >
+
+                            <SellTokenPage />
+
+                        </Route>
+
+                        <Route path={routePaths.account} exact={true} >
+
+                            <ProfilePage />
 
                         </Route>
 

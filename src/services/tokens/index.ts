@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/rea
 
 import { BASE_URL_API, GET } from 'constants/api';
 
-const mainPath = 'assets';
+const mainPath = 'tokens';
 
 export const tokensApi = createApi({
 
@@ -36,4 +36,6 @@ export const tokensApi = createApi({
     }),
 })
 
-export const { useGetTokenDataQuery, useLazyGetTokenDataQuery } = tokensApi;
+export const { 
+    useGetTokenDataQuery,
+    useLazyGetTokenDataQuery } = tokensApi;

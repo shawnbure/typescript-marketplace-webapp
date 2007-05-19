@@ -1,0 +1,47 @@
+.c-switcher-action {
+
+
+    &_option {
+
+        cursor: pointer;
+
+        color: $gray-mid;
+
+        border: 2px solid $gray-mid;
+
+        &:first-of-type {
+
+            border-top-left-radius: 20px;
+            border-bottom-left-radius: 20px;
+
+        }
+
+        &:last-of-type {
+
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+
+        }
+
+        &--active {
+
+            border-color: $white;
+            background-color: rgba($color: #fff, $alpha: .05);
+
+        }
+
+
+        &--active,
+        &:hover {
+
+            color: $white;
+
+        }
+
+
+
+
+
+    }
+
+}

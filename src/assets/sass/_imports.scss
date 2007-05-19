@@ -1,5 +1,9 @@
 @import 'themes/elrondRequirements';
 
+@import '~tailwindcss/base';
+@import '~tailwindcss/components';
+@import '~tailwindcss/utilities';
+
 @import 'variables/colors';
 @import 'variables/text';
 @import 'variables/dimensions';
@@ -20,12 +24,20 @@
 
 @import 'modules/app/app';
 @import 'modules/card/card';
+
+@import 'modules/property/property';
 @import 'modules/grid/grid';
+
+@import 'modules/switcher-action/switcher-action';
+
+@import 'modules/table/table';
+@import 'modules/modal/modal';
 @import 'modules/header/header';
 @import 'modules/footer/footer';
 @import 'modules/navbar/navbar';
 @import 'modules/button//button';
 @import 'modules/accordion/accordion';
+@import 'modules/social-band/social-band';
 @import 'modules/wallet-sidebar/wallet-sidebar';
 
 

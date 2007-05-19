@@ -16,17 +16,18 @@ export const txTemplateApi = createApi({
 
     endpoints: (builder) => ({
 
-        getBuyNftTemplate: builder.query<any, any>({
+        getBuyNftTemplate: builder.mutation<any, { userWalletAddress: string, collectionId: string, tokenNonce: string, price: number }>({
 
-            query: ({ userWalletAddress, collectionId, tokenNone, price }): FetchArgs => {
+            query: ({ userWalletAddress, collectionId, tokenNonce, price }): FetchArgs => {
 
                 const accessToken: string = 'admin';
 
                 const customRequestArg: FetchArgs = {
+                    method: GET,
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
                     },
-                    url: `/${mainPath}/buy-nft/${userWalletAddress}/${collectionId}/${tokenNone}/${price}`
+                    url: `/${mainPath}/buy-nft/${userWalletAddress}/${collectionId}/${tokenNonce}/${price}`
                 }
 
                 return customRequestArg;
@@ -34,17 +35,18 @@ export const txTemplateApi = createApi({
         }),
 
 
-        getListNftTemplate: builder.query<any, any>({
+        getListNftTemplate: builder.mutation<any, any>({
 
-            query: ({ userWalletAddress, collectionId, tokenNone, price }): FetchArgs => {
+            query: ({ userWalletAddress, collectionId, tokenNonce, price }): FetchArgs => {
 
                 const accessToken: string = 'admin';
 
                 const customRequestArg: FetchArgs = {
+                    method: GET,
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
                     },
-                    url: `/${mainPath}/list-nft/${userWalletAddress}/${collectionId}/${tokenNone}/${price}`
+                    url: `/${mainPath}/list-nft/${userWalletAddress}/${collectionId}/${tokenNonce}/${price}`
                 }
 
                 return customRequestArg;
@@ -54,4 +56,4 @@ export const txTemplateApi = createApi({
     }),
 })
 
-export const { useGetBuyNftTemplateQuery, useLazyGetBuyNftTemplateQuery, useGetListNftTemplateQuery, useLazyGetListNftTemplateQuery } = txTemplateApi;
+export const { useGetBuyNftTemplateMutation, useGetListNftTemplateMutation } = txTemplateApi;

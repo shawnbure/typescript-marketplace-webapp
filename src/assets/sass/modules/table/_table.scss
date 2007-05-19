@@ -1,0 +1,30 @@
+.c-table {
+
+    width: 100%;
+    color: $gray-light-text;
+    overflow-y: auto;
+
+    table {
+
+        width: 100%;
+        // min-width: 700px;
+
+    }
+
+    th {
+
+        background-color: #262b2f;
+        padding: 8px 16px;
+        border-top: 1px solid rgb(21, 27, 34);
+        border-bottom: 1px solid rgb(21, 27, 34);
+
+    }
+
+    td {
+        padding: 16px;
+    }
+
+    &_column {
+        // width: 100%;
+    }
+}

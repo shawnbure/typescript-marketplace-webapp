@@ -20,6 +20,7 @@ import 'swiper/swiper.min.css';
 
 SwiperCore.use([Autoplay, Pagination, Navigation]);
 
+
 export const HomePage = () => {
 
 
@@ -404,9 +405,6 @@ export const HomePage = () => {
                                     <div className="c-card_info">
                                         <img src={'./img/carousel/9.png'} className="c-card_creator-avatar" alt="" />
                                         <div className="c-card_details">
-                                            {/* <span className="c-card_title">
-                                                {'Moonkey #XYZ'}
-                                            </span> */}
                                             <span className="c-card_collection-name">
                                                 {'Moonkeyz'}
                                             </span>

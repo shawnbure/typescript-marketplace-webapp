@@ -12,9 +12,53 @@ export const userSlice = createSlice({
 
         },
         
+        setAccessToken: (state, action) => {
+
+            state.accessToken = action.payload;
+
+        },
+
+        setRefreshToken: (state, action) => {
+
+            state.refreshToken = action.payload;
+
+        },
+
+        setAccessTokenExpirationTime: (state, action) => {
+
+            state.accessTokenExpirationTime = action.payload;
+
+        },
+
+        setUserTokenData: (state, action) => {
+
+            const {
+
+                accessToken,
+                refreshToken,
+                accessTokenExpirationTime,
+
+            } = action.payload;
+
+            state.accessToken = accessToken;
+            state.refreshToken = refreshToken;
+            state.accessTokenExpirationTime = accessTokenExpirationTime;
+
+        },
+
     }
 });
 
 export const userActions = userSlice.actions;
-export const { setTheme } = userActions;
+
+export const {
+    
+    setTheme,
+    setAccessToken,
+    setRefreshToken,
+    setUserTokenData,
+    setAccessTokenExpirationTime
+
+} = userActions;
+
 export default userSlice.reducer;

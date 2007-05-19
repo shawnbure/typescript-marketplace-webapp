@@ -1,12 +1,15 @@
 .c-accordion {
 
     // border: 1px solid $black;
+    $self: &;
 
     &_trigger {
 
         display: flex;
         background-color: #262b2f;
         padding: $spacing-point-4;
+        // border: 1px solid rgb(21, 27, 34);
+
 
         &_icon {
             margin-right: $spacing-point-3;
@@ -23,7 +26,51 @@
 
         background-color: #303339;
         padding: $spacing-point-6 $spacing-point-4;
+        // border: 1px solid rgb(21, 27, 34);
+
+
+    }
+    
+
+    &--no-content-padding {
+
+        #{$self}_content {
+
+            padding: 0;
+
+        }
 
     }
 
+}
+
+
+.Collapsible__trigger {
+    
+    
+    display: block;
+    position: relative;
+    color: white;
+
+
+    &:after {
+        font-family: 'FontAwesome';
+        content: '\f107';
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        display: block;
+        transition: transform 300ms;
+    }
+
+    &.is-open {
+        &:after {
+            transform: rotateZ(180deg);
+        }
+    }
+
+    &.is-disabled {
+        opacity: 0.5;
+        background-color: grey;
+    }
 }

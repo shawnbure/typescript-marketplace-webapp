@@ -2,11 +2,11 @@ import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/rea
 
 import { BASE_URL_API, POST } from 'constants/api';
 
-const mainPath = 'auth';
+const reducerPath = 'auth';
 
 export const authApi = createApi({
 
-    reducerPath: mainPath,
+    reducerPath: reducerPath,
 
     baseQuery: fetchBaseQuery({
 
@@ -16,19 +16,12 @@ export const authApi = createApi({
 
     endpoints: (builder) => ({
 
-        getAuthToken: builder.query<any, any>({
+        getAccessToken: builder.query<any, void>({
 
-            query: (): FetchArgs => {
-
-                const customRequestArg: FetchArgs = {
-
-                    method: POST,
-                    url: `/${mainPath}/access`,
-
-                }
-
-                return customRequestArg;
-            },
+            query: () => ({
+                method: 'POST',
+                url: `/${reducerPath}/access`,
+            }),
 
         }),
 
@@ -39,11 +32,12 @@ export const authApi = createApi({
                 const customRequestArg: FetchArgs = {
 
                     method: POST,
-                    url: `/${mainPath}/refresh`,
+                    url: `/${reducerPath}/refresh`,
 
                 }
 
                 return customRequestArg;
+
             },
 
         }),
@@ -51,4 +45,8 @@ export const authApi = createApi({
     }),
 })
 
-export const { useGetAuthTokenQuery, useLazyGetRefreshTokenQuery, useGetRefreshTokenQuery, useLazyGetAuthTokenQuery } = authApi;
+export const { 
+    useGetAccessTokenQuery,
+    useGetRefreshTokenQuery,
+    useLazyGetAccessTokenQuery,
+    useLazyGetRefreshTokenQuery, } = authApi;

@@ -1,0 +1,125 @@
+.c-modal {
+
+    $self: &;
+
+    padding: 30px 0;
+    min-width: 500px;
+    max-width: 80vw;
+    max-height: 70vh;
+    overflow-x: auto;
+    border: 1px $black solid;
+    background-color: rgb(48, 51, 57);
+
+
+    &_input , &_textarea {
+
+        width: 100%;
+
+    }
+
+    &_container-overlay {
+        background: rgba(0,0,0,.5);
+    }
+
+    &_header {
+        width: 100%;
+        border-bottom: 1px solid $black;
+        // font-size: 18px;
+        // padding-bottom: $spacing-point-3;
+        text-align: center;
+        color: white;
+
+    }
+
+    &_content {
+        width: 100%;
+        padding: 10px 5px;
+        color: white;
+
+    }
+
+    &_actions {
+        width: 100%;
+        padding: 10px 5px;
+        margin: auto;
+        text-align: center;
+    }
+
+    &_close {
+        color: gray;
+        display: inline;
+        cursor: pointer;
+        padding: 2px 5px;
+        line-height: 20px;
+        // font-size: 24px;
+        border-radius: 18px;
+    }
+
+    &_content-group {
+
+        margin: $spacing-point-4 0;
+
+        input , select {
+
+            color: $black;
+            padding: $spacing-point-1;
+            margin: $spacing-point-2 0;
+
+
+        }
+
+    }
+
+
+    &--examples {
+
+
+        #{$self}_header {
+
+            border: none;
+            font-size: 28px;
+
+        }
+
+        #{$self}_subtitle {
+            font-size: 24px;
+            padding: 0 20px;
+        }
+
+        #{$self}_list {
+    
+            display: flex;
+            width: 50vw;
+            flex-flow: wrap;
+            justify-content: stretch;
+    
+        }
+
+        #{$self}_picker {
+            
+            padding: 20px;
+            margin: 20px;
+            width: calc(33.3% - 40px);
+            border: 1px solid $white;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            // text-align: center;
+
+            &-title {
+                
+                @include font-family-bold;
+                
+            }
+
+
+            &-description {
+                
+                @include font-family-regular;
+                
+            }
+    
+        }
+    
+    }
+}

@@ -7,15 +7,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { routePaths } from 'constants/router';
 import { WalletSidebar } from 'components/index';
+import { selectShouldDisplayWalletSidebar } from 'redux/selectors/ui';
+import { useAppDispatch, useAppSelector } from 'redux/store';
+import { toggleShouldDisplayWalletSidebar } from 'redux/slices/ui';
 
 export const Navbar = () => {
 
+    
+    const dispatch = useAppDispatch();
+    const shouldDisplayWalletSidebar = useAppSelector(selectShouldDisplayWalletSidebar);
+    
+    const handleToggleSidebar = () => {
 
-    const [shouldDisplayWalletSidebar, setShouldDisplayWalletSidebar] = useState<boolean>(false);
-
-    const toggleShouldDisplayWalletSidebar = () => {
-
-        setShouldDisplayWalletSidebar(!shouldDisplayWalletSidebar);
+        dispatch(toggleShouldDisplayWalletSidebar());
 
     }
 
@@ -38,26 +42,9 @@ export const Navbar = () => {
 
                 <ul className="c-navbar_list">
 
-
-                    <li className="c-navbar_list-item">
-                        <a href={'https://twitter.com/ErdseaNFT'} target="_blank" className="c-navbar_list-link">
-                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faBrandIcons.faTwitter} />
-                        </a>
-                    </li>  
-                    
-                    <li className="c-navbar_list-item">
-                        <a href={'https://discord.gg/HfV8kMuTP7'} className="c-navbar_list-link">
-                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faBrandIcons.faDiscord} />
-                        </a>
-                    </li>
-
-                </ul>
-
-                {/* <ul className="c-navbar_list">
-
                     <li className="c-navbar_list-item">
                         <Link to={routePaths.marketplace} className="c-navbar_list-link">
-                            Marketplace
+                            Explore
                         </Link>
                     </li>
                     <li className="c-navbar_list-item">
@@ -71,14 +58,14 @@ export const Navbar = () => {
                         </Link>
                     </li>
 
-                    <li className="c-navbar_list-item" onClick={toggleShouldDisplayWalletSidebar}>
+                    <li className="c-navbar_list-item" onClick={handleToggleSidebar}>
                         <span className="c-navbar_list-link">
-                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faUserCircle} />
+                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
                         </span>
                     </li>
 
 
-                </ul> */}
+                </ul>
 
             </div>
 
@@ -86,7 +73,7 @@ export const Navbar = () => {
                 shouldDisplayWalletSidebar &&
 
                 <WalletSidebar
-                    overlayClickCallback={toggleShouldDisplayWalletSidebar}
+                    overlayClickCallback={handleToggleSidebar}
                 />
             }
 

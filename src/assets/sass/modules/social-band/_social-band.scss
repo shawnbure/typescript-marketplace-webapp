@@ -1,0 +1,59 @@
+.c-social-band {
+
+    overflow: hidden;
+
+    &_item {
+
+        color: $gray-mid;
+        background-color: #202225;
+        display: inline-block;
+        border-radius: 1px solid $white;
+
+        border: 1px solid $gray-mid;
+
+        &:first-of-type {
+
+            border-top-left-radius: 20px;
+            border-bottom-left-radius: 20px;
+
+        }
+
+        &:last-of-type {
+
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+
+        }
+
+        &:hover{
+            
+            color: $white;
+            border: 1px solid $white;
+
+        }
+
+    }
+
+    &_link {
+        
+        color: $gray-light;
+
+        padding: 16px 12px 12px 12px;
+        display: inline-block;
+
+        &:hover{
+            
+            color: $white;
+
+        }
+
+    }
+
+    &_icon {
+        
+    }
+
+
+
+
+}

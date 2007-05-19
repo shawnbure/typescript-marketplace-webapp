@@ -1,9 +1,12 @@
 
 import { DARK } from 'constants/ui';
-import { ContractState } from './interfaces';
+import { UserState } from './interfaces';
 
-export const initialState: ContractState =  {
+export const initialState: UserState = {
     theme: DARK,
+    accessToken: '',
+    refreshToken: '',
+    accessTokenExpirationTime: 0,
 };
 
 export default initialState;

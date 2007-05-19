@@ -16,20 +16,18 @@ export const oracleApi = createApi({
 
     endpoints: (builder) => ({
 
-        getEgldPrice: builder.query<any, any>({
+        getEgldPrice: builder.query<any, void>({
 
             query: (): FetchArgs => {
 
-                const accessToken: string = 'admin';
-
                 const customRequestArg: FetchArgs = {
-                    headers: {
-                        "Authorization": `Bearer ${accessToken}`,
-                    },
+
                     url: `/egld_price`
+
                 }
 
                 return customRequestArg;
+                
             },
         }),
 

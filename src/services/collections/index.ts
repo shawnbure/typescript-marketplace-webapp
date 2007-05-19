@@ -1,12 +1,14 @@
 import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/react';
 
-import { BASE_URL_API, GET } from 'constants/api';
+import store from 'redux/store/index';
+import { BASE_URL_API, POST} from 'constants/api';
+import { selectAccessToken } from 'redux/selectors/user';
 
-const mainPath = 'collections';
+const reducerPath = 'collections';
 
 export const collectionsApi = createApi({
 
-    reducerPath: mainPath,
+    reducerPath: reducerPath,
 
     baseQuery: fetchBaseQuery({
 
@@ -16,17 +18,41 @@ export const collectionsApi = createApi({
 
     endpoints: (builder) => ({
 
+        createCollection: builder.mutation<any, any>({
+
+            query: ({ }): FetchArgs => {
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    url: `/${reducerPath}`,
+                    body: {
+
+                    }
+
+                }
+
+                return customRequestArg;
+            },
+
+        }),
+
         getCollectionByName: builder.query<any, any>({
 
             query: ({collectionName}): FetchArgs => {
 
-                const accessToken: string = 'admin';
+                const accessToken: string = selectAccessToken(store.getState());
 
                 const customRequestArg: FetchArgs = {
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
                     },
-                    url: `/${mainPath}/${collectionName}`
+                    url: `/${reducerPath}/${collectionName}`
                 }
 
                 return customRequestArg;
