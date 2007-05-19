@@ -11,6 +11,16 @@ export const userSlice = createSlice({
             state.theme = action.payload;
 
         },
+
+
+        setJWT: (state, action) => {
+
+            const {accessToken , refreshToken } = action.payload;
+            
+            state.accessToken = accessToken;
+            state.refreshToken = refreshToken;
+
+        },
         
         setAccessToken: (state, action) => {
 
@@ -53,6 +63,7 @@ export const userActions = userSlice.actions;
 
 export const {
     
+    setJWT,    
     setTheme,
     setAccessToken,
     setRefreshToken,

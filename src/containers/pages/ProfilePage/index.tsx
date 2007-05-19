@@ -15,7 +15,8 @@ import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
 import { shorterAddress } from "utils";
 import { BUY } from "constants/actions";
-import { useGetAccountGatewayTokensMutation, useGetAccountTokensMutation } from "services/accounts";
+import { useGetAccountGatewayTokensMutation, useGetAccountMutation, useGetAccountTokensMutation } from "services/accounts";
+import Popup from "reactjs-popup";
 
 
 export const ProfilePage: (props: any) => any = ({ }) => {
@@ -46,14 +47,22 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     }] = useLazyGetTokenDataQuery();
 
+    const [getAccountRequestTrigger, {
+        data: accountData,
+        isLoading: isLoadingGetAccountRequest }] = useGetAccountMutation();
+
     const [getAccountTokensRequestTrigger, {
-        data: accountTokensData, }] = useGetAccountTokensMutation();
+        data: accountTokensData,
+        isLoading: isLoadingAccountTokensRequest }] = useGetAccountTokensMutation();
 
     const [getAccountGatewayRequestTrigger, {
         data: accountGatewayData,
+        isLoading: isLoadingAccountGatewayRequest,
     }] = useGetAccountGatewayTokensMutation();
 
     useEffect(() => {
+
+        getAccountRequestTrigger({ userAddress: userWalletAddress });
 
         getAccountTokensRequestTrigger({ userAddress: userWalletAddress, offset: 0, limit: 20 });
 
@@ -62,11 +71,16 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     }, []);
 
-    // if (!accountTokensData) {
+    if (isLoadingGetAccountRequest || isLoadingAccountTokensRequest || isLoadingAccountGatewayRequest) {
 
-    //     return (<p>Loading...</p>);
+        return (<p>Loading...</p>);
 
-    // }
+    };
+
+
+    const dateOptions: any = { year: 'numeric', month: 'long', };
+    const joinnedDate: Date = new Date(accountData?.data.createdAt * 1000);
+    const joinedDateFormated: string = joinnedDate.toLocaleDateString("en-US", dateOptions);
 
     return (
 
@@ -84,25 +98,40 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
 
                 <div className="col-span-12 flex justify-center mb-10 pb-16 relative">
-                    <div className="-bottom-1/4 absolute bg-yellow-700 border border-black h-40 rounded-circle w-40">
-
+                    <div style={{ backgroundImage:`url(${accountData?.data.profileImageLink})` }} className="-bottom-1/4 absolute bg-yellow-700 border border-black h-40 rounded-circle w-40" >
                     </div>
                 </div>
 
 
                 <div className="col-span-12 text-center mb-6">
 
+
+                    <div className="c-icon-band">
+                        <div className="c-icon-band_item">
+
+                            <Link className="inline-block" to={`./account/settings`}>
+                                <FontAwesomeIcon className="text-white" style={{ width: 25, height: 25, margin: "10px 15px" }} icon={faIcons.faUserCog} />
+                            </Link>
+
+                        </div>
+                    </div>
+
                     <h2 className="u-regular-heading u-text-bold">
-                        Unnamed
+                       {
+                           accountData?.data.name ||  'Unnamed'
+                       }
                     </h2>
 
                     <p className="u-text-theme-gray-mid ">
                         {shortUserWalletAddress}
                     </p>
 
-                    <p className="u-text-theme-gray-mid">
-                        Joined Novemeber 2021
-                    </p>
+                    {
+                        accountData?.data.createdAt &&
+                        <p className="u-text-theme-gray-mid">
+                            Joined {joinedDateFormated}
+                        </p>
+                    }
 
                 </div>
 
@@ -124,7 +153,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faClipboardList} />
                                         </span>
                                         <span className="c-accordion_trigger_title">
-                                            Listed <span className="u-text-theme-gray-mid">- on Erdsea</span>
+                                            On sale
                                         </span>
                                     </div>
 
@@ -136,7 +165,9 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                         {accountTokensData?.data && accountTokensData.data.map((tokenData: any) => {
 
-                                            const { imageLink, tokenName, tokenId, nonce } = tokenData;
+                                            const { collection, token } = tokenData;
+                                            const { collectionName } = collection;
+                                            const { imageLink, tokenName, tokenId, nonce } = token;
 
                                             return (
                                                 <div className="col-span-3 mr-8 mb-8">
@@ -155,7 +186,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                                                     <div>
                                                                         <p className="c-card_title">
                                                                             <Link to={`/collection/${collectionId}`}>
-                                                                                {'collectionName'}
+                                                                                {collectionName || tokenId}
                                                                             </Link>
                                                                         </p>
                                                                         <p className="c-card_collection-name">
@@ -196,7 +227,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faListAlt} />
                                         </span>
                                         <span className="c-accordion_trigger_title">
-                                            Not listed <span className="u-text-theme-gray-mid">- in your wallet</span>
+                                            Unlisted
                                         </span>
                                     </div>
 
@@ -206,21 +237,28 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                 <div className="c-accordion_content bg-transparent" >
 
                                     <div className="grid grid-cols-12">
-{/* 
+
+
+                                        <div className="col-span-12">
+                                            <p className="mb-4">
+                                                ERD-721 NFTs
+                                            </p>
+                                        </div>
+
                                         {accountGatewayData?.erdNfts.map((tokenData: any) => {
 
-                                            console.log({
-                                                tokenData
-                                            });
-
-                                            return;
-
-                                            const { imageLink, tokenName, tokenId, nonce } = tokenData;
+                                            // const { imageLink, tokenName, tokenId, nonce } = tokenData;
+                                            const { availableTokensData } = accountGatewayData;
+                                            const { url: imageLink, name: tokenName, ticker: tokenId, nonce, identifier } = tokenData;
+                                            const isTokenAvailable = Boolean(availableTokensData[identifier].token.available);
+                                            const tokenLink = `/token/${tokenId}/${nonce}`;
+                                            const tokenPreviewLink = `/token/${userWalletAddress}/${tokenId}/${nonce}`;
+                                            const link = isTokenAvailable ? tokenLink : tokenPreviewLink;
 
                                             return (
                                                 <div className="col-span-3 mr-8 mb-8">
 
-                                                    <Link to={`/token/${tokenId}/${nonce}`}>
+                                                    <Link to={link}>
 
                                                         <div className={`c-card`}>
 
@@ -255,15 +293,16 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                         })}
 
+                                        <div className="col-span-12 mt-12 mb-4">
+                                            <p>
+                                                Not complained ERD-721 NFTs
+                                            </p>
+                                        </div>
+
+
                                         {accountGatewayData?.restNfts.map((tokenData: any) => {
 
-                                            console.log({
-                                                tokenData
-                                            });
-
-                                            return;
-
-                                            const { imageLink, tokenName, tokenId, nonce } = tokenData;
+                                            const { url: imageLink, name: tokenName, ticker: tokenId, nonce } = tokenData;
 
                                             return (
                                                 <div className="col-span-3 mr-8 mb-8">
@@ -273,7 +312,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                                         <div className={`c-card`}>
 
                                                             <div className="c-card_img-container">
-                                                                <img src={imageLink} className="c-card_img" alt="" onLoad={() => { setIsAssetLoaded(true) }} />
+                                                                <img src={imageLink} className="c-card_img" alt="" />
                                                             </div>
 
                                                             <div className="c-card_info justify-between">
@@ -301,7 +340,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                                 </div>
                                             )
 
-                                        })} */}
+                                        })}
 
                                     </div>
 

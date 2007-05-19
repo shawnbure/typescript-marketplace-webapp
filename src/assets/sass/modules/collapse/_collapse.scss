@@ -1,0 +1,31 @@
+.c-collapse {
+
+    position: relative;
+
+
+    &_content {
+
+        max-height: 200px;
+        overflow: hidden;
+        word-break: break-word;
+        transition: max-height 100ms ease 0s;
+        mask: linear-gradient(rgb(255, 255, 255) 45%, transparent);
+        -webkit-mask: linear-gradient(rgb(255, 255, 255) 45%, transparent);
+
+        &--open {
+
+            max-height: 100%;
+            mask: unset;
+            -webkit-mask: unset;
+
+        }
+
+    }
+
+    &_icon { 
+        color: rgb(138, 147, 155);
+        position: absolute;
+        bottom: -30px;
+    }
+
+}

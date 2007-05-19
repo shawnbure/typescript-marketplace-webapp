@@ -8,20 +8,34 @@ import { Navbar } from 'components/index';
 
 export const AuthWrapper: (Props: { children: any }) => any = ({ children }) => {
 
+    const dappLogout = Dapp.useLogout();
     const { loggedIn } = Dapp.useContext();
     const refreshAccount = Dapp.useRefreshAccount();
 
-    React.useEffect(() => {
+    useEffect(() => {
+
         if (loggedIn) {
             refreshAccount();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [loggedIn]);
+
+
+    // useEffect(() => {
+
+
+    //     return () => {
+
+    //         dappLogout({ callbackUrl: `` });
+
+    //     };
+
+    // }, []);
 
     return (
         <>
             <Navbar />
-            
+
             <Dapp.Authenticate routes={[]} unlockRoute="/login">
                 {children}
             </Dapp.Authenticate>

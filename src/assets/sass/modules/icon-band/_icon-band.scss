@@ -1,9 +1,12 @@
-.c-social-band {
+.c-icon-band {
+
+    $self: &;
 
     overflow: hidden;
 
     &_item {
 
+        // cursor: pointer;
         color: $gray-mid;
         background-color: #202225;
         display: inline-block;
@@ -25,8 +28,8 @@
 
         }
 
-        &:hover{
-            
+        &:hover {
+
             color: $white;
             border: 1px solid $white;
 
@@ -35,25 +38,40 @@
     }
 
     &_link {
-        
+
         color: $gray-light;
 
         padding: 16px 12px 12px 12px;
         display: inline-block;
 
-        &:hover{
-            
+        &:hover {
+
             color: $white;
 
         }
 
     }
 
-    &_icon {
-        
+    &--collection {
+
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        #{$self}_item {
+
+            color: $white;
+            width: 144px;
+            height: 88px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            border-color: rgb(21, 27, 34);
+
+        }
+
     }
-
-
-
 
 }

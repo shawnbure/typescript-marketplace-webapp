@@ -95,6 +95,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
         tokenName,
         attributes,
         priceNominal,
+        state: tokenState,
         priceNominal: tokenPrice } = token;
 
     const {
@@ -109,10 +110,23 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     } = collection;
 
+
+    const isListed: boolean = tokenState === 'List';
+    const isAuction: boolean = tokenState === 'Auction';
+    const isOnSale: boolean = isListed && isAuction;
+
+
     const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
     const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
 
-    const displayedOwner = ownerName ? ownerName : ownerShortWalletAddress;
+    console.log({
+        ownerName,
+        ownerWalletAddress,
+        userAccountAddress
+    });
+
+
+    const displayedOwner = Boolean(ownerName) ? ownerName : ownerShortWalletAddress;
     const displayedCreator = creatorName ? creatorName : creatorShortWalletAddress;
 
 
@@ -465,14 +479,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
         const unconsumedTransaction = prepareTransaction(txData);
 
-        console.log({
-            unconsumedTransaction
-        });
-
-
         sendTransaction({
             transaction: unconsumedTransaction,
-            callbackRoute: ''
+            callbackRoute: pathname
         });
 
 
@@ -524,49 +533,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             </div>
 
                             <div className="p-token-page_token-data u-border-radius-2 u-overflow-hidden">
-
-
-                                {/* <Collapsible
-                                    transitionTime={50}
-                                    open={true}
-                                    triggerDisabled={true}
-                                    className="c-accordion"
-                                    trigger={
-
-                                        <div className="c-accordion_trigger">
-                                            <span className="c-accordion_trigger_icon">
-                                                <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faAlignJustify} />
-                                            </span>
-                                            <span className="c-accordion_trigger_title">
-                                                Token
-                                            </span>
-                                        </div>
-
-                                    }>
-
-                                    <div className="c-accordion_content" >
-
-
-                                        <p className="u-text-small">
-
-                                            <span className="u-text-theme-gray-mid">
-                                                Created by {' '}
-                                            </span>
-
-                                            <span className="u-text-small">
-                                                <Link to={'/'}>
-                                                    {displayedCreator}
-                                                </Link>
-                                            </span>
-
-                                        </p>
-
-                                    </div>
-
-
-                                </Collapsible> */}
-
-
 
                                 <Collapsible
                                     transitionTime={50}
@@ -641,48 +607,48 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                         </p>
 
-                                        <ul className="c-social-band">
+                                        <ul className="c-icon-band">
                                             {
                                                 websiteLink &&
-                                                <li className="c-social-band_item">
-                                                    <a href={websiteLink} target="_blank" className="c-social-band_link">
-                                                        <FontAwesomeIcon width={'20px'} className="c-social-band_icon" icon={faIcons.faGlobe} />
+                                                <li className="c-icon-band_item">
+                                                    <a href={websiteLink} target="_blank" className="c-icon-band_link">
+                                                        <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faIcons.faGlobe} />
                                                     </a>
                                                 </li>
                                             }
 
                                             {
                                                 twitterLink &&
-                                                <li className="c-social-band_item">
-                                                    <a href={twitterLink} target="_blank" className="c-social-band_link">
-                                                        <FontAwesomeIcon width={'20px'} className="c-social-band_icon" icon={faBrands.faTwitch} />
+                                                <li className="c-icon-band_item">
+                                                    <a href={twitterLink} target="_blank" className="c-icon-band_link">
+                                                        <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faTwitch} />
                                                     </a>
                                                 </li>
                                             }
 
                                             {
                                                 discordLink &&
-                                                <li className="c-social-band_item">
-                                                    <a href={discordLink} target="_blank" className="c-social-band_link">
-                                                        <FontAwesomeIcon width={'20px'} className="c-social-band_icon" icon={faBrands.faDiscord} />
+                                                <li className="c-icon-band_item">
+                                                    <a href={discordLink} target="_blank" className="c-icon-band_link">
+                                                        <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faDiscord} />
                                                     </a>
                                                 </li>
                                             }
 
                                             {
                                                 telegramLink &&
-                                                <li className="c-social-band_item">
-                                                    <a href={telegramLink} target="_blank" className="c-social-band_link">
-                                                        <FontAwesomeIcon width={'20px'} className="c-social-band_icon" icon={faBrands.faTelegram} />
+                                                <li className="c-icon-band_item">
+                                                    <a href={telegramLink} target="_blank" className="c-icon-band_link">
+                                                        <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faTelegram} />
                                                     </a>
                                                 </li>
                                             }
 
                                             {
                                                 instagramLink &&
-                                                <li className="c-social-band_item">
-                                                    <a href={telegramLink} target="_blank" className="c-social-band_link">
-                                                        <FontAwesomeIcon width={'20px'} className="c-social-band_icon" icon={faBrands.faInstagram} />
+                                                <li className="c-icon-band_item">
+                                                    <a href={telegramLink} target="_blank" className="c-icon-band_link">
+                                                        <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faInstagram} />
                                                     </a>
                                                 </li>
                                             }
@@ -805,17 +771,15 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <div className="">
 
                                 <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
-                                    <Link to={`/collection/${collectionId}`}>{'Pigselated'}</Link>
-                                    {/* <Link to={`/collection/${collectionId}`}>{collectionName}</Link> */}
+                                    <Link to={`/collection/${collectionId}`}>{collectionName}</Link>
                                 </p>
 
                                 <h2 className="u-regular-heading u-text-bold u-margin-bottom-spacing-5">
-                                    {/* {tokenName} */}
-                                    Pigselated #420
+                                    {tokenName}
                                 </h2>
 
                                 <p className="u-margin-bottom-spacing-5 u-text-small">
-                                    <span className="u-text-theme-gray-mid">Owned by </span> <Link to={`/profile/${ownerWalletAddress}`}>{`cryptolegend`}</Link>
+                                    <span className="u-text-theme-gray-mid">Owned by </span> <Link to={`/profile/${ownerWalletAddress}`}>{displayedOwner}</Link>
                                 </p>
 
                             </div>
@@ -829,53 +793,77 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     transitionTime={50}
                                     classParentString="c-accordion"
                                     trigger={
-                                        <div className="c-accordion_trigger">
-                                            <span className="c-accordion_trigger_icon">
-                                                <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.faClock} />
-                                            </span>
-                                            <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                Sale ends November 11, 2022 at 12:35AM
-                                            </p>
-                                        </div>
+
+                                        isAuction ?
+                                            <div className="c-accordion_trigger">
+                                                <span className="c-accordion_trigger_icon">
+                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.faClock} />
+                                                </span>
+                                                <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                    Sale ends November 11, 2022 at 12:35AM
+                                                </p>
+                                            </div>
+                                            :
+                                            <div className="c-accordion_trigger"></div>
 
                                     }>
 
                                     <div className="c-accordion_content" >
 
-                                        <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                            Current price
-                                        </p>
-                                        <p className="u-margin-bottom-spacing-3">
+                                        {
+                                            isOnSale &&
+                                            <> <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                Current price
+                                            </p>
+                                                <p className="u-margin-bottom-spacing-3">
 
-                                            {/* <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.facoin} /> {` `} */}
+                                                    {/* <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.facoin} /> {` `} */}
 
-                                            <span className="u-regular-heading u-text-bold u-text-theme-gray-light">
-                                                {tokenPrice} {' '}
-                                            </span>
-                                            <span className="u-text-bold u-text-theme-gray-mid">
-                                                {' '}EGLD {' '}
-                                            </span>
-                                            <span className="u-text-theme-gray-mid">
-                                                (${priceTokenDollarsFixed})
-                                            </span>
-                                        </p>
+                                                    <span className="u-regular-heading u-text-bold u-text-theme-gray-light">
+                                                        {tokenPrice} {' '}
+                                                    </span>
+                                                    <span className="u-text-bold u-text-theme-gray-mid">
+                                                        {' '}EGLD {' '}
+                                                    </span>
+                                                    <span className="u-text-theme-gray-mid">
+                                                        (${priceTokenDollarsFixed})
+                                                    </span>
+                                                </p>
+                                            </>
+                                        }
 
-                                        {false ?
-
+                                        {
+                                            !isOnSale &&
                                             <div>
-
                                                 <Link to={`${pathname}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
                                                     <span className="u-padding-right-spacing-2">
                                                         <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
                                                     </span>
                                                     <span>
-                                                        Sell
+                                                        Sale
                                                     </span>
                                                 </Link>
-
                                             </div>
+                                        }
 
-                                            : <div>
+
+                                        {
+                                            (isOnSale && isCurrentTokenOwner) &&
+                                            <div>
+                                                <Link to={`${pathname}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                    <span className="u-padding-right-spacing-2">
+                                                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                    </span>
+                                                    <span>
+                                                        Widthdraw
+                                                    </span>
+                                                </Link>
+                                            </div>
+                                        }
+
+                                        {
+                                           (isOnSale && !isCurrentTokenOwner) &&
+                                            <div>
 
                                                 <button onClick={actionsHandlers[BUY]} className="c-button c-button--primary u-margin-right-spacing-2">
                                                     <span className="u-padding-right-spacing-2">
@@ -933,7 +921,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                         </div>
                                                     )}
                                                 </Popup>
-
 
                                             </div>
                                         }
@@ -1092,7 +1079,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     }>
 
                                     <div className="c-accordion_content h-96" >
-                                        
+
                                         <ResponsiveContainer width="100%" height="100%">
                                             <LineChart
                                                 width={500}
@@ -1105,10 +1092,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                     bottom: 5,
                                                 }}
                                             >
-                                                <XAxis  dy={15} dataKey="name"  />
-                                                <YAxis  dx={-15} interval={0} />
+                                                <XAxis dy={15} dataKey="name" />
+                                                <YAxis dx={-15} interval={0} />
                                                 <Tooltip />
-                                                <CartesianGrid vertical={false}  stroke="#000"  />
+                                                <CartesianGrid vertical={false} stroke="#000" />
 
                                                 <Line type="monotone" dataKey="pv" stroke="#2081e2" strokeWidth={3} activeDot={{ r: 8 }} />
                                             </LineChart>

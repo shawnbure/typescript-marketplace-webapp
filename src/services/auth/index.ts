@@ -16,16 +16,34 @@ export const authApi = createApi({
 
     endpoints: (builder) => ({
 
-        getAccessToken: builder.query<any, void>({
+        getAccessToken: builder.mutation<any, void>({
+            
+            query: ({
+                address,
+                signature,
+                verfiedMessage,
+            }: any): FetchArgs => {
 
-            query: () => ({
-                method: 'POST',
-                url: `/${reducerPath}/access`,
-            }),
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    url: `/${reducerPath}/access`,
+                    body: {
+                        address,
+                        signature,
+                        message: verfiedMessage,
+                    }
+
+                }
+
+                return customRequestArg;
+
+            },
+
 
         }),
 
-        getRefreshToken: builder.query<any, any>({
+        getRefreshToken: builder.mutation<any, any>({
 
             query: (): FetchArgs => {
 
@@ -45,8 +63,6 @@ export const authApi = createApi({
     }),
 })
 
-export const { 
-    useGetAccessTokenQuery,
-    useGetRefreshTokenQuery,
-    useLazyGetAccessTokenQuery,
-    useLazyGetRefreshTokenQuery, } = authApi;
+export const {
+    useGetAccessTokenMutation,
+    useGetRefreshTokenMutation } = authApi;

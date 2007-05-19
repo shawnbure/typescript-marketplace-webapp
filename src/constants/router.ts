@@ -1,13 +1,16 @@
 export const routePaths = {
     home: "/",
-    token: "/token/:collectionId/:tokenNonce",
-    sellToken: "/token/:collectionId/:tokenNonce/sell",
     login: "/login",
     ledger: "/ledger",
     walletconnect: "/walletconnect",
     marketplace: '/marketplace',
     create: '/create',
-    account: '/account'
+    account: '/account',
+    accountSettings: '/account/settings',
+    collection: "/collection/:collectionId/",
+    token: "/token/:collectionId/:tokenNonce",
+    collectionEdit: '/collection/:collectionId/edit',
+    sellToken: "/token/:collectionId/:tokenNonce/sell",
 };
 
 

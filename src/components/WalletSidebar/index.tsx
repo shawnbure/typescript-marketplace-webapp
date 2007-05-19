@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { routePaths } from "constants/router";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import * as Dapp from "@elrondnetwork/dapp";
-import { useLazyGetAccessTokenQuery } from "services/auth";
 import { useAppDispatch } from "redux/store";
 import { setUserTokenData } from "redux/slices/user";
 import { useGetEgldPriceQuery } from "services/oracle";
@@ -11,16 +10,11 @@ import { useGetEgldPriceQuery } from "services/oracle";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrandIcons from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-
-
-import { SignableMessage, getProviders, IDappMessageEvent, Egld, Balance, Token } from "@elrondnetwork/erdjs";
 import { shorterAddress } from "utils";
 
 export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any = ({
     overlayClickCallback
 }) => {
-
 
     const randomToken = "44acad666d67ce76a1b44e351b50e0bc";
     
@@ -55,7 +49,6 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     }
 
     const handleLogOut = (e: React.MouseEvent) => {
-
 
         e.preventDefault();
 
@@ -132,7 +125,7 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                 <div className="mb-3">
 
                     <Link to={routePaths.account} className="c-button c-button--secondary" >
-                        <div className="inline-flex">
+                        <div onClick={() => { overlayClickCallback?.() }} className="inline-flex">
 
                             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faUserCircle} />
                             <span>

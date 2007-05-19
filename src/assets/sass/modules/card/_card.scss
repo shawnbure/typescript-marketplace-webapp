@@ -1,11 +1,12 @@
 .c-card {
+
+    $self: &;
+
     width: 100%;
-    // height: 100%;
     margin: 0 auto;
     border-radius: 10px;
     overflow: hidden;
     background-color: #303339;
-    // box-shadow: 0px 0px 10px 0px rgba(4 17 29, .2);
     box-shadow: rgba(0, 0, 0, 0.25) 0px 0px 10px 0px;
 
     &:hover {
@@ -23,19 +24,24 @@
     }
 
     &_info {
-
         display: flex;
-        padding: $spacing-point-3;
+        flex-flow: row;
         align-items: center;
+        padding: $spacing-point-3;
+        justify-content: space-between;
 
     }
 
-    &_details {
+    &_token-details {
 
-        display: flex;
-        flex-flow: column;
-        align-items: flex-start;
+        width: 60%;
 
+    }
+
+    &_price {
+
+        width: 40%;
+        text-align: right;
 
     }
 
@@ -43,7 +49,7 @@
 
         width: 40px;
         height: 40px;
-        margin: $spacing-point-3;
+        margin-right: $spacing-point-3;
         border-radius: 25px;
 
     }
@@ -59,8 +65,16 @@
         @include font-family-regular;
     }
 
-
     &--homepage-feature {
         max-width: 550px;
+
+        #{$self}_info {
+
+            display: flex;
+            align-items: center;
+            justify-content: start;
+        }
+
     }
+
 }
