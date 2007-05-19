@@ -123,21 +123,44 @@ export const tokensApi = createApi({
 
         }),
 
-        getTokenMetadata: builder.mutation<any, any>({
+        // getTokenMetadata: builder.query<any, any>({
+
+        //     query: ({ metadataLink }): FetchArgs => {
+
+        //         const customRequestArg: FetchArgs = {
+
+                    
+        //             method: GET,
+        //             url: metadataLink,
+        //             headers: {
+        //                 'Access-Control-Allow-Origin':'*',
+        //                 'Access-Control-Allow-Methods':'GET',
+        //                 'Access-Control-Allow-Headers':'application/json',
+        //             }
+
+        //         }
+
+        //         return customRequestArg;
+
+        //     },
+
+        // }),
+
+
+
+        getTokenMetadata: builder.query<any, any>({
 
             query: ({ metadataLink }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
-                    method: GET,
                     url: metadataLink
 
                 }
 
                 return customRequestArg;
-
+                
             },
-
         }),
 
 
@@ -148,7 +171,7 @@ export const tokensApi = createApi({
 
 export const {
     useGetTransactionsMutation,
-    useGetTokenMetadataMutation,
+    useLazyGetTokenMetadataQuery,
     useGetTokenBidsMutation,
     useGetTokenOffersMutation,
     useGetTokenDataMutation,

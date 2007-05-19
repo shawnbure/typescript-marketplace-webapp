@@ -69,9 +69,9 @@ export const Navbar = () => {
                                 </Link>
                             </li> */}
                             <li className="c-navbar_list-item">
-                                <Link to={routePaths.resources} target="_blank" className="c-navbar_list-link">
+                                <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="c-navbar_list-link">
                                     Resources
-                                </Link>
+                                </a>
                             </li>
 
                             <li className="c-navbar_list-item" onClick={handleToggleSidebar}>

@@ -13,7 +13,7 @@ import moment from 'moment';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, } from "services/tokens";
+import { useGetTokenBidsMutation, useGetTokenDataMutation, useLazyGetTokenMetadataQuery, useGetTokenOffersMutation, useGetTransactionsMutation, } from "services/tokens";
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
@@ -74,7 +74,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [getTokenMetadataTrigger, {
         data: tokenMetadataData,
         isUninitialized: isUninitializedGetTokenMetadata
-    }] = useGetTokenMetadataMutation();
+    }] = useLazyGetTokenMetadataQuery();
 
     const [getTokenOffersTrigger, {
         data: tokenOffersData,
@@ -153,15 +153,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     }, []);
 
-
-    // if (shouldRedirect) {
-
-    //     return (
-    //         <Redirect to={routePaths.home} />
-    //     );
-
-    // };
-
     if (!shouldRenderPage) {
 
         return (<p>Loading...</p>);
@@ -233,54 +224,19 @@ export const TokenPage: (props: any) => any = ({ }) => {
     } = getBaseTokenData(tokenData, !Boolean(walletAddressParam));
 
 
-    console.log({
-        metadataLink,
-        tokenMetadataData,
-        collectionData,
-    });
-
     if (Boolean(metadataLink) && isUninitializedGetTokenMetadata) {
 
         getTokenMetadataTrigger({ metadataLink });
 
+
     };
 
-
-
-
-    // if(!Boolean(tokenTraits.length) && metadataLink){
-
-    //     fetch(metadataLink).then(response => response.json())
-    //     .then(data => console.log(data));
-
-    // };
-
-
-    // console.log({
-    //     nonce,
-    //     imageLink,
-    //     metadataLink,
-    //     tokenName,
-    //     royaltiesPercent,
-    //     ownerWalletAddress,
-    //     id,
-    //     ownerName,
-    //     tokenState,
-    //     tokenPrice,
-    // });
-
-
-    // const {
-
-    //     description,
-    //     discordLink,
-    //     twitterLink,
-    //     telegramLink,
-    //     instagramLink,
-    //     website: websiteLink,
-    //     name: collectionName,
-
-    // } = collectionData?.data;
+    const description = collectionData?.data?.collection?.description;
+    const discordLink = collectionData?.data?.collection?.discordLink;
+    const twitterLink = collectionData?.data?.collection?.twitterLink;
+    const telegramLink = collectionData?.data?.collection?.telegramLink;
+    const instagramLink = collectionData?.data?.collection?.instagramLink;
+    const websiteLink = collectionData?.data?.collection?.website;
 
     const isListed: boolean = tokenState === 'List';
     const isAuction: boolean = tokenState === 'Auction';
@@ -347,6 +303,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
     const listingTableColumns = [{
+        title: 'Type',
+        dataIndex: 'event',
+        key: 'event',
+        className: 'c-table_column',
+    },{
         title: 'Price',
         dataIndex: 'price',
         key: 'price',
@@ -355,11 +316,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
         title: 'Date',
         dataIndex: 'date',
         key: 'date',
-        className: 'c-table_column',
-    }, {
-        title: 'From',
-        dataIndex: 'from',
-        key: 'from',
         className: 'c-table_column',
     }];
 
@@ -382,73 +338,27 @@ export const TokenPage: (props: any) => any = ({ }) => {
     }];
 
 
-    const activityTableColumns = [{
-        title: 'Event',
-        dataIndex: 'event',
-        key: 'event',
-        className: 'c-table_column',
-    }, {
-        title: 'Price',
-        dataIndex: 'price',
-        key: 'price',
-        className: 'c-table_column',
-    }, {
-        title: 'From',
-        dataIndex: 'from',
-        key: 'from',
-        className: 'c-table_column',
-    }, {
-        title: 'To',
-        dataIndex: 'to',
-        key: 'to',
-        className: 'c-table_column',
-    }, {
-        title: 'Date',
-        dataIndex: 'date',
-        key: 'date',
-        className: 'c-table_column',
-    }];
 
 
+    const tokenBuys = getTokenTransactionsData?.data?.filter((transaction: any) => transaction.type === "Buy");
 
-    const chartData = [
-        {
-            name: '5/27 ',
-            uv: 4000,
-            pv: 1,
-            amt: 2400,
-        },
-        {
-            name: '6/1',
-            uv: 3000,
-            pv: 2.5,
-            amt: 2210,
-        },
-        {
-            name: '6/6',
-            uv: 2000,
-            pv: 4,
-            amt: 2290,
-        },
-        {
-            name: '6/11',
-            uv: 2780,
-            pv: 3,
-            amt: 2000,
-        },
-        {
-            name: '6/26',
-            uv: 2390,
-            pv: 5,
-            amt: 2500,
-        },
-        {
-            name: '7/1',
-            uv: 3490,
-            pv: 6,
-            amt: 2100,
-        },
-    ];
+    const chartData = tokenBuys?.map((buy: any, index: number) => {
+
+
+        const { priceNominal, timestamp } = buy;
+
+        const date = moment(new Date(timestamp * 1000), "YYYY-MM-DD HH:mm:ss");
+        const month = date.format('M');
+        const day = date.format('D');
+
+        return ({
+            name: `${month}/${day}`,
+            pv: priceNominal,
+        });
+
+    });
+
+
 
 
 
@@ -508,35 +418,42 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     });
 
-
-    // const mapListingTableData = [{
-    //     price: '1.54',
-    //     date: <span className="u-text-theme-gray-mid">2 days ago</span>,
-    //     from: <a href="#">PinkyBoy</a>,
-    //     key: `key-${1}`
-    // }, {
-    //     price: '3',
-    //     date: <span className="u-text-theme-gray-mid">10 days ago</span>,
-    //     from: <a href="#">cryptolegend</a>,
-    //     key: `key-${2}`
-    // }, {
-    //     price: '3.14',
-    //     date: <span className="u-text-theme-gray-mid">22 days ago</span>,
-    //     from: <a href="#">PinkyBoy</a>,
-    //     key: `key-${3}`
-    // }].map((el) => el);
+    const tokenListings = getTokenTransactionsData?.data?.filter((transaction: any) => transaction.type === "List" || transaction.type === "Auction");
 
 
+    const mapListingTableData = tokenListings?.map((transaction: any, index: number) => {
 
-    const mapListingTableData = getTokenTransactionsData?.data?.map((transaction: any) => {
+        const { priceNominal, timestamp, hash, type } = transaction;
 
-        console.log({
-            transaction
+
+        const mapTypeEvents: any = {
+            'List': {
+                title: "List",
+                icon: faIcons.faTags,
+            },
+            'Auction': {
+                title: "Auction",
+                icon: faIcons.faGavel,
+            },
+        };
+
+        const event = <>
+            <FontAwesomeIcon width={'20px'} icon={mapTypeEvents[type].icon} />
+            <span className="inline-block ml-4">{mapTypeEvents[type].title}</span>
+        </>;
+
+        return ({
+            event: event,
+            price: `${priceNominal}`,
+            date: <a href={`https://devnet-explorer.elrond.com/transactions/${hash}`} target="_blank">
+                <span className="inline-block mr-2 u-text-theme-blue-anchor">{moment().to(moment(timestamp * 1000))}</span>
+                <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
+            </a>,
+            key: `key-${index}`
         });
-        
 
-    })
 
+    });
 
     const mapBidsTableData = tokenBidsData?.data?.map((offerData: any, index: number) => {
 
@@ -556,103 +473,64 @@ export const TokenPage: (props: any) => any = ({ }) => {
         })
 
     });
-    const mapActivityTableData = () => {
 
-        const tx = `da7efdbdaef6fc268ad307b7ae6abce0c5d88f259e89d052c0d684d65d97f5d4`;
+    const activityTableColumns = [{
+        title: 'Event',
+        dataIndex: 'event',
+        key: 'event',
+        className: 'c-table_column',
+    }, {
+        title: 'Price',
+        dataIndex: 'price',
+        key: 'price',
+        className: 'c-table_column',
+    }, {
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'date',
+        className: 'c-table_column',
+    }];
 
-        const data = [{
-            event: <>
-                <FontAwesomeIcon width={'20px'} icon={faIcons.faTags} /> {` `}
-                <span>List</span>
-            </>,
-            price: 2,
-            from: <a href="#">cryptolegend</a>,
-            to: <a href="#"></a>,
-            date: <div>
-                <a href="#">
-                    5 minutes ago {` `}
-                    <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
-                </a>
-            </div>,
-            key: `key-${1}`
-        }, {
-            event: <>
-                <FontAwesomeIcon width={'20px'} icon={faIcons.faHandHoldingUsd} /> {` `}
-                <span>Withdraw</span>
-            </>,
-            price: '',
-            from: <a href="#">cryptolegend</a>,
-            to: <a href="#"></a>,
-            date: <div>
-                <a href="#">
-                    20 minutes ago {` `}
-                    <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
-                </a>
-            </div>,
-            key: `key-${1}`
-        }, {
-            event: <>
-                <FontAwesomeIcon width={'20px'} icon={faIcons.faGavel} /> {` `}
-                <span>Auction</span>
-            </>,
-            price: 1.5,
-            from: <a href="#">cryptolegend</a>,
-            to: <a href="#"></a>,
-            date: <div>
-                <a href="#">
-                    1 hour ago {` `}
-                    <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
-                </a>
-            </div>,
-            key: `key-${1}`
-        }, {
-            event: <>
-                <FontAwesomeIcon width={'20px'} icon={faIcons.faShoppingCart} /> {` `}
-                <span>Buy</span>
-            </>,
-            price: 1,
-            from: <a href="#">PinkyBoy</a>,
-            to: <a href="#">cryptolegend</a>,
-            date: <div>
-                <a href="#">
-                    2 hours ago {` `}
-                    <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
-                </a>
-            </div>,
-            key: `key-${1}`
-        }]
+    const mapActivityTableData = getTokenTransactionsData?.data?.map((transaction: any, index: number) => {
 
-        return data;
+        const { type, timestamp, priceNominal, hash, } = transaction;
 
-    };
+        const mapTypeEvents: any = {
+            'List': {
+                title: "List",
+                icon: faIcons.faTags,
+            },
+            'Withdraw': {
+                title: "Withdraw",
+                icon: faIcons.faHandHolding,
+            },
+            'Auction': {
+                title: "Auction",
+                icon: faIcons.faGavel,
+            },
+            'Buy': {
+                title: "Buy",
+                icon: faIcons.faShoppingCart,
+            }
+        }
 
-    const attributesMocked: Array<any> = [
-        {
-            type: 'head',
-            value: 'Beret Red',
-            rarity: 2.8,
-        },
-        {
-            type: 'face',
-            value: 'Anime Eyes',
-            rarity: 0.5,
-        },
-        {
-            type: 'hand',
-            value: 'Dynamite',
-            rarity: 1.2,
-        },
-        {
-            type: 'body',
-            value: 'Lumberjack',
-            rarity: 7,
-        },
-        {
-            type: 'background',
-            value: 'Forest',
-            rarity: 11,
-        },
-    ]
+        const event = <>
+            <FontAwesomeIcon width={'20px'} icon={mapTypeEvents[type].icon} />
+            <span className="inline-block ml-4">{mapTypeEvents[type].title}</span>
+        </>;
+
+
+        return ({
+            event: event,
+            price: priceNominal,
+            date: <a href={`https://devnet-explorer.elrond.com/transactions/${hash}`} target="_blank">
+                <span className="inline-block mr-2 u-text-theme-blue-anchor">{moment().to(moment(timestamp * 1000))}</span>
+                <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
+            </a>,
+            key: `key-${index}`
+        });
+
+    });
 
     const handleBuyAction = async () => {
 
@@ -901,12 +779,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     };
 
-
-    console.log({
-        mapOffersTableData
-    });
-
-
     const isERD721 = Boolean(tokenMetadataData?.attributes?.length);
 
     return (
@@ -953,10 +825,13 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
                                         {tokenMetadataData?.attributes?.map((attribute: any) => {
-                                            const {
-                                                trait_type,
-                                                value,
-                                            } = attribute;
+
+                                            const { trait_type, value, } = attribute;
+
+                                            const itemsTotal = collectionData?.data?.statistics?.itemsTotal || 0;
+
+                                            const trait = collectionData?.data?.statistics?.attributes?.find((attribute: any) => attribute.trait_type === trait_type && attribute.value === value);
+
                                             return (
                                                 <div className="c-property">
                                                     <div className="c-property_type">
@@ -965,9 +840,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                     <div className="c-property_value">
                                                         {value}
                                                     </div>
-                                                    {/* <div className="c-property_rarity">
-                                                        {trait_type}% have this trait
-                                                    </div> */}
+                                                    {(itemsTotal && trait) &&
+                                                        <div className="c-property_rarity">
+                                                            {((100 * trait.total) / itemsTotal).toFixed(2)}% have this trait
+                                                        </div>
+                                                    }
                                                 </div>
                                             );
                                         })}
@@ -1006,7 +883,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                             </p>
                                         }
-                                        {/* 
+
                                         <ul className="c-icon-band">
                                             {
                                                 websiteLink &&
@@ -1020,7 +897,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             {
                                                 twitterLink &&
                                                 <li className="c-icon-band_item">
-                                                    <a href={twitterLink} target="_blank" className="c-icon-band_link">
+                                                    <a href={`https://twitter.com/${twitterLink}`} target="_blank" className="c-icon-band_link">
                                                         <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faTwitter} />
                                                     </a>
                                                 </li>
@@ -1029,7 +906,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             {
                                                 discordLink &&
                                                 <li className="c-icon-band_item">
-                                                    <a href={discordLink} target="_blank" className="c-icon-band_link">
+                                                    <a href={`https://discord.gg/${discordLink}`} target="_blank" className="c-icon-band_link">
                                                         <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faDiscord} />
                                                     </a>
                                                 </li>
@@ -1038,7 +915,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             {
                                                 telegramLink &&
                                                 <li className="c-icon-band_item">
-                                                    <a href={telegramLink} target="_blank" className="c-icon-band_link">
+                                                    <a href={`https://t.me/${telegramLink}`} target="_blank" className="c-icon-band_link">
                                                         <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faTelegram} />
                                                     </a>
                                                 </li>
@@ -1047,13 +924,13 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             {
                                                 instagramLink &&
                                                 <li className="c-icon-band_item">
-                                                    <a href={telegramLink} target="_blank" className="c-icon-band_link">
+                                                    <a href={`https://instagram.com/${instagramLink}`} target="_blank" className="c-icon-band_link">
                                                         <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faInstagram} />
                                                     </a>
                                                 </li>
                                             }
 
-                                        </ul> */}
+                                        </ul>
 
 
 
@@ -1589,9 +1466,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                     }>
 
-                                    <div className="c-accordion_content h-96" >
+                                    <div className={`c-accordion_content ${Boolean(chartData?.length) && "h-96"} `} >
 
-                                        {chartData ?
+                                        {Boolean(chartData?.length) ?
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart
                                                     width={500}
@@ -1621,7 +1498,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                                 </p>
 
-                                                <p className="u-text-small u-tac u-text-theme-gray-mid">No bids yet</p>
+                                                <p className="u-text-small u-tac u-text-theme-gray-mid">No price history yet</p>
 
                                             </div>
 
@@ -1668,7 +1545,22 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     <div className="c-accordion_content" >
 
 
-                                        <Table className="c-table" rowClassName="c-table_row" columns={activityTableColumns} data={mapActivityTableData()} />
+                                        {Boolean(getTokenTransactionsData?.data?.length) ?
+
+                                            <Table className="c-table" rowClassName="c-table_row" columns={activityTableColumns} data={mapActivityTableData} /> :
+                                            <div className="py-10">
+
+                                                <p className="u-tac u-margin-bottom-spacing-4">
+
+                                                    <FontAwesomeIcon size="3x" className="u-text-theme-gray-mid" icon={faIcons.faSearchMinus} />
+
+                                                </p>
+
+                                                <p className="u-text-small u-tac u-text-theme-gray-mid">No activity yet</p>
+
+                                            </div>
+                                        }
+
 
 
                                     </div>

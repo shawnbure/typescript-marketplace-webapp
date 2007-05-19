@@ -7,6 +7,7 @@ import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrands from '@fortawesome/free-brands-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 
+import DateTimePicker from 'react-datetime-picker';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGetBuyNftTemplateMutation, useGetListNftTemplateMutation, useGetStartAuctionNftTemplateMutation } from 'services/tx-template';
 import { useGetTokenCollectionAvailablityMutation, useGetTokenDataMutation } from "services/tokens";
@@ -21,6 +22,7 @@ import { useGetCollectionByIdMutation } from 'services/collections';
 import { routePaths } from 'constants/router';
 
 
+
 export const SellTokenPage: (props: any) => any = ({ }) => {
 
 
@@ -29,8 +31,8 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     const [isFixedSale, setIsFixedSale] = useState<boolean>(true);
 
     const [requestedAmount, setRequestedAmount] = useState<number | undefined>(undefined);
-    const [startDateSeconds, setStartDateSeconds] = useState<number | undefined>(undefined);
-    const [endDateSeconds, setEndDateSeconds] = useState<number | undefined>(undefined);
+    const [startDate, setStartDate] = useState<any>();
+    const [endDate, setEndDate] = useState<any>();
 
 
     const {
@@ -47,15 +49,21 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     }
 
-    const handleChangeStartDate = (e: any) => {
+    const handleChangeStartDate = (value: any) => {
 
-        setStartDateSeconds(e.target.value);
+        setStartDate(value);
+
 
     }
 
-    const handleChangeEndDate = (e: any) => {
+    const handleChangeEndDate = (value: any) => {
 
-        setEndDateSeconds(e.target.value);
+        setEndDate(value);
+
+        console.log({
+            value
+        });
+
 
     }
 
@@ -72,8 +80,8 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     const isTokenDataFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData);
     const shouldRenderPage: boolean = isTokenDataFetched;
 
-    const [ getListNftTemplateQueryTrigger ] = useGetListNftTemplateMutation();
-    const [ getStartAuctionNftTemplateTrigger ] = useGetStartAuctionNftTemplateMutation();
+    const [getListNftTemplateQueryTrigger] = useGetListNftTemplateMutation();
+    const [getStartAuctionNftTemplateTrigger] = useGetStartAuctionNftTemplateMutation();
 
     const [getCollectionByIdTrigger, {
 
@@ -179,6 +187,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     const handleListFixedPrice = () => {
 
+
         signTemplateTransaction({
 
             succesCallbackRoute: '/account',
@@ -193,10 +202,62 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     const handleListAuction = () => {
 
+        const unixStartDate = new Date(startDate).getTime() / 1000;
+        const unixEndDate = new Date(endDate).getTime() / 1000;
+        const nowDate = new Date().getTime() / 1000;
+
+
+        if (!unixStartDate || !unixEndDate) {
+
+            toast.error(`Invalid dates`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+        };
+
+
+        if (unixStartDate >= unixEndDate) {
+
+            toast.error(`Start date needs to be earlier than end date`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+
+
+        };
+
+        if (unixEndDate < nowDate ) {
+
+            toast.error(`End date should't be in the past`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+
+        };
+
+
         signTemplateTransaction({
 
             succesCallbackRoute: '/account',
-            getTemplateData: { userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: startDateSeconds, deadline: endDateSeconds},
+            getTemplateData: { userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: unixStartDate, deadline: unixEndDate },
             getTemplateTrigger: getStartAuctionNftTemplateTrigger,
 
         });
@@ -209,7 +270,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         e.preventDefault();
 
-        if(isFixedSale) {
+        if (isFixedSale) {
 
             handleListFixedPrice();
 
@@ -224,7 +285,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     console.log({
         getCollectionByIdData
     });
-    
+
 
     return (
 
@@ -317,7 +378,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                                 </div>
 
                                 <div>
-                                    
+
                                     {
                                         !isFixedSale &&
                                         <>
@@ -336,8 +397,9 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
                                                 </p>
 
-                                                <input placeholder="seconds" min={0} onChange={handleChangeStartDate} value={startDateSeconds} type="number" className=" mb-2 bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
-
+                                                <div className="c-date-time-picker">
+                                                    <DateTimePicker value={startDate} onChange={handleChangeStartDate} />
+                                                </div>
                                             </div>
 
                                             <div className="mb-4">
@@ -354,7 +416,11 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
                                                 </p>
 
-                                                <input placeholder="seconds" min={0} onChange={handleChangeEndDate} value={endDateSeconds} type="number" className=" mb-2 bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+                                                <div className="c-date-time-picker">
+                                                    <DateTimePicker value={endDate} onChange={handleChangeEndDate} />
+                                                </div>
+
 
                                             </div>
 

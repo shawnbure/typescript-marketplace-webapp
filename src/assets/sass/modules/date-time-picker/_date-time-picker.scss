@@ -1,0 +1,38 @@
+.c-date-time-picker {
+
+
+    color: $white;
+
+    * {
+        fill: $white;
+        stroke: $white;
+    }
+
+    * option {
+        background-color: #202225!important;
+    }
+
+    .react-calendar {
+        background-color: #202225!important;
+        
+    }
+
+    button {
+        &:hover {
+            background-color: #36393f!important;
+        }
+    }
+
+    .react-datetime-picker__clock { 
+        background-color: #202225!important;
+    }
+
+
+    .react-clock__mark, .react-clock__hand, .react-clock__hand {
+        background-color: $white;;
+    }
+
+    input, select {
+        // padding: 8px;
+    }
+}
