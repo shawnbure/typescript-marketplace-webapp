@@ -21,6 +21,7 @@ import { useGetAccessTokenMutation } from 'services/auth';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setJWT } from 'redux/slices/user';
 import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
+import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
 
 
 export const App: () => JSX.Element = () => {
@@ -117,6 +118,14 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
+                        <Route path={routePaths.collectionRegister} exact={true} >
+
+                            <AuthProtected>
+                                <RegisterCollectionPage />
+                            </AuthProtected>
+
+                        </Route>
+
 
                         <Route path={routePaths.create} exact={true} >
 
@@ -167,6 +176,8 @@ export const App: () => JSX.Element = () => {
                             </AuthProtected>
 
                         </Route>
+
+
 
                         <Route path="*">
                             <HomePage />

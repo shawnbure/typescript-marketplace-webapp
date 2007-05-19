@@ -59,7 +59,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
     const [loadMoreOnSale, setLoadMoreOnSale] = useState<boolean>(true);
     const [loadMoreUnlisted, setLoadMoreUnlisted] = useState<boolean>(true);
 
-    const shouldRedirectHome = !loggedIn && !walletAddressParam;
+    // const shouldRedirectHome = !loggedIn && !walletAddressParam;
 
     const getOffsetToLimit = async (getFunction: any, offset: number = 0, limit: number = 20, dataArray: Array<any>, setDataArray: any, flag?: any) => {
 
@@ -314,13 +314,13 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     }, []);
 
-    if (shouldRedirectHome) {
+    // if (shouldRedirectHome) {
 
-        return (
-            <Redirect to={routePaths.home} />
-        );
+    //     return (
+    //         <Redirect to={routePaths.home} />
+    //     );
 
-    };
+    // };
 
 
     return (
@@ -388,12 +388,6 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                         <div className="col-span-12">
 
-                            {isOwnProfile &&
-                                <div className="mb-10">
-                                    <Link to={`/collection/create`} className="c-button c-button--primary"> Create a collection </Link>
-                                </div>
-                            }
-
                             <Collapsible
                                 transitionTime={50}
                                 open={false}
@@ -414,6 +408,21 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                 <div className="c-accordion_content bg-transparent" >
 
                                     <div className="grid grid-cols-12">
+
+                                        <div className="col-span-12">
+
+                                            {isOwnProfile &&
+                                                <div className="mb-10">
+                                                    <span className=" mr-4 inline-block">
+                                                        <Link to={`/collection/create`} className="c-button c-button--secondary"> Create collection </Link>
+                                                    </span>
+                                                    <span className=" mr-4 inline-block">
+                                                        <Link to={`/collection/register`} className="c-button c-button--secondary inline-block"> Register collection </Link>
+                                                    </span>
+                                                </div>
+
+                                            }
+                                        </div>
 
                                         {
                                             Boolean(userCollections.length) ?

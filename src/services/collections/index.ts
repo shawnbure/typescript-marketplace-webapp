@@ -4,11 +4,11 @@ import store from 'redux/store/index';
 import { BASE_URL_API, GET, POST} from 'constants/api';
 import { selectAccessToken } from 'redux/selectors/user';
 
-const reducerPath = 'collections';
+const mainPath = 'collections';
 
 export const collectionsApi = createApi({
 
-    reducerPath: reducerPath,
+    reducerPath: mainPath,
 
     baseQuery: fetchBaseQuery({
 
@@ -20,20 +20,18 @@ export const collectionsApi = createApi({
 
         createCollection: builder.mutation<any, any>({
 
-            query: ({ }): FetchArgs => {
+            query: ({ payload }): FetchArgs => {
 
                 const accessToken: string = selectAccessToken(store.getState());
 
                 const customRequestArg: FetchArgs = {
-
+                  
                     method: POST,
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
                     },
-                    url: `/${reducerPath}`,
-                    body: {
-
-                    }
+                    body: JSON.stringify(payload),
+                    url: `/${mainPath}/create`
 
                 }
 
@@ -48,16 +46,39 @@ export const collectionsApi = createApi({
 
                 const customRequestArg: FetchArgs = {
                     method: GET,
-                    url: `/${reducerPath}/${collectionId}`
+                    url: `/${mainPath}/${collectionId}`
                 }
 
                 return customRequestArg;
             },
         }),
 
+        registerCollection: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress, payload}): FetchArgs => {
+                
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                    url: `/${mainPath}/${userWalletAddress}`
+
+                }
+
+                return customRequestArg;
+            },
+
+        }),
+
     }),
 })
 
 export const { 
+    useRegisterCollectionMutation,
     useCreateCollectionMutation,
     useGetCollectionByIdMutation, } = collectionsApi;

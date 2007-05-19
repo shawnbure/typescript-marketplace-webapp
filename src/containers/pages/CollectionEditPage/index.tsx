@@ -9,6 +9,21 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     const [email, setEmail] = useState<string>('');
     const [username, setUsername] = useState<string>('');
 
+
+
+    // const schemaStep1 = yup.object({
+
+    //     description: yup.string(),
+    //     discordLink: yup.string(),
+    //     flags: yup.string(),
+    //     instagramLink: yup.string(),
+    //     telegramLink: yup.string(),
+    //     twitterLink: yup.string(),
+    //     website: yup.string(),
+
+    // }).required();
+
+
     const {
         address: userWalletAddress,
     } = Dapp.useContext();
@@ -22,7 +37,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     const handleUploadImage = (event: any) => {
 
-        
+
 
     }
 
@@ -45,16 +60,24 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                             <form>
 
                                 <div className="mb-10">
+
                                     <p className="mb-2">
                                         Logo Image
                                     </p>
                                     <p className="mb-2 text-gray-500 text-sm">
                                         This image will appear at the top of your collection page. Dimensions change on different devices. <br /> 350 x 350 recommended.
                                     </p>
-                                    <label className="c-button c-button--secondary">
-                                        <span className="mt-2 text-base leading-normal">Select a file</span>
-                                        <input onChange={handleUploadImage} type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" className="hidden" />
-                                    </label>
+
+                                    <div className="flex">
+                                        <div className="mr-4">
+                                            <label className="c-button c-button--secondary ">
+                                                <span className="mt-2 text-base leading-normal">Select a file</span>
+                                                <input onChange={handleUploadImage} type="file" accept="image/png, image/jpeg" className="hidden" />
+                                            </label>
+                                        </div>
+                                        <button className="c-button c-button--primary">upload</button>
+                                    </div>
+
                                 </div>
 
 
@@ -65,10 +88,17 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                     <p className="mb-2 text-gray-500 text-sm">
                                         This image will appear at the top of your collection page. Dimensions change on different devices. <br /> 1400 x 400 recommended.
                                     </p>
-                                    <label className="c-button c-button--secondary">
-                                        <span className="mt-2 text-base leading-normal">Select a file</span>
-                                        <input type="file" id="avatar" name="banner" accept="image/png, image/jpeg" className="hidden" />
-                                    </label>
+
+                                    <div className="flex">
+                                        <div className="mr-4">
+                                            <label className="c-button c-button--secondary ">
+                                                <span className="mt-2 text-base leading-normal">Select a file</span>
+                                                <input type="file" id="avatar" name="banner" accept="image/png, image/jpeg" className="hidden" />
+                                                <input onChange={handleUploadImage} type="file" accept="image/png, image/jpeg" className="hidden" />
+                                            </label>
+                                        </div>
+                                        <button className="c-button c-button--primary">upload</button>
+                                    </div>
                                 </div>
 
 
@@ -77,7 +107,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                 </p>
 
                                 <input placeholder="Enter username" type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
-                                
+
                                 <p className="mb-2">
                                     Description
                                 </p>
@@ -94,19 +124,19 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                         <input placeholder="yoursite.io" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
                                     <label className="flex align-items-center bg-opacity-10 bg-white text-gray-400 p-3">
-                                        <span  className="text-gray-400 ">https://discord.gg/</span>
+                                        <span className="text-gray-400 ">https://discord.gg/</span>
                                         <input placeholder="YourDiscordHandle" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
                                     <label className="flex align-items-center bg-opacity-10 bg-white text-gray-400 p-3">
-                                        <span  className="text-gray-400 ">https://twitter.com/</span>
+                                        <span className="text-gray-400 ">https://twitter.com/</span>
                                         <input placeholder="YourTwitterHandle" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
                                     <label className="flex align-items-center bg-opacity-10 bg-white text-gray-400 p-3">
-                                        <span  className="text-gray-400 ">https://instagram.com/</span>
+                                        <span className="text-gray-400 ">https://instagram.com/</span>
                                         <input placeholder="YourInstagramHandle" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
                                     <label className="flex align-items-center bg-opacity-10 bg-white text-gray-400 p-3">
-                                        <span  className="text-gray-400 ">https://t.me/</span>
+                                        <span className="text-gray-400 ">https://t.me/</span>
                                         <input placeholder="abcdef" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
 

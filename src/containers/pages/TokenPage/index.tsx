@@ -56,7 +56,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
     const [getCollectionByIdTrigger, {
-        data: collectionData
+        data: collectionData,
+        isError: isErrorGetCollectionData,
     }] = useGetCollectionByIdMutation();
 
 
@@ -98,7 +99,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isGatewayTokenFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
     const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
 
-    const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
+    // const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
 
     const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
     const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
@@ -135,13 +136,13 @@ export const TokenPage: (props: any) => any = ({ }) => {
     }, []);
 
 
-    if (shouldRedirect) {
+    // if (shouldRedirect) {
 
-        return (
-            <Redirect to={routePaths.home} />
-        );
+    //     return (
+    //         <Redirect to={routePaths.home} />
+    //     );
 
-    };
+    // };
 
     if (!shouldRenderPage) {
 
@@ -471,28 +472,22 @@ export const TokenPage: (props: any) => any = ({ }) => {
     });
 
 
-    const mapListingTableData = () => {
-
-        const data = [{
-            price: '1.54',
-            date: <span className="u-text-theme-gray-mid">2 days ago</span>,
-            from: <a href="#">PinkyBoy</a>,
-            key: `key-${1}`
-        }, {
-            price: '3',
-            date: <span className="u-text-theme-gray-mid">10 days ago</span>,
-            from: <a href="#">cryptolegend</a>,
-            key: `key-${2}`
-        }, {
-            price: '3.14',
-            date: <span className="u-text-theme-gray-mid">22 days ago</span>,
-            from: <a href="#">PinkyBoy</a>,
-            key: `key-${3}`
-        }]
-
-        return data;
-
-    }
+    const mapListingTableData = [{
+        price: '1.54',
+        date: <span className="u-text-theme-gray-mid">2 days ago</span>,
+        from: <a href="#">PinkyBoy</a>,
+        key: `key-${1}`
+    }, {
+        price: '3',
+        date: <span className="u-text-theme-gray-mid">10 days ago</span>,
+        from: <a href="#">cryptolegend</a>,
+        key: `key-${2}`
+    }, {
+        price: '3.14',
+        date: <span className="u-text-theme-gray-mid">22 days ago</span>,
+        from: <a href="#">PinkyBoy</a>,
+        key: `key-${3}`
+    }].map((el) => el);
 
 
     const mapBidsTableData = tokenBidsData?.data?.map((offerData: any, index: number) => {
@@ -1118,24 +1113,27 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                             <div className="">
 
-                                <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
+                                {!isErrorGetCollectionData && <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
                                     <Link to={`/collection/${collectionId}`}>{collectionId}</Link>
                                 </p>
+                                }
 
                                 <h2 className="u-regular-heading u-text-bold u-margin-bottom-spacing-5">
                                     {tokenName}
                                 </h2>
 
-                                <p className="u-margin-bottom-spacing-5 u-text-small">
-                                    <span className="u-text-theme-gray-mid">Owned by </span> <Link to={`/profile/${ownerWalletAddress}`}>{displayedOwner}</Link>
-                                </p>
+                                {Boolean(ownerWalletAddress) &&
+                                    <p className="u-margin-bottom-spacing-5 u-text-small">
+                                        <span className="u-text-theme-gray-mid">Owned by </span> <Link to={`/profile/${ownerWalletAddress}`}>{displayedOwner}</Link>
+                                    </p>
+                                }
 
                             </div>
 
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
 
                                 {
-                                    (!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) &&
+                                    (!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) || !ownerWalletAddress &&
                                     <Collapsible
 
                                         open={true}
@@ -1408,7 +1406,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             <p className="u-text-small u-tac u-text-theme-gray-mid">No listings yet</p>
                                         </div> */}
 
-                                        <Table className="c-table" rowClassName="c-table_row" columns={listingTableColumns} data={mapListingTableData()} />
+                                        <Table className="c-table" rowClassName="c-table_row" columns={listingTableColumns} data={mapListingTableData} />
 
 
                                     </div>
