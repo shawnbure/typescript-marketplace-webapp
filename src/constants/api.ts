@@ -1,4 +1,4 @@
-export const BASE_URL_API: string = 'http://45.76.92.249:8722';
+export const BASE_URL_API: string = 'http://api.erdsea.com';
 export const ELROND_API: string = 'https://devnet-api.elrond.com';
 
 export const GET = 'GET';
