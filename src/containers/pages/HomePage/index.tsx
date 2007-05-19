@@ -140,6 +140,7 @@ export const HomePage = () => {
                         </div>
 
                         <div className="col-xs-12 col-md-6">
+                        <Link to={`/collection/CHIBI-81192c`}>
                             <div className="u-margin-top-spacing-9">
 
                                 <div className={`c-card c-card--homepage-feature`}>
@@ -160,6 +161,8 @@ export const HomePage = () => {
 
                                 </div>
                             </div>
+
+                            </Link>
                         </div>
 
                     </div>
