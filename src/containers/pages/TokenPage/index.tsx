@@ -1132,7 +1132,19 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                     <ul className="c-icon-band">
 
-                                        <li onClick={() => { refreshMetadataTrigger({ collectionId, tokenNonce }) }} className="c-icon-band_item text-gray-500 hover:text-gray-300 cursor-pointer">
+                                        <li onClick={() => { 
+                                            
+                                            toast.success(`Refresh metadata queued`, {
+                                                autoClose: 5000,
+                                                draggable: true,
+                                                closeOnClick: true,
+                                                pauseOnHover: true,
+                                                hideProgressBar: false,
+                                                position: "bottom-right",
+                                            });
+                                
+
+                                            refreshMetadataTrigger({ collectionId, tokenNonce }) }} className="c-icon-band_item text-gray-500 hover:text-gray-300 cursor-pointer">
 
                                             <FontAwesomeIcon style={{ width: 20, height: 20, margin: "10px 15px 5px 15px", cursor: "pointer" }} className="inline-block " icon={faIcons.faRedoAlt} />
 

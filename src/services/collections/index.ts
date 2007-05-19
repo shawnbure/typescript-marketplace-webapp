@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/react';
 
 import store from 'redux/store/index';
-import { BASE_URL_API, GET, POST} from 'constants/api';
+import { BASE_URL_API, GET, POST } from 'constants/api';
 import { selectAccessToken } from 'redux/selectors/user';
 
 const mainPath = 'collections';
@@ -25,7 +25,7 @@ export const collectionsApi = createApi({
                 const accessToken: string = selectAccessToken(store.getState());
 
                 const customRequestArg: FetchArgs = {
-                  
+
                     method: POST,
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
@@ -42,8 +42,8 @@ export const collectionsApi = createApi({
 
         getCollectionById: builder.mutation<any, any>({
 
-            query: ({collectionId}): FetchArgs => {
-                
+            query: ({ collectionId }): FetchArgs => {
+
                 const customRequestArg: FetchArgs = {
                     method: GET,
                     url: `/${mainPath}/${collectionId}`
@@ -55,8 +55,8 @@ export const collectionsApi = createApi({
 
         registerCollection: builder.mutation<any, any>({
 
-            query: ({ userWalletAddress, payload}): FetchArgs => {
-                
+            query: ({ userWalletAddress, payload }): FetchArgs => {
+
                 const accessToken: string = selectAccessToken(store.getState());
 
                 const customRequestArg: FetchArgs = {
@@ -77,15 +77,16 @@ export const collectionsApi = createApi({
 
         getCollectionTokens: builder.mutation<any, any>({
 
-            query: ({ collectionId, offset, limit, filterAndSortQuery = '' }): FetchArgs => {
+            query: ({ collectionId, offset, limit, filters = {}, sortRules = {} }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
-                    method: GET,
-                    url: `/${mainPath}/${collectionId}/tokens/${offset}/${limit}/?${filterAndSortQuery}`,
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                    }
+                    method: POST,
+                    url: `/${mainPath}/${collectionId}/tokens/${offset}/${limit}`,
+                    body: JSON.stringify({
+                        filters: filters,
+                        sortRules: sortRules,
+                    })
                 }
 
                 return customRequestArg;
@@ -96,7 +97,7 @@ export const collectionsApi = createApi({
     }),
 })
 
-export const { 
+export const {
     useGetCollectionTokensMutation,
     useRegisterCollectionMutation,
     useCreateCollectionMutation,

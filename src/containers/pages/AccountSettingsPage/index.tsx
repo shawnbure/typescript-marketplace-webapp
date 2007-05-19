@@ -8,6 +8,11 @@ import { handleCopyToClipboard } from "utils";
 import { useGetAccountGatewayTokensMutation, useGetAccountTokensMutation, useSetAccountMutation, useSetProfileImageMutation } from "services/accounts";
 
 
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
+
+
 export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
     const [bio, setBio] = useState<string>('');

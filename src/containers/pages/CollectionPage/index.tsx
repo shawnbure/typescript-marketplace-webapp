@@ -51,234 +51,11 @@ export const CollectionPage: (props: any) => any = ({ }) => {
     }] = useGetCollectionByIdMutation();
 
 
+    const [hasLoadMore, setHasLoadMore] = useState(true);
+
+
 
     const [requestedNumberOfTokens, setRequestedNumberOfTokens] = useState<number>(1);
-
-
-    const mockedTokens = [
-        {
-            id: 40,
-            tokenId: "CHIBI-81192c",
-            nonce: 9,
-            priceString: "0429d069189e0000",
-            priceNominal: 0.3,
-            royaltiesPercent: 7,
-            metadataLink: "https://gateway.pinata.cloud/ipfs/QmPxQivTP7tncEkyrB7yLG7XmQXXsj8H9GfZ7vdH69eJ8k/9",
-            createdAt: 1636849692,
-            state: "List",
-            attributes: {
-                Fur: "Eyes",
-                Back: "X",
-                Ears: "Gold Studs",
-                Head: "Biker Helmet",
-                Hands: "Hook",
-                Shoes: "Rapper",
-                Outfit: "Rapper",
-                Background: "Yellow"
-            },
-            tokenName: "Chibi Ape #9",
-            imageLink: "https://gateway.pinata.cloud/ipfs/Qme8YxMe3w34r9iqU8QJ6L7Sa4ehnt8qU8VcrNHdZGAiSJ/9.png",
-            hash: "",
-            lastBuyPriceNominal: 0,
-            auctionStartTime: 0,
-            auctionDeadline: 0,
-            ownerId: 11,
-            collectionId: 5
-        },
-        {
-            id: 32,
-            tokenId: "CHIBI-81192c",
-            nonce: 1,
-            priceString: "016345785d8a0000",
-            priceNominal: 0.1,
-            royaltiesPercent: 7,
-            metadataLink: "https://gateway.pinata.cloud/ipfs/QmPxQivTP7tncEkyrB7yLG7XmQXXsj8H9GfZ7vdH69eJ8k/1",
-            createdAt: 1636849536,
-            state: "List",
-            attributes: {
-                Fur: "Abstract",
-                Back: "Wings",
-                Ears: "Double Gold Hoops",
-                Head: "Biker Helmet",
-                Hands: "Punk Half Gloves",
-                Shoes: "Rapper",
-                Outfit: "Punk",
-                Background: "Purple"
-            },
-            tokenName: "Chibi Ape #1",
-            imageLink: "https://gateway.pinata.cloud/ipfs/Qme8YxMe3w34r9iqU8QJ6L7Sa4ehnt8qU8VcrNHdZGAiSJ/1.png",
-            hash: "",
-            lastBuyPriceNominal: 0,
-            auctionStartTime: 0,
-            auctionDeadline: 0,
-            ownerId: 11,
-            collectionId: 5
-        },
-        {
-            id: 37,
-            tokenId: "CHIBI-81192c",
-            nonce: 6,
-            priceString: "02c68af0bb140000",
-            priceNominal: 0.2,
-            royaltiesPercent: 7,
-            metadataLink: "https://gateway.pinata.cloud/ipfs/QmPxQivTP7tncEkyrB7yLG7XmQXXsj8H9GfZ7vdH69eJ8k/6",
-            createdAt: 1636849632,
-            state: "List",
-            attributes: null,
-            tokenName: "Chibi Ape #6",
-            imageLink: "https://gateway.pinata.cloud/ipfs/Qme8YxMe3w34r9iqU8QJ6L7Sa4ehnt8qU8VcrNHdZGAiSJ/6.png",
-            hash: "",
-            lastBuyPriceNominal: 0,
-            auctionStartTime: 0,
-            auctionDeadline: 0,
-            ownerId: 11,
-            collectionId: 5
-        },
-        {
-            id: 33,
-            tokenId: "CHIBI-81192c",
-            nonce: 2,
-            priceString: "016345785d8a0000",
-            priceNominal: 0.1,
-            royaltiesPercent: 7,
-            metadataLink: "https://gateway.pinata.cloud/ipfs/QmPxQivTP7tncEkyrB7yLG7XmQXXsj8H9GfZ7vdH69eJ8k/2",
-            createdAt: 1636849560,
-            state: "List",
-            attributes: {
-                Fur: "Trippy",
-                Back: "Swords",
-                Ears: "Double Silver Hoops",
-                Face: "VR",
-                Head: "Mohawk Gold",
-                Hands: "Punk Half Gloves",
-                Shoes: "Gold Hipster",
-                Outfit: "Hero",
-                Background: "Punk Blue"
-            },
-            tokenName: "Chibi Ape #2",
-            imageLink: "https://gateway.pinata.cloud/ipfs/Qme8YxMe3w34r9iqU8QJ6L7Sa4ehnt8qU8VcrNHdZGAiSJ/2.png",
-            hash: "",
-            lastBuyPriceNominal: 0,
-            auctionStartTime: 0,
-            auctionDeadline: 0,
-            ownerId: 11,
-            collectionId: 5
-        },
-        {
-            id: 35,
-            tokenId: "CHIBI-81192c",
-            nonce: 4,
-            priceString: "016345785d8a0000",
-            priceNominal: 0.1,
-            royaltiesPercent: 7,
-            metadataLink: "https://gateway.pinata.cloud/ipfs/QmPxQivTP7tncEkyrB7yLG7XmQXXsj8H9GfZ7vdH69eJ8k/4",
-            createdAt: 1636849596,
-            state: "List",
-            attributes: {
-                Fur: "Brown",
-                Back: "3RX",
-                Face: "3D",
-                Head: "Biker Helmet",
-                Hands: "Medical Gloves",
-                Shoes: "Cowboy",
-                Outfit: "Cowboy",
-                Background: "Punk Blue"
-            },
-            tokenName: "Chibi Ape #4",
-            imageLink: "https://gateway.pinata.cloud/ipfs/Qme8YxMe3w34r9iqU8QJ6L7Sa4ehnt8qU8VcrNHdZGAiSJ/4.png",
-            hash: "",
-            lastBuyPriceNominal: 0,
-            auctionStartTime: 0,
-            auctionDeadline: 0,
-            ownerId: 11,
-            collectionId: 5
-        },
-        {
-            id: 36,
-            tokenId: "CHIBI-81192c",
-            nonce: 5,
-            priceString: "02c68af0bb140000",
-            priceNominal: 0.2,
-            royaltiesPercent: 7,
-            metadataLink: "https://gateway.pinata.cloud/ipfs/QmPxQivTP7tncEkyrB7yLG7XmQXXsj8H9GfZ7vdH69eJ8k/5",
-            createdAt: 1636849614,
-            state: "List",
-            attributes: {
-                Fur: "Pink",
-                Back: "Swords",
-                Face: "Sleep Mask",
-                Head: "Biker Helmet",
-                Shoes: "Punk",
-                Outfit: "Punk",
-                Background: "White"
-            },
-            tokenName: "Chibi Ape #5",
-            imageLink: "https://gateway.pinata.cloud/ipfs/Qme8YxMe3w34r9iqU8QJ6L7Sa4ehnt8qU8VcrNHdZGAiSJ/5.png",
-            hash: "",
-            lastBuyPriceNominal: 0,
-            auctionStartTime: 0,
-            auctionDeadline: 0,
-            ownerId: 11,
-            collectionId: 5
-        },
-        {
-            id: 39,
-            tokenId: "CHIBI-81192c",
-            nonce: 8,
-            priceString: "0429d069189e0000",
-            priceNominal: 0.3,
-            royaltiesPercent: 7,
-            metadataLink: "https://gateway.pinata.cloud/ipfs/QmPxQivTP7tncEkyrB7yLG7XmQXXsj8H9GfZ7vdH69eJ8k/8",
-            createdAt: 1636849674,
-            state: "List",
-            attributes: {
-                Fur: "Yellow",
-                Ears: "Gold Studs",
-                Face: "3D",
-                Shoes: "Astronaut",
-                Outfit: "Dress",
-                Background: "Blue"
-            },
-            tokenName: "Chibi Ape #8",
-            imageLink: "https://gateway.pinata.cloud/ipfs/Qme8YxMe3w34r9iqU8QJ6L7Sa4ehnt8qU8VcrNHdZGAiSJ/8.png",
-            hash: "",
-            lastBuyPriceNominal: 0,
-            auctionStartTime: 0,
-            auctionDeadline: 0,
-            ownerId: 11,
-            collectionId: 5
-        },
-        {
-            id: 34,
-            tokenId: "CHIBI-81192c",
-            nonce: 3,
-            priceString: "016345785d8a0000",
-            priceNominal: 0.1,
-            royaltiesPercent: 7,
-            metadataLink: "https://gateway.pinata.cloud/ipfs/QmPxQivTP7tncEkyrB7yLG7XmQXXsj8H9GfZ7vdH69eJ8k/3",
-            createdAt: 1636849578,
-            state: "List",
-            attributes: {
-                Fur: "Gold",
-                Back: "Full Blaster 2RX",
-                Ears: "Gold Hoops",
-                Face: "Cyborg Eye",
-                Head: "Blue Headband",
-                Hands: "Biker Half Gloves",
-                Shoes: "Purple",
-                Outfit: "Astronaut",
-                Background: "Blue"
-            },
-            tokenName: "Chibi Ape #3",
-            imageLink: "https://gateway.pinata.cloud/ipfs/Qme8YxMe3w34r9iqU8QJ6L7Sa4ehnt8qU8VcrNHdZGAiSJ/3.png",
-            hash: "",
-            lastBuyPriceNominal: 0,
-            auctionStartTime: 0,
-            auctionDeadline: 0,
-            ownerId: 11,
-            collectionId: 5
-        },
-    ];
 
 
 
@@ -287,96 +64,108 @@ export const CollectionPage: (props: any) => any = ({ }) => {
             value: {
                 criteria: "created_at",
                 mode: "desc"
-            }, 
+            },
             label: 'Oldest'
         },
         {
             value: {
                 criteria: "created_at",
                 mode: "asc"
-            }, 
+            },
             label: 'Recently listed'
         },
         {
             value: {
                 criteria: "price_nominal",
                 mode: "asc"
-            }, 
+            },
             label: 'Price: Low to High'
         },
         {
             value: {
                 criteria: "price_nominal",
                 mode: "desc"
-            }, 
+            },
             label: 'Price: High to Low'
         },
     ];
 
 
-    const [sort, setSort] = useState<any>(options[0]);
+    const [sort, setSort] = useState<any>(options[0].value);
 
     const [tokens, setTokens] = useState<any>([]);
 
-    const [filterQuery, setFilterQuery] = useState<string>('');
+    const [filterQuery, setFilterQuery] = useState<any>({});
 
     const { trigger, register: registerFilters, handleSubmit: handleSubmitFilters, formState: { errors: errorsFilters } } = useForm({});
 
-
-    const triggerFilterAndSort = async () => {
-
-        const sortQuery = `sort[criteria]=${sort.value.criteria}&sort[mode]=${sort.value.mode}`;
-
-        const collectionTokensResponse = await getCollectionTokensTrigger({ collectionId, offset: tokens.length, limit: 8, filterAndSortQuery: `${filterQuery}&${sortQuery}` });
-
-        console.log({
-            collectionTokensData
-        });
-
-        // if (collectionTokensData?.data) {
-            // setTokens([...tokens, ...collectionTokensResponse.data]);
-        // }
-
-        setTokens(mockedTokens);
-
-    }
-
-
     const onSubmitFilters = (data: any) => {
 
+        console.log({
+            data
+        });
 
-        let filterQuery = ``;
 
         const filtersCategories: Array<string> = Object.keys(data.filter);
 
-        console.log({
-            filtersCategories
-        });
+        const newFilterQuery: any = Object.assign({});
 
         filtersCategories.forEach((filterCategory: string) => {
 
-            const categoryValues: Array<string> = Object.keys(data.filter[filterCategory]);
+            if (data.filter[filterCategory]) {
 
-            categoryValues.forEach((value: string) => {
+                newFilterQuery[filterCategory] = data.filter[filterCategory];
 
-
-                if (data.filter[filterCategory][value] === true) {
-
-                    filterQuery = filterQuery + `filters[${filterCategory}]=${value}&`;
-
-                }
-
-            })
+            }
 
         });
 
-        setFilterQuery(filterQuery);
+        console.log({
+            newFilterQuery
+        });
+        
 
-        setTokens([]);
+        setFilterQuery(newFilterQuery);
 
-        triggerFilterAndSort();
+        triggerFilterAndSort({ newFilterQuery });
 
     };
+
+
+
+
+    const triggerFilterAndSort = async ({ mergeWithExisting = false, newFilterQuery, newSortQuery }: { mergeWithExisting?: boolean, newFilterQuery?: any, newSortQuery?: any }) => {
+
+        const filters = newFilterQuery ? newFilterQuery : filterQuery;
+        const offset = mergeWithExisting ? tokens.length : 0;
+        const sortRules = newSortQuery ? newSortQuery : sort;
+
+        const collectionTokensResponse: any = await getCollectionTokensTrigger({ collectionId, offset: offset, limit: 8, sortRules, filters });
+
+        if (collectionTokensData?.data) {
+
+            const tokensResponse = collectionTokensResponse?.data?.data;
+
+            const newTokens = tokensResponse || [];
+
+            if (mergeWithExisting) {
+
+                setTokens([...tokens, ...newTokens]);
+
+            } else {
+
+
+                setTokens(newTokens);
+
+            };
+
+            setHasLoadMore(Boolean(tokensResponse?.length));
+
+
+        }
+
+    }
+
 
 
     const description = collectionData?.data?.collection?.description;
@@ -452,8 +241,6 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
             });
 
-
-
             return (
                 <Collapsible
                     open={false}
@@ -480,25 +267,53 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
                     <div className="c-accordion_content" >
 
-                        {traitsValuesKeys.map((traitValue: string) => {
+
+
+
+                        {traitsValuesKeys.map((traitValue: string, index: number) => {
+
+
 
                             return (
-                                <div className="flex justify-between u-text-small my-3">
-                                    <label>
-                                        <input {...registerFilters(`filter.${attributeKey}.${traitValue}`, {
-                                            onChange: (e) => { handleSubmitFilters(onSubmitFilters)() }
-                                        })}
-                                            type="checkbox" className="mr-2" />
-                                        <span className="u-text-theme-gray-light">
-                                            {traitValue}
+
+                                <>
+
+
+                                    {Boolean(index === 0) &&
+
+
+                                        <div className="flex justify-between u-text-small my-3 border-b-2 border-bottom justify-content-center">
+                                            <label>
+                                                <input defaultChecked value={``} {...registerFilters(`filter.${attributeKey}`, {
+                                                    onChange: (e) => { handleSubmitFilters(onSubmitFilters)() }
+                                                })}
+                                                    type="radio" className="mr-2" />
+                                                <span className="u-text-theme-gray-light">
+                                                    No {attributeKey} filter selected
+                                                </span>
+                                            </label>
+
+                                        </div>
+                                    }
+
+                                    <div className="flex justify-between u-text-small my-3">
+                                        <label>
+                                            <input value={`${traitValue}`} {...registerFilters(`filter.${attributeKey}`, {
+                                                onChange: (e) => { handleSubmitFilters(onSubmitFilters)() }
+                                            })}
+                                                type="radio" className="mr-2" />
+                                            <span className="u-text-theme-gray-light">
+                                                {traitValue}
+                                            </span>
+                                        </label>
+
+                                        <span className="">
+                                            {mappedAttributes[attributeKey][traitValue]}
                                         </span>
-                                    </label>
 
-                                    <span className="">
-                                        {mappedAttributes[attributeKey][traitValue]}
-                                    </span>
+                                    </div>
 
-                                </div>
+                                </>
                             )
                         })}
 
@@ -613,36 +428,41 @@ export const CollectionPage: (props: any) => any = ({ }) => {
     };
 
 
-    const handleChangeSelectValue = (value: any) => {
-        
-        setTokens([]);
+    const handleChangeSelectValue = (option: any) => {
 
-        setSort(value);
+        // setTokens([]);
 
-        triggerFilterAndSort();
+        setSort(option.value);
+
+        triggerFilterAndSort({ newSortQuery: option.value });
 
     }
 
 
     const getInitialTokens = async () => {
 
-        const response: any = await getCollectionTokensTrigger({ collectionId, offset: 0, limit: 25 });
+        const response: any = await getCollectionTokensTrigger({ collectionId, offset: 0, limit: 8, sortRules: sort });
 
-        // if (response?.error) {
+        if (response?.error) {
 
-        //     toast.error(`Error getting initial tokens`, {
-        //         autoClose: 5000,
-        //         draggable: true,
-        //         closeOnClick: true,
-        //         pauseOnHover: true,
-        //         hideProgressBar: false,
-        //         position: "bottom-right",
-        //     });
-        //     return;
+            toast.error(`Error getting initial tokens`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+            return;
 
-        // }
+        }
 
-        setTokens(mockedTokens);
+        console.log({
+            response
+        });
+
+
+        setTokens(response.data.data);
 
     }
 
@@ -879,11 +699,11 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
 
                                 {
-                                    !Boolean(tokens.length) && <div className="col-span-12 my-3 mx-2"> <p className="my-10 text-2xl text-center">Loading...</p> </div>
+                                    !Boolean(tokens?.length) && <div className="col-span-12 my-3 mx-2"> <p className="my-10 text-2xl text-center">Loading...</p> </div>
                                 }
 
                                 {
-                                    tokens.map((token: any) => {
+                                    tokens?.map((token: any) => {
 
                                         console.log(token);
 
@@ -936,13 +756,15 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
                             </div>
 
-                            <div className="text-center my-10">
+                            {hasLoadMore &&
+                                <div className="text-center my-10">
 
-                                <button onClick={triggerFilterAndSort} className="c-button c-button--secondary" >
-                                    Load more
-                                </button>
+                                    <button onClick={() => { triggerFilterAndSort({ mergeWithExisting: true }) }} className="c-button c-button--secondary" >
+                                        Load more
+                                    </button>
 
-                            </div>
+                                </div>
+                            }
 
                         </div>
 
