@@ -6,7 +6,7 @@ import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { shorterAddress } from "utils";
+import { formatImgLink, shorterAddress } from "utils";
 import { useGetAccountCollectionsMutation, useGetAccountGatewayTokensMutation, useGetAccountMutation, useGetAccountTokensMutation } from "services/accounts";
 import { UrlParameters } from "./interfaces";
 import { routePaths } from "constants/router";
@@ -123,55 +123,39 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
         return userCollections.map((userCollection: any) => {
 
-            console.log({
-                userCollection
-            });
-            
-            return ;
+
+            const { profileImageLink, coverImageLink, name, tokenId } = userCollection;
 
 
-            // const { collection, token } = tokenData;
-            // const { collectionName } = collection;
-            // const { imageLink, tokenName, tokenId, nonce } = token;
+            return (
+                <div className="col-span-3 mr-8 mb-8">
 
-            // return (
-            //     <div className="col-span-3 mr-8 mb-8">
+                    <Link to={`/collection/${tokenId}/`}>
 
-            //         <Link to={`/token/${tokenId}/${nonce}`}>
+                        <div className={`c-card`}>
 
-            //             <div className={`c-card`}>
+                            <div className="c-card_img-container">
+                                <img src={formatImgLink(profileImageLink)} className="c-card_img" alt="" />
+                            </div>
 
-            //                 <div className="c-card_img-container">
-            //                     <img src={imageLink} className="c-card_img" alt="" />
-            //                 </div>
+                            <div className="c-card_info justify-content-center">
 
-            //                 <div className="c-card_info justify-between">
+                                <div className="c-card_details">
 
-            //                     <div className="c-card_details">
+                                    <p className="text-sm u-text-bold">
+                                        {name || tokenId}
+                                    </p>
 
-            //                         <p className="text-gray-700 text-xs">
-            //                             {
-            //                                 collectionName &&
-            //                                 <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${tokenId}`}>
-            //                                     {collectionName || tokenId}
-            //                                 </Link>
-            //                             }
-            //                         </p>
+                                </div>
 
-            //                         <p className="text-sm u-text-bold">
-            //                             {tokenName}
-            //                         </p>
+                            </div>
 
-            //                     </div>
+                        </div>
 
-            //                 </div>
+                    </Link>
 
-            //             </div>
-
-            //         </Link>
-
-            //     </div>
-            // )
+                </div>
+            )
 
         })
     }
@@ -194,7 +178,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                         <div className={`c-card`}>
 
                             <div className="c-card_img-container">
-                                <img src={imageLink} className="c-card_img" alt="" />
+                                <img src={formatImgLink(imageLink)} className="c-card_img" alt="" />
                             </div>
 
                             <div className="c-card_info justify-between">
@@ -260,7 +244,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                         <div className={`c-card c-card--colection`}>
 
                             <div className="c-card_img-container">
-                                <img src={imageLink} className="c-card_img" alt="" />
+                                <img src={formatImgLink(imageLink)} className="c-card_img" alt="" />
                             </div>
 
                             <div className="c-card_info justify-between">
@@ -320,7 +304,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     };
 
-    
+
 
     const dateOptions: any = { year: 'numeric', month: 'long', };
     const joinnedDate: Date = new Date(accountData?.data.createdAt * 1000);
@@ -437,15 +421,18 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                         <div className="col-span-12">
 
                                             {isOwnProfile &&
-                                                <div className="mb-10">
-                                                    <span className=" mr-4 inline-block">
-                                                        <Link to={`/collection/create`} className="c-button c-button--secondary"> Create collection </Link>
-                                                    </span>
-                                                    <span className=" mr-4 inline-block">
-                                                        <Link to={`/collection/register`} className="c-button c-button--secondary inline-block"> Register collection </Link>
-                                                    </span>
-                                                </div>
+                                                <>
 
+                                                    <div className="mb-10">
+                                                        <span className=" mr-4 inline-block">
+                                                            <Link to={`/collection/create`} className="c-button c-button--secondary"> Create collection </Link>
+                                                        </span>
+                                                        <span className=" mr-4 inline-block">
+                                                            <Link to={`/collection/register`} className="c-button c-button--secondary inline-block"> Register collection </Link>
+                                                        </span>
+                                                    </div>
+                                                    <hr className="text-white mb-10" />
+                                                </>
                                             }
                                         </div>
 

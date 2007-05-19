@@ -56,15 +56,15 @@
     border: 1px solid #1b1f22;
 
 
-    &:after {
-        font-family: 'FontAwesome';
-        content: '\f107';
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        display: block;
-        transition: transform 300ms;
-    }
+    // &:after {
+    //     font-family: 'FontAwesome';
+    //     content: '\f107';
+    //     position: absolute;
+    //     right: 10px;
+    //     top: 10px;
+    //     display: block;
+    //     transition: transform 300ms;
+    // }
 
     &.is-open {
         &:after {

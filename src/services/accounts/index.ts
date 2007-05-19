@@ -71,6 +71,26 @@ export const accountsApi = createApi({
         }),
 
 
+        setCoverImage: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress, imageB64 }): FetchArgs => {
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(imageB64),
+                    url: `/${mainPath}/${userWalletAddress}/cover`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+
         getAccountTokens: builder.mutation<any, any>({
 
             query: ({ userWalletAddress, offset, limit }): FetchArgs => {
@@ -169,6 +189,7 @@ export const accountsApi = createApi({
 })
 
 export const {
+    useSetCoverImageMutation,
     useGetAccountCollectionsMutation,
     useSetAccountMutation,
     useGetAccountMutation,

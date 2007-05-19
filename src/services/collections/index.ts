@@ -40,6 +40,71 @@ export const collectionsApi = createApi({
 
         }),
 
+
+        updateCollection: builder.mutation<any, any>({
+
+            query: ({ collectionId, payload }): FetchArgs => {
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                    url: `/${mainPath}/${collectionId}`
+
+                }
+
+                return customRequestArg;
+            },
+
+        }),
+
+        saveCollectionProfileImage: builder.mutation<any, any>({
+
+            query: ({ collectionId, imageB64 }): FetchArgs => {
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(imageB64),
+                    url: `/${mainPath}/${collectionId}/profile`
+                }
+
+                return customRequestArg;
+
+            },
+
+        }),
+
+        saveCollectionCoverImage: builder.mutation<any, any>({
+
+            query: ({ collectionId, imageB64 }): FetchArgs => {
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(imageB64),
+                    url: `/${mainPath}/${collectionId}/cover`
+                }
+
+                return customRequestArg;
+
+            },
+
+        }),
+
         getCollectionById: builder.mutation<any, any>({
 
             query: ({ collectionId }): FetchArgs => {
@@ -98,6 +163,9 @@ export const collectionsApi = createApi({
 })
 
 export const {
+    useSaveCollectionCoverImageMutation,
+    useSaveCollectionProfileImageMutation,
+    useUpdateCollectionMutation,
     useGetCollectionTokensMutation,
     useRegisterCollectionMutation,
     useCreateCollectionMutation,

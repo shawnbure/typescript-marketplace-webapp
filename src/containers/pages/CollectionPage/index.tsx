@@ -20,7 +20,7 @@ import Collapsible from 'react-collapsible';
 import { useEffect, useState } from 'react';
 import { useGetChangeOwnerCollectionTemplateMutation, useGetMintTokensTemplateMutation } from 'services/tx-template';
 import { useGetCollectionByIdMutation, useGetCollectionTokensMutation } from 'services/collections';
-import { shorterAddress } from 'utils';
+import { formatImgLink, shorterAddress } from 'utils';
 
 
 export const CollectionPage: (props: any) => any = ({ }) => {
@@ -716,7 +716,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                                                         <div className={`c-card c-card--colection`}>
 
                                                             <div className="c-card_img-container">
-                                                                <img src={token.imageLink} className="c-card_img" alt="" />
+                                                                <img src={formatImgLink(token.imageLink)} className="c-card_img" alt="" />
                                                             </div>
 
                                                             <div className="c-card_info">
