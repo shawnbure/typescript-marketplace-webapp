@@ -1,10 +1,18 @@
 
+
 import { Link } from 'react-router-dom';
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
+
+import * as faIcons from '@fortawesome/free-solid-svg-icons';
+import * as faBrandIcons from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Footer } from 'components/index';
+
+
+
+import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
@@ -13,6 +21,61 @@ import 'swiper/swiper.min.css';
 SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 export const HomePage = () => {
+
+
+    const mapCarouselImgHolders = () => {
+
+        const pics = [];
+
+        for (let index = 1; index <= 26; index++) {
+
+            const imgSrc = `./img/carousel/${index}.png`;
+
+            pics.push(
+                <SwiperSlide className="" key={`sp-${index}`}>
+
+
+                    {/* <div className="c-card_img-container">
+                    <img className="c-carousel_item" src={imgSrc} alt={`Carousel img #${index}`} />
+
+                                    </div> */}
+
+                    <div className="col-xs-12">
+                        <div className="u-margin-tb-spacing-4">
+
+                            <div className={`c-card c-card--homepage-feature`}>
+
+                                <div className="c-card_img-container">
+                                    <img src={imgSrc} className="c-card_img" alt="" />
+                                </div>
+
+                                {/* <div className="c-card_info">
+                                        <img src={'./img/collections/moonkeyz/moonkeyz-promo-1.png'} className="c-card_creator-avatar" alt="" />
+                                        <div className="c-card_details">
+                                            <span className="c-card_title">
+                                                {'Moonkey #XYZ'}
+                                            </span>
+                                            <span className="c-card_collection-name u-text-theme-blue-place">
+                                                {'Moonkeyz'}
+                                            </span>
+                                        </div>
+                                    </div> */}
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </SwiperSlide>
+            )
+
+
+        }
+
+        return pics;
+
+
+    };
 
 
     return (
@@ -55,16 +118,21 @@ export const HomePage = () => {
 
                                 </div>
 
-                                <p className="u-margin-bottom-spacing-10">
+                                <p className="u-margin-bottom-spacing-10 u-hidden-tablet-block">
 
-                                    <Link className="c-button c-button--primary u-margin-right-spacing-4" to="#">Stay in touch</Link>
-                                    <Link className="c-button  c-button--secondary" to="#">Launch details</Link>
+                                    <a href={'https://discord.gg/VS3bfZVn5J'} className="c-button c-button--primary u-margin-bottom-spacing-4 u-margin-right-spacing-4">Get latest</a>
+                                    <a href={'https://twitter.com/ErdseaNFT'} className="c-button c-button--secondary">Follow us</a>
 
                                 </p>
 
-                                <p>
-                                    <Link to="#">Get listed for the launch</Link>
+                                <p className="u-margin-bottom-spacing-10 u-hidden-desktop-block">
+
+                                    <a href={'https://discord.gg/VS3bfZVn5J'} className="c-button c-button--primary u-margin-spacing-2">Get latest</a>
+                                    <a href={'https://twitter.com/ErdseaNFT'} className="c-button c-button--secondary u-margin-spacing-2">Follow us</a>
+
                                 </p>
+
+
 
                             </div>
 
@@ -99,6 +167,74 @@ export const HomePage = () => {
                     </div>
 
 
+
+                    <div className="row row--standard-max u-tac">
+
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+
+
+                            <div className="u-padding-lr-spacing-10">
+
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faTags} />
+
+
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Minting NFTs
+                                </h3>
+
+                                <p>
+                                    Mint NFTs directly from our marketplace and list them instantly
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+
+                            <div className="u-padding-lr-spacing-10">
+
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faCoins} />
+
+
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Zero fees
+                                </h3>
+
+                                <p>
+                                    Erdsea offers minting, listing and biding* features with zero additional fees
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+
+
+
+                            <div className="u-padding-lr-spacing-10">
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faListOl} />
+
+
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Rarity ranking
+                                </h3>
+
+                                <p>
+                                    Erdsea displays rarity rank, score and traits statistics for every collection
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
                     <div className="row row--standard-max">
 
 
@@ -119,11 +255,11 @@ export const HomePage = () => {
                                     <div className="c-card_info">
                                         <img src={'./img/collections/kool-kitties/kool-kitties-promo-5.png'} className="c-card_creator-avatar" alt="" />
                                         <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'ErdPunk'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
-                                                {'ErdPunks'}
+                                            {/* <span className="c-card_title">
+                                                {'Kool Kitty #XYZ'}
+                                            </span> */}
+                                            <span className="c-card_collection-name">
+                                                {'Kool Kitties'}
                                             </span>
                                         </div>
                                     </div>
@@ -144,10 +280,10 @@ export const HomePage = () => {
                                     <div className="c-card_info">
                                         <img src={'./img/collections/erdpunks/erdpunks-promo-3.png'} className="c-card_creator-avatar" alt="" />
                                         <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'ErdPunk'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
+                                            {/* <span className="c-card_title">
+                                                {'ErdPunk #XYZ'}
+                                            </span> */}
+                                            <span className="c-card_collection-name">
                                                 {'ErdPunks'}
                                             </span>
                                         </div>
@@ -157,7 +293,7 @@ export const HomePage = () => {
                             </div>
                         </div>
 
-                        
+
                         <div className="col-xs-12 col-md-4">
                             <div className="u-margin-tb-spacing-4">
                                 <div className={`c-card c-card--homepage-feature`}>
@@ -167,13 +303,13 @@ export const HomePage = () => {
                                     </div>
 
                                     <div className="c-card_info">
-                                        <img src={'./img/collections/mini-robos/mini-robos-promo-1.png'} className="c-card_creator-avatar" alt="" />
+                                        <img src={'./img/carousel/8.png'} className="c-card_creator-avatar" alt="" />
                                         <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'ErdPunk'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
-                                                {'ErdPunks'}
+                                            {/* <span className="c-card_title">
+                                                {'Mini Robo #XYZ'}
+                                            </span> */}
+                                            <span className="c-card_collection-name">
+                                                {'Mini Robos'}
                                             </span>
                                         </div>
                                     </div>
@@ -195,13 +331,13 @@ export const HomePage = () => {
                                     </div>
 
                                     <div className="c-card_info">
-                                        <img src={'./img/collections/duckerds/duckerds-promo-2.png'} className="c-card_creator-avatar" alt="" />
+                                        <img src={'./img/carousel/17.png'} className="c-card_creator-avatar" alt="" />
                                         <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'ErdPunk'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
-                                                {'ErdPunks'}
+                                            {/* <span className="c-card_title">
+                                                {'Duckerd #XYZ'}
+                                            </span> */}
+                                            <span className="c-card_collection-name">
+                                                {'Duckerds'}
                                             </span>
                                         </div>
                                     </div>
@@ -210,7 +346,7 @@ export const HomePage = () => {
                         </div>
 
 
-                        
+
                         <div className="col-xs-12 col-md-4">
                             <div className="u-margin-tb-spacing-4">
                                 <div className={`c-card c-card--homepage-feature`}>
@@ -220,13 +356,13 @@ export const HomePage = () => {
                                     </div>
 
                                     <div className="c-card_info">
-                                        <img src={'./img/collections/pixel-ladies/pixel-ladies-promo-1.png'} className="c-card_creator-avatar" alt="" />
+                                        <img src={'./img/carousel/10.png'} className="c-card_creator-avatar" alt="" />
                                         <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'ErdPunk'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
-                                                {'ErdPunks'}
+                                            {/* <span className="c-card_title">
+                                                {'Pixel Lady #XYZ'}
+                                            </span> */}
+                                            <span className="c-card_collection-name">
+                                                {'Pixel Ladies'}
                                             </span>
                                         </div>
                                     </div>
@@ -235,7 +371,7 @@ export const HomePage = () => {
                             </div>
                         </div>
 
-                        
+
 
                         <div className="col-xs-12 col-md-4">
                             <div className="u-margin-tb-spacing-4">
@@ -247,13 +383,13 @@ export const HomePage = () => {
                                     </div>
 
                                     <div className="c-card_info">
-                                        <img src={'./img/collections/moonkeyz/moonkeyz-promo-1.png'} className="c-card_creator-avatar" alt="" />
+                                        <img src={'./img/carousel/9.png'} className="c-card_creator-avatar" alt="" />
                                         <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'ErdPunk'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
-                                                {'ErdPunks'}
+                                            {/* <span className="c-card_title">
+                                                {'Moonkey #XYZ'}
+                                            </span> */}
+                                            <span className="c-card_collection-name">
+                                                {'Moonkeyz'}
                                             </span>
                                         </div>
                                     </div>
@@ -267,6 +403,24 @@ export const HomePage = () => {
                                 More collections will be announcened until the Erdsea launch date
                             </h3>
                         </div>
+
+                        <div className="col-xs-12">
+
+
+                            <Swiper
+                                slidesPerView={3}
+                                loop={true}
+                                autoplay={{
+                                    "delay": 2000,
+                                    "disableOnInteraction": true
+                                }}
+                                className="">
+                                {mapCarouselImgHolders()}
+                            </Swiper>
+
+
+                        </div>
+
 
                     </div>
 

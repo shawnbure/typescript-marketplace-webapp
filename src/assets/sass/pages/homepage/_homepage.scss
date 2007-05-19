@@ -5,6 +5,15 @@
 
     // background-color: var(--t-background-color);
 
+
+    text-align: center;
+    
+    @include respond-to(desktop) {
+    
+        text-align: left;
+
+    }
+
     &_lead-background {
 
         background-size: cover;

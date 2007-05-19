@@ -2,7 +2,7 @@ export const Footer = () => {
   return (
     <footer className="c-footer">
       <div>
-          <p>
+          <p className="u-text-small">
             Copyright © 2021 Erdsea
           </p>
       </div>

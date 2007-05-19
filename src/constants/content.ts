@@ -16,3 +16,7 @@ export const toolbarActions: Array<ToolbarAction> = [
         actionTrigger: ACTIONS_CONSTANTS.LOGIN
     },
 ];
+
+// export const CAROUSEL_IMGS_SRC = [
+//     './img/carousel/1.png',
+// ];

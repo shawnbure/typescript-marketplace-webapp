@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Popup from 'reactjs-popup';
 import { Link } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
+import * as faBrandIcons from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { routePaths } from 'constants/router';
@@ -34,6 +35,23 @@ export const Navbar = () => {
                     </Link>
 
                 </div>
+
+                <ul className="c-navbar_list">
+
+
+                    <li className="c-navbar_list-item">
+                        <a href={'https://twitter.com/ErdseaNFT'} target="_blank" className="c-navbar_list-link">
+                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faBrandIcons.faTwitter} />
+                        </a>
+                    </li>  
+                    
+                    <li className="c-navbar_list-item">
+                        <a href={'https://discord.gg/HfV8kMuTP7'} className="c-navbar_list-link">
+                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faBrandIcons.faDiscord} />
+                        </a>
+                    </li>
+
+                </ul>
 
                 {/* <ul className="c-navbar_list">
 
