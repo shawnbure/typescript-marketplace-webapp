@@ -25,7 +25,7 @@ import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
 
 
 import ReactGA from 'react-ga';
-ReactGA.initialize('G-MLQ7SSSNFX');
+ReactGA.initialize('G-298PT9611Z');
 ReactGA.pageview(window.location.pathname + window.location.search);
 
 
@@ -88,7 +88,7 @@ export const App: () => JSX.Element = () => {
         <div className={generatedClasses}>
 
             <div style={{ zIndex: 10000 }} className="bg-gray-800 fixed h-full lg:hidden p-20 text- text-3xl text-center text-white w-full">
-                Sorry, this site is not yer ready for your mobile device. We will bring you this experience with our next update. Until then please visit our site on your desktop device
+                Sorry for the inconvenience, this site is not yet optimized for mobile devices. We will bring you this functionality on our next update. Until then please use the website on your desktop.
             </div>
 
             <Dapp.Context config={config}>

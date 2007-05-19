@@ -38,7 +38,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [offerAmount, setOfferAmount] = useState<number>(0);
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
 
-    const [expireOffer, setExpireOffer] = useState<any>(new Date());
+    const [expireOffer, setExpireOffer] = useState<any>();
 
 
     const {
@@ -683,7 +683,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
         };
 
-        setExpireOffer(new Date());
         setOfferAmount(0);
 
         signTemplateTransaction({

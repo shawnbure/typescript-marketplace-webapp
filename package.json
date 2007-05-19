@@ -54,7 +54,7 @@
         "yup": "^0.32.11"
     },
     "scripts": {
-        "start": "craco start",
+        "start": "craco start production",
         "build": "craco build production",
         "test": "craco test"
     },
