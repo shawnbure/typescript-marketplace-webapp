@@ -10,7 +10,7 @@ const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
-            .concat(logger)
+            // .concat(logger)
             .concat(searchApi.middleware)
             .concat(authApi.middleware)
             .concat(oracleApi.middleware)
