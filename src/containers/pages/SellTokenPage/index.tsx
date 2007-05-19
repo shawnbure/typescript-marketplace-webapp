@@ -60,11 +60,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         setEndDate(value);
 
-        console.log({
-            value
-        });
-
-
     }
 
     const [getAccountTokenTrigger, {
@@ -124,7 +119,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     if (!shouldRenderPage) {
 
-        return (<p>Loading...</p>);
+        return (<p className="my-10 text-2xl text-center">Loading...</p>);
 
     }
 
@@ -281,11 +276,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         handleListAuction();
 
     };
-
-    console.log({
-        getCollectionByIdData
-    });
-
 
     return (
 

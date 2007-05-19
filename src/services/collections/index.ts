@@ -75,10 +75,29 @@ export const collectionsApi = createApi({
 
         }),
 
+        getCollectionTokens: builder.mutation<any, any>({
+
+            query: ({ collectionId, offset, limit, filterAndSortQuery = '' }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `/${mainPath}/${collectionId}/tokens/${offset}/${limit}/?${filterAndSortQuery}`,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    }
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+
     }),
 })
 
 export const { 
+    useGetCollectionTokensMutation,
     useRegisterCollectionMutation,
     useCreateCollectionMutation,
     useGetCollectionByIdMutation, } = collectionsApi;

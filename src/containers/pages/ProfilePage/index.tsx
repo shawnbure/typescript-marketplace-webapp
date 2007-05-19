@@ -58,10 +58,11 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     const [loadMoreOnSale, setLoadMoreOnSale] = useState<boolean>(true);
     const [loadMoreUnlisted, setLoadMoreUnlisted] = useState<boolean>(true);
+    const [loadMoreCollections, setLoadMoreCollections] = useState<boolean>(true);
 
     // const shouldRedirectHome = !loggedIn && !walletAddressParam;
 
-    const getOffsetToLimit = async (getFunction: any, offset: number = 0, limit: number = 20, dataArray: Array<any>, setDataArray: any, flag?: any) => {
+    const getOffsetToLimit = async (getFunction: any, offset: number = 0, limit: number = 8, dataArray: Array<any>, setDataArray: any, flag?: any) => {
 
         let hasFetchedNewData = false;
 
@@ -120,50 +121,57 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     const mapCollections = () => {
 
-        return userCollections.map((tokenData: any) => {
+        return userCollections.map((userCollection: any) => {
 
-            const { collection, token } = tokenData;
-            const { collectionName } = collection;
-            const { imageLink, tokenName, tokenId, nonce } = token;
+            console.log({
+                userCollection
+            });
+            
+            return ;
 
-            return (
-                <div className="col-span-3 mr-8 mb-8">
 
-                    <Link to={`/token/${tokenId}/${nonce}`}>
+            // const { collection, token } = tokenData;
+            // const { collectionName } = collection;
+            // const { imageLink, tokenName, tokenId, nonce } = token;
 
-                        <div className={`c-card`}>
+            // return (
+            //     <div className="col-span-3 mr-8 mb-8">
 
-                            <div className="c-card_img-container">
-                                <img src={imageLink} className="c-card_img" alt="" />
-                            </div>
+            //         <Link to={`/token/${tokenId}/${nonce}`}>
 
-                            <div className="c-card_info justify-between">
+            //             <div className={`c-card`}>
 
-                                <div className="c-card_details">
+            //                 <div className="c-card_img-container">
+            //                     <img src={imageLink} className="c-card_img" alt="" />
+            //                 </div>
 
-                                    <p className="text-gray-700 text-xs">
-                                        {
-                                            collectionName &&
-                                            <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${tokenId}`}>
-                                                {collectionName || tokenId}
-                                            </Link>
-                                        }
-                                    </p>
+            //                 <div className="c-card_info justify-between">
 
-                                    <p className="text-sm u-text-bold">
-                                        {tokenName}
-                                    </p>
+            //                     <div className="c-card_details">
 
-                                </div>
+            //                         <p className="text-gray-700 text-xs">
+            //                             {
+            //                                 collectionName &&
+            //                                 <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${tokenId}`}>
+            //                                     {collectionName || tokenId}
+            //                                 </Link>
+            //                             }
+            //                         </p>
 
-                            </div>
+            //                         <p className="text-sm u-text-bold">
+            //                             {tokenName}
+            //                         </p>
 
-                        </div>
+            //                     </div>
 
-                    </Link>
+            //                 </div>
 
-                </div>
-            )
+            //             </div>
+
+            //         </Link>
+
+            //     </div>
+            // )
 
         })
     }
@@ -262,7 +270,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                     {
                                         isCollectionAvailable &&
                                         <p className="text-gray-700 text-xs">
-                                            <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${''}`}>
+                                            <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${tokenId}`}>
                                                 {tokenIndentData.collection.name}
                                             </Link>
                                         </p>
@@ -290,7 +298,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     const getMoreUnlistedTokens = async () => {
 
-        const { hasFetchedNewData } = await getOffsetToLimit(getAccountGatewayRequestTrigger, unlistedNfts.length, 20, unlistedNfts, setUnlistedNfts, "gateway");
+        const { hasFetchedNewData } = await getOffsetToLimit(getAccountGatewayRequestTrigger, unlistedNfts.length, 8, unlistedNfts, setUnlistedNfts, "gateway");
 
         setLoadMoreUnlisted(hasFetchedNewData);
 
@@ -298,11 +306,21 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     const getMoreOnSaleTokens = async () => {
 
-        const { hasFetchedNewData } = await getOffsetToLimit(getAccountTokensRequestTrigger, onSaleNfts.length, 20, onSaleNfts, setOnSaleNfts);
+        const { hasFetchedNewData } = await getOffsetToLimit(getAccountTokensRequestTrigger, onSaleNfts.length, 8, onSaleNfts, setOnSaleNfts);
 
         setLoadMoreOnSale(hasFetchedNewData);
 
     };
+
+    const getMoreUserCollections = async () => {
+
+        const { hasFetchedNewData } = await getOffsetToLimit(getAccountCollectionsTrigger, userCollections.length, 8, userCollections, setUserCollections);
+
+        setLoadMoreCollections(hasFetchedNewData);
+
+    };
+
+    
 
     const dateOptions: any = { year: 'numeric', month: 'long', };
     const joinnedDate: Date = new Date(accountData?.data.createdAt * 1000);
@@ -392,6 +410,13 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                 transitionTime={50}
                                 open={false}
                                 className="c-accordion"
+                                onOpening={() => {
+
+                                    if (isUninitializedAccountCollectionsRequest) {
+                                        getMoreUserCollections();
+                                    }
+
+                                }}
                                 trigger={
 
                                     <div className="c-accordion_trigger">

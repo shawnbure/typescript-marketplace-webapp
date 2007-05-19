@@ -72,20 +72,7 @@ export const App: () => JSX.Element = () => {
 
         }
 
-
     }, [location]);
-
-
-    // useEffect(() => {
-
-    //     console.log({
-    //         pathname
-    //     });
-
-
-    //     window.scrollTo(0 ,0);
-
-    // }, [pathname]);
 
 
     return (

@@ -9,6 +9,9 @@ import * as faBrands from '@fortawesome/free-brands-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+
+import DateTimePicker from 'react-datetime-picker';
+
 import moment from 'moment';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,8 +36,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
 
     const [offerAmount, setOfferAmount] = useState<number>(0);
-    const [expireOffer, setExpireOffer] = useState<number>(9999999999);
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
+
+    const [expireOffer, setExpireOffer] = useState<any>(new Date());
+
 
     const {
         loggedIn,
@@ -111,14 +116,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isGatewayTokenFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
     const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
 
-    console.log({
-        isEgldPriceFetched,
-        isTokenDataFetched,
-        isGatewayTokenFetched,
-        shouldRenderPage
-    });
-
-
     // const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
 
     const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
@@ -164,15 +161,15 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
 
-    if(isErrorGetTokenDataQuery){
-        
+    if (isErrorGetTokenDataQuery) {
+
         return (<p className="my-10 text-2xl text-center">Token ({collectionId} {tokenNonce}) not found</p>);
 
     }
 
 
-    if(isErrorGatewayTokenDataQuery){
-        
+    if (isErrorGatewayTokenDataQuery) {
+
         return (<p className="my-10 text-2xl text-center">Gateway error</p>);
 
     }
@@ -189,7 +186,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isOurs = !Boolean(walletAddressParam);
 
 
-    const getBaseTokenData = (tokenData: any ) => {
+    const getBaseTokenData = (tokenData: any) => {
 
         const token = isOurs ? tokenData.token : tokenData.tokenData;
 
@@ -257,11 +254,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     if (!isOurs && tokenData.tokenData.balance === "0" && walletAddressParam) {
 
-        return(<>
-             <p className="my-10 text-2xl text-center">{walletAddressParam}</p>
-             <p className="my-10 text-2xl text-center">is not the owner of  {collectionId} {tokenNonce}</p>
+        return (<>
+            <p className="my-10 text-2xl text-center">{walletAddressParam}</p>
+            <p className="my-10 text-2xl text-center">is not the owner of  {collectionId} {tokenNonce}</p>
         </>)
-    
+
     }
 
 
@@ -682,11 +679,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
             collectionId,
             tokenNonce,
             amount: offerAmount,
-            expire: expireOffer,
+            expire: new Date(expireOffer).getTime() / 1000,
 
         };
 
-        setExpireOffer(0);
+        setExpireOffer(new Date());
         setOfferAmount(0);
 
         signTemplateTransaction({
@@ -914,11 +911,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     <div className="c-accordion_content" >
 
 
-                                        {collectionData?.data?.collection?.description &&
+                                        {description &&
                                             <p className="u-text-small mb-8">
 
                                                 <span className="u-text-theme-gray-light">
-                                                    {collectionData.data.collection.description}
+                                                    {description}
                                                 </span>
 
                                             </p>
@@ -1170,7 +1167,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
 
                                 {
-                                    ((!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) && Boolean(ownerWalletAddress))  && 
+                                    ((!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) && Boolean(ownerWalletAddress)) &&
                                     <Collapsible
 
                                         open={true}
@@ -1375,10 +1372,30 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                                     <div className="c-modal_header text-2xl  pb-6 "> Make an offer </div>
                                                                     <div className="c-modal_content">
 
+
                                                                         <div className="px-10 pt-8">
 
-                                                                            <input onChange={(e: any) => { setExpireOffer(e.target.value); }} placeholder="seconds" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
-                                                                            <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Offer amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+                                                                            <div className="mb-4 text-center">
+
+                                                                                <p className="text-ceneter u-text-small mb-2">
+
+                                                                                    <span className="u-text-theme-gray-light">
+                                                                                        Offer expire date
+                                                                                    </span>
+
+                                                                                    {/* <span className="u-text-theme-gray-mid">
+        <FontAwesomeIcon width={'20px'} icon={faIcons.faInfoCircle} />
+    </span>
+*/}
+                                                                                </p>
+
+                                                                                <div className="c-date-time-picker">
+                                                                                    <DateTimePicker value={expireOffer} onChange={(value: any) => { setExpireOffer(value) }} />
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Offer amount (EGLD)" type="number" className=" text-center bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
 
                                                                             <div className="text-center">

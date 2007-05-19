@@ -241,11 +241,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const getTemplateData = { userWalletAddress, contractAddress: new Address(hexWalletAddress).toString() };
 
-        console.log({
-            getTemplateData
-        });
-        
-
         signTemplateTransaction({
             getTemplateData,
             succesCallbackRoute: pathname,

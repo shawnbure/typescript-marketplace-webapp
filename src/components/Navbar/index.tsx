@@ -106,11 +106,6 @@ export const Navbar = () => {
 
     const handleSearchChange = (currentSearch: any) => {
 
-        console.log({
-            currentSearch
-        });
-        
-
         if (Boolean(currentSearch?.type) && Boolean(currentSearch?.value)) {
 
             window.location.replace(`/${currentSearch.type}/${currentSearch.value}`);
@@ -168,7 +163,7 @@ export const Navbar = () => {
                             {/* <input type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black  p-2 placeholder-opacity-10 rounded-2 text-white w-full" /> */}
                             {/* <AsyncSelect onBlur={()=>{}} value={{ value: currentSearchInput, label: currentSearchInput }}  onInputChange={handleInputSearchChange} options={options} isClearable={true} isSearchable={true} className="text-white w-full" styles={customStyles} /> */}
 
-                            <AsyncSelect onChange={handleSearchChange} isClearable cacheOptions defaultOptions loadOptions={promiseOptions} className="text-white w-full" styles={customStyles} />
+                            <AsyncSelect onChange={handleSearchChange} isClearable isSearchable cacheOptions defaultOptions loadOptions={promiseOptions} className="text-white w-full" styles={customStyles} />
 
                         </div>
                     </div>
