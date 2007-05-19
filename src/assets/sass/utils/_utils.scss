@@ -1,4 +1,33 @@
 @each $number, $spaceing in $t-utility-spacing {
+
+    .u-margin-spacing-#{$number} {
+        margin: $spaceing;
+    }
+
+    .u-padding-spacing-#{$number} {
+        padding: $spaceing;
+    }
+
+
+    .u-padding-lr-spacing-#{$number} {
+        
+        padding-left: $spaceing;
+        padding-right: $spaceing;
+
+    }
+
+    .u-padding-tb-spacing-#{$number} {
+
+        padding-top: $spaceing;
+        padding-bottom: $spaceing;
+
+    }
+
+    .u-border-radius-#{$number} {
+        border-radius: $spaceing;
+    }
+
+
     .u-margin-top-spacing-#{$number} {
         margin-top: $spaceing;
     }
@@ -29,5 +58,35 @@
 
     .u-padding-right-spacing-#{$number} {
         padding-right: $spaceing;
+    }
+}
+
+
+
+
+
+@each $number, $theme in $t-utility-themes {
+    .u-bg-theme-#{$number} {
+        background-color: $theme;
+    }
+
+    .u-fill-theme-#{$number} {
+        fill: $theme;
+    }
+
+    .u-text-theme-#{$number} {
+        color: $theme !important; //sass-lint:disable-line no-important
+    }
+
+    .u-border-theme-#{$number} {
+        border-color: $theme;
+    }
+
+    .u-border-left-theme-#{$number} {
+        border-left-color: $theme;
+    }
+
+    .u-border-bottom-theme-#{$number} {
+        border-bottom-color: $theme;
     }
 }

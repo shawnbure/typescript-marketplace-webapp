@@ -7,7 +7,7 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { HomePage} from 'containers/pages';
+import { TokenPage, HomePage} from 'containers/pages';
 import { DARK } from 'constants/ui';
 
 
@@ -30,6 +30,13 @@ export const App: () => JSX.Element = () => {
                         <Route path={routePaths.home} exact={true} >
 
                             <HomePage />
+
+                        </Route>
+
+
+                        <Route path={routePaths.token} exact={true} >
+
+                            <TokenPage />
 
                         </Route>
 

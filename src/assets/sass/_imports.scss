@@ -1,4 +1,4 @@
-// @import 'themes/elrondRequirements';
+@import 'themes/elrondRequirements';
 
 @import 'variables/colors';
 @import 'variables/text';
@@ -19,15 +19,20 @@
 @import 'utilities/utilities';
 
 @import 'modules/app/app';
+@import 'modules/card/card';
 @import 'modules/grid/grid';
 @import 'modules/header/header';
 @import 'modules/footer/footer';
 @import 'modules/navbar/navbar';
 @import 'modules/button//button';
+@import 'modules/accordion/accordion';
 @import 'modules/wallet-sidebar/wallet-sidebar';
 
 
-@import 'pages/homepage/_homepage.scss';
+@import 'pages/unlock/unlock';
+@import 'pages/homepage/homepage';
+@import 'pages/token-page/token-page';
+
 
 
 

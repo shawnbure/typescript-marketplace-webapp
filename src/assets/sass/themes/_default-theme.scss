@@ -1,5 +1,5 @@
 :root {
-    
+
     --t-text-color: #{$black};
     --t-border-color: #{$black};
     --t-background-color: #{$white};
@@ -7,29 +7,33 @@
 
     --t-text-color-rgb: #{$black-rgb};
 
+    --t-link-color: #{$link-color};
+    --t-link-color-hover: #{$link-color-hover};
+
 }
 
 .dark-theme {
-    
-    --t-text-color: #{$white};
+
+    --t-text-color: #{$gray-light-text};
     --t-border-color: #{$white};
     --t-background-color: #{$gray};
 
     --t-text-color-rgb: #{$white-rgb};
 
-   
+
 
 }
 
 
-$t-utility-themes: (
-    '0': $black,
-    '1': $white,
+$t-utility-themes: ('black': $black,
+    'white': $white,
+    'gray-light': $gray-light,
+    'details-section': $details-section,
+    'gray-mid': $gray-mid,
 );
 
 
-$t-utility-spacing: (
-    "0": 0,
+$t-utility-spacing: ("0": 0,
     "1": $spacing-point-1,
     "2": $spacing-point-2,
     "3": $spacing-point-3,

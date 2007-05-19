@@ -25,9 +25,10 @@ export const Navbar = () => {
 
                 <div className="c-navbar_brand">
 
-                    <img src="" className="c-navbar_brand-logo" />
+                    <img src="/img/logos/erdsea/erdsea-logo-white.svg" image-rendering="optimizeQuality" className="c-navbar_brand-logo" />
+
                     <Link to={routePaths.home} className="c-navbar_brand-name">
-                        ErdSea
+                        Erdsea
                     </Link>
 
                 </div>
@@ -51,7 +52,9 @@ export const Navbar = () => {
                     </li>
 
                     <li className="c-navbar_list-item" onClick={toggleShouldDisplayWalletSidebar}>
-                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faUserCircle} />
+                        <span className="c-navbar_list-link">
+                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faUserCircle} />
+                        </span>
                     </li>
 
 

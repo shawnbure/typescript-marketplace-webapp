@@ -9,6 +9,7 @@
     position: -webkit-sticky;
     position: sticky;
     top: 0;
+    z-index: 8000;
 
     &_icon-link {
 
@@ -25,12 +26,15 @@
         text-align: center;
 
         &-item {
+            
 
+            @include standard-text(false);
             position: relative;
-            padding: $spacing-point-4 $spacing-point-4;
 
             &--active,
             &:hover {
+
+                color: $white;
 
                 &::after {
 
@@ -44,14 +48,17 @@
                     left: 0;
 
                 }
-
+ 
 
             }
 
         }
 
         &-link {
-            text-decoration: none;
+
+            cursor: pointer;
+            display: inline-block;
+            padding: $spacing-point-4 $spacing-point-4;
             color: rgba($color: var(--t-text-color-rgb), $alpha: 0.75);
 
             &:hover {
@@ -66,19 +73,28 @@
     &_brand {
 
         display: flex;
+        align-items: center;
 
         &-name {
 
-            @include small-heading;
+            @include lead-text(false);
             @include font-family-bold;
             color: var(--t-text-color);
+            color: $white;
             text-decoration: none;
-            margin: 0;
+            margin: 0 $spacing-point-4;
 
             &:hover {
 
                 color: var(--t-text-color);
             }
+        }
+
+        &-logo {
+
+            width: 70px;
+            height: 70px;
+
         }
 
     }

@@ -27,16 +27,19 @@
 }
 
 .u-text-small {
-    @include small-text;
+    @include small-text(false);
 }
 
 .u-heading-lead {
     @include lead-heading;
 }
 
+.u-small-heading {
+    @include small-heading;
+}
 
 .u-regular-heading {
-    @include regular-heading;
+    @include regular-heading(false);
 }
 
 .u-text-bold {
@@ -49,4 +52,12 @@
 
 .u-relative {
     position: relative;
+}
+
+.u-tac {
+    text-align: center;
+}
+
+.u-overflow-hidden {
+    overflow: hidden;
 }

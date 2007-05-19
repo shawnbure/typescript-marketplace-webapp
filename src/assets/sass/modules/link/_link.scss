@@ -1,0 +1,13 @@
+.c-link {
+ 
+    color: var(--t-link-color);
+    margin-bottom: 0;
+    text-decoration: none;
+
+    &:hover {
+
+        color: var(--t-link-color-hover);
+
+    }
+
+}

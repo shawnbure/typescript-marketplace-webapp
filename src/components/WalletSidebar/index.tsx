@@ -2,8 +2,6 @@ import { routePaths } from "constants/router";
 import { Link, useHistory } from "react-router-dom";
 import * as Dapp from "@elrondnetwork/dapp";
 import { prepareTransaction } from "utils/transactions";
-import buyNFTresponse from "services/NFT/buyNFTresponse";
-
 
 export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any = ({
     overlayClickCallback
@@ -27,11 +25,24 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
         e.preventDefault();
 
+        overlayClickCallback?.();
+
         dappLogout({ callbackUrl: `${window.location.origin}/` });
 
         history.push("/");
 
     };
+
+    const handleLogin = (e: React.MouseEvent) => {
+
+        e.preventDefault();
+
+        overlayClickCallback?.();
+
+        history.push("/unlock");
+
+    };
+
 
 
     const testTransaction = async () => {
@@ -48,7 +59,7 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
         }
 
 
-        const rawData = buyNFTresponse.data;
+       
         const unconsumedTransaction = prepareTransaction(testData);
 
         sendTransaction({
@@ -74,29 +85,9 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                         Connect with one of our available wallet info providers
                     </p>
 
-                    <ul>
-                        <li>
-                            <Link to={routePaths.unlock}>
-                                Maiar App
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to={routePaths.walletconnect}>
-                                Maiar Extension
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to={routePaths.walletconnect}>
-                                Maiar Web App
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to={routePaths.ledger}>
-                                Ledger
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
+                    <button className="c-button c-button--secondary" onClick={handleLogin}>Login</button>
+
+                 </div>
             </aside>
         );
     }
@@ -117,9 +108,9 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                     {shortWalletAddress}
                 </p>
 
-                <button onClick={testTransaction}>test</button>
+                <button className="c-button c-button--secondary" onClick={testTransaction}>test</button>
 
-                <button onClick={handleLogOut}>Logout</button>
+                <button className="c-button c-button--secondary" onClick={handleLogOut}>Logout</button>
 
             </div>
         </aside>

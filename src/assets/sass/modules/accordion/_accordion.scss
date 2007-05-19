@@ -1,0 +1,29 @@
+.c-accordion {
+
+    // border: 1px solid $black;
+
+    &_trigger {
+
+        display: flex;
+        background-color: #262b2f;
+        padding: $spacing-point-4;
+
+        &_icon {
+            margin-right: $spacing-point-3;
+        }
+
+        &_title {
+            @include font-family-bold;
+            // @include small-heading;
+        }
+
+    }
+
+    &_content {
+
+        background-color: #303339;
+        padding: $spacing-point-6 $spacing-point-4;
+
+    }
+
+}

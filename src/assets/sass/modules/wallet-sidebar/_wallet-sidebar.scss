@@ -1,10 +1,10 @@
 .c-wallet-sidebar {
 
-    height: 100%;
+    height: calc(100% - 77px);
     width: 100%;
     position: absolute;
     display: flex;
-
+    z-index: 16;
 
     &_container {
 

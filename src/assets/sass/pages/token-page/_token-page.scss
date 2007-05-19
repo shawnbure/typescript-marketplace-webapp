@@ -1,0 +1,28 @@
+.p-token-page {
+
+
+    &_visual-holder {
+        
+        max-width: 600px;
+    }
+
+    &_asset-container {
+
+        display: flex;
+        border: 1px solid $black;
+        border-radius: $spacing-point-2;
+        padding: $spacing-point-1;
+        margin-bottom: $spacing-point-6;
+    }
+
+    &_img {
+        width: 100%;
+        height: 100%;
+        max-width: 600px;
+        border-radius: $spacing-point-2;
+    }
+
+    &_token-data {
+    }
+
+}
