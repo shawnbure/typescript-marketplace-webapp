@@ -1,8 +1,16 @@
 
 import { Link } from 'react-router-dom';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
 
-import { Card, Footer } from 'components/index';
+import { Footer } from 'components/index';
+
+import 'swiper/swiper-bundle.min.css';
+import 'swiper/swiper.min.css';
+
+
+SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 export const HomePage = () => {
 
