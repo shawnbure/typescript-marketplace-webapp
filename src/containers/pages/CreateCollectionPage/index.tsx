@@ -184,6 +184,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
             }
 
+            // if(type === ""){
+
+            // }
+
             schema[name] = typeRule;
 
 
@@ -317,7 +321,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <input {...registerStep1('name')} type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                        <input {...registerStep1('name')}  autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
                                     </div>
                                 </div>
 
@@ -329,7 +333,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <input {...registerStep1('ticker')} type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                        <input {...registerStep1('ticker')} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
                                     </div>
                                 </div>
 
@@ -371,7 +375,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                                     <p className="mb-2 text-lg text-red-500">{errorsStep2.name?.message}</p>
                                                     <label className="block w-full">
                                                         <span className="block mb-2">{title}</span>
-                                                        <input  {...registerStep2(name)} type={type} className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                        <input  {...registerStep2(name)} autoComplete="off" step={ name === "price" ? "0.001" : "1" } type={type} min={0} className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
                                                     </label>
                                                 </div>
                                             )
@@ -411,7 +415,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                         <label className="block w-full">
                                             <span className="block mb-2">  Minter contract address (hex encoded)</span>
-                                            <input {...registerStep3('hexWalletAddress')} type="text" className="text-center text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                            <input {...registerStep3('hexWalletAddress')} autoComplete="off" type="text" className="text-center text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
                                         </label>
                                     </div>
@@ -444,7 +448,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                             <label className="block w-full">
 
                                                 <span className="block mb-2">  Minter contract address (hex encoded)</span>
-                                                <input {...registerStep4('hexWalletAddress')} type="text" className="text-center text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                <input {...registerStep4('hexWalletAddress')} autoComplete="off" type="text" className="text-center text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
                                             </label>
                                         </div>
@@ -453,7 +457,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                             <label className="block w-full">
 
                                                 <span className="block mb-2">  Token ID (hex value) </span>
-                                                <input {...registerStep4('collectionId')} type="text" className="text-center text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                <input {...registerStep4('collectionId')} autoComplete="off" type="text" className="text-center text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
                                             </label>
                                         </div>

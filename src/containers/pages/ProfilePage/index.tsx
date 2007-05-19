@@ -466,7 +466,13 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                     <div className="grid grid-cols-12">
 
-                                        {accountTokensData?.data && mapOnSaleTokens()}
+                                        {Boolean(onSaleNfts.length) ?
+                                            mapOnSaleTokens() :
+                                            <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+                                                no NFTs on sale
+                                            </div>
+                                        }
+
 
                                     </div>
 
@@ -521,7 +527,12 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                     <div className="grid grid-cols-12">
 
-                                        {(Boolean(availableTokens) && Boolean(unlistedNfts?.length)) && mapUnlistedTokens()}
+                                        {(Boolean(availableTokens) && Boolean(unlistedNfts?.length)) ?
+                                            mapUnlistedTokens() :
+                                            <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+                                                no NFTs unlisted
+                                            </div>
+                                        }
 
 
                                         {
