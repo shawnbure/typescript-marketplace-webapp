@@ -1126,9 +1126,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                             <div className="">
 
-                                {/* <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
-                                    <Link to={`/collection/${collectionId}`}>{collectionName}</Link>
-                                </p> */}
+                                <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
+                                    <Link to={`/collection/${collectionId}`}>{collectionId}</Link>
+                                </p>
 
                                 <h2 className="u-regular-heading u-text-bold u-margin-bottom-spacing-5">
                                     {tokenName}
@@ -1152,36 +1152,30 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                         isAuction ?
                                             <div className="c-accordion_trigger">
+                                                
                                                 <span className="c-accordion_trigger_icon">
                                                     <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.faClock} />
                                                 </span>
-
-
 
                                                 {
                                                     !isAuctionOngoing && <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">Sale has ended</p>
                                                 }
 
-                                                {
-                                                    isAuctionOngoing &&
-                                                    <div className="w-full">
-                                                        {/* <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                            Auction time left: {moment(auctionStartTime).to(moment(auctionDeadline))}
-                                                        </p> */}
-                                                        {auctionDeadline &&
-                                                            <>
-                                                                <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                                    Sale starts {auctionStartTimeTitle.format("MMM Do, YYYY HH:mm")}
-                                                                </p>
-                                                                {/* <hr className="my-2" /> */}
-                                                            </>
-                                                        }
+                                                <div className="w-full">
+                                                    {!hasAuctionStarted &&
+                                                        <>
+                                                            <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                                Sale starts {auctionStartTimeTitle.format("MMM Do, YYYY HH:mm")}
+                                                            </p>
+                                                        </>
+                                                    }
+                                                    {
+                                                        isAuctionOngoing &&
                                                         <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
                                                             Sale ends {auctionDeadlineTitle.format("MMM Do, YYYY HH:mm")}
                                                         </p>
-                                                    </div>
-
-                                                }
+                                                    }
+                                                </div>
 
                                             </div>
                                             :
@@ -1390,6 +1384,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
 
                                 <Collapsible
+                                    open={true}
                                     transitionTime={50}
                                     classParentString="c-accordion c-accordion--no-content-padding"
                                     trigger={
@@ -1431,6 +1426,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
 
                                 <Collapsible
+                                    open={true}
                                     transitionTime={50}
                                     classParentString="c-accordion c-accordion--no-content-padding"
                                     trigger={
@@ -1476,6 +1472,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
 
                                 <Collapsible
+                                    open={true}
                                     transitionTime={50}
                                     classParentString="c-accordion c-accordion--no-content-padding"
                                     trigger={

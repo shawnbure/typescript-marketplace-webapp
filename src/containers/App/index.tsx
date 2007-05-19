@@ -80,12 +80,12 @@ export const App: () => JSX.Element = () => {
     //     console.log({
     //         pathname
     //     });
-        
+
 
     //     window.scrollTo(0 ,0);
 
     // }, [pathname]);
-    
+
 
     return (
 
@@ -140,9 +140,7 @@ export const App: () => JSX.Element = () => {
 
                         <Route path={[routePaths.account, routePaths.profile]} exact={true} >
 
-                            <AuthProtected>
-                                <ProfilePage />
-                            </AuthProtected>
+                            <ProfilePage />
 
                         </Route>
 

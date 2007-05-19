@@ -12,14 +12,14 @@ import { UrlParameters } from "./interfaces";
 
 export const ProfilePage: (props: any) => any = ({ }) => {
 
-    const { collectionId } = useParams<UrlParameters>();
+    const {  walletAddress: walletAddressParam } = useParams<UrlParameters>();
 
     const {
         loggedIn,
-        address: userWalletAddress,
+        address: userAddress,
     } = Dapp.useContext();
 
-    const shortUserWalletAddress: string = shorterAddress(userWalletAddress, 7, 4);
+    // const shortUserWalletAddress: string = shorterAddress(userWalletAddress, 7, 4);
 
     const [getAccountRequestTrigger, {
         data: accountData,
@@ -44,8 +44,8 @@ export const ProfilePage: (props: any) => any = ({ }) => {
         isUninitialized: isUninitializedAccountCollectionsRequest
     }] = useGetAccountCollectionsMutation();
 
-
-    // const isOwnProfile = userWalletAddress === 
+    const userWalletAddress = walletAddressParam ? walletAddressParam : userAddress;
+    const isOwnProfile = userAddress === walletAddressParam;
 
     const [onSaleNfts, setOnSaleNfts] = useState<Array<any>>([]);
     const [unlistedNfts, setUnlistedNfts] = useState<Array<any>>([]);
@@ -208,7 +208,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                 </div>
 
                                 <div className="c-card_price">
-                                    
+
                                     <p className="text-sm">
                                         {priceNominal}
                                     </p>
@@ -326,23 +326,25 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                 <div className="col-span-12 text-center mb-6">
 
-                    <div className="c-icon-band mb-6">
+                    {isOwnProfile &&
+                        <div className="c-icon-band mb-6">
 
-                        <div className="c-icon-band_item">
+                            <div className="c-icon-band_item">
 
-                            <Link className="inline-block" to={`./account/settings`}>
-                                <FontAwesomeIcon className="text-white" style={{ width: 25, height: 25, margin: "10px 15px" }} icon={faIcons.faUserCog} />
-                            </Link>
+                                <Link className="inline-block" to={`./account/settings`}>
+                                    <FontAwesomeIcon className="text-white" style={{ width: 25, height: 25, margin: "10px 15px" }} icon={faIcons.faUserCog} />
+                                </Link>
 
+                            </div>
+
+                            <div className="c-icon-band_item">
+
+                                <Link className="inline-block" to={`/royalties`}>
+                                    <FontAwesomeIcon className="text-white" style={{ width: 25, height: 25, margin: "10px 15px" }} icon={faIcons.faCrown} />
+                                </Link>
+                            </div>
                         </div>
-
-                        <div className="c-icon-band_item">
-
-                            <Link className="inline-block" to={`/royalties`}>
-                                <FontAwesomeIcon className="text-white" style={{ width: 25, height: 25, margin: "10px 15px" }} icon={faIcons.faCrown} />
-                            </Link>
-                        </div>
-                    </div>
+                    }
 
                     <h2 className="u-regular-heading u-text-bold">
                         {
@@ -350,10 +352,11 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                         }
                     </h2>
 
-                    <p className="u-text-theme-gray-mid ">
-                        {shortUserWalletAddress}
-                    </p>
-
+                    {loggedIn &&
+                        <p className="u-text-theme-gray-mid ">
+                            {shorterAddress(userWalletAddress, 7, 4)}
+                        </p>
+                    }
                     {
                         accountData?.data.createdAt &&
                         <p className="u-text-theme-gray-mid">
@@ -369,9 +372,12 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                         <div className="col-span-12">
 
-                            <div className="mb-10">
-                                <Link to={`/collection/create`} className="c-button c-button--primary"> Create a collection </Link>
-                            </div>
+                            {isOwnProfile &&
+                                <div className="mb-10">
+                                    <Link to={`/collection/create`} className="c-button c-button--primary"> Create a collection </Link>
+                                </div>
+                            }
+
                             <Collapsible
                                 transitionTime={50}
                                 open={false}

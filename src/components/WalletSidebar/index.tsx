@@ -292,7 +292,12 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
 
                                                 <p className="text-sm">
-                                                    some explainiasjdmiasdias sdaad a asd ad adad as a sdadsasdasdsadasd ad adssadsa
+                                                    Your deposit inside the marketplace.
+                                                </p>
+
+                                                <p className="text-sm">
+
+                                                    Having a deposit allows for making Offers and Bids.
                                                 </p>
 
                                             </div>
@@ -334,11 +339,12 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                                                     }>
 
 
-                                                    <div className="bg-transparent mb-4" >
+                                                    <div className="bg-transparent mb-4  u-text-bold" >
 
 
                                                         <p className="text-sm">
-                                                            some explainiasjdmiasdias sdaad a asd ad adad as a sdadsasdasdsadasd ad adssadsa
+                                                            Add EGLD to your deposit. Be mindful of depositing MAX.
+                                                            Keep some dust in your wallet, so you can execute further transactions.
                                                         </p>
 
 
@@ -377,10 +383,13 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
                                                     }>
 
-                                                    <div className="bg-transparent mb-4" >
+                                                    <div className="bg-transparent mb-4 u-text-bold" >
+
+
 
                                                         <p className="text-sm">
-                                                            some explainiasjdmiasdias sdaad a asd ad adad as a sdadsasdasdsadasd ad adssadsa
+                                                            Withdraw EGLD from your deposit to you wallet.
+                                                            Keep some EGLD in your deposit so you can make Offers and Bids.
                                                         </p>
 
                                                     </div>
@@ -388,9 +397,9 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                                                 </Collapsible>
 
                                                 <div className="align-items-center flex justify-content-center mb-8">
-                                                    
+
                                                     <input placeholder={"Amount to withdraw (EGLD)"} onChange={(e: any) => { setWithdrawDepositAmount(e.target.value) }} value={withdrawDepositAmount} type="number" className="rounded-l-lg text-center bg-opacity-10  bg-white border-1 border-gray-400 p-2 placeholder-opacity-10  text-white w-full" />
-                                                    
+
                                                     <button onClick={() => { setWithdrawDepositAmount(deposit); }} className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-r-lg  border-1 border-gray-400 p">
                                                         Max
                                                     </button>
