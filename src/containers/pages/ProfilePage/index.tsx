@@ -389,45 +389,52 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
 
                     <div className="mb-20">
-                        <Collapse>
 
-                            <div>
-                                <div className="my-6">
+                        <div className="grid grid-cols-3">
+                            <div className="col-start-2 col-span-1">
 
-                                    <ul className="c-icon-band text-gray-500">
-                                        {
-                                            accountData?.data?.website &&
-                                            <li className="c-icon-band_item">
-                                                <a href={accountData?.data?.website} target="_blank" className="c-icon-band_link">
-                                                    <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faIcons.faGlobe} />
-                                                </a>
-                                            </li>
-                                        }
+                                <Collapse>
 
-                                        {
-                                            accountData?.data?.twitterLink &&
-                                            <li className="c-icon-band_item">
-                                                <a href={`https://twitter.com/${accountData?.data?.twitterLink}`} target="_blank" className="c-icon-band_link">
-                                                    <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faTwitter} />
-                                                </a>
-                                            </li>
-                                        }
+                                    <div>
+                                        <div className="my-6">
 
-                                        {
-                                            accountData?.data?.instagramLink &&
-                                            <li className="c-icon-band_item">
-                                                <a href={`https://instagram.com/${accountData?.data?.instagramLink}`} target="_blank" className="c-icon-band_link">
-                                                    <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faInstagram} />
-                                                </a>
-                                            </li>
-                                        }
+                                            <ul className="c-icon-band text-gray-500">
+                                                {
+                                                    accountData?.data?.website &&
+                                                    <li className="c-icon-band_item">
+                                                        <a href={accountData?.data?.website} target="_blank" className="c-icon-band_link">
+                                                            <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faIcons.faGlobe} />
+                                                        </a>
+                                                    </li>
+                                                }
 
-                                    </ul>
+                                                {
+                                                    accountData?.data?.twitterLink &&
+                                                    <li className="c-icon-band_item">
+                                                        <a href={`https://twitter.com/${accountData?.data?.twitterLink}`} target="_blank" className="c-icon-band_link">
+                                                            <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faTwitter} />
+                                                        </a>
+                                                    </li>
+                                                }
 
-                                </div>
-                                <div className="text-gray-400">{accountData?.data?.description}</div>
+                                                {
+                                                    accountData?.data?.instagramLink &&
+                                                    <li className="c-icon-band_item">
+                                                        <a href={`https://instagram.com/${accountData?.data?.instagramLink}`} target="_blank" className="c-icon-band_link">
+                                                            <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faInstagram} />
+                                                        </a>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+                                        </div>
+                                        <div className="text-gray-400">{accountData?.data?.description}</div>
+                                    </div>
+                                </Collapse>
                             </div>
-                        </Collapse>
+                        </div>
+
                     </div>
 
                 </div>

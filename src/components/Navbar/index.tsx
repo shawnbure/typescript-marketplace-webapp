@@ -172,11 +172,11 @@ export const Navbar = () => {
 
                         <ul className="c-navbar_list  float-right">
 
-                            <li className="c-navbar_list-item">
+                            {/* <li className="c-navbar_list-item">
                                 <Link to={routePaths.marketplace} className="c-navbar_list-link">
                                     Explore
                                 </Link>
-                            </li>
+                            </li> */}
                             {/* <li className="c-navbar_list-item">
                                 <Link to={routePaths.home} className="c-navbar_list-link">
                                     Stats

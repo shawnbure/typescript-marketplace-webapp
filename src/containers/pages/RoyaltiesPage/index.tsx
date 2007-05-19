@@ -309,7 +309,7 @@ export const RoyaltiesPage: (props: any) => any = ({ }) => {
                         <div className="col-span-12 lg:col-span-5">
 
                             <p className="text-2xl u-text-bold mb-4">
-                                Withdraw creator royalties _owner TODO
+                                Withdraw creator royalties to owner
                             </p>
 
                             <button onClick={() => {

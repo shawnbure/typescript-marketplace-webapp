@@ -498,7 +498,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
 
                 <div className="col-span-12">
-                    <div style={{ backgroundImage: `url(${collectionData?.data?.collection?.coverImageLink})` }} className="bg-gray-800 w-full h-60 bg-cover">
+                    <div style={{ backgroundImage: `url(${collectionData?.data?.collection?.coverImageLink})` }} className="bg-gray-800 w-full h-60 bg-cover bg-center">
 
                     </div>
                 </div>
@@ -556,7 +556,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                             </div>
 
                             <div className="">
-                                owner
+                                owners
                             </div>
 
                         </li>

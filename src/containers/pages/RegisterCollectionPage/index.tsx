@@ -9,6 +9,7 @@ import * as yup from "yup";
 import { handleCopyToClipboard, hexToAscii } from "utils";
 import { useGetCollectionByIdMutation, useCreateCollectionMutation } from "services/collections";
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
@@ -144,7 +145,7 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                 color: "white",
             }
         },
-        menuList:(provided: any, state: any) => {
+        menuList: (provided: any, state: any) => {
 
 
             return {
@@ -163,6 +164,10 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
             <div className="grid grid-cols-12">
 
                 <div className="col-span-12 m-20">
+
+                    <div className="mb-10">
+                        <Link to={`/account`}> {`< Back to account`}</Link>
+                    </div>
 
                     <h2 className="text-2xl md:text-5xl u-text-bold mb-8">
                         Register collection

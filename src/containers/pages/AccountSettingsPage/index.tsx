@@ -5,7 +5,7 @@ import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleCopyToClipboard } from "utils";
-import { useGetAccountGatewayTokensMutation, useGetAccountTokensMutation, useSetAccountMutation, useSetCoverImageMutation, useSetProfileImageMutation } from "services/accounts";
+import { useGetAccountGatewayTokensMutation, useGetAccountMutation, useGetAccountTokensMutation, useSetAccountMutation, useSetCoverImageMutation, useSetProfileImageMutation } from "services/accounts";
 
 
 import { useForm, useFieldArray, Controller } from "react-hook-form";
@@ -16,6 +16,12 @@ import { toast } from 'react-toastify';
 
 export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
+    const {
+        loggedIn,
+        address: userWalletAddress,
+    } = Dapp.useContext();
+
+
     const [coverImageB64, setCoverImageB64] = useState<string>('');
     const [profileImageB64, setProfileImageB64] = useState<string>('');
 
@@ -24,6 +30,14 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
     const [setSaveCoverImageMutationTrigger] = useSetCoverImageMutation();
     const [setSaveProfileImageMutationTrigger] = useSetProfileImageMutation();
+
+
+
+    const [getAccountRequestTrigger, {
+        data: accountData,
+        isLoading: isLoadingGetAccountRequest,
+        isUninitialized: isUninitializedGetAccountRequest }] = useGetAccountMutation();
+
 
     const handleUploadProfileImage = (event: any) => {
 
@@ -158,10 +172,6 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
     };
 
-    const {
-        address: userWalletAddress,
-    } = Dapp.useContext();
-
     const [
         setAccountMutationTrigger,
     ] = useSetAccountMutation();
@@ -183,7 +193,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
     }).required();
 
-    const { trigger, register: registerEdit, handleSubmit: handleSubmitEdit, formState: { errors: errorsEdit } } = useForm({
+    const { trigger, register: registerEdit, handleSubmit: handleSubmitEdit, setValue: setValueEdit, formState: { errors: errorsEdit } } = useForm({
 
         resolver: yupResolver(schemaEdit)
 
@@ -226,6 +236,44 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
     };
 
 
+    const setValuesAccount = async () => {
+
+        const accountData: any = await getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
+
+        console.log({
+            accountData
+        });
+        
+
+        if (accountData?.data) {
+
+
+            setValueEdit("name", accountData?.data?.data?.name);
+            setValueEdit("description", accountData?.data?.data?.description);
+            setValueEdit("website", accountData?.data?.data?.website);
+            setValueEdit("instagramLink", accountData?.data?.data?.instagramLink);
+            setValueEdit("twitterLink", accountData?.data?.data?.twitterLink);
+
+
+        }
+
+
+        // {
+        //     || 'Unnamed',
+        //     description: accountData?.data?.description || '',
+        //     website: accountData?.data?.website,
+        //     instagramLink: accountData?.data?.instagramLink,
+        //     twitterLink: accountData?.data?.twitterLink,
+        // }
+
+    }
+
+    useEffect(() => {
+
+
+        setValuesAccount();
+
+    }, []);
 
     return (
 

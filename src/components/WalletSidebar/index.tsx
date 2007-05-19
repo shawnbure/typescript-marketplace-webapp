@@ -233,12 +233,10 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
                 </div>
 
-
-
                 <div className="mb-3">
 
-                    <Link to={routePaths.account} className="c-button c-button--primary" >
-                        <div onClick={() => { overlayClickCallback?.() }} className="inline-flex">
+                    <Link to={routePaths.account} onClick={() => { overlayClickCallback?.() }}  className="c-button c-button--primary" >
+                        <div  className="inline-flex">
 
                             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faUserCircle} />
                             <span>

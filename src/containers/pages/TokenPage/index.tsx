@@ -21,7 +21,7 @@ import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
-import { shorterAddress } from "utils";
+import { formatImgLink, shorterAddress } from "utils";
 import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW } from "constants/actions";
 import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
@@ -835,7 +835,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <div className="p-token-page_asset-container">
 
 
-                                <img className={`p-token-page_img ${isAssetLoaded ? `` : `u-visually-hidden`}`} src={imageLink} alt="" onLoad={() => { setIsAssetLoaded(true) }} />
+                                <img className={`p-token-page_img ${isAssetLoaded ? `` : `u-visually-hidden`}`} src={formatImgLink(imageLink)} alt="" onLoad={() => { setIsAssetLoaded(true) }} />
                                 <p className={`p-token-page_img ${isAssetLoaded ? `u-visually-hidden` : ``}`}>loading asset...</p>
 
                             </div>
