@@ -6,13 +6,14 @@
     background-color: $dark-blue;
     justify-content: space-between;
     padding: 0 $spacing-point-4;
-
+    position: sticky;
 
     &_icon-link {
         
         border: none;
         height: $spacing-point-4;
         width: $spacing-point-4;
+        cursor: pointer;
 
     }
 
@@ -24,7 +25,7 @@
         &-item {
 
             position: relative;
-            padding: $spacing-point-4 $spacing-point-2;
+            padding: $spacing-point-4 $spacing-point-4;
 
             &--active,
             &:hover {

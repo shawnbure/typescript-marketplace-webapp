@@ -4,14 +4,14 @@ import { reduxBatch } from '@manaflair/redux-batch';
 import logger from 'redux-logger';
 
 import { rootReducer } from 'redux/slices';
-import { compiler } from 'services/resources';
+import { NFTQueryAPI } from 'services/NFT';
 
 const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
             .concat(logger)
-            .concat(compiler.middleware),
+            .concat(NFTQueryAPI.middleware),
     devTools: process.env.NODE_ENV !== 'production',
     enhancers: [reduxBatch],
 })

@@ -44,6 +44,7 @@ html {
     -webkit-text-size-adjust: 100%;
     font-size: 16px;
     overflow-x: hidden;
+    color: var(--t-text-color);
 }
 
 body {
@@ -57,9 +58,9 @@ body {
 
     & * {
         
-        border-style: solid;
-        color: var(--t-text-color);
-        border-color: var(--t-border-color);
+        // border-style: solid;
+       
+        // border-color: var(--t-border-color);
 
     }
 }

@@ -6,8 +6,8 @@ import * as config from "configs/dappConfig";
 import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
-import { AuthWrapper} from "containers/index";
-import { HomePage } from 'containers/pages';
+import { AuthWrapper, ErdReqContainer } from "containers/index";
+import { HomePage} from 'containers/pages';
 import { DARK } from 'constants/ui';
 
 
@@ -35,13 +35,18 @@ export const App: () => JSX.Element = () => {
 
                         <Route path={routePaths.unlock} exact={true}>
 
-                            <Dapp.Pages.Unlock
-                                title={config.dAppName}
-                                ledgerRoute={routePaths.ledger}
-                                callbackRoute={routePaths.home}
-                                lead="Please select your login method:"
-                                walletConnectRoute={routePaths.walletconnect}
-                            />
+
+                            <ErdReqContainer>
+
+                                <Dapp.Pages.Unlock
+                                    title={config.dAppName}
+                                    ledgerRoute={routePaths.ledger}
+                                    callbackRoute={routePaths.home}
+                                    lead="Please select your login method:"
+                                    walletConnectRoute={routePaths.walletconnect}
+                                />
+                                
+                            </ErdReqContainer>
 
                         </Route>
 

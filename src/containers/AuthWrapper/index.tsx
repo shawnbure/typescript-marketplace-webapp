@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as Dapp from "@elrondnetwork/dapp";
 
-import { Header, Footer } from 'components/index';
+import { Navbar } from 'components/index';
 
 export const AuthWrapper: (Props: { children: any }) => any = ({ children }) => {
 
@@ -17,11 +17,10 @@ export const AuthWrapper: (Props: { children: any }) => any = ({ children }) => 
 
     return (
         <>
-            <Header />
+            <Navbar />
             <Dapp.Authenticate routes={[]} unlockRoute="/unlock">
                 {children}
             </Dapp.Authenticate>
-            <Footer />
         </>
     )
 }

@@ -9,6 +9,7 @@ $light: #fafafa;
 
 @import "../../../../node_modules/bootstrap/scss/bootstrap.scss";
 
+
 // Dapp-utils
 /* Trim
 -------------------------------------------------- */
@@ -19,134 +20,138 @@ $light: #fafafa;
     overflow: hidden;
     position: relative;
     white-space: nowrap;
-  
+
     &.overflow {
-      .ellipsis {
-        display: block;
-      }
+        .ellipsis {
+            display: block;
+        }
     }
-  
+
     .left {
-      flex-shrink: 1;
-      font-size: 1px;
-      color: transparent;
-  
-      overflow: hidden;
-      text-overflow: ellipsis;
+        flex-shrink: 1;
+        font-size: 1px;
+        color: transparent;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
-  
+
     .right {
-      flex-shrink: 1;
-      font-size: 1px;
-      color: transparent;
-  
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      direction: rtl;
+        flex-shrink: 1;
+        font-size: 1px;
+        color: transparent;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        direction: rtl;
     }
-  
+
     .left span,
     .right span {
-      color: $body;
-      font-size: 1rem;
-      pointer-events: none;
-      user-select: none;
+        color: $body;
+        font-size: 1rem;
+        pointer-events: none;
+        user-select: none;
     }
-  
+
     .ellipsis {
-      flex-shrink: 0;
-      display: none;
-      pointer-events: none;
-      user-select: none;
+        flex-shrink: 0;
+        display: none;
+        pointer-events: none;
+        user-select: none;
     }
-  
+
     /* IE fix */
-    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-      .right {
-        text-overflow: clip;
-      }
+    @media all and (-ms-high-contrast: none),
+    (-ms-high-contrast: active) {
+        .right {
+            text-overflow: clip;
+        }
     }
-  
+
     /* SAFARI 10.1+ fix */
     @media not all and (min-resolution: 0.001dpcm) {
-      @supports (-webkit-appearance: none) {
-        .right {
-          text-overflow: unset;
+        @supports (-webkit-appearance: none) {
+            .right {
+                text-overflow: unset;
+            }
         }
-      }
     }
-  
+
     .hidden-text-ref {
-      position: absolute;
-      display: block;
-      color: transparent;
+        position: absolute;
+        display: block;
+        color: transparent;
     }
-  }
-  
-  .trim-wrapper {
+}
+
+.trim-wrapper {
     display: flex;
     max-width: 100%;
     overflow: hidden;
-  }
-  
-  a:hover > .trim span {
+}
+
+a:hover>.trim span {
     color: $link-hover-color !important;
+
     &.hidden-text-ref {
-      color: transparent !important;
+        color: transparent !important;
     }
-  }
-  
-  a > .trim span,
-  .text-primary > .trim span {
+}
+
+a>.trim span,
+.text-primary>.trim span {
     color: $primary !important;
+
     &.hidden-text-ref {
-      color: transparent !important;
+        color: transparent !important;
     }
-  }
-  
-  .table .trim {
+}
+
+.table .trim {
     max-width: 10rem;
-  }
-  
-  .table .trim-only-sm .trim {
+}
+
+.table .trim-only-sm .trim {
     max-width: none;
-  
+
     @include media-breakpoint-down(sm) {
-      max-width: 13rem;
+        max-width: 13rem;
     }
-  }
-  
-  .trim-fs-sm .trim {
+}
+
+.trim-fs-sm .trim {
+
     .left span,
     .right span,
     .ellipsis {
-      font-size: 0.875rem;
+        font-size: 0.875rem;
     }
-  }
-  
-  .table .trim-size-xl .trim {
+}
+
+.table .trim-size-xl .trim {
     @include media-breakpoint-up(md) {
-      max-width: 13rem;
+        max-width: 13rem;
     }
-  }
+}
 
 /* Base
 -------------------------------------------------- */
 html {
     min-height: 100%;
     font-size: 14px;
-  }
-  
-  .wrapper {
+}
+
+.wrapper {
     min-height: 100vh;
-  }
-  
-  .opacity-6 {
+}
+
+.opacity-6 {
     opacity: 0.6;
-  }
-  
-  .dapp-icon {
+}
+
+.dapp-icon {
     padding: 5px;
     border-radius: 50%;
     background-color: $light;
@@ -156,181 +161,172 @@ html {
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-  
+
     &.icon-medium {
-      width: 80px;
-      height: 80px;
+        width: 80px;
+        height: 80px;
     }
-  }
-  
-  /* Navbar
+}
+
+/* Navbar
   -------------------------------------------------- */
-  .elrond-logo {
+.elrond-logo {
     width: 85px;
     height: 25px;
-  }
-  
-  .dapp-name {
+}
+
+.dapp-name {
     line-height: 1;
     border-left: 1px solid $gray-400;
     padding-left: 3px;
     margin-left: 4px;
-  }
-  
-  /* Dashboard
+}
+
+/* Dashboard
   -------------------------------------------------- */
-  .action-btn {
+.action-btn {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     color: $white;
     margin: 0 7px;
-  
+
     button {
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      background-color: $white;
-  
-      &:hover {
-        opacity: 0.9;
-      }
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        background-color: $white;
+
+        &:hover {
+            opacity: 0.9;
+        }
     }
-  }
-  
-  .transactions {
+}
+
+.transactions {
     .transaction-icon {
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
     }
-  
+
     &.table {
-  
-      .transaction-hash .trim {
-        @include media-breakpoint-down(xl) {
-          max-width: none;
+
+        .transaction-hash .trim {
+            @include media-breakpoint-down(xl) {
+                max-width: none;
+            }
+
+            @include media-breakpoint-down(lg) {
+                max-width: 26rem;
+            }
+
+            @include media-breakpoint-down(md) {
+                max-width: 12rem;
+            }
+
+            @include media-breakpoint-down(sm) {
+                max-width: 8rem;
+            }
         }
-        @include media-breakpoint-down(lg) {
-          max-width: 26rem;
+
+        td,
+        tr {
+            padding: 0.65rem;
         }
-        @include media-breakpoint-down(md) {
-          max-width: 12rem;
-        }
-        @include media-breakpoint-down(sm) {
-          max-width: 8rem;
-        }
-      }
-  
-      td, tr {
-        padding: 0.65rem;
-      }
-  
-      td {
-        white-space: nowrap;
-        vertical-align: middle;
-      }
-   
-      tr:last-of-type {
+
         td {
-          border-bottom: 1px solid #dee2e6;
+            white-space: nowrap;
+            vertical-align: middle;
         }
-      }
+
+        tr:last-of-type {
+            td {
+                border-bottom: 1px solid #dee2e6;
+            }
+        }
     }
-  }
-  
-  /* Actions
+}
+
+/* Actions
   -------------------------------------------------- */
-  
-  .not-allwed {
+
+.not-allwed {
     cursor: not-allowed;
-  }
-  
-  /* Loader, Transaction Success/Fail
+}
+
+/* Loader, Transaction Success/Fail
   -------------------------------------------------- */
-  .page-state {
+.page-state {
     .lds-ellipsis {
-      display: inline-block;
-      position: relative;
-      width: 64px;
-      height: 64px;
+        display: inline-block;
+        position: relative;
+        width: 64px;
+        height: 64px;
     }
+
     .lds-ellipsis div {
-      position: absolute;
-      top: 27px;
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.1);
-      animation-timing-function: cubic-bezier(0, 1, 1, 0);
+        position: absolute;
+        top: 27px;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.1);
+        animation-timing-function: cubic-bezier(0, 1, 1, 0);
     }
+
     .bg-blue .lds-ellipsis div {
-      background: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.4);
     }
+
     .lds-ellipsis div:nth-child(1) {
-      left: 6px;
-      animation: lds-ellipsis1 0.6s infinite;
+        left: 6px;
+        animation: lds-ellipsis1 0.6s infinite;
     }
+
     .lds-ellipsis div:nth-child(2) {
-      left: 6px;
-      animation: lds-ellipsis2 0.6s infinite;
+        left: 6px;
+        animation: lds-ellipsis2 0.6s infinite;
     }
+
     .lds-ellipsis div:nth-child(3) {
-      left: 26px;
-      animation: lds-ellipsis2 0.6s infinite;
+        left: 26px;
+        animation: lds-ellipsis2 0.6s infinite;
     }
+
     .lds-ellipsis div:nth-child(4) {
-      left: 45px;
-      animation: lds-ellipsis3 0.6s infinite;
+        left: 45px;
+        animation: lds-ellipsis3 0.6s infinite;
     }
+
     @keyframes lds-ellipsis1 {
-      0% {
-        transform: scale(0);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-    @keyframes lds-ellipsis3 {
-      0% {
-        transform: scale(1);
-      }
-      100% {
-        transform: scale(0);
-      }
-    }
-    @keyframes lds-ellipsis2 {
-      0% {
-        transform: translate(0, 0);
-      }
-      100% {
-        transform: translate(19px, 0);
-      }
-    }
-  }
-  
-  /* Footer
-  -------------------------------------------------- */
-  footer {
-    div {
-      margin-top: 0.5rem;
-      font-size: 0.75rem;
-      display: inline-block;
-      font-weight: 400;
-      line-height: 1.155rem;
-  
-      a {
-  
-        #heart {
-          height: 16px;
-          width: 16px;
-  
-          path {
-            fill: #c00;
-          }
+        0% {
+            transform: scale(0);
         }
-      }
+
+        100% {
+            transform: scale(1);
+        }
     }
-  }
-  
+
+    @keyframes lds-ellipsis3 {
+        0% {
+            transform: scale(1);
+        }
+
+        100% {
+            transform: scale(0);
+        }
+    }
+
+    @keyframes lds-ellipsis2 {
+        0% {
+            transform: translate(0, 0);
+        }
+
+        100% {
+            transform: translate(19px, 0);
+        }
+    }
+}

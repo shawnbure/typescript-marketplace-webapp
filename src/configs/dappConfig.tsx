@@ -1,6 +1,6 @@
 import * as Dapp from '@elrondnetwork/dapp';
 
-export const dAppName = 'Playground';
+export const dAppName = 'ErdSea';
 export const decimals = 2;
 export const denomination = 18;
 export const gasPrice = 1000000000;
@@ -18,8 +18,8 @@ export const network: Dapp.NetworkType = {
   id: 'devnet',
   name: 'Devnet',
   egldLabel: 'xEGLD',
-  walletAddress: 'https://devnet-wallet.elrond.com',
   apiAddress: 'https://devnet-api.elrond.com',
+  walletAddress: 'https://devnet-wallet.elrond.com',
   gatewayAddress: 'https://devnet-gateway.elrond.com',
   explorerAddress: 'http://devnet-explorer.elrond.com/',
 };
