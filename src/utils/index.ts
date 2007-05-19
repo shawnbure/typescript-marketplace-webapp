@@ -5,7 +5,7 @@ import { SignableMessage } from '@elrondnetwork/erdjs/out/signableMessage';
 import { Signature } from '@elrondnetwork/erdjs/out/signature';
 
 
-export const createVerifiedPayload = (address: string, loginToken: string, signature: string, data: any) => {
+export const createVerifiedPayload = (address: string, loginToken: any, signature: any, data: any) => {
 
     const message = address + loginToken + JSON.stringify(data);
 

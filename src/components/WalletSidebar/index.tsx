@@ -3,14 +3,14 @@ import { routePaths } from "constants/router";
 import { Link, useHistory, useLocation, Redirect } from "react-router-dom";
 import * as Dapp from "@elrondnetwork/dapp";
 import { useAppDispatch } from "redux/store";
-import { setUserTokenData } from "redux/slices/user";
+import { setJWT, setUserTokenData } from "redux/slices/user";
 import { useGetEgldPriceQuery } from "services/oracle";
 
 
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrandIcons from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { generateId, shorterAddress } from "utils";
+import { createVerifiedPayload, generateId, shorterAddress } from "utils";
 import { useGetAddDepositEgldTemplateMutation, useGetWithdrawDepositTemplateMutation } from "services/tx-template";
 import { prepareTransaction } from "utils/transactions";
 import { toast } from "react-toastify";
@@ -18,6 +18,7 @@ import Popup from "reactjs-popup";
 import { useGetDepositTemplateMutation } from "services/deposit";
 import Collapsible from "react-collapsible";
 import { SearchBar } from "components";
+import { useGetAccessTokenMutation } from "services/auth";
 
 export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any = ({
     overlayClickCallback
@@ -40,6 +41,8 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
     const [randomToken] = useState(generateId(32));
 
+    const [getAccessTokenRequestTrigger,] = useGetAccessTokenMutation();
+
 
     const [addDepositAmount, setAddDepositAmount] = useState<number | undefined>();
     const [shouldDisplayMaiarLogin, setShouldDisplayMaiarLogin] = useState<boolean>(false);
@@ -49,9 +52,20 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     const sendTransaction = Dapp.useSendTransaction();
 
     const {
+        tokenLogin,
         account,
         address: userWalletAddress,
         loggedIn: isUserLoggedIn, } = Dapp.useContext();
+
+
+    const all = Dapp.useContext();
+
+
+
+    console.log({
+        all
+    });
+
 
     const webWalletLogin = Dapp.useWebWalletLogin({
         callbackRoute: pathname,
@@ -180,6 +194,38 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
         </div>
 
     );
+
+
+    const resove = async () => {
+
+        const verifiedPayload: any = createVerifiedPayload(userWalletAddress, tokenLogin?.loginToken, tokenLogin?.signature, {});
+        const accessResult: any = await getAccessTokenRequestTrigger(verifiedPayload);
+
+        if (!accessResult.data) {
+            return;
+        }
+
+        const { data: jtwData } = accessResult;
+
+        dispatch(setJWT(jtwData.data));
+
+        localStorage.setItem("_e_", JSON.stringify(jtwData.data));
+
+    }
+
+    useEffect(() => {
+
+
+
+        if (Boolean(tokenLogin?.loginToken) && Boolean(tokenLogin?.signature) ) {
+
+
+            resove();
+
+        }
+
+
+    }, [tokenLogin,])
 
 
     useEffect(() => {
