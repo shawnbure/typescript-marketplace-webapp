@@ -104,11 +104,11 @@ export const txTemplateApi = createApi({
 
         getWithdrawDepositTemplate: builder.mutation<any, any>({
 
-            query: ({ userWalletAddress, }): FetchArgs => {
+            query: ({ userWalletAddress, amount }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
                     method: GET,
-                    url: `/${mainPath}/withdraw/${userWalletAddress}/0`
+                    url: `/${mainPath}/withdraw/${userWalletAddress}/${amount}`
                 }
 
                 return customRequestArg;

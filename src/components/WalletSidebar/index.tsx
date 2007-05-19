@@ -16,6 +16,7 @@ import { prepareTransaction } from "utils/transactions";
 import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
 import { useGetDepositTemplateMutation } from "services/deposit";
+import Collapsible from "react-collapsible";
 
 export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any = ({
     overlayClickCallback
@@ -28,13 +29,15 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     const { pathname } = useLocation();
     const dappLogout = Dapp.useLogout();
 
-    const [getDepositTemplateTrigger, { 
+    const [getDepositTemplateTrigger, {
         data: userDepositData,
     }] = useGetDepositTemplateMutation();
     const [getAddDepositEgldTemplateTrigger] = useGetAddDepositEgldTemplateMutation();
     const [getWithdrawDepositTemplateTrigger] = useGetWithdrawDepositTemplateMutation();
-    
-    const [ addDepositAmount, setAddDepositAmount ] = useState<number>(0);
+
+    const [addDepositAmount, setAddDepositAmount] = useState<number | undefined>();
+    const [withdrawDepositAmount, setWithdrawDepositAmount] = useState<number | undefined>();
+
 
     const sendTransaction = Dapp.useSendTransaction();
 
@@ -109,9 +112,9 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
     };
 
-    const handleDepositEgld = async () => {
+    const handleAddDeposit = async () => {
 
-        const getTemplateData = { userWalletAddress: userWalletAddress, amount: 2.125 };
+        const getTemplateData = { userWalletAddress: userWalletAddress, amount: addDepositAmount };
 
         signTemplateTransaction({
 
@@ -127,35 +130,19 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
     const handleWithdrawDeposit = async () => {
 
-        const getDepositTemplateResponse: any = await getWithdrawDepositTemplateTrigger({ userWalletAddress: userWalletAddress });
+        const getTemplateData = { userWalletAddress: userWalletAddress, amount: withdrawDepositAmount };
 
-        if (getDepositTemplateResponse.error) {
+        signTemplateTransaction({
 
-            const { status, data: { error } } = getDepositTemplateResponse.error;
+            succesCallbackRoute: pathname,
+            getTemplateData: getTemplateData,
+            getTemplateTrigger: getWithdrawDepositTemplateTrigger,
 
-            toast.error(`${status} | ${error}`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-            });
-
-            return;
-
-        }
-
-        const { data: txData } = getDepositTemplateResponse.data;
-
-        const unconsumedTransaction = prepareTransaction(txData);
-
-        sendTransaction({
-            transaction: unconsumedTransaction,
-            callbackRoute: pathname
         });
 
+
     };
+
 
     useEffect(() => {
 
@@ -262,21 +249,16 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
                 <div className="mb-5">
 
-                    <button className="c-button c-button--secondary" onClick={handleDepositEgld}>
-                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faPiggyBank} />
-                        Deposit
-                    </button>
-
                     <Popup
                         modal
                         className="c-modal_container"
                         trigger={
                             <button className="c-button  c-button--secondary u-margin-top-spacing-2">
                                 <span className="u-padding-right-spacing-2">
-                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faTag} />
+                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faPiggyBank} />
                                 </span>
                                 <span>
-                                    Make offer
+                                    Deposit
                                 </span>
                             </button>
                         }
@@ -290,16 +272,140 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                                     </button>
                                 </div>
 
-                                <div className="c-modal_header text-2xl u-text-bold "> Make an offer </div>
+                                <div className="c-modal_header text-2xl u-text-bold ">
+                                    <div className="">
+
+                                        <Collapsible
+                                            transitionTime={50}
+                                            open={false}
+                                            className="c-accordion"
+                                            classParentString="border-0"
+                                            trigger={
+
+                                                <div className="">
+                                                    <FontAwesomeIcon style={{ width: 20, height: 20 }} className="c-navbar_icon-link mb-2" icon={faIcons.faInfoCircle} />
+                                                </div>
+
+                                            }>
+
+                                            <div className="bg-transparent mb-4" >
+
+
+                                                <p className="text-sm">
+                                                    some explainiasjdmiasdias sdaad a asd ad adad as a sdadsasdasdsadasd ad adssadsa
+                                                </p>
+
+                                            </div>
+
+                                        </Collapsible>
+
+                                        <p className="text-gray-400  text-xl">
+                                            Current deposit
+                                        </p>
+                                        <p className="text-3xl u-text-bold">
+                                            ${usdDeposit} USD
+                                        </p>
+                                        <p className="u-text-bold text-xl text-gray-400">
+                                            {deposit} EGLD
+                                        </p>
+
+                                    </div>
+                                </div>
                                 <div className="c-modal_content">
 
                                     <div className="px-10 pt-8">
 
-                                        <input onChange={(e: any) => { setAddDepositAmount(e.target.value) }} value={addDepositAmount} type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
-                                                                    
-                                        <p>
-                                            dsadassadsa
-                                        </p>
+
+                                        <div className="grid grid-cols-12 text-center">
+
+                                            <div className="col-span-5">
+
+                                                <Collapsible
+                                                    transitionTime={50}
+                                                    open={false}
+                                                    className="c-accordion"
+                                                    classParentString="border-0"
+                                                    trigger={
+
+                                                        <div className="">
+                                                            <FontAwesomeIcon style={{ width: 20, height: 20 }} className="c-navbar_icon-link mb-2" icon={faIcons.faInfoCircle} />
+                                                        </div>
+
+                                                    }>
+
+
+                                                    <div className="bg-transparent mb-4" >
+
+
+                                                        <p className="text-sm">
+                                                            some explainiasjdmiasdias sdaad a asd ad adad as a sdadsasdasdsadasd ad adssadsa
+                                                        </p>
+
+
+                                                    </div>
+
+
+                                                </Collapsible>
+
+                                                <div className="align-items-center flex justify-content-center mb-8">
+                                                    <input placeholder={"Amount to deposit (EGLD)"} onChange={(e: any) => { setAddDepositAmount(e.target.value) }} value={addDepositAmount} type="number" className="rounded-l-lg text-center bg-opacity-10  bg-white border-1 border-gray-400 p-2 placeholder-opacity-10  text-white w-full" />
+                                                    <button onClick={() => { setAddDepositAmount(Number(egldBalance)); }} className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-r-lg  border-1 border-gray-400">
+                                                        Max
+                                                    </button>
+                                                </div>
+
+                                                <button className="c-button c-button--secondary" onClick={handleAddDeposit}>
+                                                    <span>
+                                                        Add deposit
+                                                    </span>
+                                                </button>
+
+                                            </div>
+
+                                            <div className="col-start-8 col-span-5">
+
+                                                <Collapsible
+                                                    transitionTime={50}
+                                                    open={false}
+                                                    className="c-accordion"
+                                                    classParentString="border-0"
+                                                    trigger={
+
+                                                        <div className="">
+                                                            <FontAwesomeIcon style={{ width: 20, height: 20 }} className="c-navbar_icon-link mb-2" icon={faIcons.faInfoCircle} />
+                                                        </div>
+
+                                                    }>
+
+                                                    <div className="bg-transparent mb-4" >
+
+                                                        <p className="text-sm">
+                                                            some explainiasjdmiasdias sdaad a asd ad adad as a sdadsasdasdsadasd ad adssadsa
+                                                        </p>
+
+                                                    </div>
+
+                                                </Collapsible>
+
+                                                <div className="align-items-center flex justify-content-center mb-8">
+                                                    
+                                                    <input placeholder={"Amount to withdraw (EGLD)"} onChange={(e: any) => { setWithdrawDepositAmount(e.target.value) }} value={withdrawDepositAmount} type="number" className="rounded-l-lg text-center bg-opacity-10  bg-white border-1 border-gray-400 p-2 placeholder-opacity-10  text-white w-full" />
+                                                    
+                                                    <button onClick={() => { setWithdrawDepositAmount(deposit); }} className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded-r-lg  border-1 border-gray-400 p">
+                                                        Max
+                                                    </button>
+
+                                                </div>
+
+                                                <button className="c-button c-button--secondary" onClick={handleWithdrawDeposit}>
+                                                    <span>
+                                                        Withdraw deposit
+                                                    </span>
+                                                </button>
+
+                                            </div>
+
+                                        </div>
 
                                     </div>
 

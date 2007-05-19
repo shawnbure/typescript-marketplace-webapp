@@ -13,10 +13,10 @@ import { toggleShouldDisplayWalletSidebar } from 'redux/slices/ui';
 
 export const Navbar = () => {
 
-    
+
     const dispatch = useAppDispatch();
     const shouldDisplayWalletSidebar = useAppSelector(selectShouldDisplayWalletSidebar);
-    
+
     const handleToggleSidebar = () => {
 
         dispatch(toggleShouldDisplayWalletSidebar());
@@ -70,11 +70,12 @@ export const Navbar = () => {
             </div>
 
             {
-                shouldDisplayWalletSidebar &&
 
-                <WalletSidebar
-                    overlayClickCallback={handleToggleSidebar}
-                />
+                <div className={`${shouldDisplayWalletSidebar && 'visually-hidden'}`}>
+                    <WalletSidebar
+                        overlayClickCallback={handleToggleSidebar}
+                    />
+                </div>
             }
 
         </>
