@@ -215,6 +215,25 @@ export const TokenPage: (props: any) => any = ({ }) => {
     } = getBaseTokenData(tokenData, !Boolean(walletAddressParam));
 
 
+    console.log({
+        metadataLink
+    });
+    
+
+    // if(metadataLink){
+
+    //     fetch(metadataLink).then(( metadata: any) => {
+
+    //         console.log({
+    //             metadata
+    //         });
+            
+
+    //     });
+
+    // };
+
+
     // console.log({
     //     nonce,
     //     imageLink,
@@ -853,6 +872,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     };
 
+
+    console.log({
+        mapOffersTableData
+    });
+    
+
     return (
 
         <div className="p-token-page">
@@ -1133,7 +1158,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
 
                                 {
-                                    (!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) || !ownerWalletAddress &&
+                                    (!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) &&
                                     <Collapsible
 
                                         open={true}
@@ -1438,7 +1463,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                         <div className="c-accordion_content" >
 
-                                            {Boolean(mapOffersTableData) ?
+                                            {Boolean(mapOffersTableData?.length) ?
 
                                                 <Table className="c-table" rowClassName="c-table_row" columns={offersTableColumns} data={mapOffersTableData} />
 
@@ -1486,7 +1511,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     <div className="c-accordion_content" >
 
 
-                                        {mapBidsTableData ?
+                                        {Boolean(mapBidsTableData?.length) ?
 
                                             <Table className="c-table" rowClassName="c-table_row" columns={bidsTableColumns} data={mapBidsTableData} />
 

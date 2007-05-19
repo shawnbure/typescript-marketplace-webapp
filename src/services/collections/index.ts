@@ -43,7 +43,7 @@ export const collectionsApi = createApi({
         getCollectionById: builder.mutation<any, any>({
 
             query: ({collectionId}): FetchArgs => {
-
+                
                 const customRequestArg: FetchArgs = {
                     method: GET,
                     url: `/${mainPath}/${collectionId}`
