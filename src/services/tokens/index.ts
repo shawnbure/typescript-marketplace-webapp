@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/react';
 
 import { BASE_URL_API, GET, POST } from 'constants/api';
+import { selectAccessToken } from 'redux/selectors/user';
+import store from 'redux/store';
 
 const mainPath = 'tokens';
 
@@ -148,19 +150,46 @@ export const tokensApi = createApi({
 
 
 
-        getTokenMetadata: builder.query<any, any>({
+        getTokenMetadata: builder.mutation<any, any>({
 
             query: ({ metadataLink }): FetchArgs => {
 
+                const metadataUrlEncode = encodeURIComponent(metadataLink);
+            
                 const customRequestArg: FetchArgs = {
 
-                    url: metadataLink
-
+                    method: GET,
+                    url: `${mainPath}/metadata/relay?url=${metadataUrlEncode}`,
                 }
 
                 return customRequestArg;
                 
             },
+        }),
+
+
+        
+        refreshTokenMetadata: builder.mutation<any, any>({
+
+            query: ({ collectionId, tokenNonce }): FetchArgs => {
+
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    url: `${mainPath}/${collectionId}/${tokenNonce}/refresh`,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+
+                }
+
+                return customRequestArg;
+
+            },
+
         }),
 
 
@@ -170,8 +199,9 @@ export const tokensApi = createApi({
 
 
 export const {
+    useRefreshTokenMetadataMutation,
     useGetTransactionsMutation,
-    useLazyGetTokenMetadataQuery,
+    useGetTokenMetadataMutation,
     useGetTokenBidsMutation,
     useGetTokenOffersMutation,
     useGetTokenDataMutation,

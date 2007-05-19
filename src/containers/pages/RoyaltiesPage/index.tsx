@@ -46,7 +46,7 @@ export const RoyaltiesPage: (props: any) => any = ({ }) => {
     const [getWithdrawCreatorRoyaltiesTemplateTrigger, {
         data: getWithdrawCreatorRoyaltiesData,
     }] = useGetWithdrawCreatorRoyaltiesTemplateMutation();
-    
+
 
 
 
@@ -200,15 +200,23 @@ export const RoyaltiesPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
-                                <div className="text-white">
+                                <div className="text-white mb-4">
 
-                                    <p>
-                                        {getRoyaltiesAmountData?.data}
-                                    </p>
-                                    <p>
-                                        {getRoyaltiesRemainingData?.data}
 
-                                    </p>
+                                    {
+                                        getRoyaltiesAmountData?.data &&
+                                        <p className="text-gray-400">
+                                            You have  <span className="text-white"> {getRoyaltiesAmountData?.data} </span> EGLD
+                                        </p>
+                                    }
+
+                                    {
+                                        getRoyaltiesRemainingData?.data &&
+                                        <p className="text-gray-400">
+                                            You have <span className="text-white">{getRoyaltiesRemainingData?.data} </span> epochs to wait until the next withdraw
+                                        </p>
+                                    }
+                                  
                                 </div>
 
                                 <button type="submit" className="c-button c-button--primary mb-5" >
@@ -255,7 +263,7 @@ export const RoyaltiesPage: (props: any) => any = ({ }) => {
 
 
                                 <button type="submit" className="c-button c-button--primary mb-5" >
-                                    Check
+                                    Sign
                                 </button>
 
                             </form>
@@ -286,7 +294,7 @@ export const RoyaltiesPage: (props: any) => any = ({ }) => {
                                 </div>
 
                                 <button type="submit" className="c-button c-button--primary mb-5" >
-                                    Check
+                                    Sign
                                 </button>
 
                             </form>
@@ -313,7 +321,7 @@ export const RoyaltiesPage: (props: any) => any = ({ }) => {
                                 });
 
                             }} type="submit" className="c-button c-button--primary mb-5" >
-                                Check
+                                Sign
                             </button>
 
                         </div>

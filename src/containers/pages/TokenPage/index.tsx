@@ -13,7 +13,7 @@ import moment from 'moment';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenBidsMutation, useGetTokenDataMutation, useLazyGetTokenMetadataQuery, useGetTokenOffersMutation, useGetTransactionsMutation, } from "services/tokens";
+import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, useRefreshTokenMetadataMutation, } from "services/tokens";
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
@@ -74,7 +74,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [getTokenMetadataTrigger, {
         data: tokenMetadataData,
         isUninitialized: isUninitializedGetTokenMetadata
-    }] = useLazyGetTokenMetadataQuery();
+    }] = useGetTokenMetadataMutation();
 
     const [getTokenOffersTrigger, {
         data: tokenOffersData,
@@ -94,6 +94,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [getEndAuctionTemplateTrigger] = useGetEndAuctionTemplateMutation();
     const [getAcceptOfferTemplateTrigger] = useGetAcceptOfferTemplateMutation();
     const [getCancelOfferTemplateTrigger] = useGetCancelOfferTemplateMutation();
+    const [refreshMetadataTrigger] = useRefreshTokenMetadataMutation();
 
     const {
 
@@ -228,7 +229,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
         getTokenMetadataTrigger({ metadataLink });
 
-
     };
 
     const description = collectionData?.data?.collection?.description;
@@ -307,7 +307,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
         dataIndex: 'event',
         key: 'event',
         className: 'c-table_column',
-    },{
+    }, {
         title: 'Price',
         dataIndex: 'price',
         key: 'price',
@@ -779,7 +779,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     };
 
-    const isERD721 = Boolean(tokenMetadataData?.attributes?.length);
+    const isERD721 = Boolean(tokenMetadataData?.data?.attributes?.length);
 
     return (
 
@@ -824,7 +824,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     <div className="c-accordion_content" >
 
 
-                                        {tokenMetadataData?.attributes?.map((attribute: any) => {
+                                        {tokenMetadataData?.data?.attributes?.map((attribute: any) => {
 
                                             const { trait_type, value, } = attribute;
 
@@ -1048,6 +1048,26 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         <div className="col-xs-12 col-md-6">
 
                             <div className="">
+
+
+                                <div className="text-right">
+
+                                    <ul className="c-icon-band">
+
+                                        <li onClick={() => { refreshMetadataTrigger({ collectionId, tokenNonce }) }} className="c-icon-band_item text-gray-500 hover:text-gray-300 cursor-pointer">
+
+                                            <FontAwesomeIcon  style={{ width: 20, height: 20, margin: "10px 15px 5px 15px", cursor: "pointer"}}  className="inline-block " icon={faIcons.faRedoAlt} />
+
+                                        </li>
+
+                                    </ul>
+                                </div>
+
+                                
+
+
+
+
 
                                 {!isErrorGetCollectionData && <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
                                     <Link to={`/collection/${collectionId}`}>{collectionData?.data?.collection?.name || collectionId}</Link>
