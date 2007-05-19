@@ -170,10 +170,29 @@ export const HomePage = () => {
 
                     <div className="row row--standard-max u-tac">
 
-                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+
+                            <div className="u-padding-lr-spacing-2">
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />
 
 
-                            <div className="u-padding-lr-spacing-10">
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Create collections
+                                </h3>
+
+                                <p>
+                                    Tutorials & docs about how to create your own collection with our ERD-721 standard
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+
+
+                            <div className="u-padding-lr-spacing-2">
 
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faTags} />
 
@@ -183,7 +202,7 @@ export const HomePage = () => {
                                 </h3>
 
                                 <p>
-                                    Mint NFTs directly from our marketplace and list them instantly
+                                    Mint NFTs directly on our marketplace and list them instantly
                                 </p>
 
                             </div>
@@ -192,9 +211,9 @@ export const HomePage = () => {
                         </div>
 
 
-                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
 
-                            <div className="u-padding-lr-spacing-10">
+                            <div className="u-padding-lr-spacing-2">
 
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faCoins} />
 
@@ -204,7 +223,7 @@ export const HomePage = () => {
                                 </h3>
 
                                 <p>
-                                    Erdsea offers minting, listing and biding* features with zero additional fees
+                                    Erdsea offers minting, listing and bidding* features with zero additional fees
                                 </p>
 
                             </div>
@@ -212,11 +231,9 @@ export const HomePage = () => {
                         </div>
 
 
-                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
 
-
-
-                            <div className="u-padding-lr-spacing-10">
+                            <div className="u-padding-lr-spacing-2">
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faListOl} />
 
 
@@ -228,7 +245,9 @@ export const HomePage = () => {
                                     Erdsea displays rarity rank, score and traits statistics for every collection
                                 </p>
                             </div>
+
                         </div>
+
 
                     </div>
 
@@ -240,7 +259,7 @@ export const HomePage = () => {
 
                         <div className="col-xs-12">
                             <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
-                                Collections launching exclusive on Erdsea
+                                Collections launching exclusively on Erdsea
                             </h3>
                         </div>
 
@@ -400,7 +419,7 @@ export const HomePage = () => {
 
                         <div className="col-xs-12">
                             <h3 className="u-margin-bottom-spacing-6 u-tac u-text-bold u-text-small">
-                                More collections will be announcened until the Erdsea launch date
+                                More collections will be announced until the Erdsea launch date
                             </h3>
                         </div>
 
