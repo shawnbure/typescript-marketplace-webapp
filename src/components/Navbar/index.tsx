@@ -71,7 +71,7 @@ export const Navbar = () => {
 
             {
 
-                <div className={`${shouldDisplayWalletSidebar && 'visually-hidden'}`}>
+                <div className={`${!shouldDisplayWalletSidebar && 'visually-hidden'}`}>
                     <WalletSidebar
                         overlayClickCallback={handleToggleSidebar}
                     />

@@ -32,6 +32,7 @@ export const App: () => JSX.Element = () => {
     const generatedClasses: any = classNames('c-app', { 'light-theme': isLightThemeSelected });
 
     const location = useLocation();
+    const { pathname } = location;
 
     const [getAccessTokenRequestTrigger,] = useGetAccessTokenMutation();
 
@@ -72,6 +73,19 @@ export const App: () => JSX.Element = () => {
 
 
     }, [location]);
+
+
+    // useEffect(() => {
+
+    //     console.log({
+    //         pathname
+    //     });
+        
+
+    //     window.scrollTo(0 ,0);
+
+    // }, [pathname]);
+    
 
     return (
 
