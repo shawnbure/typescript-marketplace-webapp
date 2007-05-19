@@ -30,7 +30,23 @@ export const searchApi = createApi({
             },
         }),
 
+        searchByString: builder.mutation<any, any>({
+
+            query: ({ searchString }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `/${mainPath}/${searchString}`
+
+                }
+
+                return customRequestArg;
+                
+            },
+        }),
+
     }),
 })
 
-export const { useGetCollectionByNameQuery, useLazyGetCollectionByNameQuery } = searchApi;
+export const { useSearchByStringMutation, useGetCollectionByNameQuery, useLazyGetCollectionByNameQuery ,} = searchApi;

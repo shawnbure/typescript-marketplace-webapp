@@ -49,9 +49,9 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
             userAddress: userWalletAddress,
             flags: [flagSelect.value],
         }
-        
 
-        const response: any = await createCollectionTrigger({payload: formattedData});
+
+        const response: any = await createCollectionTrigger({ payload: formattedData });
 
         if (response?.error) {
 
@@ -103,7 +103,8 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
             padding: 20,
             onOptionHover: {
                 backgroundColor: 'red',
-            }
+            },
+            width: "100%"
         }),
         control: (provided: any) => ({
             // none of react-select's styles are passed to <Control />
@@ -113,7 +114,9 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
             borderColor: "#353840",
             onOptionHover: {
                 borderColor: "red",
-            }
+            },
+            width: "100%",
+            color: "white"
         }),
         indicatorSeparator: (provided: any, state: any) => {
             //hide
@@ -132,9 +135,25 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                 padding: 10,
                 backgroundColor: '#353840',
             }
-        }
-    };
+        },
+        input: (provided: any, state: any) => {
 
+
+            return {
+                ...provided,
+                color: "white",
+            }
+        },
+        menuList:(provided: any, state: any) => {
+
+
+            return {
+                ...provided,
+                padding: 0,
+                margin: 0,
+            }
+        },
+    }
 
 
     return (
