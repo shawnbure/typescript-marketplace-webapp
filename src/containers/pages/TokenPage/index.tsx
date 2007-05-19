@@ -36,6 +36,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [expireOffer, setExpireOffer] = useState<number>(9999999999);
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
 
+    const [tokenTraits, setTokenTraits] = useState([]);
+
     const {
         loggedIn,
         address: userWalletAddress,
@@ -220,16 +222,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
     });
     
 
-    // if(metadataLink){
+    // if(!Boolean(tokenTraits.length) && metadataLink){
 
-    //     fetch(metadataLink).then(( metadata: any) => {
-
-    //         console.log({
-    //             metadata
-    //         });
-            
-
-    //     });
+    //     fetch(metadataLink).then(response => response.json())
+    //     .then(data => console.log(data));
 
     // };
 

@@ -221,6 +221,11 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     };
 
+    console.log({
+        getCollectionByIdData
+    });
+    
+
     return (
 
         <div className="p-sell-token-page">
@@ -430,10 +435,10 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                                 <div className="c-card_info">
 
                                     <div className="c-card_token-details">
-                                        {Boolean(getCollectionByIdData) &&
+                                        {Boolean(getCollectionByIdData?.data) &&
                                             <p className="text-gray-700 text-xs">
-                                                <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${''}`}>
-                                                    {getCollectionByIdData.collection.name || collectionId}
+                                                <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${collectionId}`}>
+                                                    {getCollectionByIdData?.data?.collection?.name || collectionId}
                                                 </Link>
                                             </p>
                                         }
