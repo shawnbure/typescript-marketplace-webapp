@@ -8,7 +8,7 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage } from 'containers/pages';
+import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
 
 
@@ -144,6 +144,14 @@ export const App: () => JSX.Element = () => {
 
                             <AuthProtected>
                                 <CollectionEditPage />
+                            </AuthProtected>
+
+                        </Route>
+
+                        <Route path={routePaths.royalties} exact={true} >
+
+                            <AuthProtected>
+                                <RoyaltiesPage />
                             </AuthProtected>
 
                         </Route>

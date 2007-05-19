@@ -252,10 +252,55 @@ export const txTemplateApi = createApi({
 
         }),
 
+        getRequestWithdrawTemplate: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress, contractAddress }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/request-withdraw/${userWalletAddress}/${contractAddress}`
+                };
+
+                return customRequestArg;
+            },
+
+        }),
+
+        getWithdrawCreatorRoyaltiesTemplate: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/withdraw-creator-royalties/${userWalletAddress}`
+                };
+
+                return customRequestArg;
+            },
+
+        }),
+
+        getWithdrawMinterTemplate: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress, contractAddress }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/withdraw-minter/${userWalletAddress}/${contractAddress}`
+                };
+
+                return customRequestArg;
+            },
+
+        }),
+
     }),
 })
 
 export const {
+    useGetWithdrawCreatorRoyaltiesTemplateMutation,
+    useGetWithdrawMinterTemplateMutation,
+    useGetRequestWithdrawTemplateMutation,
     useGetStartAuctionNftTemplateMutation,
     useGetCancelOfferTemplateMutation,
     useGetEndAuctionTemplateMutation,

@@ -49,8 +49,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
         isLoading: isLoadingGatewayTokenDataQuery,
         isSuccess: isSuccessGatewayTokenDataQuery,
         isError: isErrorGatewayTokenDataQuery,
-        isUninitialized: isUninitializedGatewayTokenDataQuery,  
-        
+        isUninitialized: isUninitializedGatewayTokenDataQuery,
+
 
     }] = useGetAccountTokenGatewayMutation();
 
@@ -105,22 +105,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isGatewayTokenFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
     const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
 
-    // const shouldRedirect: boolean = (isErrorGatewayTokenDataQuery && isErrorGetTokenDataQuery) || (isErrorGatewayTokenDataQuery && !isUninitializedGetTokenDataQuery && !isErrorGetTokenDataQuery && !Boolean(tokenResponseData?.tokenData?.token));
-    console.log({
-        gatewayTokenData,
-        walletAddressParam,
-        neubn: tokenResponseData?.data?.ownerWalletAddress,
-        isErrorGatewayTokenDataQuery,
-        isErrorGetTokenDataQuery,
-        isUninitializedGetTokenDataQuery,
-        tokenResponseData,
-    });
-
     const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
-
-    console.log({
-        shouldRedirect
-    });
 
     const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
     const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
@@ -164,7 +149,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
             <Redirect to={routePaths.home} />
         );
 
-    }
+    };
 
     if (!shouldRenderPage) {
 
@@ -202,7 +187,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
             tokenState: token.state,
             ownerName: tokenData.ownerName,
             priceNominal: token.priceNominal,
-            auctionDeadline: token.auctionDeadline
+            auctionDeadline: token.auctionDeadline,
+            auctionStartTime: token.auctionStartTime,
 
         } : {
             id: 0,
@@ -210,6 +196,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
             tokenState: '',
             priceNominal: 0,
             auctionDeadline: 0,
+            auctionStartTime: 0,
         };
 
         return { ...baseData, ...ourExtraData };
@@ -223,6 +210,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
         metadataLink,
         name: tokenName,
         auctionDeadline,
+        auctionStartTime,
         royaltiesPercent,
         ownerWalletAddress,
 
@@ -281,9 +269,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isBidderWinnerAddress: boolean = tokenBidsData?.data?.[0]?.bid.bidderAddress === userWalletAddress;
 
 
-
-
-
     const egldPriceString = egldPriceData?.data;
     const priceTokenDollars = tokenPrice * parseFloat(egldPriceString);
     const priceTokenDollarsFixed = parseFloat(`${priceTokenDollars}`).toFixed(3);
@@ -291,12 +276,20 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const nowDate = new Date();
     const auctionDeadlineDate = new Date(auctionDeadline * 1000);
+    const auctionStartTimeDate = new Date(auctionStartTime * 1000);
     const auctionDeadlineTitle = moment(new Date(auctionDeadlineDate), "YYYY-MM-DD HH:mm:ss");
+    const auctionStartTimeTitle = moment(new Date(auctionStartTimeDate), "YYYY-MM-DD HH:mm:ss");
+
+
+
 
     const isAuctionOngoing: boolean = nowDate < auctionDeadlineDate;
+    const hasAuctionFinished: boolean = auctionDeadlineDate < nowDate;
+    const hasAuctionStarted: boolean = auctionStartTimeDate < nowDate;
 
+    const hasFinishedWithoutWinner = hasAuctionFinished && !hasBidderWinner;
 
-    const shouldDisplayEndAuctionButton = isAuction && !isAuctionOngoing && (isCurrentTokenOwner || isBidderWinnerAddress);
+    const shouldDisplayEndAuctionButton = isAuction && !isAuctionOngoing && hasBidderWinner && (isCurrentTokenOwner || isBidderWinnerAddress);
 
 
     const offersTableColumns = [
@@ -427,6 +420,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
         },
     ];
 
+
+
     const mapOffersTableData = tokenOffersData?.data?.map((offerData: any, index: number) => {
 
         const { offer, offerorName } = offerData;
@@ -437,14 +432,17 @@ export const TokenPage: (props: any) => any = ({ }) => {
         const shorterTx: string = shorterAddress(txHash, 4, 4);
         const txDisplayName = Boolean(offerorName) ? offerorName : shorterTx;
 
-        if (hasAction) {
+        const shouldDisplayAcceptButton = isCurrentTokenOwner && (!hasAuctionStarted || hasFinishedWithoutWinner);
+
+        if (offersTableColumns.length === 3 && hasAction && (shouldDisplayAcceptButton || isCurrentOfferor)) {
 
             offersTableColumns.push({
                 title: 'Action',
                 dataIndex: 'action',
                 key: 'action',
                 className: 'c-table_column',
-            })
+            });
+
         }
 
         const AcceptOffer: any = (
@@ -470,10 +468,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
         return ({
             action: <>
                 {isCurrentOfferor && CancelOffer}
-                {isCurrentTokenOwner && AcceptOffer}
+                {shouldDisplayAcceptButton && AcceptOffer}
             </>,
             price: `${amountNominal}`,
-            expiration: <span className="u-text-theme-gray-mid">{moment(dueDate).to(moment())}</span>,
+            expiration: <span className="u-text-theme-gray-mid">{moment().to(moment(dueDate))}</span>,
             from: <a href={`https://devnet-explorer.elrond.com/transactions/${txHash}`} target="_blank">{txDisplayName}</a>,
             key: `key-${index}`
         })
@@ -1157,15 +1155,41 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                 <span className="c-accordion_trigger_icon">
                                                     <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.faClock} />
                                                 </span>
-                                                <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                    {
-                                                        isAuctionOngoing ? <> Sale ends {auctionDeadlineTitle.format("MMM Do, YYYY HH:mm")} </> : "Sale has ended"
-                                                    }
 
-                                                </p>
+
+
+                                                {
+                                                    !isAuctionOngoing && <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">Sale has ended</p>
+                                                }
+
+                                                {
+                                                    isAuctionOngoing &&
+                                                    <div className="w-full">
+                                                        {/* <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                            Auction time left: {moment(auctionStartTime).to(moment(auctionDeadline))}
+                                                        </p> */}
+                                                        {auctionDeadline &&
+                                                            <>
+                                                                <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                                    Sale starts {auctionStartTimeTitle.format("MMM Do, YYYY HH:mm")}
+                                                                </p>
+                                                                {/* <hr className="my-2" /> */}
+                                                            </>
+                                                        }
+                                                        <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                            Sale ends {auctionDeadlineTitle.format("MMM Do, YYYY HH:mm")}
+                                                        </p>
+                                                    </div>
+
+                                                }
+
                                             </div>
                                             :
-                                            <div className="c-accordion_trigger"></div>
+                                            <div className="c-accordion_trigger">
+                                                <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                    Fixed price
+                                                </p>
+                                            </div>
 
                                     }>
 
@@ -1173,12 +1197,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                         {
                                             isOnSale &&
-                                            <> <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                {onSaleText}
-                                            </p>
+                                            <>
+                                                <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                    {onSaleText}
+                                                </p>
                                                 <p className="u-margin-bottom-spacing-3">
-
-                                                    {/* <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.facoin} /> {` `} */}
 
                                                     <span className="u-regular-heading u-text-bold u-text-theme-gray-light">
                                                         {tokenPrice} {' '}
@@ -1189,6 +1212,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                     <span className="u-text-theme-gray-mid">
                                                         (${priceTokenDollarsFixed})
                                                     </span>
+
                                                 </p>
                                             </>
                                         }
@@ -1208,7 +1232,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                         }
 
                                         {
-                                            (isOnSale && isCurrentTokenOwner) &&
+                                            (isOnSale && isCurrentTokenOwner && !(!isAuctionOngoing && hasBidderWinner)) &&
                                             <button onClick={actionsHandlers[WITHDRAW]} className="c-button c-button--primary u-margin-right-spacing-2">
                                                 <span className="u-padding-right-spacing-2">
                                                     <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
@@ -1233,7 +1257,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                         }
 
                                         {
-                                            (isOnSale && !isCurrentTokenOwner && isAuctionOngoing) &&
+                                            (isOnSale && !isCurrentTokenOwner) &&
                                             <div>
 
                                                 {
@@ -1248,7 +1272,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                 }
 
                                                 {
-                                                    isAuction &&
+                                                    (isAuction && isAuctionOngoing) &&
                                                     <Popup
                                                         modal
                                                         className="c-modal_container"
@@ -1298,56 +1322,57 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                                 }
 
+                                                {
+                                                    !(isAuction && hasBidderWinner) &&
+                                                    <Popup
+                                                        modal
+                                                        className="c-modal_container"
+                                                        trigger={
+                                                            <button className="c-button  c-button--secondary u-margin-top-spacing-2">
+                                                                <span className="u-padding-right-spacing-2">
+                                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faTag} />
+                                                                </span>
+                                                                <span>
+                                                                    Make offer
+                                                                </span>
+                                                            </button>
+                                                        }
+                                                    >
+                                                        {(close: any) => (
+                                                            <div className="c-modal rounded-2xl">
 
-                                                <Popup
-                                                    modal
-                                                    className="c-modal_container"
-                                                    trigger={
-                                                        <button className="c-button  c-button--secondary u-margin-top-spacing-2">
-                                                            <span className="u-padding-right-spacing-2">
-                                                                <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faTag} />
-                                                            </span>
-                                                            <span>
-                                                                Make offer
-                                                            </span>
-                                                        </button>
-                                                    }
-                                                >
-                                                    {(close: any) => (
-                                                        <div className="c-modal rounded-2xl">
+                                                                <div className="text-right px-10">
+                                                                    <button className="c-modal_close text-4xl" onClick={close}>
+                                                                        &times;
+                                                                    </button>
+                                                                </div>
 
-                                                            <div className="text-right px-10">
-                                                                <button className="c-modal_close text-4xl" onClick={close}>
-                                                                    &times;
-                                                                </button>
-                                                            </div>
+                                                                <div className="c-modal_header text-2xl  pb-6 "> Make an offer </div>
+                                                                <div className="c-modal_content">
 
-                                                            <div className="c-modal_header text-2xl  pb-6 "> Make an offer </div>
-                                                            <div className="c-modal_content">
+                                                                    <div className="px-10 pt-8">
 
-                                                                <div className="px-10 pt-8">
-
-                                                                    <input onChange={(e: any) => { setExpireOffer(e.target.value); }} placeholder="seconds" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
-                                                                    <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Offer amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                                        <input onChange={(e: any) => { setExpireOffer(e.target.value); }} placeholder="seconds" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                                        <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Offer amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
 
-                                                                    <div className="text-center">
-                                                                        <button onClick={actionsHandlers[MAKE_OFFER]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                                        <div className="text-center">
+                                                                            <button onClick={actionsHandlers[MAKE_OFFER]} className="c-button c-button--primary u-margin-right-spacing-2">
 
-                                                                            <span>
-                                                                                Send Offer
-                                                                            </span>
-                                                                        </button>
+                                                                                <span>
+                                                                                    Send Offer
+                                                                                </span>
+                                                                            </button>
+
+                                                                        </div>
 
                                                                     </div>
 
                                                                 </div>
-
                                                             </div>
-                                                        </div>
-                                                    )}
-                                                </Popup>
-
+                                                        )}
+                                                    </Popup>
+                                                }
                                             </div>
                                         }
 
@@ -1468,19 +1493,24 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                     <div className="c-accordion_content" >
 
-                                        {/* <div className="py-10">
 
-            <p className="u-tac u-margin-bottom-spacing-4">
+                                        {mapBidsTableData ?
 
-                <FontAwesomeIcon size="3x" className="u-text-theme-gray-mid" icon={faIcons.faSearchMinus} />
+                                            <Table className="c-table" rowClassName="c-table_row" columns={bidsTableColumns} data={mapBidsTableData} />
 
-            </p>
+                                            : <div className="py-10">
 
-            <p className="u-text-small u-tac u-text-theme-gray-mid">No offers yet</p>
+                                                <p className="u-tac u-margin-bottom-spacing-4">
 
-        </div> */}
+                                                    <FontAwesomeIcon size="3x" className="u-text-theme-gray-mid" icon={faIcons.faSearchMinus} />
 
-                                        <Table className="c-table" rowClassName="c-table_row" columns={bidsTableColumns} data={mapBidsTableData} />
+                                                </p>
+
+                                                <p className="u-text-small u-tac u-text-theme-gray-mid">No bids yet</p>
+
+                                            </div>
+                                        }
+
 
                                     </div>
 
@@ -1510,26 +1540,41 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                     <div className="c-accordion_content h-96" >
 
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart
-                                                width={500}
-                                                height={300}
-                                                data={chartData}
-                                                margin={{
-                                                    top: 5,
-                                                    right: 30,
-                                                    left: 20,
-                                                    bottom: 5,
-                                                }}
-                                            >
-                                                <XAxis dy={15} dataKey="name" />
-                                                <YAxis dx={-15} interval={0} />
-                                                <Tooltip />
-                                                <CartesianGrid vertical={false} stroke="#000" />
+                                        {chartData ?
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart
+                                                    width={500}
+                                                    height={300}
+                                                    data={chartData}
+                                                    margin={{
+                                                        top: 5,
+                                                        right: 30,
+                                                        left: 20,
+                                                        bottom: 5,
+                                                    }}
+                                                >
+                                                    <XAxis dy={15} dataKey="name" />
+                                                    <YAxis dx={-15} interval={0} />
+                                                    <Tooltip labelStyle={{ backgroundColor: "transparent" }} />
+                                                    <CartesianGrid vertical={false} stroke="#000" />
 
-                                                <Line type="monotone" dataKey="pv" stroke="#2081e2" strokeWidth={3} activeDot={{ r: 8 }} />
-                                            </LineChart>
-                                        </ResponsiveContainer>
+                                                    <Line type="monotone" dataKey="pv" stroke="#2081e2" strokeWidth={3} activeDot={{ r: 8 }} />
+
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                            : <div className="py-10">
+
+                                                <p className="u-tac u-margin-bottom-spacing-4">
+
+                                                    <FontAwesomeIcon size="3x" className="u-text-theme-gray-mid" icon={faIcons.faSearchMinus} />
+
+                                                </p>
+
+                                                <p className="u-text-small u-tac u-text-theme-gray-mid">No bids yet</p>
+
+                                            </div>
+
+                                        }
 
                                     </div>
 

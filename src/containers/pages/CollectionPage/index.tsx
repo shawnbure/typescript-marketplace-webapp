@@ -161,13 +161,6 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                             </Link>
 
                         </div>
-
-                        <div className="c-icon-band_item">
-
-                            <Link className="inline-block" to={`/collection/${collectionId}/payout`}>
-                                <FontAwesomeIcon className="text-white" style={{ width: 25, height: 25, margin: "10px 15px" }} icon={faIcons.faCrown} />
-                            </Link>
-                        </div>
                     </div>
 
                     <h2 className="text-5xl u-text-bold mb-2">

@@ -24,7 +24,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
     const [getAccountRequestTrigger, {
         data: accountData,
         isLoading: isLoadingGetAccountRequest,
-        isUninitialized: isUninitializedGetAccountRequest  }] = useGetAccountMutation();
+        isUninitialized: isUninitializedGetAccountRequest }] = useGetAccountMutation();
 
     const [getAccountTokensRequestTrigger, {
         data: accountTokensData,
@@ -114,7 +114,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
     useEffect(() => {
 
         getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
-        
+
     }, []);
 
     const mapCollections = () => {
@@ -173,9 +173,11 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
             const { collection, token } = tokenData;
             const { collectionName } = collection;
-            const { imageLink, tokenName, tokenId, nonce } = token;
+            const { imageLink, tokenName, tokenId, nonce, state, priceNominal } = token;
+            const icon = (state as string).toLocaleLowerCase() === "list" ? faIcons.faList : faIcons.faGavel;
 
             return (
+
                 <div className="col-span-3 mr-8 mb-8">
 
                     <Link to={`/token/${tokenId}/${nonce}`}>
@@ -205,6 +207,18 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                 </div>
 
+                                <div className="c-card_price">
+                                    
+                                    <p className="text-sm">
+                                        {priceNominal}
+                                    </p>
+
+                                    <p className="text-xs">
+                                        <FontAwesomeIcon className="text-gray-500 mr-1" icon={icon} />
+                                        <span className="text-gray-500 u-text-bold">{state}</span>
+                                    </p>
+                                </div>
+
                             </div>
 
                         </div>
@@ -212,6 +226,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                     </Link>
 
                 </div>
+
             )
 
         })
@@ -272,10 +287,6 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     };
 
-    const dateOptions: any = { year: 'numeric', month: 'long', };
-    const joinnedDate: Date = new Date(accountData?.data.createdAt * 1000);
-    const joinedDateFormated: string = joinnedDate.toLocaleDateString("en-US", dateOptions);
-
     const getMoreUnlistedTokens = async () => {
 
         const { hasFetchedNewData } = await getOffsetToLimit(getAccountGatewayRequestTrigger, unlistedNfts.length, 20, unlistedNfts, setUnlistedNfts, "gateway");
@@ -291,6 +302,10 @@ export const ProfilePage: (props: any) => any = ({ }) => {
         setLoadMoreOnSale(hasFetchedNewData);
 
     };
+
+    const dateOptions: any = { year: 'numeric', month: 'long', };
+    const joinnedDate: Date = new Date(accountData?.data.createdAt * 1000);
+    const joinedDateFormated: string = joinnedDate.toLocaleDateString("en-US", dateOptions);
 
     return (
 
@@ -311,8 +326,8 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                 <div className="col-span-12 text-center mb-6">
 
+                    <div className="c-icon-band mb-6">
 
-                    {<div className="c-icon-band">
                         <div className="c-icon-band_item">
 
                             <Link className="inline-block" to={`./account/settings`}>
@@ -320,7 +335,14 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                             </Link>
 
                         </div>
-                    </div>}
+
+                        <div className="c-icon-band_item">
+
+                            <Link className="inline-block" to={`/royalties`}>
+                                <FontAwesomeIcon className="text-white" style={{ width: 25, height: 25, margin: "10px 15px" }} icon={faIcons.faCrown} />
+                            </Link>
+                        </div>
+                    </div>
 
                     <h2 className="u-regular-heading u-text-bold">
                         {
@@ -453,9 +475,9 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                 onOpening={() => {
 
                                     if (isUninitializedAccountGatewayRequest) {
-                                     
+
                                         getMoreUnlistedTokens();
-                                    
+
                                     }
 
                                 }}

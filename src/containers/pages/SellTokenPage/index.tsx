@@ -2,7 +2,7 @@ import Popup from 'reactjs-popup';
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import Collapsible from 'react-collapsible';
-import { useLocation, Link, useParams, useHistory } from "react-router-dom";
+import { Redirect, Link, useParams, useHistory } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrands from '@fortawesome/free-brands-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
@@ -18,6 +18,7 @@ import { shorterAddress } from "utils";
 import { BUY } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
+import { routePaths } from 'constants/router';
 
 
 export const SellTokenPage: (props: any) => any = ({ }) => {
@@ -83,6 +84,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     }] = useGetCollectionByIdMutation();
 
+    const shouldRedirectHome: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
 
     useEffect(() => {
 
@@ -94,11 +96,22 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     }, []);
 
 
+    // gatewayTokenData?.data?.tokenData?.creator
+
     if (isErrorGatewayTokenDataQuery || Boolean(gatewayTokenData?.error)) {
 
         history.replace(`/`);
 
     }
+
+
+    if (shouldRedirectHome) {
+
+        return (
+            <Redirect to={routePaths.home} />
+        );
+
+    };
 
 
     if (!shouldRenderPage) {
@@ -293,7 +306,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                                             <FontAwesomeIcon className="text-2xl mb-3" icon={faIcons.faClock} />
 
                                             <span className="u-text-bold">
-                                                Auction
+                                                Timed Auction
                                             </span>
 
                                         </div>

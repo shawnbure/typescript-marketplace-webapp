@@ -1,11 +1,13 @@
 export const routePaths = {
+    
     home: "/",
     login: "/login",
     ledger: "/ledger",
-    walletconnect: "/walletconnect",
-    marketplace: '/marketplace',
     create: '/create',
     account: '/account',
+    royalties: "/royalties",
+    marketplace: '/marketplace',
+    walletconnect: "/walletconnect",
     profile: '/profile/:walletAddress',
     accountSettings: '/account/settings',
     collectionCreate: "/collection/create",
@@ -16,5 +18,3 @@ export const routePaths = {
     unlistedToken: "/token/:walletAddress/:collectionId/:tokenNonce",
 
 };
-
-
