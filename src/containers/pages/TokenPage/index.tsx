@@ -356,7 +356,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
             pv: priceNominal,
         });
 
-    });
+    }).reverse();
 
 
 
@@ -1021,6 +1021,24 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             </p>
                                         }
 
+                                        {metadataLink &&
+                                            <p className="flex justify-between u-text-small my-3">
+
+                                                <span className="u-text-theme-gray-light">
+                                                    Metadata
+                                                </span>
+
+                                                <span className="u-text-theme-anchor-link">
+
+                                                    <a href={metadataLink} target="_blank">
+                                                        <FontAwesomeIcon style={{ width: 20, height: 20, margin: "10px 15px 5px 15px", cursor: "pointer" }} className="inline-block " icon={faIcons.faExternalLinkAlt} />
+                                                    </a>
+
+                                                </span>
+
+                                            </p>
+                                        }
+
                                         <p className="flex justify-between u-text-small my-3">
 
                                             <span className="u-text-theme-gray-light">
@@ -1056,14 +1074,14 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                         <li onClick={() => { refreshMetadataTrigger({ collectionId, tokenNonce }) }} className="c-icon-band_item text-gray-500 hover:text-gray-300 cursor-pointer">
 
-                                            <FontAwesomeIcon  style={{ width: 20, height: 20, margin: "10px 15px 5px 15px", cursor: "pointer"}}  className="inline-block " icon={faIcons.faRedoAlt} />
+                                            <FontAwesomeIcon style={{ width: 20, height: 20, margin: "10px 15px 5px 15px", cursor: "pointer" }} className="inline-block " icon={faIcons.faRedoAlt} />
 
                                         </li>
 
                                     </ul>
                                 </div>
 
-                                
+
 
 
 

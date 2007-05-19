@@ -154,7 +154,7 @@ export const tokensApi = createApi({
 
             query: ({ metadataLink }): FetchArgs => {
 
-                const metadataUrlEncode = encodeURIComponent(metadataLink);
+                const metadataUrlEncode = encodeURIComponent(metadataLink.replace(/\s+/g, ''));
             
                 const customRequestArg: FetchArgs = {
 
