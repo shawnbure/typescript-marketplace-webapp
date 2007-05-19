@@ -465,7 +465,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
             </>,
             price: `${amountNominal}`,
             expiration: <span className="u-text-theme-gray-mid">{moment().to(moment(dueDate))}</span>,
-            from: <a href={`https://devnet-explorer.elrond.com/transactions/${txHash}`} target="_blank">{txDisplayName}</a>,
+            from: <a href={`https://explorer.elrond.com/transactions/${txHash}`} target="_blank">{txDisplayName}</a>,
             key: `key-${index}`
         })
 
@@ -498,7 +498,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
         return ({
             event: event,
             price: `${priceNominal}`,
-            date: <a href={`https://devnet-explorer.elrond.com/transactions/${hash}`} target="_blank">
+            date: <a href={`https://explorer.elrond.com/transactions/${hash}`} target="_blank">
                 <span className="inline-block mr-2 u-text-theme-blue-anchor">{moment().to(moment(timestamp * 1000))}</span>
                 <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
             </a>,
@@ -521,7 +521,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
         return ({
             price: `${bidAmountNominal}`,
             date: <span className="u-text-theme-gray-mid">{moment().to(moment(timestamp * 1000))}</span>,
-            from: <a href={`https://devnet-explorer.elrond.com/transactions/${txHash}`} target="_blank">{txDisplayName}</a>,
+            from: <a href={`https://explorer.elrond.com/transactions/${txHash}`} target="_blank">{txDisplayName}</a>,
             key: `key-${index}`
         })
 
@@ -576,7 +576,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
         return ({
             event: event,
             price: priceNominal,
-            date: <a href={`https://devnet-explorer.elrond.com/transactions/${hash}`} target="_blank">
+            date: <a href={`https://explorer.elrond.com/transactions/${hash}`} target="_blank">
                 <span className="inline-block mr-2 u-text-theme-blue-anchor">{moment().to(moment(timestamp * 1000))}</span>
                 <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
             </a>,
