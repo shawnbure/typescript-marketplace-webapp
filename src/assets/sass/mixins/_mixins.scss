@@ -9,38 +9,77 @@
     }
 }
 
+@mixin block() {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+@mixin no-margin-on-last-child() {
+    & > * { // sass-lint:disable-line no-combinators no-universal-selectors
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
 @mixin lead-heading() {
-    line-height: $h1-line-height;
-    font-size: $h1-font-size;
+    line-height: $h1-line-height-mobile;
+    font-size: $h1-font-size-mobile;
+
+    @include respond-to(desktop) {
+        line-height: $h1-line-height-desktop;
+        font-size: $h1-font-size-desktop;
+    }
 }
 
 @mixin regular-heading($margin: true) {
-    line-height: $h2-line-height;
-    font-size: $h2-font-size;
+    line-height: $h2-line-height-mobile;
+    font-size: $h2-font-size-mobile;
 
     @if ($margin) {
-        margin-bottom: $spacing-point-4;
+        margin-bottom: $spacing-point-3;
+    }
+
+    @include respond-to(desktop) {
+        line-height: $h2-line-height-desktop;
+        font-size: $h2-font-size-desktop;
+        
+        @if ($margin) {
+            margin-bottom: $spacing-point-4;
+        } 
     }
 }
 
 @mixin medium-heading($margin: true) {
-    line-height: $h3-line-height;
-    font-size: $h3-font-size;
-
+    line-height: $h3-line-height-mobile;
+    font-size: $h3-font-size-mobile;
+    
     @if ($margin) {
-        margin-bottom: $spacing-point-4;
+        margin-bottom: $spacing-point-3;
+    }
+
+    @include respond-to(desktop) {
+        line-height: $h3-line-height-desktop;
+        font-size: $h3-font-size-desktop;
+
+        @if ($margin) {
+            margin-bottom: $spacing-point-4;
+        }
     }
 }
 
-
 @mixin small-heading() {
-    line-height: $h5-line-height;
-    font-size: $h5-font-size;
+    line-height: $h5-line-height-mobile;
+    font-size: $h5-font-size-mobile;
+
+    @include respond-to(desktop) {
+        line-height: $h5-line-height-desktop;
+        font-size: $h5-font-size-desktop;
+    }
 }
 
-
 @mixin standard-text($margin: true) {
-
     line-height: $base-font-line-height;
     font-size: $base-font-size;
 
@@ -48,22 +87,35 @@
         margin: 0 0 $base-font-margin-bottom;
     }
 
+    @include respond-to(desktop) {
+        line-height: $base-font-line-height-desktop;
+        font-size: $base-font-size-desktop;
+
+        @if ($margin) {
+            margin: 0 0 $base-font-margin-bottom-desktop;
+        }
+    }
 }
 
-
 @mixin lead-text($margin: true) {
-
     line-height: $lead-text-line-height;
     font-size: $lead-text-size;
-
+    
     @if ($margin) {
         margin: 0 0 $lead-text-margin-bottom;
     }
 
+    @include respond-to(desktop) {
+        line-height: $lead-text-line-height-desktop;
+        font-size: $lead-text-size-desktop;
+
+        @if ($margin) {
+            margin: 0 0 $lead-text-margin-bottom-desktop;
+        }
+    }
 }
 
 @mixin small-text($margin: true) {
-
     line-height: $small-text-line-height;
     font-size: $small-text-size;
 
@@ -71,10 +123,71 @@
         margin: 0 0 $small-text-margin-bottom;
     }
 
+    @include respond-to(desktop) {
+        line-height: $small-text-line-height-desktop;
+        font-size: $small-text-size-desktop;
+
+        @if ($margin) {
+            margin: 0 0 $small-text-margin-bottom-desktop;
+        }
+    }
 }
+
 
 @mixin visually-hidden() {
     position: absolute !important;
     left: -99999px;
     top: -99999px;
+}
+
+// Media queries
+
+@mixin respond-to($media) {
+    
+
+    
+
+    @if $media == mobile {
+        @media screen and (max-width: $break-point-mobile-max) {
+            @content;
+        }
+    }
+
+    @if $media == mobile-large {
+        @media screen and (min-width: $break-point-large-mobile) {
+            @content;
+        }
+    }
+
+    @if $media == tablet {
+        @media screen and (min-width: $break-point-tablet) {
+            @content;
+        }
+    }
+
+    @if $media == max-desktop {
+        @media screen and (max-width: $break-point-desktop) {
+            @content;
+        }
+    }
+
+    @if $media == max-large-desktop {
+        @media screen and (max-width: $break-point-large-desktop) {
+            @content;
+        }
+    }
+    
+    @if $media == desktop {
+        @media screen and (min-width: $break-point-desktop) {
+            @content;
+        }
+    }
+
+    @if $media == desktop-large {
+        @media screen and (min-width: $break-point-large-desktop) {
+            @content;
+        }
+    }
+
+    
 }

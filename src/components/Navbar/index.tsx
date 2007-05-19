@@ -51,7 +51,7 @@ export const Navbar = () => {
                     </li>
 
                     <li className="c-navbar_list-item" onClick={toggleShouldDisplayWalletSidebar}>
-                        <FontAwesomeIcon className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faUserCircle} />
                     </li>
 
 

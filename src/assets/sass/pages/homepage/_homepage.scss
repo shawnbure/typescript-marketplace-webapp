@@ -1,0 +1,32 @@
+.p-homepage {
+
+    // min-width: 100vw;
+    // min-height: 100vh;
+
+    // background-color: var(--t-background-color);
+
+    &_lead-background {
+
+        background-size: cover;
+        background-color: rgb(32, 34, 37);
+        background-position: center center;
+        opacity: 0.3;
+        filter: blur(8px);
+        -webkit-mask: linear-gradient(rgb(255, 255, 255), transparent);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        z-index: 4;
+        background-image: url(https://lh3.googleusercontent.com/JNGtSjA2ESmes_Ut2USwkdfui6yQ0tGi6bUdBB-NN-W5RMtWv6Pig3cqtSckpssETYqMPrPKG7KoXO7bKNcTSXSnoByuPx8dDdFlzQ=s250);
+        
+    }
+
+    &_lead-container {
+
+        position: relative;
+        z-index: 8;
+
+    }
+
+}

@@ -1,0 +1,13 @@
+.c-button {
+
+    @extend %button;
+
+    &--primary {
+        @extend %button-primary;
+    }
+
+    &--secondary {
+        @extend %button-secondary;
+    }
+
+}

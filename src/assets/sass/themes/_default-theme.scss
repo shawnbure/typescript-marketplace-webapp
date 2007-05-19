@@ -22,6 +22,25 @@
 }
 
 
-$t-utility-themes: ('0': $black,
+$t-utility-themes: (
+    '0': $black,
     '1': $white,
+);
+
+
+$t-utility-spacing: (
+    "0": 0,
+    "1": $spacing-point-1,
+    "2": $spacing-point-2,
+    "3": $spacing-point-3,
+    "4": $spacing-point-4,
+    "5": $spacing-point-5,
+    "6": $spacing-point-6,
+    "7": $spacing-point-7,
+    "8": $spacing-point-8,
+    "9": $spacing-point-9,
+    "10": $spacing-point-10,
+    "11": $spacing-point-11,
+    "12": $spacing-point-12,
+    "13": $spacing-point-13,
 );

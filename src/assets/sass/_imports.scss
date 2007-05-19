@@ -1,23 +1,33 @@
-@import 'themes/elrondRequirements';
+// @import 'themes/elrondRequirements';
 
 @import 'variables/colors';
 @import 'variables/text';
 @import 'variables/dimensions';
+@import 'variables/break-points';
+
 @import 'mixins/mixins';
+
 @import 'typography/font';
 @import 'typography/basic';
-@import 'utils/utils';
+@import 'typography/typography';
+
+@import 'placeholders/buttons';
+
 @import 'themes/default-theme';
 
+@import 'utils/utils';
+@import 'utilities/utilities';
 
 @import 'modules/app/app';
+@import 'modules/grid/grid';
 @import 'modules/header/header';
 @import 'modules/footer/footer';
 @import 'modules/navbar/navbar';
+@import 'modules/button//button';
 @import 'modules/wallet-sidebar/wallet-sidebar';
 
 
-@import 'pages/homepage/homepage.scss';
+@import 'pages/homepage/_homepage.scss';
 
 
 

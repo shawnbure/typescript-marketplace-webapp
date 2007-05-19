@@ -35,7 +35,6 @@ html,
 body {
     height: 100%;
     @include font-family-regular;
-    overflow: hidden;
 }
 
 html {
@@ -44,7 +43,7 @@ html {
     -webkit-text-size-adjust: 100%;
     font-size: 16px;
     overflow-x: hidden;
-    color: var(--t-text-color);
+  
 }
 
 body {
@@ -55,9 +54,11 @@ body {
     margin: 0;
     padding: 0;
     -webkit-text-size-adjust: 100%;
+    background-color: var(--t-background-color-contrast);
 
     & * {
         
+        color: var(--t-text-color);
         // border-style: solid;
        
         // border-color: var(--t-border-color);
@@ -85,8 +86,14 @@ canvas {
     display: block;
 }
 
-svg title {
-    pointer-events: none;
+svg {
+
+    width: auto;
+
+    & title {
+        pointer-events: none;
+    }
+
 }
 
 a {
@@ -94,6 +101,7 @@ a {
     @include font-family-bold;
     text-decoration: underline;
     color: rgb(95, 95, 251);
+    margin: 0;
 }
 
 li {

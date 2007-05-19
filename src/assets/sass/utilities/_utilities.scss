@@ -1,0 +1,52 @@
+
+.u-visually-hidden {
+    position: absolute !important; // sass-lint:disable-line no-important
+    left: -99999px;
+    top: -99999px;
+}
+
+.u-hidden {
+    display: none !important; // sass-lint:disable-line no-important
+}
+
+.u-js-hidden {
+    display: none !important; // sass-lint:disable-line no-important
+}
+
+.u-no-decoration {
+    text-decoration: none;
+}
+
+//fonts
+.u-text-lead {
+    @include lead-text;
+}
+
+.u-text-standard {
+    @include standard-text;
+}
+
+.u-text-small {
+    @include small-text;
+}
+
+.u-heading-lead {
+    @include lead-heading;
+}
+
+
+.u-regular-heading {
+    @include regular-heading;
+}
+
+.u-text-bold {
+    @include font-family-bold;
+}
+
+.u-text-normal {
+    @include font-family-regular;
+}
+
+.u-relative {
+    position: relative;
+}

@@ -6,13 +6,15 @@
     background-color: $dark-blue;
     justify-content: space-between;
     padding: 0 $spacing-point-4;
+    position: -webkit-sticky;
     position: sticky;
+    top: 0;
 
     &_icon-link {
-        
+
         border: none;
         height: $spacing-point-4;
-        width: $spacing-point-4;
+        width: $spacing-point-4 !important;
         cursor: pointer;
 
     }
@@ -71,6 +73,7 @@
             @include font-family-bold;
             color: var(--t-text-color);
             text-decoration: none;
+            margin: 0;
 
             &:hover {
 

@@ -4,7 +4,7 @@
 
 export const ErdReqContainer: (Props: any) => any = ({children}) => {
   return (
-    <div>
+    <div className="p-elrond">
       {children}
     </div>
   );

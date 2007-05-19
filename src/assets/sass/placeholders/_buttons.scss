@@ -1,0 +1,66 @@
+$button-shadow-size: 4px;
+
+%button {
+
+    @include font-family-bold;
+    font-size: $base-font-size;
+    line-height: $base-font-line-height;
+    background-color: transparent;
+    border: 1px solid $black;
+    border-radius: 4px;
+    // box-shadow: 0 $button-shadow-size 0 $black;
+    box-sizing: border-box;
+    color: $white;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    width: auto;
+
+    margin-bottom: $spacing-point-3;
+    margin-right: $spacing-point-2;
+    padding: $spacing-point-1 $spacing-point-5;
+
+
+
+    @include respond-to(desktop) {
+
+        margin-bottom: $spacing-point-5;
+        margin-right: $spacing-point-4;
+        padding: $spacing-point-3 $spacing-point-7;
+
+        line-height: $base-font-line-height-desktop;
+        font-size: $base-font-size-desktop;
+
+    }
+
+}
+
+
+%button-primary {
+
+    @extend %button;
+    background-color: rgb(32, 129, 226);
+    border: 1px solid rgb(18, 68, 117);
+
+    &:hover {
+        color: $white;
+        background-color: rgb(38, 147, 255);
+    }
+
+}
+
+
+
+%button-secondary {
+
+    @extend %button;
+    background-color: rgb(53, 56, 64);
+    border: 1px solid rgb(21, 27, 34);
+
+    &:hover {
+        color: $white;
+        background-color:  rgb(82, 86, 99);
+    }
+
+}
