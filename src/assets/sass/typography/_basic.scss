@@ -35,6 +35,15 @@ html,
 body {
     height: 100%;
     @include font-family-regular;
+
+    // @include respond-to(table) {
+
+    //     & * {
+    //         margin: 0; height: 100%; overflow: hidden
+    //     }
+
+    // }
+
 }
 
 html {

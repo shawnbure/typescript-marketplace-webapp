@@ -145,17 +145,14 @@ export const HomePage = () => {
                                 <div className={`c-card c-card--homepage-feature`}>
 
                                     <div className="c-card_img-container">
-                                        <img src={'./img/collections/ergo-esse-natura/the-bird-catchers.jpg'} className="c-card_img" alt="" />
+                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_img" alt="" />
                                     </div>
 
                                     <div className="c-card_info">
-                                        <img src={'./img/collections/ergo-esse-natura/the-bird-catchers.jpg'} className="c-card_creator-avatar" alt="" />
+                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_creator-avatar" alt="" />
                                         <div className="c-card_details">
                                             <span className="c-card_title">
-                                                {'The Bird Catchers'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
-                                                {'Ergo esse natura'}
+                                                {'Chibi Ape'}
                                             </span>
                                         </div>
                                     </div>
@@ -258,184 +255,182 @@ export const HomePage = () => {
                     <div className="row row--standard-max">
 
 
-                        <div className="col-xs-12">
+                        {/* <div className="col-xs-12">
                             <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                 Collections launching exclusively on Erdsea
                             </h3>
-                        </div>
+                        </div> */}
 
                         <div className="col-xs-12 col-md-4">
-                            <div className="u-margin-tb-spacing-4">
-                                <div className={`c-card c-card--homepage-feature`}>
+                            <Link to={`/collection/CHUB-79b0da`}>
 
-                                    <div className="c-card_img-container">
-                                        <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                    </div>
+                                <div className="u-margin-tb-spacing-4">
+                                    <div className={`c-card c-card--homepage-feature`}>
 
-                                    <div className="c-card_info">
-                                        <img src={'./img/collections/kool-kitties/kool-kitties-promo-5.png'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            {/* <span className="c-card_title">
-                                                {'Kool Kitty #XYZ'}
-                                            </span> */}
-                                            <span className="c-card_collection-name">
-                                                {'Kool Kitties'}
-                                            </span>
+                                        <div className="c-card_img-container">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991988/CHUB-79b0da.profile.png'} className="c-card_img" alt="" />
+                                        </div>
+
+                                        <div className="c-card_info">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991999/CHUB-79b0da.cover.jpg'} className="c-card_creator-avatar" alt="" />
+                                            <div className="c-card_details">
+                                                <span className="c-card_collection-name">
+                                                    {'Chubby Frens'}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+
+                            </Link>
+
                         </div>
 
 
                         <div className="col-xs-12 col-md-4">
-                            <div className="u-margin-tb-spacing-4">
 
-                                <div className={`c-card c-card--homepage-feature`}>
 
-                                    <div className="c-card_img-container">
-                                        <img src={'./img/collections/erdpunks/erdpunks-promo-1.png'} className="c-card_img" alt="" />
-                                    </div>
+                            <Link to={`/collection/BEAUT-fd0e54`}>
+                                <div className="u-margin-tb-spacing-4">
 
-                                    <div className="c-card_info">
-                                        <img src={'./img/collections/erdpunks/erdpunks-promo-3.png'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            {/* <span className="c-card_title">
+                                    <div className={`c-card c-card--homepage-feature`}>
+
+                                        <div className="c-card_img-container">
+                                            <img src={'	https://res.cloudinary.com/deaezbrer/image/upload/v1637002869/BEAUT-fd0e54.profile.jpg'} className="c-card_img" alt="" />
+                                        </div>
+
+                                        <div className="c-card_info">
+                                            <img src={'	https://res.cloudinary.com/deaezbrer/image/upload/v1637002869/BEAUT-fd0e54.profile.jpg'} className="c-card_creator-avatar" alt="" />
+                                            <div className="c-card_details">
+                                                {/* <span className="c-card_title">
                                                 {'ErdPunk #XYZ'}
                                             </span> */}
-                                            <span className="c-card_collection-name">
-                                                {'ErdPunks'}
-                                            </span>
+                                                <span className="c-card_collection-name">
+                                                    {'Boss Beauty'}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
 
-                            </div>
+                            </Link>
                         </div>
 
 
                         <div className="col-xs-12 col-md-4">
-                            <div className="u-margin-tb-spacing-4">
-                                <div className={`c-card c-card--homepage-feature`}>
+                            <Link to={`/collection/COYO-ab83d0`}>
+                                <div className="u-margin-tb-spacing-4">
+                                    <div className={`c-card c-card--homepage-feature`}>
 
-                                    <div className="c-card_img-container">
-                                        <img src={'./img/collections/mini-robos/mini-robos-promo-1.png'} className="c-card_img" alt="" />
-                                    </div>
-
-                                    <div className="c-card_info">
-                                        <img src={'./img/carousel/8.png'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            {/* <span className="c-card_title">
-                                                {'Mini Robo #XYZ'}
-                                            </span> */}
-                                            <span className="c-card_collection-name">
-                                                {'Mini Robos'}
-                                            </span>
+                                        <div className="c-card_img-container">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991369/COYO-ab83d0.profile.png'} className="c-card_img" alt="" />
                                         </div>
+
+                                        <div className="c-card_info">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991369/COYO-ab83d0.profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <div className="c-card_details">
+
+                                                <span className="c-card_collection-name">
+                                                    {'Billy Coyote'}
+                                                </span>
+                                            </div>
+                                        </div>
+
                                     </div>
+
                                 </div>
 
-                            </div>
+                            </Link>
                         </div>
 
 
 
-
+                        
 
                         <div className="col-xs-12 col-md-4">
-                            <div className="u-margin-tb-spacing-4">
-                                <div className={`c-card c-card--homepage-feature`}>
 
-                                    <div className="c-card_img-container">
-                                        <img src={'./img/collections/duckerds/duckerds-promo-2.png'} className="c-card_img" alt="" />
-                                    </div>
+                            <Link to={`/collection/MATH-ca234a`}>
+                                <div className="u-margin-tb-spacing-4">
+                                    <div className={`c-card c-card--homepage-feature`}>
 
-                                    <div className="c-card_info">
-                                        <img src={'./img/carousel/17.png'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            {/* <span className="c-card_title">
+                                        <div className="c-card_img-container">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992667/MATH-ca234a.profile.png'} className="c-card_img" alt="" />
+                                        </div>
+
+                                        <div className="c-card_info">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992667/MATH-ca234a.profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <div className="c-card_details">
+                                                {/* <span className="c-card_title">
                                                 {'Duckerd #XYZ'}
                                             </span> */}
-                                            <span className="c-card_collection-name">
-                                                {'Duckerds'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        <div className="col-xs-12 col-md-4">
-                            <div className="u-margin-tb-spacing-4">
-                                <div className={`c-card c-card--homepage-feature`}>
-
-                                    <div className="c-card_img-container">
-                                        <img src={'./img/collections/pixel-ladies/pixel-ladies-promo-1.png'} className="c-card_img" alt="" />
-                                    </div>
-
-                                    <div className="c-card_info">
-                                        <img src={'./img/carousel/10.png'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            {/* <span className="c-card_title">
-                                                {'Pixel Lady #XYZ'}
-                                            </span> */}
-                                            <span className="c-card_collection-name">
-                                                {'Pixel Ladies'}
-                                            </span>
+                                                <span className="c-card_collection-name">
+                                                    {'Quick Maths'}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                            </div>
+                            </Link>
                         </div>
 
 
 
+
+
                         <div className="col-xs-12 col-md-4">
+
+                        <Link to={`/collection/CHIBI-81192c`}>
                             <div className="u-margin-tb-spacing-4">
 
                                 <div className={`c-card c-card--homepage-feature`}>
 
                                     <div className="c-card_img-container">
-                                        <img src={'./img/collections/moonkeyz/moonkeyz-promo-1.png'} className="c-card_img" alt="" />
+                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_img" alt="" />
                                     </div>
 
                                     <div className="c-card_info">
-                                        <img src={'./img/carousel/9.png'} className="c-card_creator-avatar" alt="" />
+                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_creator-avatar" alt="" />
                                         <div className="c-card_details">
                                             <span className="c-card_collection-name">
-                                                {'Moonkeyz'}
+                                                {'Chibi Ape'}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
+
+                            </Link>
                         </div>
 
-                        <div className="col-xs-12">
-                            <h3 className="u-margin-bottom-spacing-6 u-tac u-text-bold u-text-small">
-                                More collections will be announced until the Erdsea launch date
-                            </h3>
-                        </div>
-
-                        <div className="col-xs-12">
 
 
-                            <Swiper
-                                slidesPerView={3}
-                                loop={true}
-                                autoplay={{
-                                    "delay": 2000,
-                                    "disableOnInteraction": true
-                                }}
-                                className="">
-                                {mapCarouselImgHolders()}
-                            </Swiper>
+                        <div className="col-xs-12 col-md-4">
 
+                        <Link to={`/collection/GALAPE-000192`}>
+                            <div className="u-margin-tb-spacing-4">
+                                <div className={`c-card c-card--homepage-feature`}>
 
+                                    <div className="c-card_img-container">
+                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991573/GALAPE-000192.profile.png'} className="c-card_img" alt="" />
+                                    </div>
+
+                                    <div className="c-card_info">
+                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991573/GALAPE-000192.profile.png'} className="c-card_creator-avatar" alt="" />
+                                        <div className="c-card_details">
+                                            <span className="c-card_collection-name">
+                                                {'Galatic APE'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            </Link>
                         </div>
 
 

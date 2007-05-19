@@ -858,7 +858,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                     }>
 
-                                    <div className="c-accordion_content" >
+                                    <div className="c-accordion_content flex flex-wrap" >
 
 
                                         {tokenMetadataData?.data?.attributes?.map((attribute: any) => {
