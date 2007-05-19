@@ -35,7 +35,7 @@ export const Navbar = () => {
 
                 </div>
 
-                <ul className="c-navbar_list">
+                {/* <ul className="c-navbar_list">
 
                     <li className="c-navbar_list-item">
                         <Link to={routePaths.marketplace} className="c-navbar_list-link">
@@ -60,7 +60,7 @@ export const Navbar = () => {
                     </li>
 
 
-                </ul>
+                </ul> */}
 
             </div>
 

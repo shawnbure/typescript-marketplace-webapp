@@ -33,47 +33,6 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
-
-                        <Route path={routePaths.token} exact={true} >
-
-                            <TokenPage />
-
-                        </Route>
-
-                        <Route path={routePaths.login} exact={true}>
-
-
-                            <ErdReqContainer>
-
-                                <Dapp.Pages.Unlock
-                                    title={'Connect your wallet'}
-                                    ledgerRoute={routePaths.ledger}
-                                    callbackRoute={routePaths.home}
-                                    lead="Connect with one of our available wallet providers"
-                                    walletConnectRoute={routePaths.walletconnect}
-                                />
-                                
-                            </ErdReqContainer>
-
-                        </Route>
-
-                        <Route path={routePaths.walletconnect} exact={true}>
-
-                            <Dapp.Pages.WalletConnect
-                                title="Maiar Login"
-                                logoutRoute={routePaths.home}
-                                callbackRoute={routePaths.home}
-                                lead="Scan the QR code using Maiar"
-                            />
-
-                        </Route>
-
-                        <Route path={routePaths.ledger} exact={true}>
-
-                            <Dapp.Pages.Ledger callbackRoute={routePaths.home} />
-
-                        </Route>
-
                     </Switch>
 
                 </AuthWrapper>
