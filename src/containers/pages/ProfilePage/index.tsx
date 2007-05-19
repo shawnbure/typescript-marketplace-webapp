@@ -10,6 +10,11 @@ import { formatImgLink, shorterAddress } from "utils";
 import { useGetAccountCollectionsMutation, useGetAccountGatewayTokensMutation, useGetAccountMutation, useGetAccountTokensMutation } from "services/accounts";
 import { UrlParameters } from "./interfaces";
 import { routePaths } from "constants/router";
+import { Collapse } from "components";
+
+
+import * as faBrands from '@fortawesome/free-brands-svg-icons';
+
 
 export const ProfilePage: (props: any) => any = ({ }) => {
 
@@ -138,11 +143,11 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                 <img src={formatImgLink(profileImageLink)} className="c-card_img" alt="" />
                             </div>
 
-                            <div className="c-card_info justify-content-center">
+                            <div className="c-card_info h-48 justify-content-center">
 
-                                <div className="c-card_details">
+                                <div className="c-card_details ">
 
-                                    <p className="text-sm u-text-bold">
+                                    <p className="text-2xl u-text-bold">
                                         {name || tokenId}
                                     </p>
 
@@ -332,13 +337,13 @@ export const ProfilePage: (props: any) => any = ({ }) => {
             <div className="grid grid-cols-12">
 
                 <div className="col-span-12">
-                    <div className="bg-gray-800 w-full h-60">
+                    <div style={{ backgroundImage: `url(${accountData?.data?.coverImageLink})` }} className="bg-gray-800 w-full h-60 bg-cover bg-center">
 
                     </div>
                 </div>
 
                 <div className="col-span-12 flex justify-center mb-10 pb-16 relative">
-                    <div style={{ backgroundImage: `url(${accountData?.data.profileImageLink})` }} className="-bottom-1/4 absolute bg-yellow-700 border border-black h-40 rounded-circle w-40 bg-cover" >
+                    <div style={{ backgroundImage: `url(${accountData?.data?.profileImageLink})` }} className="-bottom-1/4 absolute bg-yellow-700 border border-black h-40 rounded-circle w-40 bg-cover" >
                     </div>
                 </div>
 
@@ -381,6 +386,49 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                             Joined {joinedDateFormated}
                         </p>
                     }
+
+
+                    <div className="mb-20">
+                        <Collapse>
+
+                            <div>
+                                <div className="my-6">
+
+                                    <ul className="c-icon-band text-gray-500">
+                                        {
+                                            accountData?.data?.website &&
+                                            <li className="c-icon-band_item">
+                                                <a href={accountData?.data?.website} target="_blank" className="c-icon-band_link">
+                                                    <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faIcons.faGlobe} />
+                                                </a>
+                                            </li>
+                                        }
+
+                                        {
+                                            accountData?.data?.twitterLink &&
+                                            <li className="c-icon-band_item">
+                                                <a href={`https://twitter.com/${accountData?.data?.twitterLink}`} target="_blank" className="c-icon-band_link">
+                                                    <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faTwitter} />
+                                                </a>
+                                            </li>
+                                        }
+
+                                        {
+                                            accountData?.data?.instagramLink &&
+                                            <li className="c-icon-band_item">
+                                                <a href={`https://instagram.com/${accountData?.data?.instagramLink}`} target="_blank" className="c-icon-band_link">
+                                                    <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faInstagram} />
+                                                </a>
+                                            </li>
+                                        }
+
+                                    </ul>
+
+                                </div>
+                                <div className="text-gray-400">{accountData?.data?.description}</div>
+                            </div>
+                        </Collapse>
+                    </div>
 
                 </div>
 
