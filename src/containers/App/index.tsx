@@ -8,14 +8,14 @@ import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
 import { TokenPage, HomePage} from 'containers/pages';
-import { DARK } from 'constants/ui';
+import { DARK, LIGHT } from 'constants/ui';
 
 
 export const App: () => JSX.Element = () => {
 
     const theme = useAppSelector(selectTheme);
-    const isDarkThemeSelected: boolean = theme === DARK;
-    const generatedClasses: any = classNames('c-app', { 'dark-theme': isDarkThemeSelected });
+    const isLightThemeSelected: boolean = theme === LIGHT;
+    const generatedClasses: any = classNames('c-app', { 'light-theme': isLightThemeSelected });
 
     return (
 
@@ -40,16 +40,16 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
-                        <Route path={routePaths.unlock} exact={true}>
+                        <Route path={routePaths.login} exact={true}>
 
 
                             <ErdReqContainer>
 
                                 <Dapp.Pages.Unlock
-                                    title={config.dAppName}
+                                    title={'Connect your wallet'}
                                     ledgerRoute={routePaths.ledger}
                                     callbackRoute={routePaths.home}
-                                    lead="Please select your login method:"
+                                    lead="Connect with one of our available wallet providers"
                                     walletConnectRoute={routePaths.walletconnect}
                                 />
                                 

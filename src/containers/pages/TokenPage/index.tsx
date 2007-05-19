@@ -428,7 +428,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                         <div className="c-accordion_trigger">
                                             <span className="c-accordion_trigger_icon">
-                                                <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faTags} />
+                                                <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faList} />
                                             </span>
                                             <span className="c-accordion_trigger_title">
                                                 Offers

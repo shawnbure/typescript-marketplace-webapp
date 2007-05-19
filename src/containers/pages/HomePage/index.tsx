@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 
 
-import { Card, Footer} from 'components/index';
+import { Card, Footer } from 'components/index';
 
 export const HomePage = () => {
 
@@ -19,7 +19,7 @@ export const HomePage = () => {
                 <div className="p-homepage_lead-container col-xs-11 col-md-10">
 
 
-                    <div className="row row--standard-max">
+                    <div className="row row--standard-max u-margin-bottom-spacing-10">
 
                         <div className="col-xs-12 col-md-6">
 
@@ -43,7 +43,7 @@ export const HomePage = () => {
                                 </div>
 
                                 <p className="u-margin-bottom-spacing-10">
-                                    
+
                                     <Link className="c-button c-button--primary u-margin-right-spacing-4" to="#">Explore</Link>
                                     <Link className="c-button  c-button--secondary" to="#">Create</Link>
 
@@ -59,6 +59,62 @@ export const HomePage = () => {
 
                         <div className="col-xs-12 col-md-6">
                             <div className="u-margin-top-spacing-9">
+                                <Card
+                                    classNames={'c-card--homepage-feature'}
+                                    title={'Titan Speciak'}
+                                    mediaSrcPath={'./img/mock/token-img.png'}
+                                    creatorAvatarSrcPath={'./img/mock/creator-avatar.png'}
+                                    collectionName={'Giant Titans'}
+                                    collectionLink={'/gigants'}
+                                    cardLinkTarget={'/token/WAMEN-083b50/1'}
+                                />
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div className="row row--standard-max">
+
+
+                        <div className="col-xs-12">
+                            <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                Featured collections
+                            </h3>
+                        </div>
+
+                        <div className="col-xs-12 col-md-4">
+                            <div className="u-margin-tb-spacing-4">
+                                <Card
+                                    classNames={'c-card--homepage-feature'}
+                                    title={'Titan Speciak'}
+                                    mediaSrcPath={'./img/mock/token-img.png'}
+                                    creatorAvatarSrcPath={'./img/mock/creator-avatar.png'}
+                                    collectionName={'Giant Titans'}
+                                    collectionLink={'/gigants'}
+                                    cardLinkTarget={'/token/WAMEN-083b50/1'}
+                                />
+                            </div>
+                        </div>
+
+
+                        <div className="col-xs-12 col-md-4">
+                            <div className="u-margin-tb-spacing-4">
+                                <Card
+                                    classNames={'c-card--homepage-feature'}
+                                    title={'Titan Speciak'}
+                                    mediaSrcPath={'./img/mock/token-img.png'}
+                                    creatorAvatarSrcPath={'./img/mock/creator-avatar.png'}
+                                    collectionName={'Giant Titans'}
+                                    collectionLink={'/gigants'}
+                                    cardLinkTarget={'/token/WAMEN-083b50/1'}
+                                />
+                            </div>
+                        </div>
+
+
+                        <div className="col-xs-12 col-md-4">
+                            <div className="u-margin-tb-spacing-4">
                                 <Card
                                     classNames={'c-card--homepage-feature'}
                                     title={'Titan Speciak'}

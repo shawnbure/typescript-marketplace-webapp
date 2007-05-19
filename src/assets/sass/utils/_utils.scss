@@ -23,6 +23,14 @@
 
     }
 
+    
+    .u-margin-tb-spacing-#{$number} {
+
+        padding-top: $spaceing;
+        padding-bottom: $spaceing;
+
+    }
+
     .u-border-radius-#{$number} {
         border-radius: $spaceing;
     }

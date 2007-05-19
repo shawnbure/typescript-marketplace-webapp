@@ -1,7 +1,7 @@
 export const routePaths = {
     home: "/",
     token: "/token/:collectionId/:tokenNonce",
-    unlock: "/unlock",
+    login: "/login",
     ledger: "/ledger",
     walletconnect: "/walletconnect",
     marketplace: './marketplace'

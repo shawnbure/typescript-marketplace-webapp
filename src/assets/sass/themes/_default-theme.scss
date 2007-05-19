@@ -1,25 +1,28 @@
 :root {
 
-    --t-text-color: #{$black};
-    --t-border-color: #{$black};
-    --t-background-color: #{$white};
-    --t-background-color-contrast:#{$gray};
+ 
 
-    --t-text-color-rgb: #{$black-rgb};
 
     --t-link-color: #{$link-color};
     --t-link-color-hover: #{$link-color-hover};
 
-}
 
-.dark-theme {
-
+    
     --t-text-color: #{$gray-light-text};
     --t-border-color: #{$white};
     --t-background-color: #{$gray};
-
     --t-text-color-rgb: #{$white-rgb};
+    --t-background-color-contrast:#{$gray};
 
+
+}
+
+.light-theme {
+
+    --t-text-color: #{$black};
+    --t-border-color: #{$black};
+    --t-background-color: #{$white};
+    --t-text-color-rgb: #{$black-rgb};
 
 
 }
