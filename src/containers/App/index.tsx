@@ -20,6 +20,7 @@ import { createVerifiedPayload } from 'utils';
 import { useGetAccessTokenMutation } from 'services/auth';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setJWT } from 'redux/slices/user';
+import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
 
 
 export const App: () => JSX.Element = () => {
@@ -32,25 +33,9 @@ export const App: () => JSX.Element = () => {
 
     const location = useLocation();
 
-    const [ getAccessTokenRequestTrigger, ] = useGetAccessTokenMutation();
-
-
-    // useEffect(() => {
-
-
-    //     console.log(123);
-
-    //     return () => {
-
-    //         window.scrollTo(0, 0);
-
-    //     };
-
-    // }, [pathname]);
-
+    const [getAccessTokenRequestTrigger,] = useGetAccessTokenMutation();
 
     const getJWT = async () => {
-
 
         const address = new URLSearchParams(location.search).get('address');
         const signature = new URLSearchParams(location.search).get('signature');
@@ -64,21 +49,25 @@ export const App: () => JSX.Element = () => {
         const verifiedPayload: any = createVerifiedPayload(address, loginToken, signature, data);
         const accessResult: any = await getAccessTokenRequestTrigger(verifiedPayload);
 
-        if(!accessResult.data) {
+        if (!accessResult.data) {
             return;
         }
-        
-        const jtwData = accessResult.data
-        
+
+        const { data: jtwData } = accessResult;
+
         dispatch(setJWT(jtwData.data));
 
-    }
+        localStorage.setItem("_e_", JSON.stringify(jtwData.data));
+
+    };
 
 
     useEffect(() => {
 
-        if(location) {
+        if (location) {
+
             getJWT();
+
         }
 
 
@@ -100,16 +89,32 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
+                        <Route path={routePaths.sellToken} exact={true} >
 
-                        <Route path={routePaths.token} exact={true} >
+                            <AuthProtected>
+                                <SellTokenPage />
+                            </AuthProtected>
+
+                        </Route>
+
+                        <Route path={[routePaths.token, routePaths.unlistedToken]} exact={true} >
 
                             <TokenPage />
 
                         </Route>
 
+
                         <Route path={routePaths.create} exact={true} >
 
                             <CreatePage />
+
+                        </Route>
+
+                        <Route path={routePaths.collectionCreate} exact={true} >
+
+                            <AuthProtected>
+                                <CreateCollectionPage />
+                            </AuthProtected>
 
                         </Route>
 
@@ -119,15 +124,7 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
-                        <Route path={routePaths.sellToken} exact={true} >
-
-                            <AuthProtected>
-                                <SellTokenPage />
-                            </AuthProtected>
-
-                        </Route>
-
-                        <Route path={routePaths.account} exact={true} >
+                        <Route path={[routePaths.account, routePaths.profile]} exact={true} >
 
                             <AuthProtected>
                                 <ProfilePage />
@@ -143,13 +140,16 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
-
                         <Route path={routePaths.collectionEdit} exact={true} >
 
                             <AuthProtected>
                                 <CollectionEditPage />
                             </AuthProtected>
 
+                        </Route>
+
+                        <Route path="*">
+                            <HomePage />
                         </Route>
 
                     </Switch>

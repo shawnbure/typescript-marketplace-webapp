@@ -4,7 +4,7 @@ import { reduxBatch } from '@manaflair/redux-batch';
 import logger from 'redux-logger';
 
 import { rootReducer } from 'redux/slices';
-import { txTemplateApi, tokensApi, authApi, oracleApi, collectionsApi, accountsApi} from 'services/index';
+import { txTemplateApi, tokensApi, authApi, oracleApi, collectionsApi, accountsApi, depositApi} from 'services/index';
 
 const store = configureStore({
     reducer: rootReducer,
@@ -14,6 +14,7 @@ const store = configureStore({
             .concat(authApi.middleware)
             .concat(oracleApi.middleware)
             .concat(tokensApi.middleware)
+            .concat(depositApi.middleware)
             .concat(accountsApi.middleware)
             .concat(txTemplateApi.middleware)
             .concat(collectionsApi.middleware),

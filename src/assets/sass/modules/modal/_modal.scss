@@ -1,3 +1,8 @@
+.popup-content { 
+    background-color: transparent;
+    border: none;
+}
+
 .c-modal {
 
     $self: &;
@@ -23,7 +28,7 @@
 
     &_header {
         width: 100%;
-        border-bottom: 1px solid $black;
+        // border-bottom: 1px solid $black;
         // font-size: 18px;
         // padding-bottom: $spacing-point-3;
         text-align: center;
@@ -56,6 +61,8 @@
     }
 
     &_content-group {
+
+        background-color: transparent;
 
         margin: $spacing-point-4 0;
 
@@ -123,3 +130,4 @@
     
     }
 }
+

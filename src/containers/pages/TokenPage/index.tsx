@@ -3,53 +3,87 @@ import Table from 'rc-table';
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import Collapsible from 'react-collapsible';
-import { useLocation, Link, useParams } from "react-router-dom";
+import { useLocation, Link, useParams, Redirect } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrands from '@fortawesome/free-brands-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+import moment from 'moment';
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useGetBuyNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenDataQuery, useLazyGetTokenDataQuery } from "services/tokens";
+import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation } from 'services/tx-template';
+import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenOffersMutation, } from "services/tokens";
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
 import { shorterAddress } from "utils";
-import { BUY, SELL } from "constants/actions";
+import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW } from "constants/actions";
 import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
-
-
+import { useGetAccountTokenGatewayMutation } from 'services/accounts';
+import { useGetCollectionByIdMutation } from 'services/collections';
+import { routePaths } from 'constants/router';
 
 export const TokenPage: (props: any) => any = ({ }) => {
 
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const { collectionId, tokenNonce } = useParams<UrlParameters>();
+    const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
 
+    const [offerAmount, setOfferAmount] = useState<number>(0);
+    const [expireOffer, setExpireOffer] = useState<number>(9999999999);
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
 
     const {
         loggedIn,
         address: userWalletAddress,
-        account: {
-            address: userAccountAddress
-        }
     } = Dapp.useContext();
 
     const sendTransaction = Dapp.useSendTransaction();
 
+    const [getAccountTokenTrigger, {
+
+        data: gatewayTokenData,
+        isLoading: isLoadingGatewayTokenDataQuery,
+        isSuccess: isSuccessGatewayTokenDataQuery,
+        isError: isErrorGatewayTokenDataQuery,
+        isUninitialized: isUninitializedGatewayTokenDataQuery,  
+        
+
+    }] = useGetAccountTokenGatewayMutation();
+
+
+    const [getCollectionByIdTrigger, {
+        data: collectionData
+    }] = useGetCollectionByIdMutation();
+
 
     const [getTokenDataTrigger, {
-        data: tokenResponse,
+
+        data: tokenResponseData,
         isError: isErrorGetTokenDataQuery,
         isSuccess: isSuccessGetTokenDataQuery,
-        isLoading: isLoadingGetTokenDataQuery,
-        isUninitialized: isUninitializedGetRokenDataQuery,
+        isUninitialized: isUninitializedGetTokenDataQuery,
 
-    }] = useLazyGetTokenDataQuery();
+    }] = useGetTokenDataMutation();
+
+    const [getTokenOffersTrigger, {
+        data: tokenOffersData,
+    }] = useGetTokenOffersMutation();
+
+    const [getTokenBidsTrigger, {
+        data: tokenBidsData,
+    }] = useGetTokenBidsMutation();
+
+    const [getMakeBidTemplateTrigger] = useGetMakeBidTemplateMutation();
+    const [getMakeOfferTemplateTrigger] = useGetMakeOfferTemplateMutation();
+    const [getEndAuctionTemplateTrigger] = useGetEndAuctionTemplateMutation();
+    const [getAcceptOfferTemplateTrigger] = useGetAcceptOfferTemplateMutation();
+    const [getCancelOfferTemplateTrigger] = useGetCancelOfferTemplateMutation();
+
+
 
     const {
 
@@ -60,100 +94,229 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     } = useGetEgldPriceQuery();
 
-    const isEgldPriceFetched: boolean = isSuccessEgldPriceQuery && Boolean(egldPriceData);
-    const isTokenDataFetched: boolean = isSuccessGetTokenDataQuery && Boolean(tokenResponse);
-    const shouldRenderPage: boolean = isTokenDataFetched && isEgldPriceFetched;
+    console.log({
+        walletAddressParam,
+        tokenResponseData
+    });
 
-    const [getBuyNftTemplateQueryTrigger, { data: buyNftTemplateData }] = useGetBuyNftTemplateMutation();
+
+    const isEgldPriceFetched: boolean = isSuccessEgldPriceQuery && Boolean(egldPriceData);
+    const isTokenDataFetched: boolean = isSuccessGetTokenDataQuery && Boolean(tokenResponseData?.data?.token);
+    const isGatewayTokenFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
+    const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
+
+    // const shouldRedirect: boolean = (isErrorGatewayTokenDataQuery && isErrorGetTokenDataQuery) || (isErrorGatewayTokenDataQuery && !isUninitializedGetTokenDataQuery && !isErrorGetTokenDataQuery && !Boolean(tokenResponseData?.tokenData?.token));
+    console.log({
+        gatewayTokenData,
+        walletAddressParam,
+        neubn: tokenResponseData?.data?.ownerWalletAddress,
+        isErrorGatewayTokenDataQuery,
+        isErrorGetTokenDataQuery,
+        isUninitializedGetTokenDataQuery,
+        tokenResponseData,
+    });
+
+    const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
+
+    console.log({
+        shouldRedirect
+    });
+
+    const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
+    const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
+
 
     useEffect(() => {
 
+        getTokenOffersTrigger({
+            collectionId,
+            tokenNonce,
+            offset: 0,
+            limit: 10,
+        });
+
+        getTokenBidsTrigger({
+            collectionId,
+            tokenNonce,
+            offset: 0,
+            limit: 10,
+        });
+
+        getCollectionByIdTrigger({ collectionId: collectionId });
+
+        if (walletAddressParam) {
+
+            getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
+
+            return;
+
+        }
+
         getTokenDataTrigger({ collectionId, tokenNonce });
 
+
     }, []);
+
+
+    if (shouldRedirect) {
+
+        return (
+            <Redirect to={routePaths.home} />
+        );
+
+    }
 
     if (!shouldRenderPage) {
 
         return (<p>Loading...</p>);
 
-    }
+    };
 
-    const { data: tokenData } = tokenResponse;
+    const { data: tokenData } = walletAddressParam ? gatewayTokenData : tokenResponseData;
+
+    const getBaseTokenData = (tokenData: any, isOurs: boolean = false) => {
+
+        const token = isOurs ? tokenData.token : tokenData.tokenData;
+
+        const nonce = token.nonce;
+        const name = isOurs ? token.tokenName : token.name;
+        const ownerWalletAddress = isOurs ? tokenData.ownerWalletAddress : walletAddressParam;
+        const imageLink: string = isOurs ? token.imageLink : atob(token?.uris?.[0] || '');
+        const metadataLink: string = isOurs ? token.metadataLink : atob(token?.uris?.[1] || '');
+        const royaltiesPercent = isOurs ? token.royaltiesPercent : parseFloat(token.royalties) / 100;
+
+        const baseData = {
+
+            name,
+            nonce,
+            imageLink,
+            metadataLink,
+            royaltiesPercent,
+            ownerWalletAddress,
+
+        };
+
+        const ourExtraData = isOurs ? {
+
+            id: token.id,
+            tokenState: token.state,
+            ownerName: tokenData.ownerName,
+            priceNominal: token.priceNominal,
+            auctionDeadline: token.auctionDeadline
+
+        } : {
+            id: 0,
+            ownerName: '',
+            tokenState: '',
+            priceNominal: 0,
+            auctionDeadline: 0,
+        };
+
+        return { ...baseData, ...ourExtraData };
+
+    };
 
     const {
 
-        token,
-        ownerName,
-        collection,
-        creatorName,
-        ownerWalletAddress,
-        creatorWalletAddress, } = tokenData;
-
-    const {
-        id: tokenId,
+        nonce,
         imageLink,
-        tokenName,
-        attributes,
-        priceNominal,
-        state: tokenState,
-        priceNominal: tokenPrice } = token;
+        metadataLink,
+        name: tokenName,
+        auctionDeadline,
+        royaltiesPercent,
+        ownerWalletAddress,
 
-    const {
+        id,
+        ownerName,
+        tokenState,
+        priceNominal: tokenPrice,
 
-        description,
-        discordLink,
-        twitterLink,
-        telegramLink,
-        instagramLink,
-        website: websiteLink,
-        name: collectionName,
+    } = getBaseTokenData(tokenData, !Boolean(walletAddressParam));
 
-    } = collection;
 
+    // console.log({
+    //     nonce,
+    //     imageLink,
+    //     metadataLink,
+    //     tokenName,
+    //     royaltiesPercent,
+    //     ownerWalletAddress,
+    //     id,
+    //     ownerName,
+    //     tokenState,
+    //     tokenPrice,
+    // });
+
+
+    // const {
+
+    //     description,
+    //     discordLink,
+    //     twitterLink,
+    //     telegramLink,
+    //     instagramLink,
+    //     website: websiteLink,
+    //     name: collectionName,
+
+    // } = collectionData?.data;
 
     const isListed: boolean = tokenState === 'List';
     const isAuction: boolean = tokenState === 'Auction';
-    const isOnSale: boolean = isListed && isAuction;
-
+    const isOnSale: boolean = isListed || isAuction;
+    const onSaleText = isListed ? "Current price" : "Min bid"
 
     const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
-    const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
-
-    console.log({
-        ownerName,
-        ownerWalletAddress,
-        userAccountAddress
-    });
+    // const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
 
 
     const displayedOwner = Boolean(ownerName) ? ownerName : ownerShortWalletAddress;
-    const displayedCreator = creatorName ? creatorName : creatorShortWalletAddress;
+    // const displayedCreator = creatorName ? creatorName : creatorShortWalletAddress;
 
 
-    const isCurrentTokenOwner: boolean = ownerWalletAddress === userAccountAddress;
+    const isCurrentTokenOwner: boolean = ownerWalletAddress === userWalletAddress;
 
 
-    const { data: egldPriceString } = egldPriceData;
+    const hasBidderWinner = Boolean(tokenBidsData?.data?.[0]);
+    const bidderWinnerName = tokenBidsData?.data?.[0]?.bidderName;
+    const isBidderWinnerAddress: boolean = tokenBidsData?.data?.[0]?.bid.bidderAddress === userWalletAddress;
+
+
+
+
+
+    const egldPriceString = egldPriceData?.data;
     const priceTokenDollars = tokenPrice * parseFloat(egldPriceString);
     const priceTokenDollarsFixed = parseFloat(`${priceTokenDollars}`).toFixed(3);
 
 
-    const offersTableColumns = [{
-        title: 'Price',
-        dataIndex: 'price',
-        key: 'price',
-        className: 'c-table_column',
-    }, {
-        title: 'Expiration',
-        dataIndex: 'expiration',
-        key: 'expiration',
-        className: 'c-table_column',
-    }, {
-        title: 'From',
-        dataIndex: 'from',
-        key: 'from',
-        className: 'c-table_column',
-    }];
+    const nowDate = new Date();
+    const auctionDeadlineDate = new Date(auctionDeadline * 1000);
+    const auctionDeadlineTitle = moment(new Date(auctionDeadlineDate), "YYYY-MM-DD HH:mm:ss");
+
+    const isAuctionOngoing: boolean = nowDate < auctionDeadlineDate;
+
+
+    const shouldDisplayEndAuctionButton = isAuction && !isAuctionOngoing && (isCurrentTokenOwner || isBidderWinnerAddress);
+
+
+    const offersTableColumns = [
+        {
+            title: 'Price',
+            dataIndex: 'price',
+            key: 'price',
+            className: 'c-table_column',
+        }, {
+            title: 'Expiration',
+            dataIndex: 'expiration',
+            key: 'expiration',
+            className: 'c-table_column',
+        }, {
+            title: 'From',
+            dataIndex: 'from',
+            key: 'from',
+            className: 'c-table_column',
+        }
+    ];
 
 
 
@@ -264,29 +427,58 @@ export const TokenPage: (props: any) => any = ({ }) => {
         },
     ];
 
+    const mapOffersTableData = tokenOffersData?.data?.map((offerData: any, index: number) => {
 
-    const mapOffersTableData = () => {
+        const { offer, offerorName } = offerData;
+        const { amountNominal, txHash, timestamp, expire, offerorAddress } = offer;
+        const dueDate = new Date(expire * 1000);
+        const isCurrentOfferor: boolean = offerorAddress === userWalletAddress;
+        const hasAction: boolean = isCurrentTokenOwner || isCurrentOfferor;
+        const shorterTx: string = shorterAddress(txHash, 4, 4);
+        const txDisplayName = Boolean(offerorName) ? offerorName : shorterTx;
 
-        const data = [{
-            price: '1.54',
-            expiration: <span className="u-text-theme-gray-mid">in 2 days</span>,
-            from: <a href="#">cryptolegend</a>,
-            key: `key-${1}`
-        }, {
-            price: '3',
-            expiration: <span className="u-text-theme-gray-mid">in 10 days</span>,
-            from: <a href="#">PinkyBoy</a>,
-            key: `key-${2}`
-        }, {
-            price: '3.14',
-            expiration: <span className="u-text-theme-gray-mid">in 22 days</span>,
-            from: <a href="#">cryptolegend</a>,
-            key: `key-${3}`
-        }]
+        if (hasAction) {
 
-        return data;
+            offersTableColumns.push({
+                title: 'Action',
+                dataIndex: 'action',
+                key: 'action',
+                className: 'c-table_column',
+            })
+        }
 
-    }
+        const AcceptOffer: any = (
+            <button
+                onClick={() => { actionsHandlers[ACCEPT_OFFER]({ offerorAddress, amount: amountNominal }); }}
+                className="bg-white bg-opacity-10  text-sm text-white font-bold py-2 px-4 rounded">
+                <span>
+                    Accept
+                </span>
+            </button>
+        );
+
+        const CancelOffer: any = (
+            <button
+                onClick={() => { actionsHandlers[CANCEL_OFFER]({ amount: amountNominal }); }}
+                className="bg-white bg-opacity-10  text-sm text-white font-bold py-2 px-4 rounded">
+                <span>
+                    Cancel
+                </span>
+            </button>
+        );
+
+        return ({
+            action: <>
+                {isCurrentOfferor && CancelOffer}
+                {isCurrentTokenOwner && AcceptOffer}
+            </>,
+            price: `${amountNominal}`,
+            expiration: <span className="u-text-theme-gray-mid">{moment(dueDate).to(moment())}</span>,
+            from: <a href={`https://devnet-explorer.elrond.com/transactions/${txHash}`} target="_blank">{txDisplayName}</a>,
+            key: `key-${index}`
+        })
+
+    });
 
 
     const mapListingTableData = () => {
@@ -313,46 +505,24 @@ export const TokenPage: (props: any) => any = ({ }) => {
     }
 
 
-    const mapBidsTableData = () => {
+    const mapBidsTableData = tokenBidsData?.data?.map((offerData: any, index: number) => {
 
-        const tx = `da7efdbdaef6fc268ad307b7ae6abce0c5d88f259e89d052c0d684d65d97f5d4`;
+        const { bid, bidderName } = offerData;
+        const { bidAmountNominal, txHash, timestamp, bidderAddress } = bid;
 
-        const data = [{
-            price: '5',
-            date: <div>
-                <a href="#">
-                    20 minutes ago {` `}
-                    <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
-                </a>
-            </div>,
-            from: <a href="#">cryptolegend</a>,
-            key: `key-${1}`
-        }, {
-            price: '3',
-            date: <div>
-                <a href="#">
-                    20 minutes ago {` `}
-                    <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
-                </a>
-            </div>,
-            from: <a href="#">PinkyBoy</a>,
-            key: `key-${2}`
-        }, {
-            price: '1',
-            date: <div>
-                <a href="#">
-                    20 minutes ago {` `}
-                    <FontAwesomeIcon width={'10px'} className="" icon={faIcons.faExternalLinkAlt} />
-                </a>
-            </div>,
-            from: <a href="#">cryptolegend</a>,
-            key: `key-${3}`
-        }]
+        const isCurrentBidder: boolean = bidderAddress === userWalletAddress;
+        const hasAction: boolean = isCurrentTokenOwner || isCurrentBidder;
+        const shorterTx: string = shorterAddress(txHash, 4, 4);
+        const txDisplayName = Boolean(bidderName) ? bidderName : shorterTx;
 
-        return data;
+        return ({
+            price: `${bidAmountNominal}`,
+            date: <span className="u-text-theme-gray-mid">{moment().to(moment(timestamp * 1000))}</span>,
+            from: <a href={`https://devnet-explorer.elrond.com/transactions/${txHash}`} target="_blank">{txDisplayName}</a>,
+            key: `key-${index}`
+        })
 
-    }
-
+    });
     const mapActivityTableData = () => {
 
         const tx = `da7efdbdaef6fc268ad307b7ae6abce0c5d88f259e89d052c0d684d65d97f5d4`;
@@ -421,8 +591,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
         return data;
 
-    }
-
+    };
 
     const attributesMocked: Array<any> = [
         {
@@ -452,11 +621,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
         },
     ]
 
-
     const handleBuyAction = async () => {
 
-
-        const getBuyNFTResponse: any = await getBuyNftTemplateQueryTrigger({ userWalletAddress, collectionId, tokenNonce, price: priceNominal });
+        const getBuyNFTResponse: any = await getBuyNftTemplateQueryTrigger({ userWalletAddress, collectionId, tokenNonce, price: tokenPrice });
 
         if (getBuyNFTResponse.error) {
 
@@ -481,15 +648,200 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
         sendTransaction({
             transaction: unconsumedTransaction,
-            callbackRoute: pathname
+            callbackRoute: '/account'
         });
 
 
-    }
+    };
+
+
+
+    const handleWithdrawAction = async () => {
+
+        const getWithdrawNFTResponse: any = await getWithdrawNftTemplateQueryTrigger({ userWalletAddress, collectionId, tokenNonce });
+
+        if (getWithdrawNFTResponse.error) {
+
+            const { status, data: { error } } = getWithdrawNFTResponse.error;
+
+            toast.error(`${status} | ${error}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+
+        }
+
+        const { data: txData } = getWithdrawNFTResponse.data;
+
+        const unconsumedTransaction = prepareTransaction(txData);
+
+        sendTransaction({
+            transaction: unconsumedTransaction,
+            callbackRoute: '/account'
+        });
+
+
+    };
+
+    const signTemplateTransaction = async (settings: any) => {
+
+        const { getTemplateTrigger, getTemplateData, succesCallbackRoute } = settings;
+
+        const response: any = await getTemplateTrigger({ ...getTemplateData });
+
+        if (response.error) {
+
+            const { status, data: { error } } = response.error;
+
+            toast.error(`${status} | ${error}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+
+        }
+
+        const { data: txData } = response.data;
+
+        const unconsumedTransaction = prepareTransaction(txData);
+
+        sendTransaction({
+            transaction: unconsumedTransaction,
+            callbackRoute: succesCallbackRoute
+        });
+
+    };
+
+    const handleMakeOffer = () => {
+
+        const getTemplateData = {
+
+            userWalletAddress,
+            collectionId,
+            tokenNonce,
+            amount: offerAmount,
+            expire: expireOffer,
+
+        };
+
+        setExpireOffer(0);
+        setOfferAmount(0);
+
+        signTemplateTransaction({
+
+            succesCallbackRoute: pathname,
+            getTemplateData: getTemplateData,
+            getTemplateTrigger: getMakeOfferTemplateTrigger,
+
+        });
+
+    };
+
+
+    const handleMakeBid = () => {
+
+        const getTemplateData = {
+
+            userWalletAddress,
+            collectionId,
+            tokenNonce,
+            payment: 0,
+            bidAmount: offerAmount,
+
+        };
+
+        setOfferAmount(0);
+
+        signTemplateTransaction({
+
+            succesCallbackRoute: pathname,
+            getTemplateData: getTemplateData,
+            getTemplateTrigger: getMakeBidTemplateTrigger,
+
+        });
+
+    };
+
+    const handleAcceptOffer = ({ offerorAddress, amount }: { offerorAddress: string, amount: number }) => {
+
+        const getTemplateData = {
+
+            userWalletAddress,
+            collectionId,
+            tokenNonce,
+            offerorAddress,
+            amount
+
+        };
+
+        signTemplateTransaction({
+
+            succesCallbackRoute: '/account',
+            getTemplateData: getTemplateData,
+            getTemplateTrigger: getAcceptOfferTemplateTrigger,
+
+        });
+
+    };
+
+
+
+    const handleEndAuction = () => {
+
+        const getTemplateData = {
+
+            userWalletAddress,
+            collectionId,
+            tokenNonce,
+
+        };
+
+        signTemplateTransaction({
+
+            succesCallbackRoute: '/account',
+            getTemplateData: getTemplateData,
+            getTemplateTrigger: getEndAuctionTemplateTrigger,
+
+        });
+
+    };
+
+
+    const handleCancelOffer = ({ amount }: { amount: number }) => {
+
+        const getTemplateData = {
+
+            userWalletAddress,
+            collectionId,
+            tokenNonce,
+            amount,
+
+        };
+
+        signTemplateTransaction({
+
+            succesCallbackRoute: '/account',
+            getTemplateData: getTemplateData,
+            getTemplateTrigger: getCancelOfferTemplateTrigger,
+
+        });
+
+    };
 
     const actionHandlerWrapper = (callback?: Function) => {
 
-        return () => {
+        return ({ ...rest }) => {
 
             if (!loggedIn) {
 
@@ -497,18 +849,24 @@ export const TokenPage: (props: any) => any = ({ }) => {
                 return;
             }
 
-            callback?.();
+            callback?.({ ...rest });
 
         };
 
     };
 
-    const actionsHandlers = {
+    const actionsHandlers: { [key: string]: any } = {
 
         [BUY]: actionHandlerWrapper(handleBuyAction),
         [SELL]: actionHandlerWrapper(handleBuyAction),
+        [MAKE_BID]: actionHandlerWrapper(handleMakeBid),
+        [MAKE_OFFER]: actionHandlerWrapper(handleMakeOffer),
+        [END_AUCTION]: actionHandlerWrapper(handleEndAuction),
+        [WITHDRAW]: actionHandlerWrapper(handleWithdrawAction),
+        [CANCEL_OFFER]: actionHandlerWrapper(handleCancelOffer),
+        [ACCEPT_OFFER]: actionHandlerWrapper(handleAcceptOffer),
 
-    }
+    };
 
     return (
 
@@ -606,7 +964,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             </span>
 
                                         </p>
-
+                                        {/* 
                                         <ul className="c-icon-band">
                                             {
                                                 websiteLink &&
@@ -653,7 +1011,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                 </li>
                                             }
 
-                                        </ul>
+                                        </ul> */}
 
 
 
@@ -685,7 +1043,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     <div className="c-accordion_content" >
 
 
-                                        <p className="flex justify-between u-text-small my-3">
+                                        {/* <p className="flex justify-between u-text-small my-3">
 
                                             <span className="u-text-theme-gray-light">
                                                 Creator Address
@@ -697,8 +1055,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                 </Link>
                                             </span>
 
-                                        </p>
-
+                                            </p>
+                                        */}
 
                                         <p className="flex justify-between u-text-small my-3">
 
@@ -770,9 +1128,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                             <div className="">
 
-                                <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
+                                {/* <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
                                     <Link to={`/collection/${collectionId}`}>{collectionName}</Link>
-                                </p>
+                                </p> */}
 
                                 <h2 className="u-regular-heading u-text-bold u-margin-bottom-spacing-5">
                                     {tokenName}
@@ -800,7 +1158,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                     <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link u-text-theme-gray-mid" icon={faIcons.faClock} />
                                                 </span>
                                                 <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                    Sale ends November 11, 2022 at 12:35AM
+                                                    {
+                                                        isAuctionOngoing ? <> Sale ends {auctionDeadlineTitle.format("MMM Do, YYYY HH:mm")} </> : "Sale has ended"
+                                                    }
+
                                                 </p>
                                             </div>
                                             :
@@ -813,7 +1174,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                         {
                                             isOnSale &&
                                             <> <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                                                Current price
+                                                {onSaleText}
                                             </p>
                                                 <p className="u-margin-bottom-spacing-3">
 
@@ -835,7 +1196,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                         {
                                             !isOnSale &&
                                             <div>
-                                                <Link to={`${pathname}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                <Link to={`/token/${walletAddressParam}/${collectionId}/${tokenNonce}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
                                                     <span className="u-padding-right-spacing-2">
                                                         <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
                                                     </span>
@@ -846,33 +1207,96 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             </div>
                                         }
 
-
                                         {
                                             (isOnSale && isCurrentTokenOwner) &&
-                                            <div>
-                                                <Link to={`${pathname}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
-                                                    <span className="u-padding-right-spacing-2">
-                                                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
-                                                    </span>
-                                                    <span>
-                                                        Widthdraw
-                                                    </span>
-                                                </Link>
-                                            </div>
+                                            <button onClick={actionsHandlers[WITHDRAW]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                <span className="u-padding-right-spacing-2">
+                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                </span>
+                                                <span>
+                                                    Widthdraw
+                                                </span>
+                                            </button>
                                         }
 
                                         {
-                                           (isOnSale && !isCurrentTokenOwner) &&
+
+                                            (shouldDisplayEndAuctionButton) &&
+                                            <button onClick={actionsHandlers[END_AUCTION]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                <span className="u-padding-right-spacing-2">
+                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                </span>
+                                                <span>
+                                                    End auction
+                                                </span>
+                                            </button>
+                                        }
+
+                                        {
+                                            (isOnSale && !isCurrentTokenOwner && isAuctionOngoing) &&
                                             <div>
 
-                                                <button onClick={actionsHandlers[BUY]} className="c-button c-button--primary u-margin-right-spacing-2">
-                                                    <span className="u-padding-right-spacing-2">
-                                                        <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
-                                                    </span>
-                                                    <span>
-                                                        Buy now
-                                                    </span>
-                                                </button>
+                                                {
+                                                    isListed && <button onClick={actionsHandlers[BUY]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                        <span className="u-padding-right-spacing-2">
+                                                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                        </span>
+                                                        <span>
+                                                            Buy now
+                                                        </span>
+                                                    </button>
+                                                }
+
+                                                {
+                                                    isAuction &&
+                                                    <Popup
+                                                        modal
+                                                        className="c-modal_container"
+                                                        trigger={
+                                                            <button className="c-button c-button--primary u-margin-right-spacing-2">
+                                                                <span className="u-padding-right-spacing-2">
+                                                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faTag} />
+                                                                </span>
+                                                                <span>
+                                                                    Place bid
+                                                                </span>
+                                                            </button>
+                                                        }
+                                                    >
+                                                        {(close: any) => (
+                                                            <div className="c-modal rounded-2xl">
+
+                                                                <div className="text-right px-10">
+                                                                    <button className="c-modal_close text-4xl" onClick={close}>
+                                                                        &times;
+                                                                    </button>
+                                                                </div>
+
+                                                                <div className="c-modal_header text-2xl  pb-6 "> Place bid </div>
+                                                                <div className="c-modal_content">
+
+                                                                    <div className="px-10 pt-8">
+
+                                                                        <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Bid amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+                                                                        <div className="text-center">
+                                                                            <button onClick={actionsHandlers[MAKE_BID]} className="c-button c-button--primary u-margin-right-spacing-2">
+
+                                                                                <span>
+                                                                                    Send bid
+                                                                                </span>
+                                                                            </button>
+
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </Popup>
+
+                                                }
 
 
                                                 <Popup
@@ -902,14 +1326,16 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                             <div className="c-modal_content">
 
                                                                 <div className="px-10 pt-8">
-                                                                    <input placeholder="Amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+                                                                    <input onChange={(e: any) => { setExpireOffer(e.target.value); }} placeholder="seconds" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                                    <input onChange={(e: any) => { setOfferAmount(e.target.value); }} placeholder="Offer amount (EGLD)" type="number" className="bg-opacity-10 mb-8 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
 
                                                                     <div className="text-center">
-                                                                        <button onClick={actionsHandlers[BUY]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                                        <button onClick={actionsHandlers[MAKE_OFFER]} className="c-button c-button--primary u-margin-right-spacing-2">
 
                                                                             <span>
-                                                                                Make Offer
+                                                                                Send Offer
                                                                             </span>
                                                                         </button>
 
@@ -997,19 +1423,23 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                     <div className="c-accordion_content" >
 
-                                        {/* <div className="py-10">
+                                        {Boolean(mapOffersTableData) ?
 
-                                            <p className="u-tac u-margin-bottom-spacing-4">
+                                            <Table className="c-table" rowClassName="c-table_row" columns={offersTableColumns} data={mapOffersTableData} />
 
-                                                <FontAwesomeIcon size="3x" className="u-text-theme-gray-mid" icon={faIcons.faSearchMinus} />
+                                            : <div className="py-10">
 
-                                            </p>
+                                                <p className="u-tac u-margin-bottom-spacing-4">
 
-                                            <p className="u-text-small u-tac u-text-theme-gray-mid">No offers yet</p>
+                                                    <FontAwesomeIcon size="3x" className="u-text-theme-gray-mid" icon={faIcons.faSearchMinus} />
 
-                                        </div> */}
+                                                </p>
 
-                                        <Table className="c-table" rowClassName="c-table_row" columns={offersTableColumns} data={mapOffersTableData()} />
+                                                <p className="u-text-small u-tac u-text-theme-gray-mid">No offers yet</p>
+
+                                            </div>
+                                        }
+
 
                                     </div>
 
@@ -1050,7 +1480,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
         </div> */}
 
-                                        <Table className="c-table" rowClassName="c-table_row" columns={bidsTableColumns} data={mapBidsTableData()} />
+                                        <Table className="c-table" rowClassName="c-table_row" columns={bidsTableColumns} data={mapBidsTableData} />
 
                                     </div>
 

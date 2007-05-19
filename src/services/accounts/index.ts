@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/react';
 
 import store from 'redux/store/index';
-import { BASE_URL_API, ELROND_API, GET, POST } from 'constants/api';
+import { BASE_URL_API, ELROND_API, ELROND_GATEWAY_API, GET, POST } from 'constants/api';
 import { selectAccessToken } from 'redux/selectors/user';
 
 const mainPath = 'accounts';
@@ -20,26 +20,20 @@ export const accountsApi = createApi({
 
         getAccount: builder.mutation<any, any>({
 
-            query: ({ userAddress }): FetchArgs => {
-
-                const accessToken: string = 'admin';
+            query: ({ userWalletAddress }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
                     method: GET,
-                    headers: {
-                        "Authorization": `Bearer ${accessToken}`,
-                    },
-                    url: `/${mainPath}/${userAddress}`
+                    url: `/${mainPath}/${userWalletAddress}`
                 }
 
                 return customRequestArg;
             },
         }),
 
-
         setAccount: builder.mutation<any, any>({
 
-            query: ({ userAddress, payload }): FetchArgs => {
+            query: ({ userWalletAddress, payload }): FetchArgs => {
 
                 const accessToken: string = selectAccessToken(store.getState());
 
@@ -49,18 +43,17 @@ export const accountsApi = createApi({
                         "Authorization": `Bearer ${accessToken}`,
                     },
                     body: JSON.stringify(payload),
-                    url: `/${mainPath}/${userAddress}`
+                    url: `/${mainPath}/${userWalletAddress}`
                 }
 
                 return customRequestArg;
             },
+
         }),
-
-
 
         setProfileImage: builder.mutation<any, any>({
 
-            query: ({ userAddress, imageB64 }): FetchArgs => {
+            query: ({ userWalletAddress, imageB64 }): FetchArgs => {
 
                 const accessToken: string = selectAccessToken(store.getState());
 
@@ -70,7 +63,7 @@ export const accountsApi = createApi({
                         "Authorization": `Bearer ${accessToken}`,
                     },
                     body: JSON.stringify(imageB64),
-                    url: `/${mainPath}/${userAddress}/profile`
+                    url: `/${mainPath}/${userWalletAddress}/profile`
                 }
 
                 return customRequestArg;
@@ -80,18 +73,41 @@ export const accountsApi = createApi({
 
         getAccountTokens: builder.mutation<any, any>({
 
-            query: ({ userAddress, offset, limit }): FetchArgs => {
-
-                const accessToken: string = 'admin';
+            query: ({ userWalletAddress, offset, limit }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
                     method: GET,
-                    headers: {
+                    url: `/${mainPath}/${userWalletAddress}/tokens/${offset}/${limit}`
+                }
 
-                        "Authorization": `Bearer ${accessToken}`,
-                    },
-                    url: `/${mainPath}/${userAddress}/tokens/${offset}/${limit}`
+                return customRequestArg;
+            },
+        }),
+
+        getAccountTokenGateway: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress, identifier, nonce }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `${ELROND_GATEWAY_API}/address/${userWalletAddress}/nft/${identifier}/nonce/${nonce}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+        getAccountCollections: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress, offset, limit }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `${mainPath}/${userWalletAddress}/collections/${offset}/${limit}`
+                
                 }
 
                 return customRequestArg;
@@ -101,18 +117,12 @@ export const accountsApi = createApi({
 
         getAccountGatewayTokens: builder.mutation<any, any>({
 
-            query: ({ userAddress }): FetchArgs => {
-
-                const accessToken: string = 'admin';
+            query: ({ userWalletAddress, offset, limit  }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
                     method: GET,
-                    headers: {
-
-                        "Authorization": `Bearer ${accessToken}`,
-                    },
-                    url: `${ELROND_API}/accounts/${userAddress}/nfts`
+                    url: `${ELROND_API}/accounts/${userWalletAddress}/nfts?from=${offset}&size=${limit}&type=NonFungibleESDT`
                 }
 
                 return customRequestArg;
@@ -123,65 +133,12 @@ export const accountsApi = createApi({
                 const nfts = tokens.filter((token: any) => {
 
                     const hasUris: boolean = Boolean(token.uris?.length);
-                    const isNft: boolean = token.type === "NonFungibleESDT";
-
-                    return hasUris && isNft;
+                    
+                    return hasUris;
 
                 });
 
-                const erdNfts: any = [];
-                const restNfts: any = [];
-
-                for (let index = 0; index < nfts.length; index++) {
-
-                    const nft = nfts[index];
-                    const { nonce, uris } = nft;
-                    const secondUrlB64 = uris?.[1];
-                    const hasSecondURL: boolean = Boolean(secondUrlB64);
-
-                    if (!hasSecondURL) {
-
-                        restNfts.push(nft);
-                        continue;
-
-                    };
-
-                    const secondUrl = window.atob(secondUrlB64);
-
-                    await fetch(`${secondUrl}`)
-                        .then(response => response.json())
-                        .then(metadata => {
-
-                            const isErd721 = Boolean(metadata?.attributes);
-
-                            if (isErd721) {
-
-                                erdNfts.push(nft);
-
-                            } else {
-
-                                restNfts.push(nft);
-
-                            }
-
-                        }).catch(() => {
-
-                            restNfts.push(nft);
-
-                        });
-
-                };
-
-
-                // for (let index = 0; index < erdNfts .length; index++) {
-
-                //     const nft = erdNfts[index];
-
-                // }
-
-                const erdNftsCollectionIds = erdNfts.map((nft: any) => nft?.identifier);
-                const restNftsCollectionIds = restNfts.map((nft: any) => nft?.identifier);
-                const allIndentifiers = [...erdNftsCollectionIds, ...restNftsCollectionIds];
+                const allIndentifiers = nfts.map((nft: any) => nft?.identifier);
 
                 let availableTokensData = {};
 
@@ -200,8 +157,7 @@ export const accountsApi = createApi({
                 });
 
                 return {
-                    erdNfts,
-                    restNfts,
+                    nfts,
                     availableTokensData,
                 };
 
@@ -213,8 +169,10 @@ export const accountsApi = createApi({
 })
 
 export const {
+    useGetAccountCollectionsMutation,
     useSetAccountMutation,
     useGetAccountMutation,
     useSetProfileImageMutation,
     useGetAccountTokensMutation,
-    useGetAccountGatewayTokensMutation } = accountsApi;
+    useGetAccountGatewayTokensMutation,
+    useGetAccountTokenGatewayMutation, } = accountsApi;

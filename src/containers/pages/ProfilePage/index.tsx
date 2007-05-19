@@ -1,31 +1,18 @@
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import Collapsible from 'react-collapsible';
-import { useLocation, Link, useParams, useHistory } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
-import * as faBrands from '@fortawesome/free-brands-svg-icons';
-import { ToastContainer, toast } from 'react-toastify';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useGetBuyNftTemplateMutation, useGetListNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenDataQuery, useLazyGetTokenDataQuery } from "services/tokens";
-import { prepareTransaction } from "utils/transactions";
 
-import { UrlParameters } from "./interfaces";
-import { useGetEgldPriceQuery } from "services/oracle";
 import { shorterAddress } from "utils";
-import { BUY } from "constants/actions";
-import { useGetAccountGatewayTokensMutation, useGetAccountMutation, useGetAccountTokensMutation } from "services/accounts";
-import Popup from "reactjs-popup";
-
+import { useGetAccountCollectionsMutation, useGetAccountGatewayTokensMutation, useGetAccountMutation, useGetAccountTokensMutation } from "services/accounts";
+import { UrlParameters } from "./interfaces";
 
 export const ProfilePage: (props: any) => any = ({ }) => {
 
-    const history = useHistory();
-    const { collectionId, tokenNonce } = useParams<UrlParameters>();
-    const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
-
-    const [requestedAmount, setRequestedAmount] = useState<number | undefined>(undefined);
+    const { collectionId } = useParams<UrlParameters>();
 
     const {
         loggedIn,
@@ -34,53 +21,276 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     const shortUserWalletAddress: string = shorterAddress(userWalletAddress, 7, 4);
 
-
-    const sendTransaction = Dapp.useSendTransaction();
-
-
-    const [getTokenDataTrigger, {
-        data: tokenResponse,
-        isError: isErrorGetTokenDataQuery,
-        isSuccess: isSuccessGetTokenDataQuery,
-        isLoading: isLoadingGetTokenDataQuery,
-        isUninitialized: isUninitializedGetRokenDataQuery,
-
-    }] = useLazyGetTokenDataQuery();
-
     const [getAccountRequestTrigger, {
         data: accountData,
-        isLoading: isLoadingGetAccountRequest }] = useGetAccountMutation();
+        isLoading: isLoadingGetAccountRequest,
+        isUninitialized: isUninitializedGetAccountRequest  }] = useGetAccountMutation();
 
     const [getAccountTokensRequestTrigger, {
         data: accountTokensData,
-        isLoading: isLoadingAccountTokensRequest }] = useGetAccountTokensMutation();
+        isLoading: isLoadingAccountTokensRequest,
+        isUninitialized: isUninitializedAccountTokensRequest,
+    }] = useGetAccountTokensMutation();
 
     const [getAccountGatewayRequestTrigger, {
         data: accountGatewayData,
         isLoading: isLoadingAccountGatewayRequest,
+        isUninitialized: isUninitializedAccountGatewayRequest,
     }] = useGetAccountGatewayTokensMutation();
+
+    const [getAccountCollectionsTrigger, {
+        data: accountCollections,
+        isLoading: isLoadingAccountCollectionsRequest,
+        isUninitialized: isUninitializedAccountCollectionsRequest
+    }] = useGetAccountCollectionsMutation();
+
+
+    // const isOwnProfile = userWalletAddress === 
+
+    const [onSaleNfts, setOnSaleNfts] = useState<Array<any>>([]);
+    const [unlistedNfts, setUnlistedNfts] = useState<Array<any>>([]);
+    const [availableTokens, setAvailableTokens] = useState<any>({});
+    const [userCollections, setUserCollections] = useState<Array<any>>([]);
+
+    const [loadMoreOnSale, setLoadMoreOnSale] = useState<boolean>(true);
+    const [loadMoreUnlisted, setLoadMoreUnlisted] = useState<boolean>(true);
+
+    const getOffsetToLimit = async (getFunction: any, offset: number = 0, limit: number = 20, dataArray: Array<any>, setDataArray: any, flag?: any) => {
+
+        let hasFetchedNewData = false;
+
+        const dataResponse = await getFunction({
+
+            userWalletAddress,
+            limit,
+            offset,
+
+        });
+
+        if (!dataResponse.data) {
+
+            return {
+
+                hasFetchedNewData: false,
+
+            };
+
+        };
+
+        const previousDataArrayLenght = dataArray.length;
+
+        if (flag === "gateway") {
+
+            const {
+                nfts,
+                availableTokensData } = dataResponse.data;
+
+            const newDataArray = [...dataArray, ...nfts];
+
+            setDataArray(newDataArray);
+            setAvailableTokens({ ...availableTokens, ...availableTokensData });
+
+            hasFetchedNewData = previousDataArrayLenght !== newDataArray?.length;
+
+            return {
+                hasFetchedNewData,
+            };
+
+        };
+
+        const newDataArray = [...dataArray, ...dataResponse.data.data];
+
+        setDataArray(newDataArray);
+
+        hasFetchedNewData = previousDataArrayLenght !== newDataArray?.length;
+
+        return {
+
+            hasFetchedNewData,
+
+        };
+    };
 
     useEffect(() => {
 
-        getAccountRequestTrigger({ userAddress: userWalletAddress });
-
-        getAccountTokensRequestTrigger({ userAddress: userWalletAddress, offset: 0, limit: 20 });
-
-        getAccountGatewayRequestTrigger({ userAddress: userWalletAddress });
-
-
+        getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
+        
     }, []);
 
-    if (isLoadingGetAccountRequest || isLoadingAccountTokensRequest || isLoadingAccountGatewayRequest) {
+    const mapCollections = () => {
 
-        return (<p>Loading...</p>);
+        return userCollections.map((tokenData: any) => {
+
+            const { collection, token } = tokenData;
+            const { collectionName } = collection;
+            const { imageLink, tokenName, tokenId, nonce } = token;
+
+            return (
+                <div className="col-span-3 mr-8 mb-8">
+
+                    <Link to={`/token/${tokenId}/${nonce}`}>
+
+                        <div className={`c-card`}>
+
+                            <div className="c-card_img-container">
+                                <img src={imageLink} className="c-card_img" alt="" />
+                            </div>
+
+                            <div className="c-card_info justify-between">
+
+                                <div className="c-card_details">
+
+                                    <p className="text-gray-700 text-xs">
+                                        {
+                                            collectionName &&
+                                            <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${tokenId}`}>
+                                                {collectionName || tokenId}
+                                            </Link>
+                                        }
+                                    </p>
+
+                                    <p className="text-sm u-text-bold">
+                                        {tokenName}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </Link>
+
+                </div>
+            )
+
+        })
+    }
+
+    const mapOnSaleTokens = () => {
+
+        return onSaleNfts.map((tokenData: any) => {
+
+            const { collection, token } = tokenData;
+            const { collectionName } = collection;
+            const { imageLink, tokenName, tokenId, nonce } = token;
+
+            return (
+                <div className="col-span-3 mr-8 mb-8">
+
+                    <Link to={`/token/${tokenId}/${nonce}`}>
+
+                        <div className={`c-card`}>
+
+                            <div className="c-card_img-container">
+                                <img src={imageLink} className="c-card_img" alt="" />
+                            </div>
+
+                            <div className="c-card_info justify-between">
+
+                                <div className="c-card_details">
+
+                                    <p className="text-gray-700 text-xs">
+                                        {
+                                            collectionName &&
+                                            <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${tokenId}`}>
+                                                {collectionName || tokenId}
+                                            </Link>
+                                        }
+                                    </p>
+
+                                    <p className="text-sm u-text-bold">
+                                        {tokenName}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </Link>
+
+                </div>
+            )
+
+        })
+    }
+
+    const mapUnlistedTokens = (): any => {
+
+        return unlistedNfts?.map((tokenData: any) => {
+
+            const { url: imageLink, name: tokenName, ticker: tokenId, nonce, identifier } = tokenData;
+            const tokenIndentData = availableTokens[identifier];
+            const isTokenAvailable = Boolean(tokenIndentData?.token?.available);
+            const isCollectionAvailable = Boolean(tokenIndentData?.collection?.available);
+            const tokenLink = `/token/${userWalletAddress}/${tokenId}/${nonce}`;
+
+
+            return (
+                <div className="col-span-3 mr-8 mb-8">
+
+                    <Link to={tokenLink}>
+
+                        <div className={`c-card c-card--colection`}>
+
+                            <div className="c-card_img-container">
+                                <img src={imageLink} className="c-card_img" alt="" />
+                            </div>
+
+                            <div className="c-card_info justify-between">
+
+                                <div className="c-card_token-details">
+
+                                    {
+                                        isCollectionAvailable &&
+                                        <p className="text-gray-700 text-xs">
+                                            <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${''}`}>
+                                                {tokenIndentData.collection.name}
+                                            </Link>
+                                        </p>
+                                    }
+
+                                    <p className="text-sm u-text-bold">
+                                        {tokenName}
+                                    </p>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    </Link>
+
+                </div>
+            )
+
+
+        });
+
 
     };
-
 
     const dateOptions: any = { year: 'numeric', month: 'long', };
     const joinnedDate: Date = new Date(accountData?.data.createdAt * 1000);
     const joinedDateFormated: string = joinnedDate.toLocaleDateString("en-US", dateOptions);
+
+    const getMoreUnlistedTokens = async () => {
+
+        const { hasFetchedNewData } = await getOffsetToLimit(getAccountGatewayRequestTrigger, unlistedNfts.length, 20, unlistedNfts, setUnlistedNfts, "gateway");
+
+        setLoadMoreUnlisted(hasFetchedNewData);
+
+    };
+
+    const getMoreOnSaleTokens = async () => {
+
+        const { hasFetchedNewData } = await getOffsetToLimit(getAccountTokensRequestTrigger, onSaleNfts.length, 20, onSaleNfts, setOnSaleNfts);
+
+        setLoadMoreOnSale(hasFetchedNewData);
+
+    };
 
     return (
 
@@ -88,25 +298,21 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
             <div className="grid grid-cols-12">
 
-
-
                 <div className="col-span-12">
                     <div className="bg-gray-800 w-full h-60">
 
                     </div>
                 </div>
 
-
                 <div className="col-span-12 flex justify-center mb-10 pb-16 relative">
                     <div style={{ backgroundImage: `url(${accountData?.data.profileImageLink})` }} className="-bottom-1/4 absolute bg-yellow-700 border border-black h-40 rounded-circle w-40" >
                     </div>
                 </div>
 
-
                 <div className="col-span-12 text-center mb-6">
 
 
-                    <div className="c-icon-band">
+                    {<div className="c-icon-band">
                         <div className="c-icon-band_item">
 
                             <Link className="inline-block" to={`./account/settings`}>
@@ -114,7 +320,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                             </Link>
 
                         </div>
-                    </div>
+                    </div>}
 
                     <h2 className="u-regular-heading u-text-bold">
                         {
@@ -135,8 +341,54 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                 </div>
 
+                <div className="col-start-2 col-span-10 mb-20">
 
-                <div className="col-start-2 col-span-10 my-20">
+                    <div className="grid grid-cols-12">
+
+                        <div className="col-span-12">
+
+                            <div className="mb-10">
+                                <Link to={`/collection/create`} className="c-button c-button--primary"> Create a collection </Link>
+                            </div>
+                            <Collapsible
+                                transitionTime={50}
+                                open={false}
+                                className="c-accordion"
+                                trigger={
+
+                                    <div className="c-accordion_trigger">
+                                        <span className="c-accordion_trigger_icon">
+                                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faImages} />
+                                        </span>
+                                        <span className="c-accordion_trigger_title">
+                                            Collections
+                                        </span>
+                                    </div>
+
+                                }>
+
+                                <div className="c-accordion_content bg-transparent" >
+
+                                    <div className="grid grid-cols-12">
+
+                                        {
+                                            Boolean(userCollections.length) ?
+                                                mapCollections() :
+                                                <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+                                                    no collections
+                                                </div>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            </Collapsible>
+
+                        </div>
+
+                    </div>
+
 
                     <div className="grid grid-cols-12">
 
@@ -144,8 +396,15 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                             <Collapsible
                                 transitionTime={50}
-                                open={true}
+                                open={false}
                                 className="c-accordion"
+                                onOpening={() => {
+
+                                    if (isUninitializedAccountTokensRequest) {
+                                        getMoreOnSaleTokens();
+                                    }
+
+                                }}
                                 trigger={
 
                                     <div className="c-accordion_trigger">
@@ -163,63 +422,43 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                     <div className="grid grid-cols-12">
 
-                                        {accountTokensData?.data && accountTokensData.data.map((tokenData: any) => {
-
-                                            const { collection, token } = tokenData;
-                                            const { collectionName } = collection;
-                                            const { imageLink, tokenName, tokenId, nonce } = token;
-
-                                            return (
-                                                <div className="col-span-3 mr-8 mb-8">
-
-                                                    <Link to={`/token/${tokenId}/${nonce}`}>
-
-                                                        <div className={`c-card`}>
-
-                                                            <div className="c-card_img-container">
-                                                                <img src={imageLink} className="c-card_img" alt="" onLoad={() => { setIsAssetLoaded(true) }} />
-                                                            </div>
-
-                                                            <div className="c-card_info justify-between">
-
-                                                                <div className="c-card_details">
-                                                                    <div>
-                                                                        <p className="c-card_title">
-                                                                            <Link to={`/collection/${collectionId}`}>
-                                                                                {collectionName || tokenId}
-                                                                            </Link>
-                                                                        </p>
-                                                                        <p className="c-card_collection-name">
-                                                                            {tokenName}
-                                                                        </p>
-                                                                    </div>
-
-                                                                </div>
-
-
-                                                            </div>
-                                                        </div>
-
-                                                    </Link>
-
-                                                </div>
-                                            )
-
-                                        })}
+                                        {accountTokensData?.data && mapOnSaleTokens()}
 
                                     </div>
 
+                                    {
+                                        (loadMoreOnSale && Boolean(onSaleNfts.length)) &&
+
+                                        <div className="col-span-12 mr-8 mb-8">
+
+                                            <div className="text-center my-10">
+
+                                                <button onClick={getMoreOnSaleTokens} className="c-button c-button--secondary" >
+                                                    Load more
+                                                </button>
+
+                                            </div>
+                                            1
+                                        </div>
+                                    }
 
                                 </div>
 
                             </Collapsible>
 
-
-
                             <Collapsible
                                 transitionTime={50}
-                                open={true}
+                                open={false}
                                 className="c-accordion"
+                                onOpening={() => {
+
+                                    if (isUninitializedAccountGatewayRequest) {
+                                     
+                                        getMoreUnlistedTokens();
+                                    
+                                    }
+
+                                }}
                                 trigger={
 
                                     <div className="c-accordion_trigger">
@@ -238,102 +477,24 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                     <div className="grid grid-cols-12">
 
-
-                                        <div className="col-span-12">
-                                            <p className="mb-4">
-                                                ERD-721 NFTs
-                                            </p>
-                                        </div>
-
-                                        {accountGatewayData?.erdNfts.map((tokenData: any) => {
-
-                                            // const { imageLink, tokenName, tokenId, nonce } = tokenData;
-                                            const { availableTokensData } = accountGatewayData;
-                                            const { url: imageLink, name: tokenName, ticker: tokenId, nonce, identifier } = tokenData;
-                                            const isTokenAvailable = Boolean(availableTokensData[identifier].token.available);
-                                            const tokenLink = `/token/${tokenId}/${nonce}`;
-                                            const tokenPreviewLink = `/token/${userWalletAddress}/${tokenId}/${nonce}`;
-                                            const link = isTokenAvailable ? tokenLink : tokenPreviewLink;
-
-                                            return (
-                                                <div className="col-span-3 mr-8 mb-8">
-
-                                                    <Link to={link}>
-
-                                                        <div className={`c-card`}>
-
-                                                            <div className="c-card_img-container">
-                                                                <img src={imageLink} className="c-card_img" alt="" onLoad={() => { setIsAssetLoaded(true) }} />
-                                                            </div>
-
-                                                            <div className="c-card_info justify-between">
-
-                                                                <div className="c-card_token-details">
-                                                                    <p className="text-gray-700 text-xs">
-                                                                        <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${collectionId}`}>
-                                                                            {'collectionName'}
-                                                                        </Link>
-                                                                    </p>
-                                                                    <p className="text-sm u-text-bold">
-                                                                        {tokenName}
-                                                                    </p>
-                                                                </div>
+                                        {(Boolean(availableTokens) && Boolean(unlistedNfts?.length)) && mapUnlistedTokens()}
 
 
-                                                            </div>
-                                                        </div>
+                                        {
+                                            (loadMoreUnlisted && Boolean(unlistedNfts.length)) &&
 
-                                                    </Link>
+                                            <div className="col-span-12 mr-8 mb-8">
+
+                                                <div className="text-center my-10">
+
+                                                    <button onClick={getMoreUnlistedTokens} className="c-button c-button--secondary" >
+                                                        Load more
+                                                    </button>
 
                                                 </div>
-                                            )
-
-                                        })}
-
-                                        <div className="col-span-12 mt-12 mb-4">
-                                            <p>
-                                                Not ERD-721 compliant
-                                            </p>
-                                        </div>
-
-
-                                        {accountGatewayData?.restNfts.map((tokenData: any) => {
-
-                                            const { url: imageLink, name: tokenName, ticker: tokenId, nonce } = tokenData;
-
-                                            return (
-                                                <div className="col-span-3 mr-8 mb-8">
-
-                                                    <Link to={`/token/${tokenId}/${nonce}`}>
-
-                                                        <div className={`c-card`}>
-
-                                                            <div className="c-card_img-container">
-                                                                <img src={imageLink} className="c-card_img" alt="" />
-                                                            </div>
-
-                                                            <div className="c-card_info justify-between">
-
-                                                                <div className="c-card_token-details">
-                                                                    <p className="text-gray-700 text-xs">
-                                                                        <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${collectionId}`}>
-                                                                            {'collectionName'}
-                                                                        </Link>
-                                                                    </p>
-                                                                    <p className="text-sm u-text-bold">
-                                                                        {tokenName}
-                                                                    </p>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-
-                                                    </Link>
-
-                                                </div>
-                                            )
-
-                                        })}
+                                                1
+                                            </div>
+                                        }
 
                                     </div>
 

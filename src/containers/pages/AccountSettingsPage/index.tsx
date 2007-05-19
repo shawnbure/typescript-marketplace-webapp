@@ -1,21 +1,11 @@
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
-import Collapsible from 'react-collapsible';
-import { useLocation, Link, useParams, useHistory } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
-import * as faBrands from '@fortawesome/free-brands-svg-icons';
-import { ToastContainer, toast } from 'react-toastify';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useGetBuyNftTemplateMutation, useGetListNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenDataQuery, useLazyGetTokenDataQuery } from "services/tokens";
-import { prepareTransaction } from "utils/transactions";
-
-import { useGetEgldPriceQuery } from "services/oracle";
-import { handleCopyToClipboard, shorterAddress } from "utils";
-import { BUY } from "constants/actions";
+import { handleCopyToClipboard } from "utils";
 import { useGetAccountGatewayTokensMutation, useGetAccountTokensMutation, useSetAccountMutation, useSetProfileImageMutation } from "services/accounts";
-import Popup from "reactjs-popup";
 
 
 export const AccountSettingsPage: (props: any) => any = ({ }) => {
@@ -98,14 +88,14 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
                 twitterLink: 'twi',
                 instagramLink: 'insta',
             },
-            userAddress: userWalletAddress
+            userWalletAddress: userWalletAddress
         });
 
 
         setProfileMutationTrigger({
 
             imageB64: profileImageB64,
-            userAddress: userWalletAddress
+            userWalletAddress: userWalletAddress
 
         });
 
@@ -118,6 +108,10 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
             <div className="grid grid-cols-12">
 
                 <div className="col-span-12 m-20">
+
+                    <div className="mb-10">
+                        <Link to={`/account`}> {`< Back to account`}</Link>
+                    </div>
 
                     <h2 className="text-2xl md:text-5xl u-text-bold mb-8">
                         Profile Settings

@@ -1,4 +1,5 @@
 export interface UrlParameters {
-    tokenNonce: string,
-    collectionId: string,
+    tokenNonce: string;
+    collectionId: string;
+    walletAddress: string;
 }

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/react';
 
 import store from 'redux/store/index';
-import { BASE_URL_API, POST} from 'constants/api';
+import { BASE_URL_API, GET, POST} from 'constants/api';
 import { selectAccessToken } from 'redux/selectors/user';
 
 const reducerPath = 'collections';
@@ -42,17 +42,13 @@ export const collectionsApi = createApi({
 
         }),
 
-        getCollectionByName: builder.query<any, any>({
+        getCollectionById: builder.mutation<any, any>({
 
-            query: ({collectionName}): FetchArgs => {
-
-                const accessToken: string = selectAccessToken(store.getState());
+            query: ({collectionId}): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
-                    headers: {
-                        "Authorization": `Bearer ${accessToken}`,
-                    },
-                    url: `/${reducerPath}/${collectionName}`
+                    method: GET,
+                    url: `/${reducerPath}/${collectionId}`
                 }
 
                 return customRequestArg;
@@ -62,4 +58,6 @@ export const collectionsApi = createApi({
     }),
 })
 
-export const { useGetCollectionByNameQuery, useLazyGetCollectionByNameQuery } = collectionsApi;
+export const { 
+    useCreateCollectionMutation,
+    useGetCollectionByIdMutation, } = collectionsApi;

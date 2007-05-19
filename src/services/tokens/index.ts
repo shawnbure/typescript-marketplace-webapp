@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/react';
 
-import { BASE_URL_API, GET } from 'constants/api';
+import { BASE_URL_API, GET, POST } from 'constants/api';
 
 const mainPath = 'tokens';
 
@@ -16,26 +16,104 @@ export const tokensApi = createApi({
 
     endpoints: (builder) => ({
 
-        getTokenData: builder.query<any, any>({
+        getTokenData: builder.mutation<any, any>({
 
             query: ({collectionId, tokenNonce}): FetchArgs => {
 
-                const accessToken: string = 'admin';
-
                 const customRequestArg: FetchArgs = {
-                    headers: {
-                        "Authorization": `Bearer ${accessToken}`,
-                    },
+
+                    method: GET,
                     url: `/${mainPath}/${collectionId}/${tokenNonce}`
+                    
                 }
 
                 return customRequestArg;
+
             },
         }),
+
+
+        getTokenCollectionAvailablity: builder.mutation<any, any>({
+
+            query: ({indentifier}): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    url: `/${mainPath}/available`,
+                    body: JSON.stringify({
+                        tokens: [indentifier]
+                    })
+                    
+                }
+
+                return customRequestArg;
+
+            },
+        }),
+
+
+        getTokensCollectionsAvailablity: builder.mutation<any, any>({
+
+            query: ({indentifiers}): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    url: `/${mainPath}/available`,
+                    body: JSON.stringify({
+                        tokens: indentifiers
+                    })
+                    
+                }
+
+                return customRequestArg;
+
+            },
+        }),
+
+        getTokenOffers: builder.mutation<any, any>({
+
+            query: ({collectionId, tokenNonce, offset, limit}): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `${mainPath}/${collectionId}/${tokenNonce}/offers/${offset}/${limit}`
+                    
+                }
+
+                return customRequestArg;
+
+            },
+            
+        }),
+
+        getTokenBids: builder.mutation<any, any>({
+
+            query: ({collectionId, tokenNonce, offset, limit}): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `${mainPath}/${collectionId}/${tokenNonce}/bids/${offset}/${limit}`
+                    
+                }
+
+                return customRequestArg;
+
+            },
+            
+        }),
+
 
     }),
 })
 
+
 export const { 
-    useGetTokenDataQuery,
-    useLazyGetTokenDataQuery } = tokensApi;
+    useGetTokenBidsMutation,
+    useGetTokenOffersMutation,
+    useGetTokenDataMutation, 
+    useGetTokenCollectionAvailablityMutation,
+    useGetTokensCollectionsAvailablityMutation } = tokensApi;

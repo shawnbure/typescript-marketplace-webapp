@@ -10,6 +10,8 @@
         "@fortawesome/free-regular-svg-icons": "^5.15.4",
         "@fortawesome/free-solid-svg-icons": "^5.15.4",
         "@fortawesome/react-fontawesome": "^0.1.15",
+        "@hookform/error-message": "^2.0.0",
+        "@hookform/resolvers": "^2.8.3",
         "@manaflair/redux-batch": "^1.0.0",
         "@monaco-editor/react": "^4.2.2",
         "@reduxjs/toolkit": "^1.6.1",
@@ -27,6 +29,7 @@
         "axios": "^0.21.4",
         "bootstrap": "^5.1.1",
         "classnames": "^2.3.1",
+        "moment": "^2.29.1",
         "node-sass": "^6.0.1",
         "postcss-import": "^14.0.2",
         "rc-table": "^7.19.0",
@@ -45,7 +48,8 @@
         "redux-logger": "^3.0.6",
         "swiper": "^6.8.4",
         "typescript": "^4.3.5",
-        "web-vitals": "^1.1.2"
+        "web-vitals": "^1.1.2",
+        "yup": "^0.32.11"
     },
     "scripts": {
         "start": "craco start",

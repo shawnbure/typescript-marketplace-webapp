@@ -6,11 +6,13 @@ export const routePaths = {
     marketplace: '/marketplace',
     create: '/create',
     account: '/account',
+    profile: '/profile/:walletAddress',
     accountSettings: '/account/settings',
+    collectionCreate: "/collection/create",
     collection: "/collection/:collectionId",
     token: "/token/:collectionId/:tokenNonce",
     collectionEdit: '/collection/:collectionId/edit',
-    sellToken: "/token/:collectionId/:tokenNonce/sell",
+    sellToken: "/token/:walletAddress/:collectionId/:tokenNonce/sell",
     unlistedToken: "/token/:walletAddress/:collectionId/:tokenNonce",
 
 };

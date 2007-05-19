@@ -1,22 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
-import Collapsible from 'react-collapsible';
-import { useLocation, Link, useParams, useHistory } from "react-router-dom";
-import * as faIcons from '@fortawesome/free-solid-svg-icons';
-import * as faBrands from '@fortawesome/free-brands-svg-icons';
-import { ToastContainer, toast } from 'react-toastify';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useGetBuyNftTemplateMutation, useGetListNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenDataQuery, useLazyGetTokenDataQuery } from "services/tokens";
-import { prepareTransaction } from "utils/transactions";
-
-import { useGetEgldPriceQuery } from "services/oracle";
 import { handleCopyToClipboard, shorterAddress } from "utils";
-import { BUY } from "constants/actions";
-import { useGetAccountGatewayTokensMutation, useGetAccountTokensMutation } from "services/accounts";
-import Popup from "reactjs-popup";
-
 
 export const CollectionEditPage: (props: any) => any = ({ }) => {
 

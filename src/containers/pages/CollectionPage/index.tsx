@@ -1,18 +1,38 @@
 import Select from 'react-select'
+import { toast } from 'react-toastify';
 import { useLocation, Link, useParams, } from "react-router-dom";
 import { UrlParameters } from "./interfaces";
 
+import * as Dapp from "@elrondnetwork/dapp";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrands from '@fortawesome/free-brands-svg-icons';
 
+import { prepareTransaction } from "utils/transactions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collapse } from "components";
 import Collapsible from 'react-collapsible';
+import { useEffect, useState } from 'react';
+import { useGetChangeOwnerCollectionTemplateMutation, useGetMintTokensTemplateMutation } from 'services/tx-template';
 
 export const CollectionPage: (props: any) => any = ({ }) => {
 
+    const {
+        loggedIn,
+        address: userWalletAddress, } = Dapp.useContext();
+
+
+    const { pathname } = useLocation();
+    const sendTransaction = Dapp.useSendTransaction();
 
     const { collectionId } = useParams<UrlParameters>();
+    const [getMintTokensTemplateTrigger] = useGetMintTokensTemplateMutation();
+    const [requestedNumberOfTokens, setRequestedNumberOfTokens] = useState<number>(1);
+
+    const handleChangeRequestedAmount = (e: any) => {
+
+        setRequestedNumberOfTokens(e.target.value);
+
+    };
 
     const { websiteLink,
         twitterLink,
@@ -73,6 +93,39 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                 backgroundColor: '#353840',
             }
         }
+    }
+
+
+    const handleMintTokens = async () => {
+
+        const getBuyNFTResponse: any = await getMintTokensTemplateTrigger({ userWalletAddress, collectionId, numberOfTokens: requestedNumberOfTokens });
+
+        if (getBuyNFTResponse.error) {
+
+            const { status, data: { error } } = getBuyNFTResponse.error;
+
+            toast.error(`${status} | ${error}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+
+        }
+
+        const { data: txData } = getBuyNFTResponse.data;
+
+        const unconsumedTransaction = prepareTransaction(txData);
+
+        sendTransaction({
+            transaction: unconsumedTransaction,
+            callbackRoute: pathname
+        });
+
     }
 
     return (
@@ -176,9 +229,14 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
                     </ul>
 
+                    <div className="grid grid-cols-9 mb-4">
+                        <div className="col-start-5 col-span-1">
+                            <input min={1} onChange={handleChangeRequestedAmount} value={requestedNumberOfTokens} type="number" className="text-center text-4xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                        </div>
+                    </div>
 
-                    <button className="c-button c-button--primary mb-5" >
-                        Mint
+                    <button onClick={handleMintTokens} className="c-button c-button--primary mb-5" >
+                        Mint now
                     </button>
 
 
