@@ -544,7 +544,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                     }
 
                     <h2 className="flex justify-content-center mb-2 text-4xl md:text-5xl u-text-bold">
-                        {collectionName || collectionTokenId}  <FontAwesomeIcon width={'20px'} className="text-lg u-text-theme-blue-place" icon={faIcons.faCheckCircle} />
+                        {collectionName || collectionTokenId} { Boolean(collectionData?.data?.collection?.isVerified) && <FontAwesomeIcon width={'20px'} className="text-lg u-text-theme-blue-place" icon={faIcons.faCheckCircle} />  } 
                     </h2>
 
                     <p className="text-gray-500 text-xl2 mb-6">

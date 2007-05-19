@@ -1,7 +1,7 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import classNames from 'classnames';
 import * as Dapp from "@elrondnetwork/dapp";
-import { Route, Switch, useLocation } from "react-router-dom";
+import { Route, Switch, useLocation, Redirect } from "react-router-dom";
 
 
 import * as config from "configs/dappConfig";
@@ -37,8 +37,8 @@ export const App: () => JSX.Element = () => {
     const theme = useAppSelector(selectTheme);
     const isLightThemeSelected: boolean = theme === LIGHT;
 
-    
-    const generatedClasses: any = classNames('c-app', { 
+
+    const generatedClasses: any = classNames('c-app', {
         'light-theme': isLightThemeSelected
     });
 
@@ -189,7 +189,11 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
+                        <Route path={"/pigselated"} exact={true} >
 
+                            <Redirect to={"/collection/PIGSEL-91e91b"} />
+
+                        </Route>
 
                         <Route path="*">
                             <HomePage />

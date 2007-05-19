@@ -140,28 +140,29 @@ export const HomePage = () => {
                         </div>
 
                         <div className="col-xs-12 col-md-6">
-                            <Link to={`/collection/CHIBI-81192c`}>
+
+                            <Link to={'/collection/PIGSEL-91e91b'}>
                                 <div className="u-margin-top-spacing-9">
 
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_img" alt="" />
+                                            <img src={'./img/l8UrAFL.png'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636990119/erd1dtug93adfr7jd8q35u8jjp34prnpwscpvgtrfe8gltmdas44zppspzhgje.profile.png'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 <span className="c-card_title">
-                                                    {'Chibi Ape'}
+                                                    {'Pigselated'}
                                                 </span>
+
                                             </div>
                                         </div>
 
 
                                     </div>
                                 </div>
-
                             </Link>
                         </div>
 
@@ -258,62 +259,34 @@ export const HomePage = () => {
                     <div className="grid grid-cols-12">
 
 
-                        {/* <div className="col-xs-12">
-                            <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
-                                Collections launching exclusively on Erdsea
-                            </h3>
-                        </div> */}
 
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/CHUB-79b0da`}>
 
-                                <div className="u-margin-tb-spacing-4">
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991988/CHUB-79b0da.profile.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991999/CHUB-79b0da.cover.jpg'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_collection-name">
-                                                    {'Chubby Frens'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </Link>
-
-                        </div>
 
 
                         <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
 
 
-                            <Link to={`/collection/BEAUT-fd0e54`}>
+                            <Link to={`/collection/KITTIES-fe6016`}>
                                 <div className="u-margin-tb-spacing-4">
 
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'	https://res.cloudinary.com/deaezbrer/image/upload/v1637002869/BEAUT-fd0e54.profile.jpg'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'	https://res.cloudinary.com/deaezbrer/image/upload/v1637002869/BEAUT-fd0e54.profile.jpg'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-5.png'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
-                                                {/* <span className="c-card_title">
-                                                {'ErdPunk #XYZ'}
-                                            </span> */}
-                                                <span className="c-card_collection-name">
-                                                    {'Boss Beauty'}
+                                                <span className="c-card_title">
+                                                    {'Kool Kitties'}
                                                 </span>
                                             </div>
                                         </div>
+
+
                                     </div>
+
 
                                 </div>
 
@@ -322,20 +295,20 @@ export const HomePage = () => {
 
 
                         <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/COYO-ab83d0`}>
+                            <Link to={`/collection/MNROBOS-39ece5`}>
                                 <div className="u-margin-tb-spacing-4">
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991369/COYO-ab83d0.profile.png'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/mini-robos/mini-robos-promo-1.png'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991369/COYO-ab83d0.profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/carousel/8.png'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
 
                                                 <span className="c-card_collection-name">
-                                                    {'Billy Coyote'}
+                                                    {'Mini Robos'}
                                                 </span>
                                             </div>
                                         </div>
@@ -353,22 +326,22 @@ export const HomePage = () => {
 
                         <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
 
-                            <Link to={`/collection/MATH-ca234a`}>
+                            <Link to={`/collection/DUCKERDS-348dd3`}>
                                 <div className="u-margin-tb-spacing-4">
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992667/MATH-ca234a.profile.png'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/duckerds/duckerds-promo-2.png'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992667/MATH-ca234a.profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/carousel/17.png'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 {/* <span className="c-card_title">
                                                 {'Duckerd #XYZ'}
                                             </span> */}
                                                 <span className="c-card_collection-name">
-                                                    {'Quick Maths'}
+                                                    {'Duckerds'}
                                                 </span>
                                             </div>
                                         </div>
@@ -378,26 +351,22 @@ export const HomePage = () => {
                             </Link>
                         </div>
 
-
-
-
-
                         <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
 
-                            <Link to={`/collection/CHIBI-81192c`}>
+                            <Link to={`/collection/MOONKEYZ-7af2e1`}>
                                 <div className="u-margin-tb-spacing-4">
 
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/moonkeyz/moonkeyz-promo-1.png'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/carousel/9.png'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 <span className="c-card_collection-name">
-                                                    {'Chibi Ape'}
+                                                    {'Moonkeyz'}
                                                 </span>
                                             </div>
                                         </div>
@@ -409,31 +378,62 @@ export const HomePage = () => {
                         </div>
 
 
-
                         <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
 
-                            <Link to={`/collection/GALAPE-000192`}>
+                            <Link to={`/collection/LADIES-677dc6`}>
                                 <div className="u-margin-tb-spacing-4">
+
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991573/GALAPE-000192.profile.png'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/pixel-ladies/pixel-ladies-promo-1.png'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991573/GALAPE-000192.profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/carousel/10.png'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 <span className="c-card_collection-name">
-                                                    {'Galatic APE'}
+                                                    {'Pixel Ladies'}
                                                 </span>
                                             </div>
                                         </div>
-
                                     </div>
 
                                 </div>
 
                             </Link>
+                        </div>
+
+
+
+                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
+
+                            <Link to={'/collection/PIGSEL-91e91b'}>
+
+                                <div className="u-margin-top-spacing-4">
+
+                                    <div className={`c-card c-card--homepage-feature`}>
+
+                                        <div className="c-card_img-container">
+                                            <img src={'./img/avatar.jpg'} className="c-card_img" alt="" />
+                                        </div>
+
+                                        <div className="c-card_info">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636990119/erd1dtug93adfr7jd8q35u8jjp34prnpwscpvgtrfe8gltmdas44zppspzhgje.profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <div className="c-card_details">
+                                                <span className="c-card_title">
+                                                    {'Pigselated'}
+                                                </span>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                            </Link>
+
                         </div>
 
 
