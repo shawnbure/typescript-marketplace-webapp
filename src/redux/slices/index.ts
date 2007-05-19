@@ -4,7 +4,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 import uiReducer from 'redux/slices/ui';
 import userReducer from 'redux/slices/user';
 
-import { txTemplateApi, tokensApi, authApi, oracleApi, collectionsApi, accountsApi, depositApi, royaltiesApi} from 'services/index';
+import { txTemplateApi, tokensApi, authApi, oracleApi, collectionsApi, accountsApi, depositApi, royaltiesApi,searchApi } from 'services/index';
 
 export const rootReducer = combineReducers({
     ui: uiReducer,
@@ -12,6 +12,8 @@ export const rootReducer = combineReducers({
     [authApi.reducerPath]: authApi.reducer,
     [oracleApi.reducerPath]: oracleApi.reducer,
     [tokensApi.reducerPath]: tokensApi.reducer,
+    [searchApi.reducerPath]: searchApi.reducer,
+
     [depositApi.reducerPath]: depositApi.reducer,
     [accountsApi.reducerPath]: accountsApi.reducer,
     [royaltiesApi.reducerPath]: royaltiesApi.reducer,

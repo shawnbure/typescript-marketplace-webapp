@@ -2,7 +2,7 @@
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 
 export const Collapse: (props: any) => any = ({
     open,

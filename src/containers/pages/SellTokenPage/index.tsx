@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import Popup from 'reactjs-popup';
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";

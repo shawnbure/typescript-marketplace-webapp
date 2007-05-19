@@ -1,13 +1,14 @@
+/* eslint-disable */ 
 import Popup from 'reactjs-popup';
 import Table from 'rc-table';
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import Collapsible from 'react-collapsible';
-import { useLocation, Link, useParams, Redirect } from "react-router-dom";
+import { useLocation, Link, useParams } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrands from '@fortawesome/free-brands-svg-icons';
-import { ToastContainer, toast } from 'react-toastify';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {  toast } from 'react-toastify';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 
 import DateTimePicker from 'react-datetime-picker';
@@ -27,7 +28,7 @@ import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
-import { routePaths } from 'constants/router';
+// import { routePaths } from 'constants/router';
 
 export const TokenPage: (props: any) => any = ({ }) => {
 
@@ -51,10 +52,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [getAccountTokenTrigger, {
 
         data: gatewayTokenData,
-        isLoading: isLoadingGatewayTokenDataQuery,
+        // isLoading: isLoadingGatewayTokenDataQuery,
         isSuccess: isSuccessGatewayTokenDataQuery,
         isError: isErrorGatewayTokenDataQuery,
-        isUninitialized: isUninitializedGatewayTokenDataQuery,
+        // isUninitialized: isUninitializedGatewayTokenDataQuery,
 
 
     }] = useGetAccountTokenGatewayMutation();
@@ -104,8 +105,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const {
 
         data: egldPriceData,
-        isError: isErrorEgldPriceQuery,
-        isLoading: isLoadingEgldPriceQuery,
+        // isError: isErrorEgldPriceQuery,
+        // isLoading: isLoadingEgldPriceQuery,
         isSuccess: isSuccessEgldPriceQuery,
 
     } = useGetEgldPriceQuery();

@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 
 
-import { Props } from './interfaces';
+// import { Props } from './interfaces';
 
 
 export const Card: (props: any) => any = ({

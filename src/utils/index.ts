@@ -1,5 +1,6 @@
+/* eslint-disable */ 
 import transactionsUtils from './transactions';
-import { Address, UserPublicKey, UserVerifier } from '@elrondnetwork/erdjs/out';
+// import { Address, UserPublicKey, UserVerifier } from '@elrondnetwork/erdjs/out';
 import { SignableMessage } from '@elrondnetwork/erdjs/out/signableMessage';
 import { Signature } from '@elrondnetwork/erdjs/out/signature';
 

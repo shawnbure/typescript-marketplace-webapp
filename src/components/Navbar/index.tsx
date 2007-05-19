@@ -145,7 +145,7 @@ export const Navbar = () => {
                         <div className="c-navbar_brand">
 
                             <Link to={routePaths.home}>
-                                <img src="/img/logos/erdsea/erdsea-logo-white.svg" image-rendering="optimizeQuality" className="c-navbar_brand-logo" />
+                                <img src="/img/logos/erdsea/erdsea-logo-white.svg" className="c-navbar_brand-logo" />
                             </Link>
 
                             <Link to={routePaths.home} className="c-navbar_brand-name">

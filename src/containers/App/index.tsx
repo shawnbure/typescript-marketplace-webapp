@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import classNames from 'classnames';
 import * as Dapp from "@elrondnetwork/dapp";
 import { Route, Switch, useLocation } from "react-router-dom";

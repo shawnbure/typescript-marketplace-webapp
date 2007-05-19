@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/react';
 
-import { BASE_URL_API, GET } from 'constants/api';
+import { BASE_URL_API } from 'constants/api';
 
 const mainPath = 'oracle';
 

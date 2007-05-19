@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import { Transaction, GasPrice, Address, TransactionPayload, Balance, ChainID, TransactionVersion, GasLimit } from "@elrondnetwork/erdjs";
 
 import { RawTransactionInterface } from "./interfaces";
