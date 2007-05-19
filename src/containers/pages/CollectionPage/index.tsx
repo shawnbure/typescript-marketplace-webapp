@@ -459,11 +459,6 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
         }
 
-        console.log({
-            response
-        });
-
-
         setTokens(response.data.data);
 
     }

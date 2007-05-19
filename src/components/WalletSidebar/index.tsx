@@ -38,7 +38,7 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     const [getWithdrawDepositTemplateTrigger] = useGetWithdrawDepositTemplateMutation();
 
 
-    const [randomToken] = useState(generateId(32)); 
+    const [randomToken] = useState(generateId(32));
 
 
     const [addDepositAmount, setAddDepositAmount] = useState<number | undefined>();
@@ -199,10 +199,10 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
 
 
-                
+
                 <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay w-0/12 lg:w-6/12 lg:w-8/12"></div>
 
-                <div className="c-wallet-sidebar_container w-full md:w-6/12 lg:w-4/12">
+                <div className="c-wallet-sidebar_container w-full md:w-12/12 lg:w-4/12">
 
                     {MaiarWrapper}
                 </div>
@@ -221,16 +221,36 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
 
 
-                <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay w-0/12 lg:w-6/12 lg:w-8/12"></div>
+                <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay w-0/12  lg:w-8/12"></div>
 
 
-                <div className="c-wallet-sidebar_container w-full md:w-6/12 lg:w-4/12">
+                <div className="c-wallet-sidebar_container w-full md:w-12/12 lg:w-4/12">
 
                     <SearchBar wrapperClassNames={"px-6 block lg:hidden"} />
                     <div className="mt-10">
                         <button onClick={toggleShouldDisplayMaiarLogin} className="c-button c-button--primary " >
                             Login
                         </button>
+
+                    </div>
+
+
+                    <div style={{ border: "1px solid #151b22" }} className="lg:hidden m-10 mb-0 mt-4 p-1 rounded-3xl">
+
+                        <ul className="">
+
+                            <li onClick={handleOverlayClick} style={{ borderBottom: "1px solid #151b22" }} className="c-navbar_list-item">
+                                <Link to={routePaths.rankings} className="c-navbar_list-link text-lg">
+                                    Rankings
+                                </Link>
+                            </li>
+
+                            <li onClick={handleOverlayClick} className="c-navbar_list-item">
+                                <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="c-navbar_list-link text-lg">
+                                    Resources
+                                </a>
+                            </li>
+                        </ul>
 
                     </div>
 
@@ -516,13 +536,13 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                                     Explore
                                 </Link>
                             </li> */}
-                            <li style={{ borderBottom: "1px solid #151b22" }} className="c-navbar_list-item">
+                            <li onClick={handleOverlayClick} style={{ borderBottom: "1px solid #151b22" }} className="c-navbar_list-item">
                                 <Link to={routePaths.rankings} className="c-navbar_list-link text-lg">
                                     Rankings
                                 </Link>
                             </li>
 
-                            <li className="c-navbar_list-item">
+                            <li onClick={handleOverlayClick} className="c-navbar_list-item">
                                 <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="c-navbar_list-link text-lg">
                                     Resources
                                 </a>

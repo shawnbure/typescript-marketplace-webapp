@@ -4,7 +4,7 @@ import { reduxBatch } from '@manaflair/redux-batch';
 import logger from 'redux-logger';
 
 import { rootReducer } from 'redux/slices';
-import { txTemplateApi, tokensApi, authApi, oracleApi, collectionsApi, depositApi, royaltiesApi, searchApi} from 'services/index';
+import { txTemplateApi, tokensApi, authApi, oracleApi, collectionsApi, depositApi, royaltiesApi, searchApi,} from 'services/index';
 
 const store = configureStore({
     reducer: rootReducer,
@@ -19,7 +19,8 @@ const store = configureStore({
             .concat(royaltiesApi.middleware)
             .concat(txTemplateApi.middleware)
             .concat(collectionsApi.middleware),
-    devTools: process.env.NODE_ENV !== 'production',
+    devTools: false,
+    // devTools: process.env.NODE_ENV !== 'production',
     enhancers: [reduxBatch],
 })
 

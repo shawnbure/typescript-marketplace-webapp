@@ -239,10 +239,6 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
     const setValuesAccount = async () => {
 
         const accountData: any = await getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
-
-        console.log({
-            accountData
-        });
         
 
         if (accountData?.data) {
