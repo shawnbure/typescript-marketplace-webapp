@@ -5,6 +5,7 @@ import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { ErrorMessage } from '@hookform/error-message';
 
+
 import { prepareTransaction } from "utils/transactions";
 
 
@@ -13,10 +14,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { handleCopyToClipboard } from "utils";
+import { handleCopyToClipboard, hexToAscii } from "utils";
 import { useGetAccountGatewayTokensMutation, useGetAccountTokensMutation, useSetAccountMutation, useSetProfileImageMutation } from "services/accounts";
 import { toast } from 'react-toastify';
 import { useGetChangeOwnerCollectionTemplateMutation, useGetDeployCollectionTemplateMutation, useGetIssueNftTemplateMutation, useGetSetRolesCollectionTemplateMutation } from 'services/tx-template';
+
+
+import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, AddressType, } from '@elrondnetwork/erdjs/out';
 
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
@@ -25,14 +29,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         address: userWalletAddress,
     } = Dapp.useContext();
 
-    
-    const [getIssueNftTemplateTrigger] = useGetIssueNftTemplateMutation();
-    const [getSetRolesCollectionTemplate] = useGetSetRolesCollectionTemplateMutation();
-    const [getDeployCollectionTemplateTrigger] = useGetDeployCollectionTemplateMutation();
-    const [getChangeOwnerCollectionTemplateTrigger ] = useGetChangeOwnerCollectionTemplateMutation();
-    
 
-    
+    const [getIssueNftTemplateTrigger] = useGetIssueNftTemplateMutation();
+    const [getSetRolesCollectionTemplateTrigger] = useGetSetRolesCollectionTemplateMutation();
+    const [getDeployCollectionTemplateTrigger] = useGetDeployCollectionTemplateMutation();
+    const [getChangeOwnerCollectionTemplateTrigger] = useGetChangeOwnerCollectionTemplateMutation();
+
+
+
     const { pathname } = useLocation();
     const sendTransaction = Dapp.useSendTransaction();
 
@@ -44,9 +48,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         if (response.error) {
 
-            const { status, data: { error } } = response.error;
+            const { error, status, } = response.error;
 
-            toast.error(`${status} | ${error}`, {
+            toast.error(`${error + ' ' + status}`, {
                 autoClose: 5000,
                 draggable: true,
                 closeOnClick: true,
@@ -77,10 +81,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const { register: registerStep1, handleSubmit: handleSubmitStep1, control: controlStep1, setError: setErrorStep1, clearErrors: clearErrorsStep1, formState: { errors: errorsStep1 } } = useForm({
 
-        defaultValues: {
-            name: "",
-            ticker: ""
-        },
+        // defaultValues: {
+        //     name: "",
+        //     ticker: ""
+        // },
 
         resolver: yupResolver(schemaStep1),
 
@@ -103,14 +107,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     // step 2
 
     const inputsStep2 = [
+        // {
+        //     title: "user address",
+        //     type: "text",
+        //     name: "userAddress",
+        //     isRequired: false,
+        // },
         {
-            title: "user address",
-            type: "text",
-            name: "userAddress",
-            isRequired: false,
-        },
-        {
-            title: "tokenId",
+            title: "Token ID (hex value)",
             type: "text",
             name: "tokenId",
             isRequired: false,
@@ -165,14 +169,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         },
     ];
 
-    const schemaObject = () => {
+    const schemaObjectStep2 = () => {
 
         const schema: any = {};
 
         inputsStep2.forEach((inputData: any) => {
 
             const { type, name, isRequired } = inputData;
-            const typeRule = type === "number" ? yup.number() :  yup.string() ;
+            const typeRule = type === "number" ? yup.number() : yup.string();
 
             if (isRequired) {
 
@@ -189,7 +193,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     }
 
-    const schemaStep2 = yup.object(schemaObject()).required();
+    const schemaStep2 = yup.object(schemaObjectStep2()).required();
 
     const { register: registerStep2, handleSubmit: handleSubmitStep2, formState: { errors: errorsStep2 } } = useForm({
         resolver: yupResolver(schemaStep2),
@@ -197,44 +201,87 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep2 = (data: any) => {
 
-        signTemplateTransaction({ 
-            getTemplateData: data,
+        const formattedData = {
+            ...data,
+            imageExt: `.` + data.imageExt,
+            tokenId: hexToAscii(data.tokenId),
+        };
+
+        signTemplateTransaction({
+            getTemplateData: { ...formattedData, userWalletAddress },
             succesCallbackRoute: pathname,
-            getTemplateTrigger: getDeployCollectionTemplateTrigger, 
+            getTemplateTrigger: getDeployCollectionTemplateTrigger,
         });
 
     };
 
 
-    // {/* royalties: BigUint,
-    // token_name_base: BoxedBytes,
-    // image_base_uri: BoxedBytes,
-    // image_extension: BoxedBytes,
-    // price: BigUint,
-    // max_supply: u64,
-    // sale_start_timestamp: u64,
-    // #[var_args] metadata_base_uri_opt: OptionalArg<BoxedBytes>, */}
-    
-    
-    useEffect(() => {
+    // 3
 
-        // getChangeOwnerCollectionTemplateTrigger(();
 
-        // signTemplateTransaction({
-        //     getTemplateData: { userWalletAddress, contractAddress: 'erd1qqqqqqqqqqqqqpgqfnpmvezt9rhatjsyew2ycwl7antfm0ult9uscqf6yy' },
-        //     succesCallbackRoute: pathname,
-        //     getTemplateTrigger: getChangeOwnerCollectionTemplateTrigger, 
-        // });
-       
-       
-        // signTemplateTransaction({
-        //     getTemplateData: { userWalletAddress, contractAddress: 'erd1qqqqqqqqqqqqqpgqfnpmvezt9rhatjsyew2ycwl7antfm0ult9uscqf6yy', collectionId: 'ABCD-9d7a44' },
-        //     succesCallbackRoute: pathname,
-        //     getTemplateTrigger: getSetRolesCollectionTemplate, 
-        // });
+    const schemaStep3 = yup.object({
+        
+        hexWalletAddress: yup.string().required(),
+
+    }).required();
+
+    const { register: registerStep3, handleSubmit: handleSubmitStep3, formState: { errors: errorsStep3 } } = useForm({
+
+        resolver: yupResolver(schemaStep3),
+
+    });
+
+    const onSubmitStep3 = (data: any) => {
+
+        const { hexWalletAddress } = data;
+
+        const getTemplateData = { userWalletAddress, contractAddress: new Address(hexWalletAddress).toString() };
+
+        console.log({
+            getTemplateData
+        });
         
 
-    },[])
+        signTemplateTransaction({
+            getTemplateData,
+            succesCallbackRoute: pathname,
+            getTemplateTrigger: getChangeOwnerCollectionTemplateTrigger,
+        });
+
+    };
+
+
+
+    // 4
+
+    const schemaStep4 = yup.object({
+        collectionId: yup.string().required(),
+        hexWalletAddress: yup.string().required(),
+    }).required();
+
+    const { register: registerStep4, handleSubmit: handleSubmitStep4, formState: { errors: errorsStep4 } } = useForm({
+
+        resolver: yupResolver(schemaStep4),
+
+    });
+
+    const onSubmitStep4 = (data: any) => {
+
+        const { hexWalletAddress, collectionId } = data;
+
+        const getTemplateData = {
+            userWalletAddress,
+            collectionId: hexToAscii(collectionId),
+            contractAddress: new Address(hexWalletAddress).toString()
+        };
+
+        signTemplateTransaction({
+            getTemplateData,
+            succesCallbackRoute: pathname,
+            getTemplateTrigger: getSetRolesCollectionTemplateTrigger,
+        });
+
+    };
 
     return (
 
@@ -305,7 +352,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             </p>
 
                             <p>
-                                Token ID
+                                {/* Token ID */}
                             </p>
 
 
@@ -316,14 +363,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                         {inputsStep2.map((inputData: any) => {
 
-                                            const { name, type } = inputData;
+                                            const { name, type, title } = inputData;
 
                                             return (
                                                 <div className="my-6">
 
-                                <p className="mb-2 text-lg text-red-500">{errorsStep2.name?.message}</p>
+                                                    <p className="mb-2 text-lg text-red-500">{errorsStep2.name?.message}</p>
                                                     <label className="block w-full">
-                                                        <span className="block mb-2">{name}</span>
+                                                        <span className="block mb-2">{title}</span>
                                                         <input  {...registerStep2(name)} type={type} className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
                                                     </label>
                                                 </div>
@@ -353,22 +400,28 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         <div className="col-span-12 lg:col-span-5">
 
                             <p className="text-2xl u-text-bold mb-4">
-                                Step 3 ┋ Transfer collection ownership
+                                Step 3 ┋ Transfer ownership
                             </p>
 
-                            <p className="text-xl mb-2">
-                                Collection contract address
-                            </p>
+                            <form onSubmit={handleSubmitStep3(onSubmitStep3)} >
 
-                            <div className="grid grid-cols-9 mb-4">
-                                <div className="col-span-12">
-                                    <input type="text" className="text-center text-4xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+
+                                        <label className="block w-full">
+                                            <span className="block mb-2">  Minter contract address (hex encoded)</span>
+                                            <input {...registerStep3('hexWalletAddress')} type="text" className="text-center text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <button className="c-button c-button--primary mb-5" >
-                                Sign
-                            </button>
+                                <button type="submit" className="c-button c-button--primary mb-5" >
+                                    Sign
+                                </button>
+
+                            </form>
 
                         </div>
 
@@ -376,26 +429,42 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             <hr className="text-white my-20" />
                         </div>
 
-
                         <div className="col-span-12 lg:col-span-5">
 
                             <p className="text-2xl u-text-bold mb-4">
                                 Step 4 ┋ Set roles for collection
                             </p>
 
-                            <p className="text-xl mb-2">
-                                Collection contract address
-                            </p>
+                            <form onSubmit={handleSubmitStep4(onSubmitStep4)} >
 
-                            <div className="grid grid-cols-9 mb-4">
-                                <div className="col-span-12">
-                                    <input type="text" className="text-center text-4xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+
+                                        <div className="mb-4">
+                                            <label className="block w-full">
+
+                                                <span className="block mb-2">  Minter contract address (hex encoded)</span>
+                                                <input {...registerStep4('hexWalletAddress')} type="text" className="text-center text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+                                            </label>
+                                        </div>
+
+                                        <div>
+                                            <label className="block w-full">
+
+                                                <span className="block mb-2">  Token ID (hex value) </span>
+                                                <input {...registerStep4('collectionId')} type="text" className="text-center text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <button className="c-button c-button--primary mb-5" >
-                                Sign
-                            </button>
+                                <button type="submit" className="c-button c-button--primary mb-5" >
+                                    Sign
+                                </button>
+
+                            </form>
 
                         </div>
 
