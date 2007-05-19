@@ -13,7 +13,6 @@ export const rootReducer = combineReducers({
     [oracleApi.reducerPath]: oracleApi.reducer,
     [tokensApi.reducerPath]: tokensApi.reducer,
     [searchApi.reducerPath]: searchApi.reducer,
-
     [depositApi.reducerPath]: depositApi.reducer,
     [accountsApi.reducerPath]: accountsApi.reducer,
     [royaltiesApi.reducerPath]: royaltiesApi.reducer,

@@ -26,7 +26,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     const schemaEdit = yup.object({
 
         // name: yup.string(),
-        description: yup.string(),
+        description: yup.string().max(350, "Must be 300 max"),
         discordLink: yup.string(),
         instagramLink: yup.string(),
         telegramLink: yup.string(),
@@ -231,7 +231,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
             <div className="grid grid-cols-12">
 
-                <div className="col-span-12 m-20">
+                <div className="col-span-12 m-4 md:m-20">
 
                     <div className="mb-10">
                         <Link to={`/collection/${collectionId}`}> {`< Back to collection`}</Link>
@@ -259,7 +259,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                     {profileName}
                                 </p>
                                 
-                                <div className="flex">
+                                <div className="flex ">
                                     <div className="mr-4">
                                         <label className="c-button c-button--secondary ">
                                             <span className="mt-2 text-base leading-normal">Select a file</span>

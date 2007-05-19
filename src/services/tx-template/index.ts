@@ -294,6 +294,39 @@ export const txTemplateApi = createApi({
 
         }),
 
+
+
+        getMintPigsTemplate: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress, numberOfTokens }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `/${mainPath}/mint-pigs/${userWalletAddress}/${numberOfTokens}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+
+
+        getPigsMintInfo: builder.mutation<any, void>({
+
+            query: (): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/collections/pigs-mint-info`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+
+
     }),
 })
 

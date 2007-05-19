@@ -5,9 +5,19 @@ export const uiSlice = createSlice({
     name: 'ui',
     initialState: initialState,
     reducers: {
-        
+
         toggleShouldDisplayWalletSidebar: (state) => {
+
+            if (!state.shouldDisplayWalletSidebar === true) {
+
+                document.body.classList.add('overflow-hidden');
             
+            } else {
+
+                document.body.classList.remove('overflow-hidden');
+            
+            }
+
             state.shouldDisplayWalletSidebar = !state.shouldDisplayWalletSidebar;
 
         },
@@ -24,10 +34,10 @@ export const uiSlice = createSlice({
 export const uiActions = uiSlice.actions;
 
 export const {
-    
+
     setShouldDisplayWalletSidebar,
     toggleShouldDisplayWalletSidebar,
-    
+
 } = uiActions;
 
 export default uiSlice.reducer;

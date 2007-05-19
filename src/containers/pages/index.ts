@@ -2,6 +2,7 @@ export { HomePage } from './HomePage';
 export { TokenPage } from './TokenPage';
 export { CreatePage } from './CreatePage';
 export { ProfilePage } from './ProfilePage';
+export { RankingsPage } from './RankingsPage';
 export { RoyaltiesPage} from './RoyaltiesPage';
 export { SellTokenPage } from './SellTokenPage';
 export { CollectionPage } from './CollectionPage';

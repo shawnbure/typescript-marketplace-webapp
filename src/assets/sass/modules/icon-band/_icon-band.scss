@@ -52,6 +52,13 @@
 
     }
 
+
+    // &--no-border-radius { 
+    //     #{$self}_item {
+    //         border-radius: inherit;
+    //     }
+    // }
+
     &--collection {
 
 
@@ -69,6 +76,50 @@
             flex-direction: column;
             justify-content: center;
             border-color: rgb(21, 27, 34);
+
+            // border-radius: unset;
+
+
+            &:first-of-type {
+
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
+
+                border-bottom-left-radius: 0;
+
+
+            }
+
+            &:last-of-type {
+
+                border-top-right-radius: 0;
+
+                border-bottom-left-radius: 20px;
+                border-bottom-right-radius: 20px;
+
+            }
+
+
+            @include respond-to(tablet) {
+
+                &:first-of-type {
+
+                    border-top-left-radius: 20px;
+                    border-bottom-left-radius: 20px;
+                    border-top-right-radius: 0;
+        
+                }
+        
+                &:last-of-type {
+        
+                    border-top-right-radius: 20px;
+                    border-bottom-right-radius: 20px;
+
+                    border-bottom-left-radius: 0;
+        
+                }
+
+            }
 
         }
 

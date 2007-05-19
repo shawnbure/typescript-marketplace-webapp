@@ -19,7 +19,7 @@ import { Collapse } from "components";
 import Collapsible from 'react-collapsible';
 import { useEffect, useState } from 'react';
 import { useGetChangeOwnerCollectionTemplateMutation, useGetMintTokensTemplateMutation } from 'services/tx-template';
-import { useGetCollectionByIdMutation, useGetCollectionTokensMutation } from 'services/collections';
+import { useGetCollectionByIdMutation, useGetCollectionInfoMutation, useGetCollectionTokensMutation } from 'services/collections';
 import { formatImgLink, shorterAddress } from 'utils';
 
 
@@ -51,12 +51,26 @@ export const CollectionPage: (props: any) => any = ({ }) => {
     }] = useGetCollectionByIdMutation();
 
 
-    const [hasLoadMore, setHasLoadMore] = useState(true);
+    // const [getMintPigsTemplateTrigger, {
 
+    // }] = useGetMintPigsTemplateMutation();
+
+    const [getCollectionInfoTrigger, {
+        data: getCollectionInfoData
+    }] = useGetCollectionInfoMutation();
+
+
+
+    const [hasLoadMore, setHasLoadMore] = useState(true);
+    const [shouldDisplayMobileFilters, setShouldDisplayMobileFilters] = useState(false);
 
 
     const [requestedNumberOfTokens, setRequestedNumberOfTokens] = useState<number>(1);
 
+    const mobileFiltersStyles = shouldDisplayMobileFilters ? { zIndex: 100, width: "100%", height: "100%", backgroundColor: "#262b2f" } : {};
+
+
+    const columnMobileFiltersStyles = shouldDisplayMobileFilters ? { zIndex: 10, width: "calc(100% - 16px)", borderBottom: "1px solid black" } : {};
 
 
     const options = [
@@ -101,11 +115,6 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitFilters = (data: any) => {
 
-        console.log({
-            data
-        });
-
-
         const filtersCategories: Array<string> = Object.keys(data.filter);
 
         const newFilterQuery: any = Object.assign({});
@@ -120,18 +129,11 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
         });
 
-        console.log({
-            newFilterQuery
-        });
-        
-
         setFilterQuery(newFilterQuery);
 
         triggerFilterAndSort({ newFilterQuery });
 
     };
-
-
 
 
     const triggerFilterAndSort = async ({ mergeWithExisting = false, newFilterQuery, newSortQuery }: { mergeWithExisting?: boolean, newFilterQuery?: any, newSortQuery?: any }) => {
@@ -467,7 +469,27 @@ export const CollectionPage: (props: any) => any = ({ }) => {
     }
 
 
+    const toggleMobileFilters = () => {
+
+        // if (!shouldDisplayMobileFilters === true) {
+
+        //     document.body.classList.add('overflow-hidden');
+
+        // } else {
+
+        //     document.body.classList.remove('overflow-hidden');
+
+        // }
+
+        setShouldDisplayMobileFilters(!shouldDisplayMobileFilters);
+
+
+    }
+
+
     useEffect(() => {
+
+        getCollectionInfoTrigger({ collectionId: collectionId });
 
         getCollectionByIdTrigger({ collectionId: collectionId });
 
@@ -526,7 +548,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                         </div>
                     }
 
-                    <h2 className="flex justify-content-center mb-2 text-5xl u-text-bold">
+                    <h2 className="flex justify-content-center mb-2 text-4xl md:text-5xl u-text-bold">
                         {collectionName || collectionTokenId}  <FontAwesomeIcon width={'20px'} className="text-lg u-text-theme-blue-place" icon={faIcons.faCheckCircle} />
                     </h2>
 
@@ -535,11 +557,11 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                     </p>
 
 
-                    <ul className="c-icon-band c-icon-band--collection mb-10">
+                    <ul className="c-icon-band c-icon-band--collection mb-10 flex-col md:flex-row">
 
                         <li className="c-icon-band_item">
 
-                            <div className="text-3xl u-text-bold">
+                            <div className="text-2xl md:text-3xl u-text-bold">
                                 {itemsTotal}
                             </div>
 
@@ -551,7 +573,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
                         <li className="c-icon-band_item">
 
-                            <div className="text-3xl u-text-bold">
+                            <div className="text-2xl md:text-3xl u-text-bold">
                                 {ownersTotal}
                             </div>
 
@@ -563,7 +585,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
                         <li className="c-icon-band_item">
 
-                            <div className="text-3xl u-text-bold">
+                            <div className="text-2xl md:text-3xl u-text-bold">
                                 {floorPrice || '---'}
                             </div>
                             <div className="">
@@ -572,9 +594,9 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
                         </li>
 
-                        <li className="c-icon-band_item" style={{ width: 144, height: 88 }}>
+                        <li className="c-icon-band_item">
 
-                            <div className="text-3xl u-text-bold">
+                            <div className="text-2xl md:text-3xl u-text-bold">
                                 {volumeTraded || '---'}
                             </div>
                             <div className="text-sm">
@@ -585,19 +607,60 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
                     </ul>
 
-                    {/* <div className="grid grid-cols-9 mb-4">
-                        <div className="col-start-5 col-span-1">
-                            <input min={1} onChange={(e: any) => { setRequestedNumberOfTokens(e.target.value); }} value={requestedNumberOfTokens} type="number" className="text-center text-4xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
-                        </div>
-                    </div>
+                    {
 
-                    <button onClick={handleMintTokens} className="c-button c-button--primary mb-5" >
-                        Mint now
-                    </button> */}
+                        Boolean(collectionData?.data?.collection?.contractAddress) &&
+                        <>
+
+
+
+                            <div className="grid grid-cols-10 mb-4">
+                                <div  className="col-span-12 md:col-start-5 md:col-span-2  p-10 md:p-0 ">
+                                    <p className="text-sm mb-4">Number of tokens to mint: </p>
+                                    <input min={1} onChange={(e: any) => { setRequestedNumberOfTokens(e.target.value); }} value={requestedNumberOfTokens} type="number" className="text-center text-4xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                    <p className="text-lg mt-2">For {requestedNumberOfTokens} tokens you will pay {(requestedNumberOfTokens * collectionData?.data?.collection?.mintPricePerTokenNominal).toFixed(3)} EGLD </p>
+
+                                </div>
+                            </div>
+
+                            <button onClick={handleMintTokens} className="c-button c-button--primary mb-5" >
+                                Mint now
+                            </button>
+
+                            <ul className="c-icon-band c-icon-band--collection mb-10 flex-col md:flex-row">
+
+                                <li className="c-icon-band_item">
+
+                                    <div className="text-3xl u-text-bold">
+                                        {getCollectionInfoData?.data?.totalSold || 0}
+                                    </div>
+
+                                    <div className="">
+                                        minted
+                                    </div>
+
+                                </li>
+
+                                <li className="c-icon-band_item">
+
+                                    <div className="text-3xl u-text-bold">
+                                        {getCollectionInfoData?.data?.maxSupply}
+                                    </div>
+
+                                    <div className="">
+                                        max supply
+                                    </div>
+
+                                </li>
+
+                            </ul>
+
+                        </>
+                    }
 
 
                     <div className="grid grid-cols-3">
-                        <div className="col-start-2 col-span-1">
+                        <div className="col-span-3 lg:col-start-2 lg:col-span-1 px-4">
                             <Collapse>
 
                                 <div>
@@ -663,25 +726,77 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                 </div>
 
 
-                <div className="col-span-3">
+                <div className="fixed bottom-2 z-50 flex w-full justify-center md:hidden">
+                    <button onClick={toggleMobileFilters} style={{ display: "flex", minWidth: "230px" }} className="align-items-center c-button c-button--primary justify-center" >
+                        <FontAwesomeIcon width={'20px'} className="mr-2" icon={faIcons.faFilter} />
+                        Filters
 
-                    <div onClick={() => { }} className="c-accordion_trigger cursor-pointer">
-                        <span className="c-accordion_trigger_icon">
-                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faFilter} />
+                        <span className="align-items-center bg-white flex h-8 ml-2 justify-center rounded-full w-8">
+                            <span className="u-text-theme-blue-anchor">
+                                {Object.keys(filterQuery)?.length}
+                            </span>
                         </span>
-                        <span className="c-accordion_trigger_title">
-                            Filters
-                        </span>
-                    </div>
 
-                    {
-                        Boolean(attributes?.length) && mapFilters()
-                    }
+                    </button>
                 </div>
 
-                <div className="col-span-9">
+
+
+                <div style={mobileFiltersStyles} className="col-span-12 md:col-span-3 fixed md:relative">
+
+                    <div className={`overflow-auto h-full md:block ${shouldDisplayMobileFilters || 'hidden'}`}>
+
+                        <div style={columnMobileFiltersStyles} className="c-accordion_trigger absolute md:relative  justify-between cursor-pointer">
+                            <span>
+                                <span className="c-accordion_trigger_icon">
+                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faFilter} />
+                                </span>
+                                <span className="c-accordion_trigger_title">
+                                    Filters
+                                </span>
+                            </span>
+
+                            <button onClick={toggleMobileFilters} className="c-button c-button--secondary md:hidden" >
+                                Done
+                            </button>
+                        </div>
+
+                        <div className="pt-24 md:pt-0">
+
+                            {
+                                Boolean(attributes?.length) && mapFilters()
+                            }
+                        </div>
+
+                    </div>
+
+
+                    {/* <div className={`hidden md:block`}>
+
+                        <div className="c-accordion_trigger cursor-pointer">
+                            <span className="c-accordion_trigger_icon">
+                                <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faFilter} />
+                            </span>
+                            <span className="c-accordion_trigger_title">
+                                Filters
+                            </span>
+
+
+                        </div>
+
+                        {
+                            Boolean(attributes?.length) && mapFilters()
+                        }
+
+                    </div> */}
+
+
+
+                </div>
+
+                <div className="col-span-12 md:col-span-9">
                     <div className="grid grid-cols-12">
-                        <div className="col-start-10 col-span-3 mx-4">
+                        <div className="col-span-12 md:col-span-6  xl:col-span-4 m-4 md:m-0">
 
                             <Select onChange={handleChangeSelectValue} options={options} isSearchable={false} defaultValue={options[0]} styles={customStyles} />
 
@@ -705,11 +820,9 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                                 {
                                     tokens?.map((token: any) => {
 
-                                        console.log(token);
-
                                         return (
                                             (
-                                                <div className="col-span-3 my-3 mx-2">
+                                                <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3 md:mx-4 mb-8 my-3 mx-2">
 
                                                     <Link to={`/token/${collectionId}/${token.nonce}`}>
 

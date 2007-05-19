@@ -1,29 +1,48 @@
-.popup-content { 
+.popup-content {
+
     background-color: transparent;
     border: none;
+    width: 100%;
+
+    z-index: 20000;
+
+    @include respond-to(tablet) {
+
+        width: 50%;
+    }
 }
 
 .c-modal {
 
     $self: &;
 
-    padding: 30px 0;
-    min-width: 500px;
-    max-width: 80vw;
-    max-height: 70vh;
+    padding: 16px;
     overflow-x: auto;
     border: 1px $black solid;
     background-color: rgb(48, 51, 57);
 
 
-    &_input , &_textarea {
+    @include respond-to(tablet) {
+
+        padding: 30px 0;
+        min-width: 500px;
+        max-width: 80vw;
+        max-height: 70vh;
+    }
+
+
+    &_input,
+    &_textarea {
 
         width: 100%;
 
     }
 
     &_container-overlay {
-        background: rgba(0,0,0,.5);
+
+        overflow-y: auto !important;
+        z-index: 20000 !important;
+        background: rgba(0, 0, 0, .5);
     }
 
     &_header {
@@ -37,9 +56,14 @@
     }
 
     &_content {
-        width: 100%;
-        padding: 10px 5px;
-        color: white;
+
+        @include respond-to(tablet) {
+
+            width: 100%;
+            padding: 10px 5px;
+            color: white;
+
+        }
 
     }
 
@@ -66,7 +90,8 @@
 
         margin: $spacing-point-4 0;
 
-        input , select {
+        input,
+        select {
 
             color: $black;
             padding: $spacing-point-1;
@@ -94,16 +119,16 @@
         }
 
         #{$self}_list {
-    
+
             display: flex;
             width: 50vw;
             flex-flow: wrap;
             justify-content: stretch;
-    
+
         }
 
         #{$self}_picker {
-            
+
             padding: 20px;
             margin: 20px;
             width: calc(33.3% - 40px);
@@ -114,20 +139,19 @@
             // text-align: center;
 
             &-title {
-                
+
                 @include font-family-bold;
-                
+
             }
 
 
             &-description {
-                
+
                 @include font-family-regular;
-                
+
             }
-    
+
         }
-    
+
     }
 }
-

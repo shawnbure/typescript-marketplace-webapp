@@ -156,7 +156,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             isRequired: false,
         },
         {
-            title: "Sale start timestamp",
+            title: "Sale start UNIX timestamp",
             type: "number",
             name: "saleStart",
             isRequired: false,
@@ -288,7 +288,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
             <div className="grid grid-cols-12">
 
-                <div className="col-span-12 m-20">
+                <div className="col-span-12 m-4 md:m-20">
 
                     <div className="mb-10">
                         <Link to={`/account`}> {`< Back to account`}</Link>
@@ -370,7 +370,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                                     <p className="mb-2 text-lg text-red-500">{errorsStep2.name?.message}</p>
                                                     <label className="block w-full">
                                                         <span className="block mb-2">{title}</span>
-                                                        <input  {...registerStep2(name)} autoComplete="off" step={ name === "price" ? "0.001" : "1" } type={type} min={0} className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                                        <input  {...registerStep2(name)} autoComplete="off" step={ name === "price" || name ===  "royalties" ? "0.001" : "1" } type={type} min={0} className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
                                                     </label>
                                                 </div>
                                             )

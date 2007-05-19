@@ -140,6 +140,26 @@ export const collectionsApi = createApi({
 
         }),
 
+        getCollectionsRankings: builder.mutation<any, any>({
+
+            query: ({ collectionId, offset, limit, filters = {}, sortRules = {} }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    url: `/${mainPath}/rankings/${offset}/${limit}`,
+                    body: JSON.stringify({
+                        sortRules: {
+                            "criteria": "volumeTraded",
+                            "mode": "desc"
+                        },
+                    })
+                }
+
+                return customRequestArg;
+            },
+        }),
+
         getCollectionTokens: builder.mutation<any, any>({
 
             query: ({ collectionId, offset, limit, filters = {}, sortRules = {} }): FetchArgs => {
@@ -159,10 +179,27 @@ export const collectionsApi = createApi({
         }),
 
 
+        getCollectionInfo: builder.mutation<any, any>({
+
+            query: ({ collectionId }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `/${mainPath}/${collectionId}/mintInfo`,
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+
     }),
 })
 
 export const {
+    useGetCollectionInfoMutation,
+    useGetCollectionsRankingsMutation,
     useSaveCollectionCoverImageMutation,
     useSaveCollectionProfileImageMutation,
     useUpdateCollectionMutation,

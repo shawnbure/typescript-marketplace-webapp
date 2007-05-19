@@ -133,7 +133,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
 
             return (
-                <div className="col-span-3 mr-8 mb-8">
+                <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3 md:mx-4 mb-8">
 
                     <Link to={`/collection/${tokenId}/`}>
 
@@ -143,7 +143,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                 <img src={formatImgLink(profileImageLink)} className="c-card_img" alt="" />
                             </div>
 
-                            <div className="c-card_info h-48 justify-content-center">
+                            <div className="c-card_info h-24 md:h-48 justify-content-center">
 
                                 <div className="c-card_details ">
 
@@ -176,7 +176,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
             return (
 
-                <div className="col-span-3 mr-8 mb-8">
+                <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3 md:mx-4 mb-8">
 
                     <Link to={`/token/${tokenId}/${nonce}`}>
 
@@ -242,7 +242,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
 
             return (
-                <div className="col-span-3 mr-8 mb-8">
+                <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3 md:mx-4 mb-8">
 
                     <Link to={tokenLink}>
 
@@ -391,11 +391,11 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                     <div className="mb-20">
 
                         <div className="grid grid-cols-3">
-                            <div className="col-start-2 col-span-1">
+                            <div className="col-span-3 lg:col-start-2 lg:col-span-1">
 
                                 <Collapse>
 
-                                    <div>
+                                    <div className="p-6">
                                         <div className="my-6">
 
                                             <ul className="c-icon-band text-gray-500">
@@ -478,8 +478,8 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                             {isOwnProfile &&
                                                 <>
 
-                                                    <div className="mb-10">
-                                                        <span className=" mr-4 inline-block">
+                                                    <div className="mb-10 md:text-center">
+                                                        <span className=" mr-4 inline-block mb-6 md:mb-0">
                                                             <Link to={`/collection/create`} className="c-button c-button--secondary"> Create collection </Link>
                                                         </span>
                                                         <span className=" mr-4 inline-block">

@@ -3,7 +3,6 @@
 
     color: $white;
     display: inline-block;
-    width: 160px;
     text-align: center;
     background-color: rgba(21, 178, 229, 0.06);
     padding: $spacing-point-3;
@@ -13,32 +12,40 @@
     border-radius: 6px;
 
     border: 1px solid rgb(21, 178, 229);
-    
-    &_type, &_value  {
+
+    min-width: 120px;
+    max-width: 160px;
+
+    width: 100%;
+
+
+
+    &_type,
+    &_value {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
 
-    &_type { 
-        
+    &_type {
+
         text-transform: uppercase;
         font-size: 12px;
         margin-bottom: $spacing-point-1;
 
-        
+
 
     }
 
 
     &_value {
-        
+
         @include font-family-bold;
         margin-bottom: $spacing-point-1;
         font-size: 15px;
 
-       
-    
+
+
     }
 
     &_rarity {

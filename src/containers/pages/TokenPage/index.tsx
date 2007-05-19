@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import Popup from 'reactjs-popup';
 import Table from 'rc-table';
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import Collapsible from 'react-collapsible';
 import { useLocation, Link, useParams } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrands from '@fortawesome/free-brands-svg-icons';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 
@@ -396,7 +396,22 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     }).reverse();
 
+    const CustomTooltip = ({ active, payload, label } : any) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="flex p-4 rounded-xl flex-col justify-center bg-black bg-opacity-50 text-white items-center content-center align-middle">
+                    <div>
+                        Day: {label} 
+                    </div>
+                    <div>
+                        Price: {payload[0].value}
+                    </div>
+                </div>
+            );
+        }
 
+        return null;
+    };
 
 
 
@@ -818,19 +833,70 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const isERD721 = Boolean(tokenMetadataData?.data?.attributes?.length);
 
+    const TokenHeader = (
+
+        <>
+            <div className="text-right">
+
+                <ul className="c-icon-band">
+
+                    <li onClick={() => {
+
+                        toast.success(`Refresh metadata queued`, {
+                            autoClose: 5000,
+                            draggable: true,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            hideProgressBar: false,
+                            position: "bottom-right",
+                        });
+
+
+                        refreshMetadataTrigger({ collectionId, tokenNonce })
+                    }} className="c-icon-band_item text-gray-500 hover:text-gray-300 cursor-pointer">
+
+                        <FontAwesomeIcon style={{ width: 20, height: 20, margin: "10px 15px 5px 15px", cursor: "pointer" }} className="inline-block " icon={faIcons.faRedoAlt} />
+
+                    </li>
+
+                </ul>
+            </div>
+
+            {!isErrorGetCollectionData && <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
+                <Link to={`/collection/${collectionId}`}>{collectionData?.data?.collection?.name || collectionId}</Link>
+            </p>
+            }
+
+            <h2 className="u-regular-heading u-text-bold u-margin-bottom-spacing-5">
+                {tokenName}
+            </h2>
+
+            {Boolean(ownerWalletAddress) &&
+                <p className="u-margin-bottom-spacing-5 u-text-small">
+                    <span className="u-text-theme-gray-mid">Owned by </span> <Link to={`/profile/${ownerWalletAddress}`}>{displayedOwner}</Link>
+                </p>
+            }
+        </>
+    )
+
     return (
 
         <div className="p-token-page">
 
 
-            <div className="row center-xs u-padding-tb-spacing-9">
+            <div className="grid grid-cols-12 my-10">
 
-                <div className="col-xs-11 col-md-10">
+                <div className="col-span-12">
 
 
-                    <div className="row row--standard-max">
+                    <div className="grid grid-cols-12  container-max">
 
-                        <div className="col-xs-12 col-md-6 p-token-page_visual-holder u-margin-bottom-spacing-4">
+
+                        <div className="col-span-12 md:hidden px-4">
+                            {TokenHeader}
+                        </div>
+
+                        <div className="col-span-12 md:col-span-6 p-token-page_visual-holder u-margin-bottom-spacing-4 justify-center px-6">
 
                             <div className="p-token-page_asset-container">
 
@@ -844,7 +910,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                 <Collapsible
                                     transitionTime={50}
-                                    className="c-accordion"
+                                    classParentString="c-accordion c-accordion--no-content-padding"
                                     trigger={
 
                                         <div className="c-accordion_trigger">
@@ -858,7 +924,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                     }>
 
-                                    <div className="c-accordion_content flex flex-wrap" >
+                                    <div className="c-accordion_content flex flex-wrap justify-center py-4" >
 
 
                                         {tokenMetadataData?.data?.attributes?.map((attribute: any) => {
@@ -1123,56 +1189,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         </div>
 
 
-                        <div className="col-xs-12 col-md-6">
+                        <div className="col-span-12 md:col-span-6 px-6">
 
-                            <div className="">
+                            <div className="hidden md:block">
 
-
-                                <div className="text-right">
-
-                                    <ul className="c-icon-band">
-
-                                        <li onClick={() => { 
-                                            
-                                            toast.success(`Refresh metadata queued`, {
-                                                autoClose: 5000,
-                                                draggable: true,
-                                                closeOnClick: true,
-                                                pauseOnHover: true,
-                                                hideProgressBar: false,
-                                                position: "bottom-right",
-                                            });
-                                
-
-                                            refreshMetadataTrigger({ collectionId, tokenNonce }) }} className="c-icon-band_item text-gray-500 hover:text-gray-300 cursor-pointer">
-
-                                            <FontAwesomeIcon style={{ width: 20, height: 20, margin: "10px 15px 5px 15px", cursor: "pointer" }} className="inline-block " icon={faIcons.faRedoAlt} />
-
-                                        </li>
-
-                                    </ul>
-                                </div>
-
-
-
-
-
-
-
-                                {!isErrorGetCollectionData && <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
-                                    <Link to={`/collection/${collectionId}`}>{collectionData?.data?.collection?.name || collectionId}</Link>
-                                </p>
-                                }
-
-                                <h2 className="u-regular-heading u-text-bold u-margin-bottom-spacing-5">
-                                    {tokenName}
-                                </h2>
-
-                                {Boolean(ownerWalletAddress) &&
-                                    <p className="u-margin-bottom-spacing-5 u-text-small">
-                                        <span className="u-text-theme-gray-mid">Owned by </span> <Link to={`/profile/${ownerWalletAddress}`}>{displayedOwner}</Link>
-                                    </p>
-                                }
+                                {TokenHeader}
 
                             </div>
 
@@ -1613,7 +1634,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                 >
                                                     <XAxis dy={15} dataKey="name" />
                                                     <YAxis dx={-15} interval={0} />
-                                                    <Tooltip labelStyle={{ backgroundColor: "transparent" }} />
+                                                    <Tooltip content={CustomTooltip} />
                                                     <CartesianGrid vertical={false} stroke="#000" />
 
                                                     <Line type="monotone" dataKey="pv" stroke="#2081e2" strokeWidth={3} activeDot={{ r: 8 }} />
@@ -1650,9 +1671,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                     </div>
 
-                    <div className="row row--standard-max">
+                    <div className="grid grid-cols-12  container-max my-4">
 
-                        <div className="col-xs-12 my-12">
+                        <div className="col-span-12 px-6 mb-6">
 
                             <div className="u-border-radius-2 u-overflow-hidden">
 
@@ -1702,7 +1723,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                         </div>
 
-                        <div className="col-xs-12 u-tac">
+                        <div className="col-span-12 px-6 text-center">
 
                             {
                                 collectionId &&

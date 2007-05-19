@@ -9,7 +9,7 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage } from 'containers/pages';
+import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
 
 
@@ -25,9 +25,9 @@ import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
 import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
 
 
-import ReactGA from 'react-ga';
-ReactGA.initialize('G-298PT9611Z');
-ReactGA.pageview(window.location.pathname + window.location.search);
+// import ReactGA from 'react-ga';
+// ReactGA.initialize('G-298PT9611Z');
+// ReactGA.pageview(window.location.pathname + window.location.search);
 
 
 export const App: () => JSX.Element = () => {
@@ -36,7 +36,11 @@ export const App: () => JSX.Element = () => {
     const dispatch = useDispatch();
     const theme = useAppSelector(selectTheme);
     const isLightThemeSelected: boolean = theme === LIGHT;
-    const generatedClasses: any = classNames('c-app', { 'light-theme': isLightThemeSelected });
+
+    
+    const generatedClasses: any = classNames('c-app', { 
+        'light-theme': isLightThemeSelected
+    });
 
     const location = useLocation();
     const { pathname } = location;
@@ -82,15 +86,9 @@ export const App: () => JSX.Element = () => {
 
 
 
-
-
     return (
 
         <div className={generatedClasses}>
-
-            <div style={{ zIndex: 10000 }} className="bg-gray-800 fixed h-full lg:hidden p-20 text- text-3xl text-center text-white w-full">
-                Sorry for the inconvenience, this site is not yet optimized for mobile devices. We will bring you this functionality on our next update. Until then please use the website on your desktop.
-            </div>
 
             <Dapp.Context config={config}>
 
@@ -103,6 +101,20 @@ export const App: () => JSX.Element = () => {
                             <HomePage />
 
                         </Route>
+
+                        <Route path={routePaths.rankings} exact={true} >
+
+                            <RankingsPage />
+
+                        </Route>
+
+
+                        {/* <Route path={'/maiar-login'} exact={true} >
+
+                            <div className="p-maiar-login">
+                               
+                            </div>
+                        </Route> */}
 
                         <Route path={routePaths.sellToken} exact={true} >
 

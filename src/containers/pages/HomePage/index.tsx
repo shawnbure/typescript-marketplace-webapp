@@ -140,27 +140,27 @@ export const HomePage = () => {
                         </div>
 
                         <div className="col-xs-12 col-md-6">
-                        <Link to={`/collection/CHIBI-81192c`}>
-                            <div className="u-margin-top-spacing-9">
+                            <Link to={`/collection/CHIBI-81192c`}>
+                                <div className="u-margin-top-spacing-9">
 
-                                <div className={`c-card c-card--homepage-feature`}>
+                                    <div className={`c-card c-card--homepage-feature`}>
 
-                                    <div className="c-card_img-container">
-                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_img" alt="" />
-                                    </div>
-
-                                    <div className="c-card_info">
-                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'Chibi Ape'}
-                                            </span>
+                                        <div className="c-card_img-container">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_img" alt="" />
                                         </div>
+
+                                        <div className="c-card_info">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_creator-avatar" alt="" />
+                                            <div className="c-card_details">
+                                                <span className="c-card_title">
+                                                    {'Chibi Ape'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+
                                     </div>
-
-
                                 </div>
-                            </div>
 
                             </Link>
                         </div>
@@ -255,7 +255,7 @@ export const HomePage = () => {
 
 
 
-                    <div className="row row--standard-max">
+                    <div className="grid grid-cols-12">
 
 
                         {/* <div className="col-xs-12">
@@ -264,7 +264,7 @@ export const HomePage = () => {
                             </h3>
                         </div> */}
 
-                        <div className="col-xs-12 col-md-4">
+                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
                             <Link to={`/collection/CHUB-79b0da`}>
 
                                 <div className="u-margin-tb-spacing-4">
@@ -290,7 +290,7 @@ export const HomePage = () => {
                         </div>
 
 
-                        <div className="col-xs-12 col-md-4">
+                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
 
 
                             <Link to={`/collection/BEAUT-fd0e54`}>
@@ -321,7 +321,7 @@ export const HomePage = () => {
                         </div>
 
 
-                        <div className="col-xs-12 col-md-4">
+                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
                             <Link to={`/collection/COYO-ab83d0`}>
                                 <div className="u-margin-tb-spacing-4">
                                     <div className={`c-card c-card--homepage-feature`}>
@@ -349,9 +349,9 @@ export const HomePage = () => {
 
 
 
-                        
 
-                        <div className="col-xs-12 col-md-4">
+
+                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
 
                             <Link to={`/collection/MATH-ca234a`}>
                                 <div className="u-margin-tb-spacing-4">
@@ -382,56 +382,56 @@ export const HomePage = () => {
 
 
 
-                        <div className="col-xs-12 col-md-4">
+                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
 
-                        <Link to={`/collection/CHIBI-81192c`}>
-                            <div className="u-margin-tb-spacing-4">
+                            <Link to={`/collection/CHIBI-81192c`}>
+                                <div className="u-margin-tb-spacing-4">
 
-                                <div className={`c-card c-card--homepage-feature`}>
+                                    <div className={`c-card c-card--homepage-feature`}>
 
-                                    <div className="c-card_img-container">
-                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_img" alt="" />
-                                    </div>
+                                        <div className="c-card_img-container">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_img" alt="" />
+                                        </div>
 
-                                    <div className="c-card_info">
-                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            <span className="c-card_collection-name">
-                                                {'Chibi Ape'}
-                                            </span>
+                                        <div className="c-card_info">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636992218/CHIBI-81192c.profile.jpg'} className="c-card_creator-avatar" alt="" />
+                                            <div className="c-card_details">
+                                                <span className="c-card_collection-name">
+                                                    {'Chibi Ape'}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                            </div>
+                                </div>
 
                             </Link>
                         </div>
 
 
 
-                        <div className="col-xs-12 col-md-4">
+                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
 
-                        <Link to={`/collection/GALAPE-000192`}>
-                            <div className="u-margin-tb-spacing-4">
-                                <div className={`c-card c-card--homepage-feature`}>
+                            <Link to={`/collection/GALAPE-000192`}>
+                                <div className="u-margin-tb-spacing-4">
+                                    <div className={`c-card c-card--homepage-feature`}>
 
-                                    <div className="c-card_img-container">
-                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991573/GALAPE-000192.profile.png'} className="c-card_img" alt="" />
-                                    </div>
-
-                                    <div className="c-card_info">
-                                        <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991573/GALAPE-000192.profile.png'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            <span className="c-card_collection-name">
-                                                {'Galatic APE'}
-                                            </span>
+                                        <div className="c-card_img-container">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991573/GALAPE-000192.profile.png'} className="c-card_img" alt="" />
                                         </div>
+
+                                        <div className="c-card_info">
+                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636991573/GALAPE-000192.profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <div className="c-card_details">
+                                                <span className="c-card_collection-name">
+                                                    {'Galatic APE'}
+                                                </span>
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                 </div>
-
-                            </div>
 
                             </Link>
                         </div>

@@ -15,6 +15,11 @@
     --container-md: calc(var(--md-min) + var(--gutter-width));
     --container-lg: calc(var(--lg-min) + var(--gutter-width));
   }
+
+  .container-max {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
   
   .container-fluid, .container {
     margin-right: auto;

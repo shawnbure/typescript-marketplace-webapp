@@ -66,9 +66,10 @@ export const AuthWrapper: (Props: { children: any }) => any = ({ children }) => 
 
     return (
         <>
-            <Navbar />
+    
 
             <Dapp.Authenticate routes={[]} unlockRoute="/login">
+                <Navbar />
                 {children}
             </Dapp.Authenticate>
 

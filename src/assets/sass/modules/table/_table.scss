@@ -29,4 +29,38 @@
     &_column {
         // width: 100%;
     }
+
+    &--rankings {
+
+        table {
+            text-align: left;
+        }
+
+        th {
+            background-color: transparent;
+            padding: 32px;
+            border: none;
+            text-align: right;
+            @include font-family-bold;
+            font-size: 20px;
+
+             &:first-of-type {
+                text-align: left;
+            }
+        }
+
+        td {
+
+            text-align: right;
+            border-top: 1px solid rgb(21, 27, 34);
+            border-bottom: 1px solid rgb(21, 27, 34);
+
+            &:first-of-type {
+                @include font-family-bold;
+                text-align: left;
+            }
+
+        }
+
+    }
 }

@@ -169,7 +169,7 @@ export const RoyaltiesPage: (props: any) => any = ({ }) => {
 
             <div className="grid grid-cols-12">
 
-                <div className="col-span-12 m-20">
+                <div className="col-span-12 m-4 md:m-20">
 
                     <div className="mb-10">
                         <Link to={`/account`}> {`< Back to account`}</Link>

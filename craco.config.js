@@ -6,6 +6,6 @@ module.exports = {
         }
     },
     eslint: {
-        enable: false
+        enable: true
     }
 };

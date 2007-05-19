@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { routePaths } from "constants/router";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation, Redirect } from "react-router-dom";
 import * as Dapp from "@elrondnetwork/dapp";
 import { useAppDispatch } from "redux/store";
 import { setUserTokenData } from "redux/slices/user";
@@ -17,12 +17,14 @@ import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
 import { useGetDepositTemplateMutation } from "services/deposit";
 import Collapsible from "react-collapsible";
+import { SearchBar } from "components";
 
 export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any = ({
     overlayClickCallback
 }) => {
 
-    const randomToken = generateId(32);
+    // const randomToken = generateId(32);
+
 
     const history = useHistory();
     const dispatch = useAppDispatch();
@@ -35,7 +37,12 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     const [getAddDepositEgldTemplateTrigger] = useGetAddDepositEgldTemplateMutation();
     const [getWithdrawDepositTemplateTrigger] = useGetWithdrawDepositTemplateMutation();
 
+
+    const [randomToken] = useState(generateId(32)); 
+
+
     const [addDepositAmount, setAddDepositAmount] = useState<number | undefined>();
+    const [shouldDisplayMaiarLogin, setShouldDisplayMaiarLogin] = useState<boolean>(false);
     const [withdrawDepositAmount, setWithdrawDepositAmount] = useState<number | undefined>();
 
 
@@ -63,6 +70,13 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     const handleOverlayClick = () => {
 
         overlayClickCallback?.();
+
+    }
+
+
+    const toggleShouldDisplayMaiarLogin = () => {
+
+        setShouldDisplayMaiarLogin(!shouldDisplayMaiarLogin);
 
     }
 
@@ -144,6 +158,30 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     };
 
 
+
+    const MaiarWrapper = (
+
+        <div className="p-maiar-login">
+
+
+            <button onClick={webWalletLogin} className="c-button c-button--secondary " >dev</button>
+
+            <button onClick={toggleShouldDisplayMaiarLogin} className="c-button c-button--secondary " >
+                Cancel
+            </button>
+            <Dapp.Pages.WalletConnect
+                callbackRoute={pathname}
+                logoutRoute={pathname}
+                title="Maiar Login"
+                lead="Scan the QR code using Maiar"
+                token={randomToken}
+            />
+
+        </div>
+
+    );
+
+
     useEffect(() => {
 
         if (!isUserLoggedIn) {
@@ -152,22 +190,53 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
         getDepositTemplateTrigger({ userWalletAddress });
 
-    }, [isUserLoggedIn])
+    }, [isUserLoggedIn]);
+
+    if (shouldDisplayMaiarLogin && !isUserLoggedIn) {
+
+        return (
+            <aside className="c-wallet-sidebar">
+
+
+
+                
+                <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay w-0/12 lg:w-6/12 lg:w-8/12"></div>
+
+                <div className="c-wallet-sidebar_container w-full md:w-6/12 lg:w-4/12">
+
+                    {MaiarWrapper}
+                </div>
+
+
+            </aside>
+        )
+
+    }
+
 
     if (!isUserLoggedIn) {
         return (
 
             <aside className="c-wallet-sidebar">
-                <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay"></div>
-                <div className="c-wallet-sidebar_container">
 
-                   <div className="mt-10">
-                   <button onClick={(e: any) => { webWalletLogin() }} className="c-button c-button--primary " >
-                        Login
-                    </button>
 
-                   </div>
+
+                <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay w-0/12 lg:w-6/12 lg:w-8/12"></div>
+
+
+                <div className="c-wallet-sidebar_container w-full md:w-6/12 lg:w-4/12">
+
+                    <SearchBar wrapperClassNames={"px-6 block lg:hidden"} />
+                    <div className="mt-10">
+                        <button onClick={toggleShouldDisplayMaiarLogin} className="c-button c-button--primary " >
+                            Login
+                        </button>
+
+                    </div>
+
                 </div>
+
+
             </aside>
         );
     };
@@ -186,10 +255,16 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
         <aside className="c-wallet-sidebar">
 
-            <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay"></div>
+            <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay w-0/12 md:w-6/12 lg:w-8/12"></div>
 
-            <div className="c-wallet-sidebar_container">
+            <div className="c-wallet-sidebar_container w-full md:w-6/12 lg:w-4/12">
 
+
+                <div className="block lg:hidden">
+
+                    <SearchBar wrapperClassNames={"px-6 mb-10"} />
+
+                </div>
 
                 <p className="flex justify-around">
 
@@ -204,7 +279,6 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                     </span>
 
                 </p>
-
 
                 <div style={{ border: "1px solid #151b22" }} className="m-10 mb-0 mt-4 p-1 rounded-t-3xl">
                     <p className="text-gray-400 text-sm">
@@ -235,8 +309,8 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
                 <div className="mb-3">
 
-                    <Link to={routePaths.account} onClick={() => { overlayClickCallback?.() }}  className="c-button c-button--primary" >
-                        <div  className="inline-flex">
+                    <Link to={routePaths.account} onClick={() => { overlayClickCallback?.() }} className="c-button c-button--primary" >
+                        <div className="inline-flex">
 
                             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faUserCircle} />
                             <span>
@@ -323,7 +397,7 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
                                         <div className="grid grid-cols-12 text-center">
 
-                                            <div className="col-span-5">
+                                            <div className="col-span-12 mb-6 md:mb-0 md:col-span-5">
 
                                                 <Collapsible
                                                     transitionTime={50}
@@ -368,7 +442,7 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
                                             </div>
 
-                                            <div className="col-start-8 col-span-5">
+                                            <div className="col-span-12 md:col-start-8 md:col-span-5">
 
                                                 <Collapsible
                                                     transitionTime={50}
@@ -427,10 +501,49 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                 </div>
 
 
+
+
+                <div className="block lg:hidden mb-6">
+
+
+                    <div style={{ border: "1px solid #151b22" }} className="m-10 mb-0 mt-4 p-1 rounded-3xl">
+
+                        <ul className="">
+
+                            {/* 
+                            <li style={{ borderBottom: "1px solid #151b22" }} className="c-navbar_list-item">
+                                <Link to={routePaths.marketplace} className="c-navbar_list-link text-lg">
+                                    Explore
+                                </Link>
+                            </li> */}
+                            <li style={{ borderBottom: "1px solid #151b22" }} className="c-navbar_list-item">
+                                <Link to={routePaths.rankings} className="c-navbar_list-link text-lg">
+                                    Rankings
+                                </Link>
+                            </li>
+
+                            <li className="c-navbar_list-item">
+                                <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="c-navbar_list-link text-lg">
+                                    Resources
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
+
+
+
+                </div>
+
+
                 <div>
-                    <button className="c-button c-button--secondary bg-transparent" onClick={handleLogOut}>Logout</button>
+                    <button className="c-button c-button--secondary" onClick={handleLogOut}>
+                        {/* <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faDoorOpen} /> */}
+                        Logout
+                    </button>
                 </div>
             </div>
+
         </aside>
     );
 };

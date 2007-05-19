@@ -2,28 +2,35 @@
 
     height: calc(100% - 77px);
     width: 100%;
-    position: absolute;
+    position: fixed;
     display: flex;
-    z-index: 16;
+    z-index: 200;
+
 
     &_container {
 
         position: relative;
         z-index: 8;
-        width: 24vw;
+        // width: 24vw;
         background-color: #202225;
-        height: 100%;
+        // height: 100vh;
+        // height: 100vh;
+
 
         text-align: center;
-        padding: $spacing-point-3 $spacing-point-2;
+        padding: $spacing-point-3 0;
+        padding-bottom: 16px;
+        overflow-y: auto;
+
 
     }
 
     &_overlay {
 
-        width: 75vw;
-        height: 100%;
+        // width: 75vw;
         background-color: rgba(0, 0, 0, 0.5);
+        padding-bottom: 16px;
+
 
     }
 
