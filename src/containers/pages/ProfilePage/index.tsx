@@ -98,7 +98,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
 
                 <div className="col-span-12 flex justify-center mb-10 pb-16 relative">
-                    <div style={{ backgroundImage:`url(${accountData?.data.profileImageLink})` }} className="-bottom-1/4 absolute bg-yellow-700 border border-black h-40 rounded-circle w-40" >
+                    <div style={{ backgroundImage: `url(${accountData?.data.profileImageLink})` }} className="-bottom-1/4 absolute bg-yellow-700 border border-black h-40 rounded-circle w-40" >
                     </div>
                 </div>
 
@@ -117,9 +117,9 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                     </div>
 
                     <h2 className="u-regular-heading u-text-bold">
-                       {
-                           accountData?.data.name ||  'Unnamed'
-                       }
+                        {
+                            accountData?.data.name || 'Unnamed'
+                        }
                     </h2>
 
                     <p className="u-text-theme-gray-mid ">
@@ -268,18 +268,15 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                                             <div className="c-card_info justify-between">
 
-                                                                <div className="c-card_details">
-                                                                    <div>
-                                                                        <p className="c-card_title">
-                                                                            <Link to={`/collection/${collectionId}`}>
-                                                                                {'collectionName'}
-                                                                            </Link>
-                                                                        </p>
-                                                                        <p className="c-card_collection-name">
-                                                                            {tokenName}
-                                                                        </p>
-                                                                    </div>
-
+                                                                <div className="c-card_token-details">
+                                                                    <p className="text-gray-700 text-xs">
+                                                                        <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${collectionId}`}>
+                                                                            {'collectionName'}
+                                                                        </Link>
+                                                                    </p>
+                                                                    <p className="text-sm u-text-bold">
+                                                                        {tokenName}
+                                                                    </p>
                                                                 </div>
 
 
@@ -295,7 +292,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                         <div className="col-span-12 mt-12 mb-4">
                                             <p>
-                                                Not complained ERD-721 NFTs
+                                                Not ERD-721 compliant
                                             </p>
                                         </div>
 
@@ -317,20 +314,16 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
                                                             <div className="c-card_info justify-between">
 
-                                                                <div className="c-card_details">
-                                                                    <div>
-                                                                        <p className="c-card_title">
-                                                                            <Link to={`/collection/${collectionId}`}>
-                                                                                {'collectionName'}
-                                                                            </Link>
-                                                                        </p>
-                                                                        <p className="c-card_collection-name">
-                                                                            {tokenName}
-                                                                        </p>
-                                                                    </div>
-
+                                                                <div className="c-card_token-details">
+                                                                    <p className="text-gray-700 text-xs">
+                                                                        <Link className="text-gray-500 hover:text-gray-200" to={`/collection/${collectionId}`}>
+                                                                            {'collectionName'}
+                                                                        </Link>
+                                                                    </p>
+                                                                    <p className="text-sm u-text-bold">
+                                                                        {tokenName}
+                                                                    </p>
                                                                 </div>
-
 
                                                             </div>
                                                         </div>

@@ -139,16 +139,10 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
                                 </div>
 
                                 <p className="mb-2">
-                                    Username <span className="text-red-600">*</span>
+                                    Username
                                 </p>
 
-                                <input onChange={handleChangeUsername} value={username} required placeholder="Enter username" type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
-
-                                {/* <p className="mb-2">
-                                    Email Address <span className="text-red-600">*</span>
-                                </p>
-
-                                <input required placeholder="Enter username" type="email" className="bg-opacity-10 bg-white border-1  border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" /> */}
+                                <input onChange={handleChangeUsername} value={username} placeholder="Enter username" type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
 
                                 <p className="mb-2">
                                     Bio

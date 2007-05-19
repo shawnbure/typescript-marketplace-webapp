@@ -7,10 +7,12 @@ export const routePaths = {
     create: '/create',
     account: '/account',
     accountSettings: '/account/settings',
-    collection: "/collection/:collectionId/",
+    collection: "/collection/:collectionId",
     token: "/token/:collectionId/:tokenNonce",
     collectionEdit: '/collection/:collectionId/edit',
     sellToken: "/token/:collectionId/:tokenNonce/sell",
+    unlistedToken: "/token/:walletAddress/:collectionId/:tokenNonce",
+
 };
 
 

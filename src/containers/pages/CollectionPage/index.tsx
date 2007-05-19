@@ -203,7 +203,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                                                 twitterLink &&
                                                 <li className="c-icon-band_item">
                                                     <a href={twitterLink} target="_blank" className="c-icon-band_link">
-                                                        <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faTwitch} />
+                                                        <FontAwesomeIcon width={'20px'} className="c-icon-band_icon" icon={faBrands.faTwitter} />
                                                     </a>
                                                 </li>
                                             }

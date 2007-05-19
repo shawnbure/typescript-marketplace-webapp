@@ -84,6 +84,8 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     const egldBalance = (parseFloat(balance) / 1000000000000000000).toFixed(3);
     const usdBalance = (Number(egldBalance) * parseFloat(egldPriceString)).toFixed(2);
 
+    const deposit = (0 / 1000000000000000000).toFixed(3);
+    const usdDeposit = (Number(deposit) * parseFloat(egldPriceString)).toFixed(2);
 
     return (
 
@@ -109,7 +111,7 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                 </p>
 
 
-                <div className="my-14">
+                <div className="border m-10 mb-0 p-5 rounded-t-3xl">
                     <p className="u-text-theme-gray-mid u-text-small">
                         Total balance
                     </p>
@@ -118,6 +120,19 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                     </p>
                     <p className="u-text-bold u-text-theme-gray-mid">
                         {egldBalance} EGLD
+                    </p>
+
+                </div>
+
+                <div className="border m-10 mt-0 p-5 rounded-b-3xl">
+                    <p className="u-text-theme-gray-mid u-text-small">
+                        Deposit
+                    </p>
+                    <p className="text-3xl u-text-bold">
+                        ${usdDeposit} USD
+                    </p>
+                    <p className="u-text-bold u-text-theme-gray-mid">
+                        {deposit} EGLD
                     </p>
 
                 </div>
