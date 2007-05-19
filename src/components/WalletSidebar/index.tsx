@@ -164,7 +164,7 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
         <div className="p-maiar-login">
 
 
-            <button onClick={webWalletLogin} className="c-button c-button--secondary " >dev</button>
+            {/* <button onClick={webWalletLogin} className="c-button c-button--secondary " >dev</button> */}
 
             <button onClick={toggleShouldDisplayMaiarLogin} className="c-button c-button--secondary " >
                 Cancel
