@@ -336,7 +336,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                 </div>
 
                 <div className="col-span-12 flex justify-center mb-10 pb-16 relative">
-                    <div style={{ backgroundImage: `url(${accountData?.data.profileImageLink})` }} className="-bottom-1/4 absolute bg-yellow-700 border border-black h-40 rounded-circle w-40" >
+                    <div style={{ backgroundImage: `url(${accountData?.data.profileImageLink})` }} className="-bottom-1/4 absolute bg-yellow-700 border border-black h-40 rounded-circle w-40 bg-cover" >
                     </div>
                 </div>
 

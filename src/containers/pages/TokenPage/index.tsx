@@ -111,6 +111,14 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isGatewayTokenFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
     const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
 
+    console.log({
+        isEgldPriceFetched,
+        isTokenDataFetched,
+        isGatewayTokenFetched,
+        shouldRenderPage
+    });
+
+
     // const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
 
     const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
@@ -154,15 +162,34 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     }, []);
 
+
+
+    if(isErrorGetTokenDataQuery){
+        
+        return (<p className="my-10 text-2xl text-center">Token ({collectionId} {tokenNonce}) not found</p>);
+
+    }
+
+
+    if(isErrorGatewayTokenDataQuery){
+        
+        return (<p className="my-10 text-2xl text-center">Gateway error</p>);
+
+    }
+
     if (!shouldRenderPage) {
 
-        return (<p>Loading...</p>);
+        return (<p className="my-10 text-2xl text-center">Loading...</p>);
 
     };
 
+
     const { data: tokenData } = walletAddressParam ? gatewayTokenData : tokenResponseData;
 
-    const getBaseTokenData = (tokenData: any, isOurs: boolean = false) => {
+    const isOurs = !Boolean(walletAddressParam);
+
+
+    const getBaseTokenData = (tokenData: any ) => {
 
         const token = isOurs ? tokenData.token : tokenData.tokenData;
 
@@ -206,6 +233,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     };
 
+
     const {
 
         nonce,
@@ -222,7 +250,19 @@ export const TokenPage: (props: any) => any = ({ }) => {
         tokenState,
         priceNominal: tokenPrice,
 
-    } = getBaseTokenData(tokenData, !Boolean(walletAddressParam));
+    } = getBaseTokenData(tokenData);
+
+
+
+
+    if (!isOurs && tokenData.tokenData.balance === "0" && walletAddressParam) {
+
+        return(<>
+             <p className="my-10 text-2xl text-center">{walletAddressParam}</p>
+             <p className="my-10 text-2xl text-center">is not the owner of  {collectionId} {tokenNonce}</p>
+        </>)
+    
+    }
 
 
     if (Boolean(metadataLink) && isUninitializedGetTokenMetadata) {
@@ -1021,23 +1061,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             </p>
                                         }
 
-                                        {metadataLink &&
-                                            <p className="flex justify-between u-text-small my-3">
-
-                                                <span className="u-text-theme-gray-light">
-                                                    Metadata
-                                                </span>
-
-                                                <span className="u-text-theme-anchor-link">
-
-                                                    <a href={metadataLink} target="_blank">
-                                                        <FontAwesomeIcon style={{ width: 20, height: 20, margin: "10px 15px 5px 15px", cursor: "pointer" }} className="inline-block " icon={faIcons.faExternalLinkAlt} />
-                                                    </a>
-
-                                                </span>
-
-                                            </p>
-                                        }
 
                                         <p className="flex justify-between u-text-small my-3">
 
@@ -1050,6 +1073,46 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             </span>
 
                                         </p>
+
+                                        {metadataLink &&
+                                            <p className="flex justify-between u-text-small my-3">
+
+                                                <span className="u-text-theme-gray-light">
+                                                    Metadata
+                                                </span>
+
+                                                <span className="u-text-theme-anchor-link">
+
+                                                    <a href={metadataLink} target="_blank">
+                                                        <FontAwesomeIcon style={{ width: 15, height: 15, cursor: "pointer" }} className="inline-block " icon={faIcons.faExternalLinkAlt} />
+                                                    </a>
+
+                                                </span>
+
+                                            </p>
+                                        }
+
+
+
+                                        {imageLink &&
+                                            <p className="flex justify-between u-text-small my-3">
+
+                                                <span className="u-text-theme-gray-light">
+                                                    Asset
+                                                </span>
+
+                                                <span className="u-text-theme-anchor-link">
+
+                                                    <a href={imageLink} target="_blank">
+                                                        <FontAwesomeIcon style={{ width: 15, height: 15, cursor: "pointer" }} className="inline-block " icon={faIcons.faExternalLinkAlt} />
+                                                    </a>
+
+                                                </span>
+
+                                            </p>
+                                        }
+
+
 
 
 
@@ -1107,7 +1170,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
 
                                 {
-                                    (!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) &&
+                                    ((!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) && Boolean(ownerWalletAddress))  && 
                                     <Collapsible
 
                                         open={true}
