@@ -57,7 +57,7 @@ export const Navbar = () => {
                             </Link>
 
                             <Link to={routePaths.home} className="c-navbar_brand-name">
-                                Erdsea
+                                Youbei
                             </Link>
 
                         </div>
