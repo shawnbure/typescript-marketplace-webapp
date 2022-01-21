@@ -97,10 +97,10 @@ export const HomePage = () => {
 
                             <div className="u-margin-top-spacing-13 u-padding-right-spacing-3">
 
-                                <h1 className="u-visually-hidden">Erdsea</h1>
+                                <h1 className="u-visually-hidden">Youbei</h1>
 
                                 <h2 className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white">
-                                    Discover, collect, and sell exceptional NFTs
+                                    Get Paid to NFT
                                 </h2>
 
                                 <div className="row">
@@ -112,24 +112,26 @@ export const HomePage = () => {
                                         </p> */}
 
                                         <p className="u-text-lead u-text-theme-gray-mid u-margin-bottom-spacing-10">
-                                            Erdsea is the first open NFT marketplace on Elrond
+                                        Youbei is the community-first open NFT marketplace that shares 100% of the profits
                                         </p>
 
                                     </div>
 
                                 </div>
 
+                             
+
                                 <p className="u-margin-bottom-spacing-10 u-hidden-tablet-block">
 
-                                    <a href={'https://discord.gg/VS3bfZVn5J'} className="c-button c-button--primary u-margin-bottom-spacing-4 u-margin-right-spacing-4">Get latest</a>
-                                    <a href={'https://twitter.com/ErdseaNFT'} className="c-button c-button--secondary">Follow us</a>
+                                    <a href={'https://discord.gg/xBh7dEEeBc'} className="c-button c-button--primary u-margin-bottom-spacing-4 u-margin-right-spacing-4">Get latest</a>
+                                    <a href={'https://twitter.com/ElrondNFT'} className="c-button c-button--secondary">Follow us</a>
 
                                 </p>
 
                                 <p className="u-margin-bottom-spacing-10 u-hidden-desktop-block">
 
-                                    <a href={'https://discord.gg/VS3bfZVn5J'} className="c-button c-button--primary u-margin-spacing-2">Get latest</a>
-                                    <a href={'https://twitter.com/ErdseaNFT'} className="c-button c-button--secondary u-margin-spacing-2">Follow us</a>
+                                    <a href={'https://discord.gg/xBh7dEEeBc'} className="c-button c-button--primary u-margin-spacing-2">Get latest</a>
+                                    <a href={'https://twitter.com/ElrondNFT'} className="c-button c-button--secondary u-margin-spacing-2">Follow us</a>
 
                                 </p>
 
