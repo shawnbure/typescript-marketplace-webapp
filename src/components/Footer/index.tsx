@@ -3,7 +3,7 @@ export const Footer = () => {
     <footer className="c-footer">
       <div>
           <p className="u-text-small">
-            Copyright © 2021 Erdsea
+            Copyright © 2021 ENFT-DAO
           </p>
       </div>
     </footer>
