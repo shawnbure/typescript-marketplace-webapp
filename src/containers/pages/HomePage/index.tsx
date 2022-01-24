@@ -177,8 +177,16 @@ export const HomePage = () => {
                         <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
 
                             <div className="u-padding-lr-spacing-2">
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />
+                                { /*
+                                    <img src = "./img/SVG/icon_create.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
+                                */ }
 
+                                   
+                                
+                            <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />  
+                                
+                     
+                                
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Create collections
@@ -197,9 +205,12 @@ export const HomePage = () => {
 
 
                             <div className="u-padding-lr-spacing-2">
-
+                                { /*  
+                                    <img src = "./img/SVG/icon_minting.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
+                                */ }
+                                
+                                
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faTags} />
-
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Minting NFTs
@@ -219,7 +230,10 @@ export const HomePage = () => {
 
                             <div className="u-padding-lr-spacing-2">
 
+                            { /*  <img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
+
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faCoins} />
+                                
 
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
@@ -227,7 +241,7 @@ export const HomePage = () => {
                                 </h3>
 
                                 <p>
-                                    Erdsea offers minting, listing and bidding* features with zero additional fees
+                                    Minting, listing and bidding* features with zero additional fees
                                 </p>
 
                             </div>
@@ -238,15 +252,19 @@ export const HomePage = () => {
                         <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
 
                             <div className="u-padding-lr-spacing-2">
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faListOl} />
+                                
+                                
+                                { /* <<img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
 
+                                
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faListOl} />
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Rarity ranking
                                 </h3>
 
                                 <p>
-                                    Erdsea displays rarity rank, score and traits statistics for every collection
+                                    Rarity rank, score and traits statistics for every collection
                                 </p>
                             </div>
 
