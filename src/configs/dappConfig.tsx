@@ -17,13 +17,13 @@ export const walletConnectDeepLink =
 export const contractAddress = 'erd1qqqqqqqqqqqqqpgqhz4g5t6n7qkdupykngtp69ynw7ghcccry4wsx6423a';
 
 export const network: Dapp.NetworkType = {
-  id: 'devnet',
-  name: 'Devnet',
+  id: 'testnet',
+  name: 'testnet',
   egldLabel: 'xEGLD',
-  apiAddress: 'https://devnet-api.elrond.com',
-  walletAddress: 'https://devnet-wallet.elrond.com',
-  gatewayAddress: 'https://devnet-gateway.elrond.com',
-  explorerAddress: 'http://devnet-explorer.elrond.com/',
+  apiAddress: 'https://testnet-api.elrond.com',
+  walletAddress: 'https://testnet-wallet.elrond.com',
+  gatewayAddress: 'https://testnet-gateway.elrond.com',
+  explorerAddress: 'http://testnet-explorer.elrond.com/',
 };
 
 
