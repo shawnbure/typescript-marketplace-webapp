@@ -1,19 +1,34 @@
 {
   "files": {
     "main.css": "/static/css/main.37a75ed4.chunk.css",
+<<<<<<< HEAD
     "main.js": "/static/js/main.9284464b.chunk.js",
     "runtime-main.js": "/static/js/runtime-main.c82d7e55.js",
     "static/css/2.da384bee.chunk.css": "/static/css/2.da384bee.chunk.css",
     "static/js/2.de500854.chunk.js": "/static/js/2.de500854.chunk.js",
     "index.html": "/index.html",
     "static/js/2.de500854.chunk.js.LICENSE.txt": "/static/js/2.de500854.chunk.js.LICENSE.txt",
+=======
+    "main.js": "/static/js/main.82f3f63f.chunk.js",
+    "runtime-main.js": "/static/js/runtime-main.c82d7e55.js",
+    "static/css/2.da384bee.chunk.css": "/static/css/2.da384bee.chunk.css",
+    "static/js/2.514b73d2.chunk.js": "/static/js/2.514b73d2.chunk.js",
+    "index.html": "/index.html",
+    "static/js/2.514b73d2.chunk.js.LICENSE.txt": "/static/js/2.514b73d2.chunk.js.LICENSE.txt",
+>>>>>>> 7a5930a1c5d5a0fb4a4d0f19b143c2c740250624
     "static/media/_imports.scss": "/static/media/Technology-Coder.1db42915.jpg"
   },
   "entrypoints": [
     "static/js/runtime-main.c82d7e55.js",
     "static/css/2.da384bee.chunk.css",
+<<<<<<< HEAD
     "static/js/2.de500854.chunk.js",
     "static/css/main.37a75ed4.chunk.css",
     "static/js/main.9284464b.chunk.js"
+=======
+    "static/js/2.514b73d2.chunk.js",
+    "static/css/main.37a75ed4.chunk.css",
+    "static/js/main.82f3f63f.chunk.js"
+>>>>>>> 7a5930a1c5d5a0fb4a4d0f19b143c2c740250624
   ]
 }

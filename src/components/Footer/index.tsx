@@ -4,9 +4,14 @@ export const Footer = () => {
       <div>
           <p className="u-text-small u-tac">
             Copyright © 2022 Youbei 
+            
             |
-            Resources
+
+            &nbsp;
+            <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="">Resources</a>            
+            &nbsp;
             |
+
             ENFT-DAO                         
           </p>
       </div>
