@@ -100,7 +100,8 @@ export const HomePage = () => {
                                 <h1 className="u-visually-hidden">Youbei</h1>
 
                                 <h2 className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white">
-                                    Get Paid to NFT
+                                Get Paid to Collect, Hold-To-Earn. 
+
                                 </h2>
 
                                 <div className="row">
@@ -112,7 +113,9 @@ export const HomePage = () => {
                                         </p> */}
 
                                         <p className="u-text-lead u-text-theme-gray-mid u-margin-bottom-spacing-10">
-                                        Youbei is the community-first open NFT marketplace that shares 100% of the profits
+                                        Youbei is the profit-sharing community marketplace for Elrond NFTs. 
+                                        Easy and Fast for Creators, Safe and Reliable for Collectors.
+
                                         </p>
 
                                     </div>
@@ -149,14 +152,14 @@ export const HomePage = () => {
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'./img/l8UrAFL.png'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/regal-eagles/regal-eagles-promo.png'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636990119/erd1dtug93adfr7jd8q35u8jjp34prnpwscpvgtrfe8gltmdas44zppspzhgje.profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/collections/regal-eagles/regal-eagles-profile.png'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 <span className="c-card_title">
-                                                    {'Pigselated'}
+                                                    {'Regal Eagles'}
                                                 </span>
 
                                             </div>
@@ -286,20 +289,20 @@ export const HomePage = () => {
                         <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
 
 
-                            <Link to={`/collection/KITTIES-fe6016`}>
+                            <Link to={`/collection/TinyWings`}>
                                 <div className="u-margin-tb-spacing-4">
 
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/TinyWings/Promo_TinyWings.png'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-5.png'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/collections/TinyWings/Profile_TinyWings.png'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 <span className="c-card_title">
-                                                    {'Kool Kitties'}
+                                                    {'Tiny Wings'}
                                                 </span>
                                             </div>
                                         </div>
@@ -459,6 +462,113 @@ export const HomePage = () => {
 
                     </div>
 
+
+
+                    <br/><br/>
+
+                    <h1 className="u-tac u-text-bold">Roadmap</h1>
+
+                    <div className="row row--standard-max u-tac">
+
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+
+                            <div className="u-padding-lr-spacing-2">
+                                { /*
+                                    <img src = "./img/SVG/icon_create.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
+                                */ }
+
+                                   
+                                
+                            <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessPawn} />  
+                                
+                     
+                                
+
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Alpha Phase: <br/>
+                                    Reward Early Adopters
+                                </h3>
+
+                                <p>
+                                
+                                
+                                    2% fee to holders of Onchain Warriors, EGLD Vault and Regal Eagle NFTs.
+.5% fee to DAO Development. 
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+ 
+
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+
+
+                            <div className="u-padding-lr-spacing-2">
+                                { /*  
+                                    <img src = "./img/SVG/icon_minting.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
+                                */ }
+                                
+                                
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessKnight} />
+
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Beta Phase:<br/>
+                                    Reward Our Users 
+                                </h3>
+
+                                <p>
+                                
+                                
+
+                                    80% profits to daily active users in User Basic Income (UBI).
+							 20% profits to DAO Development.
+
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+
+                            <div className="u-padding-lr-spacing-2">
+
+                            { /*  <img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
+
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessKing} />
+                                
+
+
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Gamma Phase:<br/>
+                                    Grow Sustainably 
+                                </h3>
+
+                                <p>
+                                    
+                                    80% profits to daily active users in User Basic Income (UBI).
+							20% profits to $ENFT Treasury.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+
+
+                    </div>
+
+
+                    <br/>
 
                     <Footer />
 
