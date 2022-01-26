@@ -85,16 +85,7 @@ export const Navbar = () => {
                                     Rankings
                                 </Link>
                             </li>
-                            <li className="c-navbar_list-item">
-                                <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="c-navbar_list-link">
-                                    Resources
-                                </a>
-                            </li>
-                            <li className="c-navbar_list-item">
-                                <Link to={routePaths.dao} className="c-navbar_list-link">
-                                    DAO
-                                </Link>
-                            </li>
+
                             <li className="c-navbar_list-item" onClick={handleToggleSidebar}>
                                 <span className="c-navbar_list-link">
                                     <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />

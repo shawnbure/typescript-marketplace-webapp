@@ -244,7 +244,7 @@ export const HomePage = () => {
                                 </h3>
 
                                 <p>
-                                    Minting, listing and bidding* features with zero additional fees
+                                    Youbei offers minting, listing and bidding features with zero additional fees to save collectors crypto
                                 </p>
 
                             </div>
@@ -267,7 +267,7 @@ export const HomePage = () => {
                                 </h3>
 
                                 <p>
-                                    Rarity rank, score and traits statistics for every collection
+                                    Youbei displays rarity rank, score and trait statistics for every collection to give collectors the right information at the right time
                                 </p>
                             </div>
 
@@ -571,6 +571,7 @@ export const HomePage = () => {
                     <br/>
 
                     <Footer />
+
 
 
 

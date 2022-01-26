@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/static/css/main.37a75ed4.chunk.css",
-    "main.js": "/static/js/main.5d6e31ad.chunk.js",
+    "main.js": "/static/js/main.82f3f63f.chunk.js",
     "runtime-main.js": "/static/js/runtime-main.c82d7e55.js",
     "static/css/2.da384bee.chunk.css": "/static/css/2.da384bee.chunk.css",
-    "static/js/2.edf7009d.chunk.js": "/static/js/2.edf7009d.chunk.js",
+    "static/js/2.514b73d2.chunk.js": "/static/js/2.514b73d2.chunk.js",
     "index.html": "/index.html",
-    "static/js/2.edf7009d.chunk.js.LICENSE.txt": "/static/js/2.edf7009d.chunk.js.LICENSE.txt",
+    "static/js/2.514b73d2.chunk.js.LICENSE.txt": "/static/js/2.514b73d2.chunk.js.LICENSE.txt",
     "static/media/_imports.scss": "/static/media/Technology-Coder.1db42915.jpg"
   },
   "entrypoints": [
     "static/js/runtime-main.c82d7e55.js",
     "static/css/2.da384bee.chunk.css",
-    "static/js/2.edf7009d.chunk.js",
+    "static/js/2.514b73d2.chunk.js",
     "static/css/main.37a75ed4.chunk.css",
-    "static/js/main.5d6e31ad.chunk.js"
+    "static/js/main.82f3f63f.chunk.js"
   ]
 }
