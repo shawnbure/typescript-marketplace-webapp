@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-export const BASE_URL_API: string = 'http://localhost:5000';  //'https://container-service-youbei-api-test.3dlo0nfncitse.us-east-2.cs.amazonlightsail.com/';
-=======
-export const BASE_URL_API: string = 'https://app.youbei.io:5055';
-//export const BASE_URL_API: string = 'http://localhost:5000';
->>>>>>> 629f9f8d67a630563070bb8b55b120b7dca3d901
+export const BASE_URL_API: string = 'http://localhost:5000'; 
 export const ELROND_API: string = 'https://api.elrond.com';
 export const ELROND_GATEWAY_API: string = 'https://gateway.elrond.com';
 
