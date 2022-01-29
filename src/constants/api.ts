@@ -7,8 +7,6 @@ export const ELROND_ID: string = process.env.REACT_APP_NODE_ENV == 'development'
 export const ELROND_EGLD_LABEL: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'xEGLD': process.env.REACT_APP_NODE_ENV == 'production' ? 'EGLD':'xEGLD'; 
 
 
-console.log(process.env.REACT_APP_NODE_ENV)
-console.log(BASE_URL_API)
 export const GET = 'GET';
 export const PUT: string = 'PUT';
 export const POST = 'POST';
