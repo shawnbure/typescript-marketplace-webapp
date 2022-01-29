@@ -57,6 +57,8 @@
     },
     "scripts": {
         "start": "craco start production",
+        "start:dev": "craco start development",
+        "start:local": "craco start local",
         "build": "yarn build:test",
         "build:test": "cat .env.develop > .env.local && craco build",
         "build:main": "cat .env.production > .env.local  && craco build",
