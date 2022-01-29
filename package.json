@@ -57,7 +57,9 @@
     },
     "scripts": {
         "start": "craco start production",
-        "build": "craco build production",
+        "build": "yarn build:test",
+        "build:test": "cat .env.develop > .env.local && craco build",
+        "build:main": "cat .env.production > .env.local  && craco build",
         "test": "craco test"
     },
     "eslintConfig": {
