@@ -16,6 +16,6 @@ RUN yarn install
 RUN npm install -g serve
 # copy application
 COPY . .
-RUN yarn build
+RUN NODE_ENV=development yarn build
 
 ENTRYPOINT [ "serve","-l","5000", "-s", "build" ]
