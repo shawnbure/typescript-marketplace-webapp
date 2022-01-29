@@ -3,7 +3,7 @@ FROM node:14 as builder
 WORKDIR /app
 
 ENV PATH /app/node_modules/.bin:$PATH
-ENV PORT 8080 
+ENV PORT 5000 
 
 RUN apt update
 RUN apt install git
