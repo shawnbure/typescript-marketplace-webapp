@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Footer } from 'components/index';
 
-
+import { asciiToHex } from "utils";
 
 import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -19,6 +19,7 @@ import 'swiper/swiper.min.css';
 
 
 SwiperCore.use([Autoplay, Pagination, Navigation]);
+
 
 
 export const HomePage = () => {

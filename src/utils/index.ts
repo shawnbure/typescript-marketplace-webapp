@@ -3,6 +3,7 @@ import transactionsUtils from './transactions';
 // import { Address, UserPublicKey, UserVerifier } from '@elrondnetwork/erdjs/out';
 import { SignableMessage } from '@elrondnetwork/erdjs/out/signableMessage';
 import { Signature } from '@elrondnetwork/erdjs/out/signature';
+import { string } from 'yup';
 
 
 export const createVerifiedPayload = (address: string, loginToken: any, signature: any, data: any) => {
@@ -62,6 +63,19 @@ export function hexToAscii(str1: string) {
 }
 
 
+export function asciiToHex(str1: string)
+{
+    var arr1 = []
+
+    for( var n=0, l=str1.length; n < l; n++)
+    {
+        var hex = Number(str1.charCodeAt(n)).toString(16);
+        arr1.push(hex);
+    }
+
+    return arr1.join('');
+}
+
 export const formatImgLink = (url: string) => {
 
     if (url.includes("gateway.pinata.cloud")) {
@@ -78,6 +92,7 @@ export const formatImgLink = (url: string) => {
 
 export default {
     hexToAscii,
+    asciiToHex,
     shorterAddress,
     transactionsUtils,
     handleCopyToClipboard,
