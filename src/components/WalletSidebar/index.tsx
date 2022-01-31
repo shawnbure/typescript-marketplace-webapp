@@ -66,7 +66,7 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
         all
     });
 
-
+    localStorage.setItem("token",randomToken) //temp hack TODO
     const webWalletLogin = Dapp.useWebWalletLogin({
         callbackRoute: pathname,
         token: randomToken,
@@ -216,9 +216,7 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     useEffect(() => {
 
 
-
         if (Boolean(tokenLogin?.loginToken) && Boolean(tokenLogin?.signature) ) {
-
 
             resove();
 

@@ -51,14 +51,14 @@ export const App: () => JSX.Element = () => {
 
         const address = new URLSearchParams(location.search).get('address');
         const signature = new URLSearchParams(location.search).get('signature');
-        const loginToken = new URLSearchParams(location.search).get('loginToken');
+        const loginToken = localStorage.getItem("token")//TODO //new URLSearchParams(location.search).get('loginToken');
         const data = {};
-
-        if (!address || !signature || !loginToken) {
+        if (!address || !signature ) {
             return;
         }
 
         const verifiedPayload: any = createVerifiedPayload(address, loginToken, signature, data);
+        localStorage.removeItem("token") //TODO
         const accessResult: any = await getAccessTokenRequestTrigger(verifiedPayload);
 
         if (!accessResult.data) {
@@ -75,9 +75,7 @@ export const App: () => JSX.Element = () => {
 
 
     useEffect(() => {
-
         if (location) {
-
             getJWT();
 
         }
