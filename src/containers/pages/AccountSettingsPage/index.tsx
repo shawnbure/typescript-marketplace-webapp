@@ -206,6 +206,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
             userWalletAddress: userWalletAddress
         });
 
+        console.log(response.error);
 
         if (response.error) {
 
