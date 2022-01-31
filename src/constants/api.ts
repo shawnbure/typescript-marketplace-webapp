@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-export const BASE_URL_API: string = 'http://localhost:8080';  //'https://container-service-youbei-api-test.3dlo0nfncitse.us-east-2.cs.amazonlightsail.com/';
-export const ELROND_API: string = 'https://devnet-api.elrond.com';
-export const ELROND_GATEWAY_API: string = 'https://devnet-gateway.elrond.com';
-=======
 export const BASE_URL_API: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'https://dev-api.youbei.io' : process.env.REACT_APP_NODE_ENV == 'production' ? 'https://api.youbei.io' : 'http://localhost:8080';
 export const ELROND_API: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'https://devnet-api.elrond.com' : process.env.REACT_APP_NODE_ENV == 'production' ? 'https://api.elrond.com' : 'https://devnet-api.elrond.com'; 
 export const ELROND_GATEWAY_API: string =  process.env.REACT_APP_NODE_ENV == 'development' ? 'https://devnet-gateway.elrond.com' : process.env.REACT_APP_NODE_ENV == 'production' ? 'https://gateway.elrond.com' : 'https://devnet-gateway.elrond.com'; 
@@ -11,7 +6,6 @@ export const ELROND_EXPLORER: string = process.env.REACT_APP_NODE_ENV == 'develo
 export const ELROND_ID: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'devnet': process.env.REACT_APP_NODE_ENV == 'production' ? 'mainnet':'devnet'; 
 export const ELROND_EGLD_LABEL: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'xEGLD': process.env.REACT_APP_NODE_ENV == 'production' ? 'EGLD':'xEGLD'; 
 
->>>>>>> 2440f57098a68ce5eb6fbff9029abd3b7e8e755c
 
 export const GET = 'GET';
 export const PUT: string = 'PUT';
