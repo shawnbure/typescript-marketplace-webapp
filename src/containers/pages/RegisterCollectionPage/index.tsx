@@ -55,6 +55,8 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
         }
 
 
+        //TODO: Contract Address, MintPricePerTokenNominal (put in 1 for now)
+
 
         /*
         const response: any = await createCollectionTrigger({ payload: formattedData });

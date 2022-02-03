@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Footer } from 'components/index';
 
-import { asciiToHex } from "utils";
+import { asciiToHex,  GetTransactionRequestHttpURL, GetJSONResultData, GetTransactionActionName, GetTransactionTokenID} from "utils";
 
 import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -17,10 +17,31 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
 
+import { hexToAscii } from "utils";
+
+
+
 
 SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 
+
+
+function hex_to_ascii(str1:any)
+ {
+	var hex  = str1.toString();
+	var str = '';
+	for (var n = 0; n < hex.length; n += 2) {
+		str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+	}
+	return str;
+ }
+
+
+{
+    console.log("Date: " + new Date("2022-02-03").getTime() / 1000 );
+
+}
 
 export const HomePage = () => {
 
@@ -101,7 +122,7 @@ export const HomePage = () => {
                                 <h1 className="u-visually-hidden">Youbei</h1>
 
                                 <h2 className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white">
-                                Get Paid to Collect, Hold-To-Earn. 
+                                Get Paid to Collect, Hold-To-Earn. 2
 
                                 </h2>
 

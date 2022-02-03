@@ -86,8 +86,59 @@ export const formatImgLink = (url: string) => {
 
     }
 
+
     return url;
 }
+
+
+
+export function GetTransactionRequestHttpURL(txHash: string)
+{
+    return 'https://devnet-api.elrond.com/transactions/' + txHash;
+}
+
+
+export function GetJSONResultData(jsonParse: any) 
+{
+    return jsonParse["results"][0]["data"];
+}
+
+export function GetTransactionActionName(jsonParse: any)
+{
+    return jsonParse["action"]["name"];
+}
+
+export function GetTransactionTokenID(resultData: string)
+{
+    const asciiOfBase64Result = atob(resultData);
+    const arraySplit = asciiOfBase64Result.split("@");
+
+    const tokenIDHexed = arraySplit[2];
+
+    return hexToAscii(tokenIDHexed);
+}
+
+export function GetTransactionContractAddress(resultData: string)
+{
+    const asciiOfBase64Result = atob(resultData);
+    const arraySplit = asciiOfBase64Result.split("@");
+
+    const contractAddress = arraySplit[2];
+
+    //TODO: Bech32
+
+    return contractAddress;
+}
+
+
+export function GetTransactionErdContractAddress(jsonParse: any) 
+{
+    return jsonParse["logs"]["events"][0]["address"];
+}
+
+
+// [logs][events][0][address]
+
 
 
 export default {
@@ -97,5 +148,9 @@ export default {
     transactionsUtils,
     handleCopyToClipboard,
     createVerifiedPayload,
+    GetTransactionRequestHttpURL,
+    GetJSONResultData,
+    GetTransactionActionName,
+    GetTransactionTokenID,
 }
 
