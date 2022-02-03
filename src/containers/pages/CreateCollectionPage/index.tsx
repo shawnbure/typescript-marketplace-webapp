@@ -19,6 +19,7 @@ import { useGetAccountGatewayTokensMutation, useGetAccountTokensMutation, useSet
 import { toast } from 'react-toastify';
 import { useGetChangeOwnerCollectionTemplateMutation, useGetDeployCollectionTemplateMutation, useGetIssueNftTemplateMutation, useGetSetRolesCollectionTemplateMutation } from 'services/tx-template';
 
+import { useCreateCollectionMutation } from "services/collections";
 
 import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, AddressType, } from '@elrondnetwork/erdjs/out';
 
@@ -174,14 +175,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     function HandleSetSpecialRoleAction(resultData: string)
     {
+        
         const tokenId = sessionStorage.getItem("tokenId") as string;
-
-        var inputCollectionTokenId = document.getElementById("collectionTokenID") as HTMLInputElement;
+        
+        var inputCollectionTokenId = document.getElementById("collectionTokenId") as HTMLInputElement;
 
         console.log("tokenId : " + tokenId)
         console.log("inputCollectionTokenId : " + inputCollectionTokenId)
 
-        inputCollectionTokenId.value = tokenId;        
+        inputCollectionTokenId.value = tokenId;   
+           
     }
 
     function HandlePageStateByActionName(actionName: string)
@@ -339,6 +342,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     };
 
+    // ================================== STEP 1 ==================================
+
     const schemaStep1 = yup.object({
         name: yup.string().required(),
         ticker: yup.string().required(),
@@ -369,7 +374,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-    // step 2
+       // ================================== STEP 2 ==================================
 
     const inputsStep2 = [
         // {
@@ -486,8 +491,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     };
 
 
-    // 3
-
+    // ================================== STEP 3 ==================================
 
     const schemaStep3 = yup.object({
         
@@ -519,7 +523,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-    // 4
+    // ================================== STEP 4 ==================================
 
     const schemaStep4 = yup.object({
         collectionId: yup.string().required(),
@@ -554,7 +558,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     };
 
 
-    //5 
+    // ================================== STEP 5 ==================================
     const customStyles = {
         option: (provided: any, state: any) => ({
             ...provided,
@@ -630,6 +634,82 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     ];    
 
+    const [createCollectionTrigger,] = useCreateCollectionMutation
+    ();
+
+
+    const schemaStep5 = yup.object({
+
+        collectionName: yup.string(),
+        description: yup.string(),
+        discordLink: yup.string(),
+        instagramLink: yup.string(),
+        telegramLink: yup.string(),
+        twitterLink: yup.string(),
+        website: yup.string(),
+        collectionTokenId: yup.string(),
+
+    }).required();
+    
+    const { register: registerStep5, handleSubmit: handleSubmitStep5, formState: { errors: errorsStep5 } } = useForm({
+        resolver: yupResolver(schemaStep5),
+    });
+    
+    const onSubmitStep5 = async (data: any) => {
+
+        /*
+        console.log("data.tokenId2: " + data.tokenId2)
+
+        data.tokenId2 = asciiToHex(data.tokenId2);
+
+        console.log("data.tokenId2: " + data.tokenId2)
+        console.log("flag: " + [flagSelect.value])
+        console.log("collectionName: " + data.collectionName)
+        console.log("description: " + data.description)
+        */
+
+        const formattedData = {
+            ...data,
+            tokenId:hexToAscii(data.collectionTokenId),
+            userAddress: userWalletAddress,
+            flags: [flagSelect.value],
+        }
+
+
+
+        const response: any = await createCollectionTrigger({ payload: formattedData });
+
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+        }
+        
+
+
+        toast.success(`Succesful register`, {
+            autoClose: 5000,
+            draggable: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            hideProgressBar: false,
+            position: "bottom-right",
+        });
+
+
+    };
+
+    
     return (
 
         <div className="p-account-settings-page">
@@ -827,14 +907,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 Step 5 of 5 ┋ Set Details
                             </p>
 
-                            <form onSubmit={handleSubmitStep4(onSubmitStep4)} >
+                            <form onSubmit={handleSubmitStep5(onSubmitStep5)} >
 
                                 <p className="text-xl mb-2">
                                     Token ID
                                 </p>
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <input {...registerStep1('collectionTokenID')}  id="collectionTokenID" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                        <input {...registerStep5('collectionTokenId')}  id="collectionTokenId" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
                                     </div>
                                 </div>
 
@@ -845,7 +925,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <input {...registerStep1('collectionName')}  autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                        <input {...registerStep5('collectionName')}  autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
                                     </div>
                                 </div>
                                 
@@ -855,7 +935,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <textarea {...registerStep1('collectiondescription')} autoComplete="off"   placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
+                                        <textarea {...registerStep5('collectiondescription')} autoComplete="off"   placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
                                     </div>
                                 </div>
 
@@ -881,27 +961,27 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 <div className="border-1 border-gray-500  rounded-2 overflow-hidden  mb-8">
 
                                     <label className="flex align-items-center bg-opacity-10 hover:bg-opacity-20 bg-white p-3">
-                                        <input {...registerStep1('website')} autoComplete="off" placeholder="http://www.yoursite.io" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
+                                        <input {...registerStep5('website')} autoComplete="off" placeholder="http://www.yoursite.io" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
 
                                     <label className="flex align-items-center bg-opacity-10 bg-white text-gray-400 p-3">
                                         <span className="text-gray-400 ">https://discord.gg/</span>
-                                        <input {...registerStep1('discordLink')} autoComplete="off" placeholder="YourDiscordHandle" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
+                                        <input {...registerStep5('discordLink')} autoComplete="off" placeholder="YourDiscordHandle" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
 
                                     <label className="flex align-items-center bg-opacity-10 bg-white text-gray-400 p-3">
                                         <span className="text-gray-400 ">https://twitter.com/</span>
-                                        <input {...registerStep1('twitterLink')} autoComplete="off" placeholder="YourTwitterHandle" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
+                                        <input {...registerStep5('twitterLink')} autoComplete="off" placeholder="YourTwitterHandle" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
 
                                     <label className="flex align-items-center bg-opacity-10 bg-white text-gray-400 p-3">
                                         <span className="text-gray-400 ">https://instagram.com/</span>
-                                        <input {...registerStep1('instagramLink')} autoComplete="off" placeholder="YourInstagramHandle" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
+                                        <input {...registerStep5('instagramLink')} autoComplete="off" placeholder="YourInstagramHandle" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
 
                                     <label className="flex align-items-center bg-opacity-10 bg-white text-gray-400 p-3">
                                         <span className="text-gray-400 ">https://t.me/</span>
-                                        <input {...registerStep1('telegramLink')} autoComplete="off" placeholder="abcdef" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
+                                        <input {...registerStep5('telegramLink')} autoComplete="off" placeholder="abcdef" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
 
                                 </div>
