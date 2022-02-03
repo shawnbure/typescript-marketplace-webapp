@@ -559,6 +559,100 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     // ================================== STEP 5 ==================================
+
+
+    const [flagSelect, setFlagSelect] = useState<any>({ value: 'art', label: 'Art' });
+
+    const [createCollectionTrigger,] = useCreateCollectionMutation
+    ();
+
+    const schemaStep5 = yup.object({
+
+        collectionName: yup.string(),
+        description: yup.string(),
+        discordLink: yup.string(),
+        instagramLink: yup.string(),
+        telegramLink: yup.string(),
+        twitterLink: yup.string(),
+        website: yup.string(),
+        collectionTokenId: yup.string(),
+
+    }).required();
+
+    const { register: registerStep5, handleSubmit: handleSubmitStep5, formState: { errors: errorsStep5 } } = useForm({
+        resolver: yupResolver(schemaStep5),
+    });
+
+    const onSubmitStep5 = async (data: any) => {
+
+        //data.collectionTokenId = asciiToHex(data.collectionTokenId);
+
+        /*
+        console.log("data.tokenId2: " + data.tokenId2)
+
+        
+
+        console.log("data.tokenId2: " + data.tokenId2)
+        console.log("flag: " + [flagSelect.value])
+        console.log("collectionName: " + data.collectionName)
+        console.log("description: " + data.description)
+        */
+
+        const formattedData = {
+            ...data,
+            tokenId:hexToAscii(data.collectionTokenId),
+            userAddress: userWalletAddress,
+            flags: [flagSelect.value],
+        }
+
+
+
+        const response: any = await createCollectionTrigger({ payload: formattedData });
+
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+        }
+        
+
+
+        toast.success(`Succesful register`, {
+            autoClose: 5000,
+            draggable: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            hideProgressBar: false,
+            position: "bottom-right",
+        });
+
+
+    };
+
+    
+
+    const options = [
+
+        { value: 'art', label: 'Art' },
+        { value: 'metaverse', label: 'Metaverse' },
+        { value: 'trading-cards', label: 'Trading Cards' },
+        { value: 'collectibles', label: 'Collectibles' },
+        { value: 'sports', label: 'Sports' },
+        { value: 'Utility', label: 'Utility' },
+
+    ];    
+
+
     const customStyles = {
         option: (provided: any, state: any) => ({
             ...provided,
@@ -621,93 +715,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
 
-    const [flagSelect, setFlagSelect] = useState<any>({ value: 'art', label: 'Art' });
-
-    const options = [
-
-        { value: 'art', label: 'Art' },
-        { value: 'metaverse', label: 'Metaverse' },
-        { value: 'trading-cards', label: 'Trading Cards' },
-        { value: 'collectibles', label: 'Collectibles' },
-        { value: 'sports', label: 'Sports' },
-        { value: 'Utility', label: 'Utility' },
-
-    ];    
-
-    const [createCollectionTrigger,] = useCreateCollectionMutation
-    ();
-
-
-    const schemaStep5 = yup.object({
-
-        collectionName: yup.string(),
-        description: yup.string(),
-        discordLink: yup.string(),
-        instagramLink: yup.string(),
-        telegramLink: yup.string(),
-        twitterLink: yup.string(),
-        website: yup.string(),
-        collectionTokenId: yup.string(),
-
-    }).required();
     
-    const { register: registerStep5, handleSubmit: handleSubmitStep5, formState: { errors: errorsStep5 } } = useForm({
-        resolver: yupResolver(schemaStep5),
-    });
+
     
-    const onSubmitStep5 = async (data: any) => {
 
-        /*
-        console.log("data.tokenId2: " + data.tokenId2)
-
-        data.tokenId2 = asciiToHex(data.tokenId2);
-
-        console.log("data.tokenId2: " + data.tokenId2)
-        console.log("flag: " + [flagSelect.value])
-        console.log("collectionName: " + data.collectionName)
-        console.log("description: " + data.description)
-        */
-
-        const formattedData = {
-            ...data,
-            tokenId:hexToAscii(data.collectionTokenId),
-            userAddress: userWalletAddress,
-            flags: [flagSelect.value],
-        }
-
-
-
-        const response: any = await createCollectionTrigger({ payload: formattedData });
-
-        if (response.error) {
-
-            const { error, status, } = response.error;
-
-            toast.error(`${error + ' ' + status}`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-            });
-
-            return;
-        }
-        
-
-
-        toast.success(`Succesful register`, {
-            autoClose: 5000,
-            draggable: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            hideProgressBar: false,
-            position: "bottom-right",
-        });
-
-
-    };
 
     
     return (
