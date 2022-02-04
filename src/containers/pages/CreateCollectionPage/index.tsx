@@ -29,10 +29,8 @@ import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
-    {
-    
+    {    
         const queryString = window.location.search;
-        console.log("queryString" + queryString);
 
         const params = new URLSearchParams(window.location.search)
 
@@ -46,7 +44,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             httpRequest.open("GET", url);
             httpRequest.send();
             
-            
             httpRequest.onreadystatechange = (e) => 
             {
                 if (httpRequest.readyState == 4 && httpRequest.status == 200)
@@ -54,15 +51,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     if( httpRequest.responseText )
                     {                
                         const data = httpRequest.responseText;
-                        console.log("data:" + data)
 
                         const jsonResponse = JSON.parse(data);
                         const actionName = GetTransactionActionName(jsonResponse)
 
-                        console.log("action-name: " + actionName )
-                        
                         const resultData = GetJSONResultData(jsonResponse);
-                        console.log("result-data: " + resultData)
                         
                         switch(actionName) 
                         {
@@ -119,17 +112,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         var inputName = document.getElementById("tokenId") as HTMLInputElement;
         inputName.value = tokenID;
         inputName.readOnly = true;
-
-        //disable the token name 
-        //var tokenName = document.getElementById("token_name") as HTMLInputElement;
-        //tokenName.disabled = true;
-
-        //disable token ticker
-        //var tokenTicker = document.getElementById("token_ticker") as HTMLInputElement;
-        //tokenTicker.disabled = true;  
      
         sessionStorage.setItem("tokenId", tokenID);
-
     }
 
 
@@ -138,14 +122,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //get the contractAddress from the resultData
         const contractAddress = GetTransactionContractAddress(resultData);
 
-        //set the contract address
-        
-        console.log("ERD Address: " + new Address(contractAddress).toString() );
-
-
         var inputName = document.getElementById("step3SCAddress") as HTMLInputElement;
         inputName.value = contractAddress;
-        //inputName.readOnly = true;
         
         sessionStorage.setItem("contractAddress", contractAddress);
 
@@ -154,50 +132,31 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     function HandleChangeOwnerAction(resultData: string)
     {
-        
         const contractAddress = sessionStorage.getItem("contractAddress") as string;
         const tokenId = sessionStorage.getItem("tokenId") as string;
 
-         
-        console.log("===== contractAddress: " + contractAddress);
-        console.log("===== tokenId: " + tokenId);
-
         var inputSetRoleAddress = document.getElementById("SetRole_Address") as HTMLInputElement;
         inputSetRoleAddress.value = contractAddress;
-        //inputSetRoleAddress.readOnly = true;
 
         var inputSetRoleTokenId = document.getElementById("SetRole_TokenId") as HTMLInputElement;
         inputSetRoleTokenId.value = tokenId;
-        //inputSetRoleTokenId.readOnly = true;        
-        
-
     }
 
     function HandleSetSpecialRoleAction(resultData: string)
     {
-        
         const tokenId = sessionStorage.getItem("tokenId") as string;
         
         var inputCollectionTokenId = document.getElementById("collectionTokenId") as HTMLInputElement;
 
-        console.log("tokenId : " + tokenId)
-        console.log("inputCollectionTokenId : " + inputCollectionTokenId)
-
         inputCollectionTokenId.value = tokenId;   
-           
     }
 
     function HandlePageStateByActionName(actionName: string)
     {
         HideElement("divStep1");
-
         HideElement("divStep2");
-
         HideElement("divStep3");
-
-        HideElement("divStep4");
-        
-        
+        HideElement("divStep4");                
         HideElement("divStep5");
 
         switch(actionName) 
@@ -205,37 +164,28 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case "Init":
             {
                 ShowElement("divStep1");
-
                 break;
             } 
             case "issueNonFungible":
             {
-                //DisableButton("submit_step1", "Done");
-
-
                 ShowElement("divStep2");
-
                 break;
             } 
             case "deployNFTTemplateContract":
             {
                 ShowElement("divStep3");
-
                 break;
             }
             case "changeOwner":
             {
                 ShowElement("divStep4");                
-
                 break;
             }
             case "setSpecialRole":
             {
                 ShowElement("divStep5");
-
                 break;
             }
-
             default:
             {
 
@@ -485,9 +435,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     });
 
     const onSubmitStep3 = (data: any) => {
-
-        console.log("======= onSubmitStep3 =========");
-
         const { hexWalletAddress } = data;
 
         const getTemplateData = { userWalletAddress, contractAddress: new Address(hexWalletAddress).toString() };
@@ -564,24 +511,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep5 = async (data: any) => {
 
-        //data.collectionTokenId = asciiToHex(data.collectionTokenId);
-
         const tokenId = sessionStorage.getItem("tokenId") as string;
-        console.log("================================ tokenId: " + tokenId);
-
-        //console.log("data.collectionTokenId:" + data.collectionTokenId);
-        
-        /*
-        console.log("data.tokenId2: " + data.tokenId2)
-
-        
-
-        console.log("data.tokenId2: " + data.tokenId2)
-        console.log("flag: " + [flagSelect.value])
-        console.log("collectionName: " + data.collectionName)
-        console.log("description: " + data.description)
-        */
-
+ 
         const formattedData = {
             ...data,
             tokenId:tokenId,
@@ -609,8 +540,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             return;
         }
         
-
-
         toast.success(`Succesful register`, {
             autoClose: 5000,
             draggable: true,
@@ -921,7 +850,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <textarea {...registerStep5('collectiondescription')} autoComplete="off"   placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
+                                        <textarea {...registerStep5('description')} autoComplete="off"   placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
                                     </div>
                                 </div>
 
