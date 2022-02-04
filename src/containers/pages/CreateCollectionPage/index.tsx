@@ -522,13 +522,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         const tokenId = sessionStorage.getItem("tokenId") as string;
         const contractAddress = sessionStorage.getItem("contractAddress") as string;
 
-        data.contractAddress = new Address(contractAddress).toString();
-
-        console.log("======== contractAddress = " + contractAddress)
-        console.log("======== data.contractAddress = " + data.contractAddress)
-
-        
-        data.MintPricePerTokenString = "0.1"
+        data.ContractAddress = new Address(contractAddress).toString();
 
         const formattedData = {
             ...data,
