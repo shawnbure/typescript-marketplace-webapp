@@ -587,6 +587,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         //data.collectionTokenId = asciiToHex(data.collectionTokenId);
 
+        const tokenId = sessionStorage.getItem("tokenId") as string;
+        console.log("tokenId: " + tokenId);
+
+        //console.log("data.collectionTokenId:" + data.collectionTokenId);
+        
         /*
         console.log("data.tokenId2: " + data.tokenId2)
 
@@ -600,7 +605,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const formattedData = {
             ...data,
-            tokenId:hexToAscii(data.collectionTokenId),
+            tokenId:hexToAscii(tokenId),
             userAddress: userWalletAddress,
             flags: [flagSelect.value],
         }
