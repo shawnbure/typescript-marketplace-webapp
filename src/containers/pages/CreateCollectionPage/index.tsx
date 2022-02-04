@@ -52,6 +52,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     {                
                         const data = httpRequest.responseText;
 
+                        try {
+                            const jsonResponse2 = JSON.parse(data);
+                          } catch (error) {
+                            console.error(" =================== PARSE ERRROR:" + error);
+                            return;
+                          }
+
+                          
                         const jsonResponse = JSON.parse(data);
                         const actionName = GetTransactionActionName(jsonResponse)
 
@@ -512,7 +520,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const onSubmitStep5 = async (data: any) => {
 
         const tokenId = sessionStorage.getItem("tokenId") as string;
- 
+        const contractAddress = sessionStorage.getItem("contractAddress") as string;
+
+        data.contractAddress = new Address(contractAddress).toString();
+
+        console.log("======== contractAddress = " + contractAddress)
+        console.log("======== data.contractAddress = " + data.contractAddress)
+
+        
+        data.MintPricePerTokenString = "0.1"
+
         const formattedData = {
             ...data,
             tokenId:tokenId,
