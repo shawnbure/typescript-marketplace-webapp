@@ -191,13 +191,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     {
         HideElement("divStep1");
 
-        HideElement("divStep2_HRLine");
         HideElement("divStep2");
 
-        HideElement("divStep3_HRLine");
         HideElement("divStep3");
 
-        HideElement("divStep4_HRLine");
         HideElement("divStep4");
         
         
@@ -215,37 +212,19 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             {
                 //DisableButton("submit_step1", "Done");
 
-                //ShowElement("divStep2_HRLine");
+
                 ShowElement("divStep2");
 
                 break;
             } 
             case "deployNFTTemplateContract":
             {
-                //("submit_step1", "Done");
-                //DisableButton("submit_step2", "Done");
-
-                //ShowElement("divStep2_HRLine");
-                //ShowElement("divStep2");
-
-                //ShowElement("divStep3_HRLine");
                 ShowElement("divStep3");
 
                 break;
             }
             case "changeOwner":
             {
-                //DisableButton("submit_step1", "Done");
-                //DisableButton("submit_step2", "Done");
-                //DisableButton("submit_step3", "Done");
-
-                //ShowElement("divStep2_HRLine");
-                //ShowElement("divStep2");
-
-                //ShowElement("divStep3_HRLine");
-                //ShowElement("divStep3");
-
-                //ShowElement("divStep4_HRLine");
                 ShowElement("divStep4");                
 
                 break;
@@ -588,7 +567,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //data.collectionTokenId = asciiToHex(data.collectionTokenId);
 
         const tokenId = sessionStorage.getItem("tokenId") as string;
-        console.log("tokenId: " + tokenId);
+        console.log("================================ tokenId: " + tokenId);
 
         //console.log("data.collectionTokenId:" + data.collectionTokenId);
         
@@ -605,7 +584,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const formattedData = {
             ...data,
-            tokenId:hexToAscii(tokenId),
+            tokenId:tokenId,
             userAddress: userWalletAddress,
             flags: [flagSelect.value],
         }
@@ -788,9 +767,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                         </div>
 
-                        <div className="col-span-12 "  id="divStep2_HRLine" hidden={true} >
-                                <hr className="text-white my-20" />
-                            </div>
 
                         <div className="col-span-12 lg:col-span-5" id="divStep2" hidden={true}>
 
@@ -841,9 +817,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         </div>
 
 
-                        <div className="col-span-12 "  id="divStep3_HRLine" hidden={true} >
-                            <hr className="text-white my-20" />
-                        </div>
 
                         <div className="col-span-12 lg:col-span-5"  id="divStep3" hidden={true}>
 
@@ -873,9 +846,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                         </div>
 
-                        <div className="col-span-12 "  id="divStep4_HRLine" hidden={true} >
-                            <hr className="text-white my-20" />
-                        </div>
 
                         <div className="col-span-12 lg:col-span-5"  id="divStep4" hidden={true} >
 

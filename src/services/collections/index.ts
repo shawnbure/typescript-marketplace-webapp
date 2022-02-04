@@ -31,7 +31,7 @@ export const collectionsApi = createApi({
                         "Authorization": `Bearer ${accessToken}`,
                     },
                     body: JSON.stringify(payload),
-                    url: `/create/${mainPath}`
+                    url: `${mainPath}/create`
 
                 }
 
