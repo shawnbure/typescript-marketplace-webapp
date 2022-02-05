@@ -23,6 +23,7 @@ import { useCreateCollectionMutation } from "services/collections";
 
 import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, AddressType, } from '@elrondnetwork/erdjs/out';
 
+import { routePaths } from "constants/router";
 
 
 
@@ -30,6 +31,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     {    
+        
         const queryString = window.location.search;
 
         const params = new URLSearchParams(window.location.search)
@@ -161,11 +163,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     function HandlePageStateByActionName(actionName: string)
     {
+        //hide all divs
         HideElement("divStep1");
         HideElement("divStep2");
         HideElement("divStep3");
         HideElement("divStep4");                
         HideElement("divStep5");
+        HideElement("divStep6");
 
         switch(actionName) 
         {
@@ -192,6 +196,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case "setSpecialRole":
             {
                 ShowElement("divStep5");
+                break;
+            }
+            case "successCreation":
+            {
+                ShowElement("divStep6");
                 break;
             }
             default:
@@ -410,13 +419,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep2 = (data: any) => {
 
-        data.tokenId = asciiToHex(data.tokenId);
         data.saleStart = new Date(data.saleStart).getTime() / 1000;
 
         const formattedData = {
             ...data,
             imageExt: `.` + data.imageExt,
-            tokenId: hexToAscii(data.tokenId),
+            tokenId: sessionStorage.getItem("tokenId") as string,
         };
 
         signTemplateTransaction({
@@ -550,7 +558,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
             return;
         }
-        
+ 
         toast.success(`Succesful register`, {
             autoClose: 5000,
             draggable: true,
@@ -921,6 +929,39 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
                             </form>
+
+                        </div>
+
+
+                        <div className="col-span-12 lg:col-span-5"  id="divStep6" hidden={true} >
+
+                            <p className="text-2xl u-text-bold mb-4">
+                                Done ┋ Collection Created
+                            </p>
+
+
+                            <div className="grid grid-cols-9 mb-4">
+                                <div className="col-span-12">
+
+                                    <div className="mb-4">
+                                        <label className="block w-full">
+
+                                            <span className="block mb-2">  Collection '<span id='spanCollectionName'>collectionName</span>'has been succesfully created. </span>
+
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <Link to={routePaths.account} className="c-button c-button--primary" >                        
+                                <div className="inline-flex">
+                                    <span>
+                                        Okay
+                                    </span>
+                                </div>
+                            </Link>
+
 
                         </div>
 
