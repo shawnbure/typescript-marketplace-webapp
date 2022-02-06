@@ -24,14 +24,13 @@ import { useCreateCollectionMutation } from "services/collections";
 import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, AddressType, } from '@elrondnetwork/erdjs/out';
 
 import { routePaths } from "constants/router";
+import { date } from 'yup/lib/locale';
 
 
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
-
     {    
-        
         const queryString = window.location.search;
 
         const params = new URLSearchParams(window.location.search)
@@ -291,8 +290,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     // ================================== STEP 1 ==================================
 
     const schemaStep1 = yup.object({
-        name: yup.string().required(),
-        ticker: yup.string().required(),
+        name: yup.string().min(3, "Must be between 3-10 AlphaNumeric Characters").max(10, "Must be between 3-10 AlphaNumeric Characters").matches(/^[a-zA-Z0-9]+$/, "Must be AlphaNumeric ONLY").required(),
+        ticker: yup.string().min(3, "Must be between 3-10 AlphaNumeric Uppercase Characters").max(10, "Must be between 3-10 AlphaNumeric Uppercase Characters").matches(/^[A-Z0-9]+$/, "Must be Uppercase AlphaNumeric ONLY").required(),
+
     }).required();
 
     const { register: registerStep1, handleSubmit: handleSubmitStep1, control: controlStep1, setError: setErrorStep1, clearErrors: clearErrorsStep1, formState: { errors: errorsStep1 } } = useForm({
@@ -310,7 +310,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const { name, ticker } = data;
 
+        //ticker is force to be upper
         const getTemplateData = { userWalletAddress, tokenName: name, tokenTicker: ticker };
+
 
         const getTemplateTrigger = getIssueNftTemplateTrigger;
 
@@ -360,21 +362,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             isRequired: false,
         },
         {
-            title: "Price",
-            type: "number",
-            name: "price",
-            isRequired: false,
-        },
-        {
             title: "Max Supply",
             type: "number",
             name: "maxSupply",
-            isRequired: false,
-        },
-        {
-            title: "Sale Start Date",
-            type: "date",
-            name: "saleStart",
             isRequired: false,
         },
         {
@@ -419,7 +409,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep2 = (data: any) => {
 
-        data.saleStart = new Date(data.saleStart).getTime() / 1000;
+        //sale start date is now current date with time of 12am 
+        var d = new Date();     //current date
+        d.setHours(0,0,0,0);    //set to 12am
+
+        //set to to saleStart
+        data.saleStart = d.getTime() / 1000;
+
+        //price is set to zero(0) to the request
+        data.price = 0 
+
 
         const formattedData = {
             ...data,
@@ -669,7 +668,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         Create Your Collection
                     </h2>
 
-                    <div className="grid grid-cols-12">
+                    <div className="grid grid-cols-12 p-create-collection">
 
                         <div className="col-span-12 lg:col-span-5"  id="divStep1" >
                             <form onSubmit={handleSubmitStep1(onSubmitStep1)}>
@@ -699,17 +698,17 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <input {...registerStep1('ticker')} id="token_ticker" autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                        <input {...registerStep1('ticker')} id="token_ticker" autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
                                     </div>
                                 </div>
 
-                                
-                                
                                 <button type="submit" id="submit_step1" className="c-button c-button--primary mb-5" >
                                     Sign
                                 </button>
 
                             </form>
+
+
 
 
 

@@ -122,7 +122,7 @@ export const HomePage = () => {
                                 <h1 className="u-visually-hidden">Youbei</h1>
 
                                 <h2 className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white">
-                                Get Paid to Collect, Hold-To-Earn. 2
+                                Get Paid to Collect, Hold-To-Earn.
 
                                 </h2>
 
