@@ -324,57 +324,57 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
        // ================================== STEP 2 ==================================
 
-    const inputsStep2 = [
+    //const inputsStep2 = [
         // {
         //     title: "user address",
         //     type: "text",
         //     name: "userAddress",
         //     isRequired: false,
         // },
-        {
-            title: "Token ID (Assigned from Step 1)",
-            type: "text",
-            name: "tokenId",
-            isRequired: false,
-        },
-        {
-            title: "Royalties",
-            type: "number",
-            name: "royalties",
-            isRequired: false,
-        },
-        {
-            title: "Token Name Base",
-            type: "text",
-            name: "tokenNameBase",
-            isRequired: false,
-        },
-        {
-            title: "Token Base URI",
-            type: "text",
-            name: "imageBase",
-            isRequired: false,
-        },
-        {
-            title: "Image Extension Type",
-            type: "text",
-            name: "imageExt",
-            isRequired: false,
-        },
-        {
-            title: "Max Supply",
-            type: "number",
-            name: "maxSupply",
-            isRequired: false,
-        },
-        {
-            title: "Metadata Base URI",
-            type: "text",
-            name: "metadataBase",
-            isRequired: false,
-        },
-    ];
+        //{
+        //    title: "Royalties",
+        //    type: "number",
+        //    name: "royalties",
+        //    isRequired: true,
+        //},
+        //{
+        //    title: "Token Name Base",
+        //    type: "text",
+        //    name: "tokenNameBase",
+        //    isRequired: true,
+        //},
+        //{
+        //    title: "Token Base URI",
+        //    type: "text",
+        //    name: "imageBase",
+        //    isRequired: true,
+        //},
+        //{
+        //    title: "Image Extension Type",
+        //    type: "text",
+        //    name: "imageExt",
+        //    isRequired: false,
+        //},
+        //{
+        //    title: "Max Supply",
+        //    type: "number",
+        //    name: "maxSupply",
+        //    isRequired: false,
+        //},
+        //{
+        //    title: "Metadata Base URI",
+        //    type: "text",
+        //    name: "metadataBase",
+        //    isRequired: false,
+        //},
+    //];
 
+
+
+
+
+
+    /*
     const schemaObjectStep2 = () => {
 
         const schema: any = {};
@@ -406,7 +406,43 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const { register: registerStep2, handleSubmit: handleSubmitStep2, formState: { errors: errorsStep2 } } = useForm({
         resolver: yupResolver(schemaStep2),
     });
+    */
 
+    const [mediaTypeSelect, setMediaTypeSelect] = useState<any>({ value: '.PNG', label: 'PNG' });
+
+    const optionsMediaType = [
+
+        { value: '.PNG', label: 'PNG' },
+        { value: '.JPEG', label: 'JPEG' },
+        { value: '.JPG', label: 'JPG' },
+        { value: '.GIF', label: 'GIF' },
+        { value: '.MP3', label: 'MP3' },
+        { value: '.MP4', label: 'MP4' },
+
+    ]; 
+
+    //
+
+    const schemaStep2 = yup.object({
+        royalties: yup.string().matches(/^((10)(\.[0-0]{0,2})?$|([0-9])(\.[0-9]{1,2})?$)/, "Numbers must be between 0-10").required(),
+        tokenNameBase: yup.string().required("Required Field"),
+        imageBase: yup.string().required("Required Field"),
+        maxSupply: yup.string().matches(/^[1-9][0-9]?$|^10000$/, "Numbers must be between 1-10000").required(),
+        metadataBase: yup.string().required("Required Field"),
+    }).required();
+
+    const { register: registerStep2, handleSubmit: handleSubmitStep2, control: controlStep2, setError: setErrorStep2, clearErrors: clearErrorsStep2, formState: { errors: errorsStep2 } } = useForm({
+
+        // defaultValues: {
+        //     name: "",
+        //     ticker: ""
+        // },
+
+        resolver: yupResolver(schemaStep2),
+
+    });
+    
+    
     const onSubmitStep2 = (data: any) => {
 
         //sale start date is now current date with time of 12am 
@@ -419,10 +455,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //price is set to zero(0) to the request
         data.price = 0 
 
+        console.log("mediaTypeSelect.value: " + mediaTypeSelect.value);
+
+        data.imageExt = mediaTypeSelect.value
 
         const formattedData = {
             ...data,
-            imageExt: `.` + data.imageExt,
+            imageExt: mediaTypeSelect.value,
             tokenId: sessionStorage.getItem("tokenId") as string,
         };
 
@@ -509,7 +548,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const schemaStep5 = yup.object({
 
-        collectionName: yup.string(),
+        collectionName: yup.string().required("Required Field"),
         description: yup.string(),
         discordLink: yup.string(),
         instagramLink: yup.string(),
@@ -721,34 +760,95 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 Step 2 of 5 ┋ Deploy Collection Contract
                             </p>
 
-                            <p>
-                                {/* Token ID */}
-                            </p>
+
 
 
                             <form onSubmit={handleSubmitStep2(onSubmitStep2)} >
 
+
+                                <p className="text-xl mb-2">
+                                    Token Id
+                                </p>
+
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
+                                        <input id="tokenId" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                    </div>
+                                </div>
 
-                                        {inputsStep2.map((inputData: any) => {
+                                <p>
+                                    Royalties
+                                </p>
 
-                                            const { name, type, title } = inputData;
+                                <p className="mb-2 text-lg text-red-500">{errorsStep2.royalties?.message}</p>
 
-                                            return (
-                                                <div className="my-6">
-
-                                                    <p className="mb-2 text-lg text-red-500">{errorsStep2.name?.message}</p>
-                                                    <label className="block w-full">
-                                                        <span className="block mb-2">{title}</span>
-                                                        <input  {...registerStep2(name)} id={name} autoComplete="off" step={ name === "price" || name ===  "royalties" ? "0.001" : "1" } type={type} min={0} className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
-                                                    </label>
-                                                </div>
-                                            )
-
-                                        })}
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerStep2('royalties')} id="royalties" autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
+                                    </div>
+                                </div>
 
 
+
+                                <p>
+                                    Token Name Base
+                                </p>
+
+                                <p className="mb-2 text-lg text-red-500">{errorsStep2.tokenNameBase?.message}</p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerStep2('tokenNameBase')} id="tokenNameBase" autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
+                                    </div>
+                                </div>
+
+
+                                <p>
+                                    Token Base URI
+                                </p>
+
+                                <p className="mb-2 text-lg text-red-500">{errorsStep2.imageBase?.message}</p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerStep2('imageBase')} id="imageBase" autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
+                                    </div>
+                                </div>
+
+                                <p>
+                                    Media Type
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <Select onChange={(value) => { setMediaTypeSelect(value) }} options={optionsMediaType} isSearchable={false} defaultValue={mediaTypeSelect} styles={customStyles} />
+
+                                    </div>
+                                </div>
+
+
+                                <p>
+                                    Max Supply
+                                </p>
+
+                                <p className="mb-2 text-lg text-red-500">{errorsStep2.maxSupply?.message}</p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerStep2('maxSupply')} id="maxSupply" autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
+                                    </div>
+                                </div>
+
+
+                                <p>
+                                    Metadata Base URI
+                                </p>
+
+                                <p className="mb-2 text-lg text-red-500">{errorsStep2.metadataBase?.message}</p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerStep2('metadataBase')} id="metadataBase" autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
                                     </div>
                                 </div>
 
