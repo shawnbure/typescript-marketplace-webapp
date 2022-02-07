@@ -372,9 +372,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //price is set to zero(0) to the request
         //data.price = 0 
 
-        console.log("data.price : " + data.price);
 
-        console.log("mediaTypeSelect.value: " + mediaTypeSelect.value);
+        sessionStorage.setItem("price", data.price);
+
+
 
         data.imageExt = mediaTypeSelect.value
 
@@ -488,6 +489,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         const contractAddress = sessionStorage.getItem("contractAddress") as string;
 
         data.ContractAddress = new Address(contractAddress).toString();
+
+        const sPrice = sessionStorage.getItem("price") as string;
+
+        console.log("sPrice: " + sPrice);
+
+        data.mintPricePerTokenString = sPrice
 
         const formattedData = {
             ...data,
@@ -894,6 +901,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
                                 
+
                                 <p className="text-xl mb-2">
                                     Description
                                 </p>
