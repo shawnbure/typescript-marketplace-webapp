@@ -322,102 +322,18 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-       // ================================== STEP 2 ==================================
-
-    //const inputsStep2 = [
-        // {
-        //     title: "user address",
-        //     type: "text",
-        //     name: "userAddress",
-        //     isRequired: false,
-        // },
-        //{
-        //    title: "Royalties",
-        //    type: "number",
-        //    name: "royalties",
-        //    isRequired: true,
-        //},
-        //{
-        //    title: "Token Name Base",
-        //    type: "text",
-        //    name: "tokenNameBase",
-        //    isRequired: true,
-        //},
-        //{
-        //    title: "Token Base URI",
-        //    type: "text",
-        //    name: "imageBase",
-        //    isRequired: true,
-        //},
-        //{
-        //    title: "Image Extension Type",
-        //    type: "text",
-        //    name: "imageExt",
-        //    isRequired: false,
-        //},
-        //{
-        //    title: "Max Supply",
-        //    type: "number",
-        //    name: "maxSupply",
-        //    isRequired: false,
-        //},
-        //{
-        //    title: "Metadata Base URI",
-        //    type: "text",
-        //    name: "metadataBase",
-        //    isRequired: false,
-        //},
-    //];
-
-
-
-
-
-
-    /*
-    const schemaObjectStep2 = () => {
-
-        const schema: any = {};
-
-        inputsStep2.forEach((inputData: any) => {
-
-            const { type, name, isRequired } = inputData;
-            const typeRule = type === "number" ? yup.number() : yup.string();
-
-            if (isRequired) {
-
-                schema[name] = typeRule.required();
-
-            }
-
-
-
-            schema[name] = typeRule;
-
-
-        });
-
-        return schema;
-
-    }
-
-    const schemaStep2 = yup.object(schemaObjectStep2()).required();
-
-    const { register: registerStep2, handleSubmit: handleSubmitStep2, formState: { errors: errorsStep2 } } = useForm({
-        resolver: yupResolver(schemaStep2),
-    });
-    */
-
-    const [mediaTypeSelect, setMediaTypeSelect] = useState<any>({ value: '.PNG', label: 'PNG' });
+    // ================================== STEP 2 ==================================
+    
+    const [mediaTypeSelect, setMediaTypeSelect] = useState<any>({ value: '.png', label: 'PNG' });
 
     const optionsMediaType = [
 
-        { value: '.PNG', label: 'PNG' },
-        { value: '.JPEG', label: 'JPEG' },
-        { value: '.JPG', label: 'JPG' },
-        { value: '.GIF', label: 'GIF' },
-        { value: '.MP3', label: 'MP3' },
-        { value: '.MP4', label: 'MP4' },
+        { value: '.png', label: 'PNG' },
+        { value: '.jpeg', label: 'JPEG' },
+        { value: '.jpg', label: 'JPG' },
+        { value: '.gif', label: 'GIF' },
+        { value: '.mp3', label: 'MP3' },
+        { value: '.mp4', label: 'MP4' },
 
     ]; 
 
@@ -427,7 +343,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         royalties: yup.string().matches(/^((10)(\.[0-0]{0,2})?$|([0-9])(\.[0-9]{1,2})?$)/, "Numbers must be between 0-10").required(),
         tokenNameBase: yup.string().required("Required Field"),
         imageBase: yup.string().required("Required Field"),
-        maxSupply: yup.string().matches(/^[1-9][0-9]?$|^10000$/, "Numbers must be between 1-10000").required(),
+        price: yup.string().matches(/^(?!0*[.]0*$|[.]0*$|0*$)\d+[.]?\d{0,2}$/, "Only positive numbers with 2 decimals allowed.").required(),
+        maxSupply: yup.string().matches(/^([1-9][0-9]{0,3}|10000)$/, "Numbers must be between 1-10000").required(),
         metadataBase: yup.string().required("Required Field"),
     }).required();
 
@@ -453,7 +370,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         data.saleStart = d.getTime() / 1000;
 
         //price is set to zero(0) to the request
-        data.price = 0 
+        //data.price = 0 
+
+        console.log("data.price : " + data.price);
 
         console.log("mediaTypeSelect.value: " + mediaTypeSelect.value);
 
@@ -823,6 +742,19 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     <div className="col-span-12">
                                         <Select onChange={(value) => { setMediaTypeSelect(value) }} options={optionsMediaType} isSearchable={false} defaultValue={mediaTypeSelect} styles={customStyles} />
 
+                                    </div>
+                                </div>
+
+
+                                <p>
+                                    Price
+                                </p>
+
+                                <p className="mb-2 text-lg text-red-500">{errorsStep2.price?.message}</p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerStep2('price')} id="price" autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
                                     </div>
                                 </div>
 
