@@ -1,10 +1,15 @@
-import { Link, useLocation } from 'react-router-dom';
+
+import { Redirect, Link, Router, useLocation, useHistory } from 'react-router-dom';
 import Select from 'react-select'
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { ErrorMessage } from '@hookform/error-message';
+
+
+
+
 
 
 import { prepareTransaction } from "utils/transactions";
@@ -168,7 +173,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         HideElement("divStep3");
         HideElement("divStep4");                
         HideElement("divStep5");
-        HideElement("divStep6");
 
         switch(actionName) 
         {
@@ -195,11 +199,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case "setSpecialRole":
             {
                 ShowElement("divStep5");
-                break;
-            }
-            case "successCreation":
-            {
-                ShowElement("divStep6");
                 break;
             }
             default:
@@ -307,6 +306,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     });
 
     const onSubmitStep1 = (data: any) => {
+
+        //let history = useHistory();
+
+        //history.push('/account')
+
+        //const history  = useHistory();
+
+        //history.push("/account")
+
+        //return <Redirect to="/account" /> 
+
+        //eturn <Redirect to={routePaths.account} />
+
+        //return
 
         const { name, ticker } = data;
 
@@ -522,7 +535,19 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
             return;
         }
- 
+        else
+        {
+            //submit_step5, linkBackToProfile
+
+            HideElement("submit_step5");
+
+            ShowElement("linkBackToProfile");
+        }
+        
+        
+        
+
+        
         toast.success(`Succesful register`, {
             autoClose: 5000,
             draggable: true,
@@ -531,7 +556,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             hideProgressBar: false,
             position: "bottom-right",
         });
-
+        
 
     };
 
@@ -670,6 +695,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 <button type="submit" id="submit_step1" className="c-button c-button--primary mb-5" >
                                     Sign
                                 </button>
+
+
+
 
                             </form>
 
@@ -958,13 +986,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </label>
 
                                 </div>
-
+                                
 
                                 <button type="submit" id="submit_step5" className="c-button c-button--primary mb-5" >
                                     Create
                                 </button>
 
 
+                                <Link to={routePaths.account} id="linkBackToProfile" hidden={true} className="c-button c-button--primary" >                        
+                                    <div className="inline-flex">
+                                        <span>
+                                            Back to Profile
+                                        </span>
+                                    </div>
+                                </Link>
 
 
                             </form>
@@ -972,37 +1007,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         </div>
 
 
-                        <div className="col-span-12 lg:col-span-5"  id="divStep6" hidden={true} >
 
-                            <p className="text-2xl u-text-bold mb-4">
-                                Done ┋ Collection Created
-                            </p>
-
-
-                            <div className="grid grid-cols-9 mb-4">
-                                <div className="col-span-12">
-
-                                    <div className="mb-4">
-                                        <label className="block w-full">
-
-                                            <span className="block mb-2">  Collection '<span id='spanCollectionName'>collectionName</span>'has been succesfully created. </span>
-
-                                        </label>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <Link to={routePaths.account} className="c-button c-button--primary" >                        
-                                <div className="inline-flex">
-                                    <span>
-                                        Okay
-                                    </span>
-                                </div>
-                            </Link>
-
-
-                        </div>
 
 
                     </div>
