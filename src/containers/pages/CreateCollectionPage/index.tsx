@@ -242,6 +242,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     } = Dapp.useContext();
 
 
+
     const [getIssueNftTemplateTrigger] = useGetIssueNftTemplateMutation();
     const [getSetRolesCollectionTemplateTrigger] = useGetSetRolesCollectionTemplateMutation();
     const [getDeployCollectionTemplateTrigger] = useGetDeployCollectionTemplateMutation();
@@ -481,8 +482,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const schemaStep5 = yup.object({
 
-        collectionName: yup.string().required("Required Field"),
-        description: yup.string(),
+        collectionName: yup.string().min(3, "Min of 3 and Max of 20 Characters").max(20,"Min of 3 and Max of 20 Characters").required("Required Field"),
+        description: yup.string().max(1000, "Max of 1000 Characters"),
         discordLink: yup.string(),
         instagramLink: yup.string(),
         telegramLink: yup.string(),
