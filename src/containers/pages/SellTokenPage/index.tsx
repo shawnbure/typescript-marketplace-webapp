@@ -20,12 +20,12 @@ import { formatImgLink, shorterAddress } from "utils";
 import { BUY } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
+import { useCreateTokenMutation } from "services/tokens";
 import { routePaths } from 'constants/router';
 
 
 
 export const SellTokenPage: (props: any) => any = ({ }) => {
-
 
     const history = useHistory();
     const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
@@ -88,10 +88,14 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     }] = useGetCollectionByIdMutation();
 
-    const shouldRedirectHome: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
+    //const shouldRedirectHome: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
+    const shouldRedirectHome: boolean = false
+
+
+    const [createTokenTrigger,] = useCreateTokenMutation
+    ();
 
     useEffect(() => {
-
 
         getCollectionByIdTrigger({ collectionId: collectionId });
 
@@ -177,24 +181,45 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
             transaction: unconsumedTransaction,
             callbackRoute: succesCallbackRoute
         });
-
     };
-
 
     const handleListFixedPrice = () => {
 
-
         signTemplateTransaction({
 
-            succesCallbackRoute: '/account',
+            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, price: requestedAmount },
             getTemplateTrigger: getListNftTemplateQueryTrigger,
 
-        });
-
+        });        
     };
 
+     const handleCreateToken = () => {
 
+         const formattedData = {
+            collectionID: collectionId,
+            tokenName:tokenName,
+            tokenNonce: tokenNonce,
+        }
+
+        const response: any = createTokenTrigger({ payload: formattedData });
+
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+        }
+    };
 
     const handleListAuction = () => {
 
@@ -260,8 +285,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     };
 
-
-
     const handleSubmitListing = (e: any) => {
 
         e.preventDefault();
@@ -277,6 +300,20 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         handleListAuction();
 
     };
+
+    //this is new - added this because the page originally redirected to the accounts page - need to stop that
+    //now, we need add the database record after we return from adding the token to the marketplace contract
+
+
+    const queryString = window.location.search;
+    const params = new URLSearchParams(window.location.search)
+    const transferredTokenToMarketplaceStatus = params.get("status")
+    if(transferredTokenToMarketplaceStatus !== null) {
+        handleCreateToken();
+        //document.addEventListener("load", handleCreateToken);
+    }
+
+
 
     return (
 

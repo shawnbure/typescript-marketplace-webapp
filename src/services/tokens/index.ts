@@ -18,6 +18,29 @@ export const tokensApi = createApi({
 
     endpoints: (builder) => ({
 
+        createToken: builder.mutation<any, any>({
+
+            query: ({ payload }): FetchArgs => {
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                    url: `${mainPath}/create`
+
+                }
+
+                return customRequestArg;
+            },
+
+        }),
+
+
         getTokenData: builder.mutation<any, any>({
 
             query: ({ collectionId, tokenNonce }): FetchArgs => {
@@ -199,6 +222,7 @@ export const tokensApi = createApi({
 
 
 export const {
+    useCreateTokenMutation,
     useRefreshTokenMetadataMutation,
     useGetTransactionsMutation,
     useGetTokenMetadataMutation,
