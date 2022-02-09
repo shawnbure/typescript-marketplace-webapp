@@ -4,7 +4,7 @@ import store from 'redux/store/index';
 import { BASE_URL_API, GET, POST } from 'constants/api';
 import { selectAccessToken } from 'redux/selectors/user';
 
-const mainPath = 'sessionStates';
+const mainPath = 'session-states'; 
 
 export const sessionStatesApi = createApi({
 
@@ -46,12 +46,14 @@ export const sessionStatesApi = createApi({
         deleteSessionStatesByAccountIdByStateType: builder.mutation<any, any>({
 
             query: ({ accountId, stateType, payload }): FetchArgs => {
-
                 
+                console.log("payload: " + payload)
                 console.log("payload JSON: " + JSON.stringify(payload))
 
                 const accessToken: string = selectAccessToken(store.getState());
 
+                console.log("accessToken: " + accessToken)
+                
                 const customRequestArg: FetchArgs = {
 
                     method: POST,
@@ -59,7 +61,7 @@ export const sessionStatesApi = createApi({
                         "Authorization": `Bearer ${accessToken}`,
                     },
                     body: JSON.stringify(payload),
-                    url: `${mainPath}/delete/${accountId}/${stateType}`
+                    url: `${mainPath}/delete`
 
                 }
 

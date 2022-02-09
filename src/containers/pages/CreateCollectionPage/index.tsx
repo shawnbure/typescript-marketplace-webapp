@@ -31,7 +31,7 @@ import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, 
 import { routePaths } from "constants/router";
 import { date } from 'yup/lib/locale';
 
-//import { useCreateSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/stateSessions";
+import { useCreateSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
 
 
 
@@ -41,11 +41,45 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
+    const [deleteSessionStatesByAccountIdByStateTypeTrigger] = useDeleteSessionStatesByAccountIdByStateTypeMutation();
+
+    const deleteSessionStateTransaction = async () => {
+
+        const formattedData = {
+            accountId: 7,
+            stateType: 8,
+        }
+
+        console.log("formattedData.accountId: " + formattedData.accountId)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+
+
+        const response: any = deleteSessionStatesByAccountIdByStateTypeTrigger({ payload: formattedData });
+
+
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            //return;
+        }
+
+    };
+        
     /*
     const [createSessionStatesTrigger,] = useCreateSessionStatesMutation
     ();
 
-    const [deleteSessionStatesByAccountIdByStateTypeTrigger] = useDeleteSessionStatesByAccountIdByStateTypeMutation();
+    
 
     const deleteSessionStateByAccountIdByStateTypeTransaction = async () => {
 
@@ -115,7 +149,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     */
 
 
-    
+
     
     {    
 
@@ -412,6 +446,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         //createSessionStateTransaction();
 
+        deleteSessionStateTransaction();
 
         const { name, ticker } = data;
 
