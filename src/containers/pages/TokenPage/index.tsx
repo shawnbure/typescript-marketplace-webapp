@@ -1314,11 +1314,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             }
 
                                             {
-                                                (isOnSale && !isCurrentTokenOwner) &&
+                                                // (isOnSale && !isCurrentTokenOwner) &&
                                                 <div>
 
                                                     {
-                                                        isListed && <button onClick={actionsHandlers[BUY]} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                        true && <button onClick={actionsHandlers[BUY]} className="c-button c-button--primary u-margin-right-spacing-2">
                                                             <span className="u-padding-right-spacing-2">
                                                                 <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
                                                             </span>

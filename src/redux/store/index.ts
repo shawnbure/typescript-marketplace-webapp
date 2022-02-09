@@ -1,7 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
 import { reduxBatch } from '@manaflair/redux-batch';
-import logger from 'redux-logger';
 
 import { rootReducer } from 'redux/slices';
 import { txTemplateApi, tokensApi, authApi, oracleApi, collectionsApi, depositApi, royaltiesApi, searchApi,} from 'services/index';

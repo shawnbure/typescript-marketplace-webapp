@@ -200,7 +200,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
                                     </p>
 
                                     <p className="text-sm u-text-bold">
-                                        {tokenName}
+                                        {tokenName} 
                                     </p>
 
                                 </div>

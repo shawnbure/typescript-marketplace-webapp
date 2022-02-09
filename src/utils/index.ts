@@ -3,6 +3,7 @@ import transactionsUtils from './transactions';
 // import { Address, UserPublicKey, UserVerifier } from '@elrondnetwork/erdjs/out';
 import { SignableMessage } from '@elrondnetwork/erdjs/out/signableMessage';
 import { Signature } from '@elrondnetwork/erdjs/out/signature';
+import { string } from 'yup';
 
 
 export const createVerifiedPayload = (address: string, loginToken: any, signature: any, data: any) => {
@@ -62,6 +63,19 @@ export function hexToAscii(str1: string) {
 }
 
 
+export function asciiToHex(str1: string)
+{
+    var arr1 = []
+
+    for( var n=0, l=str1.length; n < l; n++)
+    {
+        var hex = Number(str1.charCodeAt(n)).toString(16);
+        arr1.push(hex);
+    }
+
+    return arr1.join('');
+}
+
 export const formatImgLink = (url: string) => {
 
     if (url.includes("gateway.pinata.cloud")) {
@@ -72,15 +86,71 @@ export const formatImgLink = (url: string) => {
 
     }
 
+
     return url;
 }
 
 
+
+export function GetTransactionRequestHttpURL(txHash: string)
+{
+    return 'https://devnet-api.elrond.com/transactions/' + txHash;
+}
+
+
+export function GetJSONResultData(jsonParse: any) 
+{
+    return jsonParse["results"][0]["data"];
+}
+
+export function GetTransactionActionName(jsonParse: any)
+{
+    return jsonParse["action"]["name"];
+}
+
+export function GetTransactionTokenID(resultData: string)
+{
+    const asciiOfBase64Result = atob(resultData);
+    const arraySplit = asciiOfBase64Result.split("@");
+
+    const tokenIDHexed = arraySplit[2];
+
+    return hexToAscii(tokenIDHexed);
+}
+
+export function GetTransactionContractAddress(resultData: string)
+{
+    const asciiOfBase64Result = atob(resultData);
+    const arraySplit = asciiOfBase64Result.split("@");
+
+    const contractAddress = arraySplit[2];
+
+    //TODO: Bech32
+
+    return contractAddress;
+}
+
+
+export function GetTransactionErdContractAddress(jsonParse: any) 
+{
+    return jsonParse["logs"]["events"][0]["address"];
+}
+
+
+// [logs][events][0][address]
+
+
+
 export default {
     hexToAscii,
+    asciiToHex,
     shorterAddress,
     transactionsUtils,
     handleCopyToClipboard,
     createVerifiedPayload,
+    GetTransactionRequestHttpURL,
+    GetJSONResultData,
+    GetTransactionActionName,
+    GetTransactionTokenID,
 }
 

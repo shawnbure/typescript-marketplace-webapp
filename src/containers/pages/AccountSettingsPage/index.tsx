@@ -206,7 +206,28 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
             userWalletAddress: userWalletAddress
         });
 
+        console.log(response.error);
 
+
+        /*
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+
+        }
+        */
+   
         if (response.error) {
 
 
