@@ -31,11 +31,99 @@ import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, 
 import { routePaths } from "constants/router";
 import { date } from 'yup/lib/locale';
 
+//import { useCreateSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/stateSessions";
+
+
+
 
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
+
+
+    /*
+    const [createSessionStatesTrigger,] = useCreateSessionStatesMutation
+    ();
+
+    const [deleteSessionStatesByAccountIdByStateTypeTrigger] = useDeleteSessionStatesByAccountIdByStateTypeMutation();
+
+    const deleteSessionStateByAccountIdByStateTypeTransaction = async () => {
+
+
+
+
+       // accountId := "0"
+        //stateType := "0"
+
+        const formattedData = {
+        }
+
+        const response: any = await deleteSessionStatesByAccountIdByStateTypeTrigger({ accountId, stateType, payload: formattedData });
+
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            //return;
+        }
+
+    }; 
+    
+
+    const createSessionStateTransaction = async () => {
+
+        const formattedData = {
+            accountId:88,
+            stateType: 1,
+            jsonData: "testData",
+        }
+
+        console.log("formattedData.accountId: " + formattedData.accountId)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+        console.log("formattedData.jsonData: " + formattedData.jsonData)
+
+
+        const response: any = createSessionStatesTrigger({ payload: formattedData });
+
+
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            //return;
+        }
+
+    };
+    */
+
+
+    
+    
     {    
+
+
+
+        
+
+
         const queryString = window.location.search;
 
         const params = new URLSearchParams(window.location.search)
@@ -322,6 +410,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         //return
 
+        //createSessionStateTransaction();
+
+
         const { name, ticker } = data;
 
         //ticker is force to be upper
@@ -351,13 +442,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     ]; 
 
-    //
 
     const schemaStep2 = yup.object({
         royalties: yup.string().matches(/^((10)(\.[0-0]{0,2})?$|([0-9])(\.[0-9]{1,2})?$)/, "Numbers must be between 0-10").required(),
         tokenNameBase: yup.string().required("Required Field"),
         imageBase: yup.string().required("Required Field"),
-        price: yup.string().matches(/^(?!0*[.]0*$|[.]0*$|0*$)\d+[.]?\d{0,2}$/, "Only positive numbers with 2 decimals allowed.").required(),
+        price: yup.string().matches(/^\d{0,10}(\.\d{1,2})?$/, "Only positive numbers with 2 decimals allowed.").required(),
         maxSupply: yup.string().matches(/^([1-9][0-9]{0,3}|10000)$/, "Numbers must be between 1-10000").required(),
         metadataBase: yup.string().required("Required Field"),
     }).required();

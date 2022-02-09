@@ -38,10 +38,6 @@ function hex_to_ascii(str1:any)
  }
 
 
-{
-    console.log("Date: " + new Date("2022-02-03").getTime() / 1000 );
-
-}
 
 export const HomePage = () => {
 
