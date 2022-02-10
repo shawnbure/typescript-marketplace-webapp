@@ -11,7 +11,7 @@
         "@fortawesome/free-brands-svg-icons": "^5.15.4",
         "@fortawesome/free-regular-svg-icons": "^5.15.4",
         "@fortawesome/free-solid-svg-icons": "^5.15.4",
-        "@fortawesome/react-fontawesome": "^0.1.15",
+        "@fortawesome/react-fontawesome": "github:fortawesome/react-fontawesome",
         "@hookform/error-message": "^2.0.0",
         "@hookform/resolvers": "^2.8.3",
         "@manaflair/redux-batch": "^1.0.0",
@@ -52,7 +52,7 @@
         "recharts": "^2.1.6",
         "redux-logger": "^3.0.6",
         "swiper": "^6.8.4",
-        "typescript": "^4.3.5",
+        "typescript": "^4.5.5",
         "upgrade": "^1.1.0",
         "web-vitals": "^1.1.2",
         "yup": "^0.32.11"
