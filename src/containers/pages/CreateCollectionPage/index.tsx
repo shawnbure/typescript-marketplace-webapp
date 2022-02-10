@@ -1,4 +1,6 @@
 
+import ReactDOM from "react-dom";
+
 import { Redirect, Link, Router, useLocation, useHistory } from 'react-router-dom';
 import Select from 'react-select'
 import { useEffect, useState } from "react";
@@ -36,9 +38,12 @@ import { useCreateSessionStatesMutation, useDeleteSessionStatesByAccountIdByStat
 
 
 
-
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
+
+    const {
+        address: userWalletAddress,
+    } = Dapp.useContext();
 
 
     const [deleteSessionStatesByAccountIdByStateTypeTrigger] = useDeleteSessionStatesByAccountIdByStateTypeMutation();
@@ -46,11 +51,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const deleteSessionStateTransaction = async () => {
 
         const formattedData = {
-            accountId: 7,
-            stateType: 8,
+            address: userWalletAddress,
+            stateType: 1,
         }
 
-        console.log("formattedData.accountId: " + formattedData.accountId)
+        console.log("formattedData.address: " + formattedData.address)
         console.log("formattedData.stateType: " + formattedData.stateType)
 
 
@@ -75,8 +80,50 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     };
         
+    
+
+    const [createSessionStatesTrigger] = useCreateSessionStatesMutation();
+
+    const createSessionStateTransaction = async (step: any, tokenId: any) => {
+
+        console.log("step: " + step)
+        console.log("tokenId: " + tokenId)
+
+        const formattedData = {
+            address: userWalletAddress,
+            stateType: 1,
+            jsonData: "{testData}",
+        }
+
+        console.log("formattedData.address: " + formattedData.address)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+        console.log("formattedData.jsonData: " + formattedData.jsonData)
+
+
+        const response: any = createSessionStatesTrigger({ payload: formattedData });
+
+
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            //return;
+        }
+
+    };
+    
+    
     /*
-    const [createSessionStatesTrigger,] = useCreateSessionStatesMutation
+    
     ();
 
     
@@ -111,41 +158,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         }
 
     }; 
-    
-
-    const createSessionStateTransaction = async () => {
-
-        const formattedData = {
-            accountId:88,
-            stateType: 1,
-            jsonData: "testData",
-        }
-
-        console.log("formattedData.accountId: " + formattedData.accountId)
-        console.log("formattedData.stateType: " + formattedData.stateType)
-        console.log("formattedData.jsonData: " + formattedData.jsonData)
-
-
-        const response: any = createSessionStatesTrigger({ payload: formattedData });
-
-
-        if (response.error) {
-
-            const { error, status, } = response.error;
-
-            toast.error(`${error + ' ' + status}`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-            });
-
-            //return;
-        }
-
-    };
+ 
     */
 
 
@@ -155,7 +168,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-        
+
+        useEffect(()=>
+        {
+            console.log("useEffect LOADED 1");
+
+
+
+            console.log("useEffect LOADED 6");
+
+        }, [])
 
 
         const queryString = window.location.search;
@@ -174,8 +196,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             
             httpRequest.onreadystatechange = (e) => 
             {
+                
                 if (httpRequest.readyState == 4 && httpRequest.status == 200)
                 {
+
                     if( httpRequest.responseText )
                     {                
                         const data = httpRequest.responseText;
@@ -230,10 +254,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 }                
             }
         }  
-        else
-        {
-            
-        }      
+    
     }
 
 
@@ -359,9 +380,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-    const {
-        address: userWalletAddress,
-    } = Dapp.useContext();
+
 
 
 
@@ -430,23 +449,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep1 = (data: any) => {
 
-        //let history = useHistory();
 
-        //history.push('/account')
 
-        //const history  = useHistory();
-
-        //history.push("/account")
-
-        //return <Redirect to="/account" /> 
-
-        //eturn <Redirect to={routePaths.account} />
-
-        //return
-
-        //createSessionStateTransaction();
-
-        deleteSessionStateTransaction();
+        //createSessionStateTransaction(5, "ABC-01");
 
         const { name, ticker } = data;
 

@@ -43,6 +43,62 @@ export const sessionStatesApi = createApi({
 
         }),
 
+
+        retrieveSessionStates: builder.mutation<any, any>({
+
+            query: ({ payload }): FetchArgs => {
+
+                
+                console.log("payload JSON: " + JSON.stringify(payload))
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                    url: `${mainPath}/retrieve`
+
+                }
+
+                return customRequestArg;
+            },
+
+        }),
+
+
+
+        updateSessionStates: builder.mutation<any, any>({
+
+            query: ({ payload }): FetchArgs => {
+
+                
+                console.log("payload JSON: " + JSON.stringify(payload))
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                    url: `${mainPath}/update`
+
+                }
+
+                return customRequestArg;
+            },
+
+        }),
+
+
+
+
         deleteSessionStatesByAccountIdByStateType: builder.mutation<any, any>({
 
             query: ({ accountId, stateType, payload }): FetchArgs => {
@@ -75,5 +131,10 @@ export const sessionStatesApi = createApi({
 })
 
 export const {
-    useCreateSessionStatesMutation, 
+    useCreateSessionStatesMutation,
+    useRetrieveSessionStatesMutation, 
+    useUpdateSessionStatesMutation,
     useDeleteSessionStatesByAccountIdByStateTypeMutation, } = sessionStatesApi;
+
+
+    
