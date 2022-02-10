@@ -16,7 +16,7 @@ import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
-import { formatImgLink, shorterAddress } from "utils";
+import { formatImgLink, shorterAddress, GetTransactionRequestHttpURL, GetJSONResultData } from "utils";
 import { BUY } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
@@ -102,7 +102,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
 
     }, []);
-
 
     // gatewayTokenData?.data?.tokenData?.creator
 
@@ -196,12 +195,23 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
      const handleCreateToken = () => {
 
-         const formattedData = {
-            collectionID: collectionId,
-            tokenName:tokenName,
-            tokenNonce: tokenNonce,
+        
+        //console.log(userWalletAddress) //account address string
+        //console.log(gatewayTokenData.data.tokenData["tokenIdentifier"]) //tokenName string
+        //console.log(tokenNonce) // tokenNonce string
+        
+        //database nonce is bigint - this value needs to be hexidecimal. basically adding 0 to the first position is the len = 1
+        let hexNonce = tokenNonce;
+        if(tokenNonce.length == 1){
+            hexNonce = "0" + tokenNonce;
         }
-
+        
+        const formattedData = {
+            walletAddress: userWalletAddress,
+            tokenName: gatewayTokenData.data.tokenData["tokenIdentifier"],
+            tokenNonce: hexNonce,
+        }        
+ 
         const response: any = createTokenTrigger({ payload: formattedData });
 
         if (response.error) {
@@ -218,8 +228,9 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
             });
 
             return;
-        }
+        }  
     };
+
 
     const handleListAuction = () => {
 
@@ -301,20 +312,23 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     };
 
+    /****************************************************************************************************************************************************/
     //this is new - added this because the page originally redirected to the accounts page - need to stop that
     //now, we need add the database record after we return from adding the token to the marketplace contract
-
 
     const queryString = window.location.search;
     const params = new URLSearchParams(window.location.search)
     const transferredTokenToMarketplaceStatus = params.get("status")
-    if(transferredTokenToMarketplaceStatus !== null) {
-        handleCreateToken();
-        //document.addEventListener("load", handleCreateToken);
+    const txtHash = params.get("txHash")    
+  
+    if(txtHash !== null && transferredTokenToMarketplaceStatus == "success") {
+
+       // handleCreateToken();    
     }
-
-
-
+    
+    /****************************************************************************************************************************************************/
+    
+    
     return (
 
         <div className="p-sell-token-page">
@@ -510,6 +524,12 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                                 <button type="submit" className="c-button c-button--primary u-margin-right-spacing-2">
                                     <span>
                                         List
+                                    </span>
+                                </button>
+
+                                <button type="button" onClick={handleCreateToken} className="c-button c-button--primary u-margin-right-spacing-2">
+                                    <span>
+                                        Set Data 
                                     </span>
                                 </button>
 
