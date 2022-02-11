@@ -264,7 +264,8 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
         if (accountData?.data) {
 
-
+            console.log(accountData?.data?.data?.name);
+            
             setValueEdit("name", accountData?.data?.data?.name);
             setValueEdit("description", accountData?.data?.data?.description);
             setValueEdit("website", accountData?.data?.data?.website);

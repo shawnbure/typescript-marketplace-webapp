@@ -18,6 +18,34 @@ export const sessionStatesApi = createApi({
 
     endpoints: (builder) => ({
 
+
+
+        refreshCreateOrUpdateSessionStates: builder.mutation<any, any>({
+
+            query: ({ payload }): FetchArgs => {
+
+                
+                console.log("payload JSON: " + JSON.stringify(payload))
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                    url: `${mainPath}/refresh-create-or-update-session-state`
+
+                }
+
+                return customRequestArg;
+            },
+
+        }),
+
+
         createSessionStates: builder.mutation<any, any>({
 
             query: ({ payload }): FetchArgs => {
@@ -131,6 +159,7 @@ export const sessionStatesApi = createApi({
 })
 
 export const {
+    useRefreshCreateOrUpdateSessionStatesMutation,
     useCreateSessionStatesMutation,
     useRetrieveSessionStatesMutation, 
     useUpdateSessionStatesMutation,
