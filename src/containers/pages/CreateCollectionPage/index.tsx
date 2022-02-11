@@ -1,4 +1,7 @@
-import { Link, useLocation } from 'react-router-dom';
+
+import ReactDOM from "react-dom";
+
+import { Redirect, Link, Router, useLocation, useHistory } from 'react-router-dom';
 import Select from 'react-select'
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
@@ -26,20 +29,311 @@ import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, 
 import { routePaths } from "constants/router";
 import { date } from 'yup/lib/locale';
 
+import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
+
+
 
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
+    const {
+        address: userWalletAddress,
+    } = Dapp.useContext();
+
+
+    interface SessionStateJSONData 
+    {
+        step: number;
+        tokenID: string;
+        scAddress: string;
+    }
+
+
+    function CreateJSONDataStringForSessionState(stepParam: number, 
+                                                 tokenIDParam: string, 
+                                                 scAddressParam: string) : string
+    {
+        let jsonObj = { step: stepParam, 
+                        tokenID: tokenIDParam, 
+                        scAddress: scAddressParam };
+
+        return JSON.stringify(jsonObj);
+    }
+
+    function GetSessionStateJSONDataFromString(jstrJSON: string) : SessionStateJSONData
+    {
+        return JSON.parse(jstrJSON);
+    }
+
+
+    
+
+    //var [count] = useState(1) //class variable
+
+
+    //const[ step, setStep] = useState("")
+
+    /*
+    useEffect(() => {
+        
+        setValuesSessionState()
+        
+        //count++
+         count = 5
+
+        console.log(" %%%%%%%%%%%%%%%%% count: " + count)
+
+
+        console.log("this component was also mounted", []);
+    
+   });
+
+   useEffect(() => {
+    console.log("the step changed.! Just like componentDidUpdate", step);
+    });
+    */
+
+
+
+    //const handleStepEvent = (step: any) => {
+    //    setStep(step)
+    // }
+
+
+
+
+
+
+    const [retrieveSessionStatesTrigger, {
+        data: sessionStateData,
+    }] = useRetrieveSessionStatesMutation();
+    
+
+    const setValuesSessionState = async () => {
+
+        const formattedData = {
+            address: "TestAddress",
+            stateType: 1,
+        }
+
+        console.log("formattedData.address: " + formattedData.address)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+
+
+        const sessionStateData: any = await retrieveSessionStatesTrigger({ payload: formattedData });
+        
+
+
+        if (sessionStateData?.data) {
+            console.log("sessionStateData.address: " + sessionStateData?.data?.data?.address)
+            console.log("sessionStateData.jsonData: " + sessionStateData?.data?.data?.jsonData)
+            console.log("sessionStateData.stateType: " + sessionStateData?.data?.data?.stateType)
+
+        }
+
+        //
+
+        /*
+        var json = '{ "Step": 1, "TokenID": "ABC-01", "SCAddress": "0001234w454" }';
+
+        var obj = JSON.parse(json);
+
+        // Accessing individual value from JS object
+        console.log("obj.Step: " + obj.Step); // Outputs: Peter
+        console.log("obj.TokenID: " + obj.TokenID); // Outputs: 22
+        console.log("obj.SCAddress: " + obj.SCAddress); // Outputs: United States
+
+
+        let myObj = { Step1: 2, TokenID1: "TokenID1", SCAddress: "randomAddress2" };
+
+        var jsonMyObj = JSON.stringify(myObj); 
+
+        console.log("jsonMyObj: " + jsonMyObj);
+
+        var obj2 = JSON.parse(jsonMyObj);
+
+        // Accessing individual value from JS object
+        console.log("obj2.Step: " + obj2.Step1); // Outputs: Peter
+        console.log("obj2.TokenID: " + obj2.TokenID1); // Outputs: 22
+        console.log("obj2.SCAddress: " + obj2.SCAddress); // Outputs: United States
+
+
+        let strJSON2 = CreateJSONDataStringForSessionState(88, "Token88", "SCAddress88") 
+
+        var obj2 = JSON.parse(strJSON2);
+
+        console.log("Step: " + obj2.step)
+        console.log("TokenID: " + obj2.tokenID)
+        console.log("SCAddress: " + obj2.scAddress)
+
+
+        let ss: SessionStateJSONData = { step: 10, tokenID: "Token10", scAddress: "scAddress10" };
+
+        console.log("ss: " + ss)
+
+        console.log("ss.step: " + ss.step)
+        console.log("ss.tokenID: " + ss.tokenID)
+        console.log("ss.scAddress: " + ss.scAddress)
+
+        let ssjsonObj = GetSessionStateJSONDataFromString(JSON.stringify(ss));
+
+        console.log("ss2.step: " + ss.step)
+        console.log("ss2.tokenID: " + ss.tokenID)
+        console.log("ss2.scAddress: " + ss.scAddress)
+
+        //deleteSessionStateTransaction();
+        */
+    }
+
+    
+    useEffect(() => {
+
+        //setValuesSessionState();
+
+    }, []);
+    
+
+
+
+    
+
+
+    const [deleteSessionStatesByAccountIdByStateTypeTrigger] = useDeleteSessionStatesByAccountIdByStateTypeMutation();
+
+    const deleteSessionStateTransaction = async () => {
+
+        const formattedData = {
+            address: userWalletAddress,
+            stateType: 1,
+        }
+
+        console.log("formattedData.address: " + formattedData.address)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+
+        const response: any = deleteSessionStatesByAccountIdByStateTypeTrigger({ payload: formattedData });
+
+        if (response.error) {
+             //handle any error here
+            //return;
+        }
+
+    };
+        
+    
+
+
+    const [refreshCreateOrUpdateSessionStatesTrigger] = useRefreshCreateOrUpdateSessionStatesMutation();
+
+    const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any) => {
+
+        console.log("step: " + step)
+        console.log("tokenId: " + tokenId)
+        console.log("scAddress: " + scAddress)
+        
+        const formattedData = {
+            address: userWalletAddress,
+            stateType: 1,
+            jsonData: CreateJSONDataStringForSessionState(step, tokenId, scAddress),
+        }
+
+        console.log("formattedData.address: " + formattedData.address)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+        console.log("formattedData.jsonData: " + formattedData.jsonData)
+
+
+        const response: any = refreshCreateOrUpdateSessionStatesTrigger({ payload: formattedData });
+
+
+        if (response.error) {
+            //handle any error here
+            //return;
+        }
+
+    };
+    
+    
+
+    
+    
+    /*
+    const retrieveSessionStateTransaction = async (step: any, tokenId: any) => {
+
+        console.log("step: " + step)
+        console.log("tokenId: " + tokenId)
+
+        const formattedData = {
+            address: "someWallets",
+            stateType: 1,
+            jsonData: "{testData}",
+        }
+
+        console.log("formattedData.address: " + formattedData.address)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+        console.log("formattedData.jsonData: " + formattedData.jsonData)
+
+
+        const response: any = await retrieveSessionStatesTrigger({ payload: formattedData });
+
+        
+        
+
+        if (response.error) {
+
+            console.log("retrieveSessionStatesTrigger error");
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            //return;
+        }
+
+    };
+    */
+
+
+    
     {    
+
+
+
+        /*
+        useEffect(()=>
+        {
+            console.log("useEffect 1");
+
+            console.log("userWalletAddress: " + userWalletAddress)
+
+            retrieveSessionStatesTrigger({ Address: userWalletAddress, StateType: 1 })
+
+            //console.log(sessionStateData.address)
+
+            console.log("useEffect 2");
+
+
+        }, [])
+        */
+
+
         const queryString = window.location.search;
 
         const params = new URLSearchParams(window.location.search)
 
         const txtHash = params.get("txHash")
         
+        console.log("after txHash");
 
         if(txtHash != null )
         {
+            console.log("after txHash != null");
+
             const httpRequest = new XMLHttpRequest();
             const url= GetTransactionRequestHttpURL(txtHash); 
             httpRequest.open("GET", url);
@@ -47,8 +341,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             
             httpRequest.onreadystatechange = (e) => 
             {
+                
                 if (httpRequest.readyState == 4 && httpRequest.status == 200)
                 {
+                    console.log("after httpRequest.readyState == 4");
+
                     if( httpRequest.responseText )
                     {                
                         const data = httpRequest.responseText;
@@ -103,10 +400,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 }                
             }
         }  
-        else
-        {
-            
-        }      
+    
     }
 
 
@@ -168,7 +462,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         HideElement("divStep3");
         HideElement("divStep4");                
         HideElement("divStep5");
-        HideElement("divStep6");
 
         switch(actionName) 
         {
@@ -195,11 +488,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case "setSpecialRole":
             {
                 ShowElement("divStep5");
-                break;
-            }
-            case "successCreation":
-            {
-                ShowElement("divStep6");
                 break;
             }
             default:
@@ -238,9 +526,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-    const {
-        address: userWalletAddress,
-    } = Dapp.useContext();
+
+
 
 
     const [getIssueNftTemplateTrigger] = useGetIssueNftTemplateMutation();
@@ -308,6 +595,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep1 = (data: any) => {
 
+
+
+        //createSessionStateTransaction(5, "ABC-01");
+
         const { name, ticker } = data;
 
         //ticker is force to be upper
@@ -337,13 +628,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     ]; 
 
-    //
 
     const schemaStep2 = yup.object({
         royalties: yup.string().matches(/^((10)(\.[0-0]{0,2})?$|([0-9])(\.[0-9]{1,2})?$)/, "Numbers must be between 0-10").required(),
         tokenNameBase: yup.string().required("Required Field"),
         imageBase: yup.string().required("Required Field"),
-        price: yup.string().matches(/^(?!0*[.]0*$|[.]0*$|0*$)\d+[.]?\d{0,2}$/, "Only positive numbers with 2 decimals allowed.").required(),
+        price: yup.string().matches(/^\d{0,10}(\.\d{1,2})?$/, "Only positive numbers with 2 decimals allowed.").required(),
         maxSupply: yup.string().matches(/^([1-9][0-9]{0,3}|10000)$/, "Numbers must be between 1-10000").required(),
         metadataBase: yup.string().required("Required Field"),
     }).required();
@@ -372,9 +662,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //price is set to zero(0) to the request
         //data.price = 0 
 
-        console.log("data.price : " + data.price);
 
-        console.log("mediaTypeSelect.value: " + mediaTypeSelect.value);
+        sessionStorage.setItem("price", data.price);
+
+
 
         data.imageExt = mediaTypeSelect.value
 
@@ -467,8 +758,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const schemaStep5 = yup.object({
 
-        collectionName: yup.string().required("Required Field"),
-        description: yup.string(),
+        collectionName: yup.string().min(3, "Min of 3 and Max of 20 Characters").max(20,"Min of 3 and Max of 20 Characters").required("Required Field"),
+        description: yup.string().max(1000, "Max of 1000 Characters"),
         discordLink: yup.string(),
         instagramLink: yup.string(),
         telegramLink: yup.string(),
@@ -488,6 +779,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         const contractAddress = sessionStorage.getItem("contractAddress") as string;
 
         data.ContractAddress = new Address(contractAddress).toString();
+
+        const sPrice = sessionStorage.getItem("price") as string;
+
+        console.log("sPrice: " + sPrice);
+
+        data.mintPricePerTokenString = sPrice
 
         const formattedData = {
             ...data,
@@ -515,7 +812,19 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
             return;
         }
- 
+        else
+        {
+            //submit_step5, linkBackToProfile
+
+            HideElement("submit_step5");
+
+            ShowElement("linkBackToProfile");
+        }
+        
+        
+        
+
+        
         toast.success(`Succesful register`, {
             autoClose: 5000,
             draggable: true,
@@ -524,7 +833,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             hideProgressBar: false,
             position: "bottom-right",
         });
-
+        
 
     };
 
@@ -663,6 +972,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 <button type="submit" id="submit_step1" className="c-button c-button--primary mb-5" >
                                     Sign
                                 </button>
+
+
+
 
                             </form>
 
@@ -894,6 +1206,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
                                 
+
                                 <p className="text-xl mb-2">
                                     Description
                                 </p>
@@ -950,13 +1263,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </label>
 
                                 </div>
-
+                                
 
                                 <button type="submit" id="submit_step5" className="c-button c-button--primary mb-5" >
                                     Create
                                 </button>
 
 
+                                <Link to={routePaths.account} id="linkBackToProfile" hidden={true} className="c-button c-button--primary" >                        
+                                    <div className="inline-flex">
+                                        <span>
+                                            Back to Profile
+                                        </span>
+                                    </div>
+                                </Link>
 
 
                             </form>
@@ -964,37 +1284,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         </div>
 
 
-                        <div className="col-span-12 lg:col-span-5"  id="divStep6" hidden={true} >
 
-                            <p className="text-2xl u-text-bold mb-4">
-                                Done ┋ Collection Created
-                            </p>
-
-
-                            <div className="grid grid-cols-9 mb-4">
-                                <div className="col-span-12">
-
-                                    <div className="mb-4">
-                                        <label className="block w-full">
-
-                                            <span className="block mb-2">  Collection '<span id='spanCollectionName'>collectionName</span>'has been succesfully created. </span>
-
-                                        </label>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <Link to={routePaths.account} className="c-button c-button--primary" >                        
-                                <div className="inline-flex">
-                                    <span>
-                                        Okay
-                                    </span>
-                                </div>
-                            </Link>
-
-
-                        </div>
 
 
                     </div>

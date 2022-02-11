@@ -6,6 +6,9 @@ import { Signature } from '@elrondnetwork/erdjs/out/signature';
 import { string } from 'yup';
 
 
+import { ELROND_API } from 'constants/api';
+
+
 export const createVerifiedPayload = (address: string, loginToken: any, signature: any, data: any) => {
 
     const message = address + loginToken + JSON.stringify(data);
@@ -18,6 +21,7 @@ export const createVerifiedPayload = (address: string, loginToken: any, signatur
     const verfiedMessage = signedMessage.serializeForSigning().toString("hex");
 
     return {
+
         address,
         signature,
         verfiedMessage,
@@ -91,10 +95,10 @@ export const formatImgLink = (url: string) => {
 }
 
 
-
 export function GetTransactionRequestHttpURL(txHash: string)
 {
-    return 'https://devnet-api.elrond.com/transactions/' + txHash;
+
+    return ELROND_API + '/transactions/' + txHash;
 }
 
 
@@ -125,7 +129,6 @@ export function GetTransactionContractAddress(resultData: string)
 
     const contractAddress = arraySplit[2];
 
-    //TODO: Bech32
 
     return contractAddress;
 }
@@ -135,9 +138,6 @@ export function GetTransactionErdContractAddress(jsonParse: any)
 {
     return jsonParse["logs"]["events"][0]["address"];
 }
-
-
-// [logs][events][0][address]
 
 
 
