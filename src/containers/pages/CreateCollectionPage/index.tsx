@@ -5,30 +5,21 @@ import { Redirect, Link, Router, useLocation, useHistory } from 'react-router-do
 import Select from 'react-select'
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
-import * as faIcons from '@fortawesome/free-solid-svg-icons';
-
-import { ErrorMessage } from '@hookform/error-message';
-
-
 import { prepareTransaction } from "utils/transactions";
 
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { handleCopyToClipboard, hexToAscii, asciiToHex, GetTransactionRequestHttpURL, GetTransactionActionName, GetJSONResultData, GetTransactionTokenID, GetTransactionContractAddress} from "utils";
-import { useGetAccountGatewayTokensMutation, useGetAccountTokensMutation, useSetAccountMutation, useSetProfileImageMutation } from "services/accounts";
+import { hexToAscii, asciiToHex, GetTransactionRequestHttpURL, GetTransactionActionName, GetJSONResultData, GetTransactionTokenID, GetTransactionContractAddress} from "utils";
 import { toast } from 'react-toastify';
 import { useGetChangeOwnerCollectionTemplateMutation, useGetDeployCollectionTemplateMutation, useGetIssueNftTemplateMutation, useGetSetRolesCollectionTemplateMutation } from 'services/tx-template';
 
 import { useCreateCollectionMutation } from "services/collections";
 
-import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, AddressType, } from '@elrondnetwork/erdjs/out';
+import { Address} from '@elrondnetwork/erdjs/out';
 
 import { routePaths } from "constants/router";
-import { date } from 'yup/lib/locale';
-
 import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
 
 
