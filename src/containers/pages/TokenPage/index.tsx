@@ -44,7 +44,7 @@ import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
-import { formatImgLink, shorterAddress } from "utils";
+import { formatHexMetaImage, formatImgLink, shorterAddress } from "utils";
 import {
   ACCEPT_OFFER,
   BUY,
@@ -974,7 +974,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                   className={`p-token-page_img ${
                     isAssetLoaded ? `` : `u-visually-hidden`
                   }`}
-                  src={formatImgLink(imageLink)}
+                  src={formatHexMetaImage(imageLink)}
                   alt=""
                   onLoad={() => {
                     setIsAssetLoaded(true);
