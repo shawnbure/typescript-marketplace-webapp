@@ -105,6 +105,21 @@ export const accountsApi = createApi({
             },
         }),
 
+
+        getAccountTokensOnSale: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress, offset, limit }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+
+                    method: GET,
+                    url: `/${mainPath}/${userWalletAddress}/tokens/onsale/${offset}/${limit}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
         getAccountTokenGateway: builder.mutation<any, any>({
 
             query: ({ userWalletAddress, identifier, nonce }): FetchArgs => {
@@ -195,5 +210,6 @@ export const {
     useGetAccountMutation,
     useSetProfileImageMutation,
     useGetAccountTokensMutation,
+    useGetAccountTokensOnSaleMutation,
     useGetAccountGatewayTokensMutation,
     useGetAccountTokenGatewayMutation, } = accountsApi;

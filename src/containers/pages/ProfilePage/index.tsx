@@ -7,7 +7,7 @@ import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { formatImgLink, shorterAddress } from "utils";
-import { useGetAccountCollectionsMutation, useGetAccountGatewayTokensMutation, useGetAccountMutation, useGetAccountTokensMutation } from "services/accounts";
+import { useGetAccountCollectionsMutation, useGetAccountGatewayTokensMutation, useGetAccountMutation, useGetAccountTokensOnSaleMutation, useGetAccountTokensMutation } from "services/accounts";
 import { UrlParameters } from "./interfaces";
 import { routePaths } from "constants/router";
 import { Collapse } from "components";
@@ -34,11 +34,11 @@ export const ProfilePage: (props: any) => any = ({ }) => {
         isLoading: isLoadingGetAccountRequest,
         isUninitialized: isUninitializedGetAccountRequest }] = useGetAccountMutation();
 
-    const [getAccountTokensRequestTrigger, {
+    const [getAccountTokensOnSaleRequestTrigger, {
         data: accountTokensData,
         isLoading: isLoadingAccountTokensRequest,
         isUninitialized: isUninitializedAccountTokensRequest,
-    }] = useGetAccountTokensMutation();
+    }] = useGetAccountTokensOnSaleMutation();
 
     const [getAccountGatewayRequestTrigger, {
         data: accountGatewayData,
@@ -295,7 +295,7 @@ export const ProfilePage: (props: any) => any = ({ }) => {
 
     const getMoreOnSaleTokens = async () => {
 
-        const { hasFetchedNewData } = await getOffsetToLimit(getAccountTokensRequestTrigger, onSaleNfts.length, 8, onSaleNfts, setOnSaleNfts);
+        const { hasFetchedNewData } = await getOffsetToLimit(getAccountTokensOnSaleRequestTrigger, onSaleNfts.length, 8, onSaleNfts, setOnSaleNfts);
 
         setLoadMoreOnSale(hasFetchedNewData);
 
