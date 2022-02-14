@@ -1,101 +1,276 @@
 
+import ReactDOM from "react-dom";
+
 import { Redirect, Link, Router, useLocation, useHistory } from 'react-router-dom';
 import Select from 'react-select'
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
-import * as faIcons from '@fortawesome/free-solid-svg-icons';
-
-import { ErrorMessage } from '@hookform/error-message';
-
-
-
-
-
-
 import { prepareTransaction } from "utils/transactions";
 
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { handleCopyToClipboard, hexToAscii, asciiToHex, GetTransactionRequestHttpURL, GetTransactionActionName, GetJSONResultData, GetTransactionTokenID, GetTransactionContractAddress} from "utils";
-import { useGetAccountGatewayTokensMutation, useGetAccountTokensMutation, useSetAccountMutation, useSetProfileImageMutation } from "services/accounts";
+import { hexToAscii, asciiToHex, GetTransactionRequestHttpURL, GetTransactionActionName, GetJSONResultData, GetTransactionTokenID, GetTransactionContractAddress} from "utils";
 import { toast } from 'react-toastify';
 import { useGetChangeOwnerCollectionTemplateMutation, useGetDeployCollectionTemplateMutation, useGetIssueNftTemplateMutation, useGetSetRolesCollectionTemplateMutation } from 'services/tx-template';
 
 import { useCreateCollectionMutation } from "services/collections";
 
-import { AddressValue, BytesValue, U32Value, ArgSerializer, Address, BytesType, AddressType, } from '@elrondnetwork/erdjs/out';
+import { Address} from '@elrondnetwork/erdjs/out';
 
 import { routePaths } from "constants/router";
-import { date } from 'yup/lib/locale';
-
-//import { useCreateSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/stateSessions";
-
+import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
 
 
 
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
+    const {
+        address: userWalletAddress,
+    } = Dapp.useContext();
 
+
+    interface SessionStateJSONData 
+    {
+        step: number;
+        tokenID: string;
+        scAddress: string;
+    }
+
+
+    function CreateJSONDataStringForSessionState(stepParam: number, 
+                                                 tokenIDParam: string, 
+                                                 scAddressParam: string) : string
+    {
+        let jsonObj = { step: stepParam, 
+                        tokenID: tokenIDParam, 
+                        scAddress: scAddressParam };
+
+        return JSON.stringify(jsonObj);
+    }
+
+    function GetSessionStateJSONDataFromString(jstrJSON: string) : SessionStateJSONData
+    {
+        return JSON.parse(jstrJSON);
+    }
+
+
+    
+
+    //var [count] = useState(1) //class variable
+
+
+    //const[ step, setStep] = useState("")
 
     /*
-    const [createSessionStatesTrigger,] = useCreateSessionStatesMutation
-    ();
+    useEffect(() => {
+        
+        setValuesSessionState()
+        
+        //count++
+         count = 5
+
+        console.log(" %%%%%%%%%%%%%%%%% count: " + count)
+
+
+        console.log("this component was also mounted", []);
+    
+   });
+
+   useEffect(() => {
+    console.log("the step changed.! Just like componentDidUpdate", step);
+    });
+    */
+
+
+
+    //const handleStepEvent = (step: any) => {
+    //    setStep(step)
+    // }
+
+
+
+
+
+
+    const [retrieveSessionStatesTrigger, {
+        data: sessionStateData,
+    }] = useRetrieveSessionStatesMutation();
+    
+
+    const setValuesSessionState = async () => {
+
+        const formattedData = {
+            address: "TestAddress",
+            stateType: 1,
+        }
+
+        console.log("formattedData.address: " + formattedData.address)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+
+
+        const sessionStateData: any = await retrieveSessionStatesTrigger({ payload: formattedData });
+        
+
+
+        if (sessionStateData?.data) {
+            console.log("sessionStateData.address: " + sessionStateData?.data?.data?.address)
+            console.log("sessionStateData.jsonData: " + sessionStateData?.data?.data?.jsonData)
+            console.log("sessionStateData.stateType: " + sessionStateData?.data?.data?.stateType)
+
+        }
+
+        //
+
+        /*
+        var json = '{ "Step": 1, "TokenID": "ABC-01", "SCAddress": "0001234w454" }';
+
+        var obj = JSON.parse(json);
+
+        // Accessing individual value from JS object
+        console.log("obj.Step: " + obj.Step); // Outputs: Peter
+        console.log("obj.TokenID: " + obj.TokenID); // Outputs: 22
+        console.log("obj.SCAddress: " + obj.SCAddress); // Outputs: United States
+
+
+        let myObj = { Step1: 2, TokenID1: "TokenID1", SCAddress: "randomAddress2" };
+
+        var jsonMyObj = JSON.stringify(myObj); 
+
+        console.log("jsonMyObj: " + jsonMyObj);
+
+        var obj2 = JSON.parse(jsonMyObj);
+
+        // Accessing individual value from JS object
+        console.log("obj2.Step: " + obj2.Step1); // Outputs: Peter
+        console.log("obj2.TokenID: " + obj2.TokenID1); // Outputs: 22
+        console.log("obj2.SCAddress: " + obj2.SCAddress); // Outputs: United States
+
+
+        let strJSON2 = CreateJSONDataStringForSessionState(88, "Token88", "SCAddress88") 
+
+        var obj2 = JSON.parse(strJSON2);
+
+        console.log("Step: " + obj2.step)
+        console.log("TokenID: " + obj2.tokenID)
+        console.log("SCAddress: " + obj2.scAddress)
+
+
+        let ss: SessionStateJSONData = { step: 10, tokenID: "Token10", scAddress: "scAddress10" };
+
+        console.log("ss: " + ss)
+
+        console.log("ss.step: " + ss.step)
+        console.log("ss.tokenID: " + ss.tokenID)
+        console.log("ss.scAddress: " + ss.scAddress)
+
+        let ssjsonObj = GetSessionStateJSONDataFromString(JSON.stringify(ss));
+
+        console.log("ss2.step: " + ss.step)
+        console.log("ss2.tokenID: " + ss.tokenID)
+        console.log("ss2.scAddress: " + ss.scAddress)
+
+        //deleteSessionStateTransaction();
+        */
+    }
+
+    
+    useEffect(() => {
+
+        //setValuesSessionState();
+
+    }, []);
+    
+
+
+
+    
+
 
     const [deleteSessionStatesByAccountIdByStateTypeTrigger] = useDeleteSessionStatesByAccountIdByStateTypeMutation();
 
-    const deleteSessionStateByAccountIdByStateTypeTransaction = async () => {
-
-
-
-
-       // accountId := "0"
-        //stateType := "0"
+    const deleteSessionStateTransaction = async () => {
 
         const formattedData = {
+            address: userWalletAddress,
+            stateType: 1,
         }
 
-        const response: any = await deleteSessionStatesByAccountIdByStateTypeTrigger({ accountId, stateType, payload: formattedData });
+        console.log("formattedData.address: " + formattedData.address)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+
+        const response: any = deleteSessionStatesByAccountIdByStateTypeTrigger({ payload: formattedData });
 
         if (response.error) {
-
-            const { error, status, } = response.error;
-
-            toast.error(`${error + ' ' + status}`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-            });
-
+             //handle any error here
             //return;
         }
 
-    }; 
+    };
+        
     
 
-    const createSessionStateTransaction = async () => {
 
+    const [refreshCreateOrUpdateSessionStatesTrigger] = useRefreshCreateOrUpdateSessionStatesMutation();
+
+    const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any) => {
+
+        console.log("step: " + step)
+        console.log("tokenId: " + tokenId)
+        console.log("scAddress: " + scAddress)
+        
         const formattedData = {
-            accountId:88,
+            address: userWalletAddress,
             stateType: 1,
-            jsonData: "testData",
+            jsonData: CreateJSONDataStringForSessionState(step, tokenId, scAddress),
         }
 
-        console.log("formattedData.accountId: " + formattedData.accountId)
+        console.log("formattedData.address: " + formattedData.address)
         console.log("formattedData.stateType: " + formattedData.stateType)
         console.log("formattedData.jsonData: " + formattedData.jsonData)
 
 
-        const response: any = createSessionStatesTrigger({ payload: formattedData });
+        const response: any = refreshCreateOrUpdateSessionStatesTrigger({ payload: formattedData });
 
 
         if (response.error) {
+            //handle any error here
+            //return;
+        }
+
+    };
+    
+    
+
+    
+    
+    /*
+    const retrieveSessionStateTransaction = async (step: any, tokenId: any) => {
+
+        console.log("step: " + step)
+        console.log("tokenId: " + tokenId)
+
+        const formattedData = {
+            address: "someWallets",
+            stateType: 1,
+            jsonData: "{testData}",
+        }
+
+        console.log("formattedData.address: " + formattedData.address)
+        console.log("formattedData.stateType: " + formattedData.stateType)
+        console.log("formattedData.jsonData: " + formattedData.jsonData)
+
+
+        const response: any = await retrieveSessionStatesTrigger({ payload: formattedData });
+
+        
+        
+
+        if (response.error) {
+
+            console.log("retrieveSessionStatesTrigger error");
 
             const { error, status, } = response.error;
 
@@ -116,12 +291,26 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     
-    
     {    
 
 
 
-        
+        /*
+        useEffect(()=>
+        {
+            console.log("useEffect 1");
+
+            console.log("userWalletAddress: " + userWalletAddress)
+
+            retrieveSessionStatesTrigger({ Address: userWalletAddress, StateType: 1 })
+
+            //console.log(sessionStateData.address)
+
+            console.log("useEffect 2");
+
+
+        }, [])
+        */
 
 
         const queryString = window.location.search;
@@ -130,9 +319,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const txtHash = params.get("txHash")
         
+        console.log("after txHash");
 
         if(txtHash != null )
         {
+            console.log("after txHash != null");
+
             const httpRequest = new XMLHttpRequest();
             const url= GetTransactionRequestHttpURL(txtHash); 
             httpRequest.open("GET", url);
@@ -140,8 +332,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             
             httpRequest.onreadystatechange = (e) => 
             {
+                
                 if (httpRequest.readyState == 4 && httpRequest.status == 200)
                 {
+                    console.log("after httpRequest.readyState == 4");
+
                     if( httpRequest.responseText )
                     {                
                         const data = httpRequest.responseText;
@@ -196,10 +391,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 }                
             }
         }  
-        else
-        {
-            
-        }      
+    
     }
 
 
@@ -325,9 +517,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-    const {
-        address: userWalletAddress,
-    } = Dapp.useContext();
+
 
 
 
@@ -396,22 +586,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep1 = (data: any) => {
 
-        //let history = useHistory();
 
-        //history.push('/account')
 
-        //const history  = useHistory();
-
-        //history.push("/account")
-
-        //return <Redirect to="/account" /> 
-
-        //eturn <Redirect to={routePaths.account} />
-
-        //return
-
-        //createSessionStateTransaction();
-
+        //createSessionStateTransaction(5, "ABC-01");
 
         const { name, ticker } = data;
 
