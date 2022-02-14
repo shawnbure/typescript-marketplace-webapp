@@ -9,3 +9,4 @@ export { CollectionPage } from './CollectionPage';
 export { CollectionEditPage } from './CollectionEditPage';
 export { AccountSettingsPage } from './AccountSettingsPage';
 export { CreateCollectionPage } from './CreateCollectionPage';
+export { DaoPage } from './DaoPage';
