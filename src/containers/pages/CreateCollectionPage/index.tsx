@@ -57,10 +57,61 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
 
+    const [state, setState] = useState({ vStep: 1, vTokenID: "tokeIDEmpty", vSCAddress: "scAddressEmpty" })
+    const { vStep, vTokenID, vSCAddress } = state
+
+  
+   
+
+
+
+      //This initialize the varSessionStateJSON
+      const initializeSessionStateJSON = async () => {
+
+        //set the request data to pass to triggers
+        const formattedData = {
+            address: userWalletAddress,
+            stateType: 1,
+        }
+
+        //retrieve the session state
+        const sessionStateData: any = await retrieveSessionStatesTrigger({ payload: formattedData });
+        
+        //check data and initialize it to variable
+        if (sessionStateData?.data) {
+
+            console.log("sessionStateData?.data?.data?.jsonData:" + sessionStateData?.data?.data?.jsonData )
+
+            const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
+            console.log("step: " + sessionStateJSONData.step )
+            console.log("scAddress: " + sessionStateJSONData.scAddress )
+            console.log("tokenID: " + sessionStateJSONData.tokenID )
+
+            setState({
+                ['vStep']: sessionStateJSONData.step,
+                ['vTokenID']: sessionStateJSONData.tokenID,
+                ['vSCAddress']: sessionStateJSONData.scAddress
+              })
+
+
+            //set the page state based on teh sessonState
+            HandlePageStateBySessionState();            
+        }        
+    }
+
+
+    useEffect(() => {
+
+        //initializeSessionStateJSON();
+        //deleteSessionStateTransaction();
+         
+    }, [state.vStep]);
+
+    //reason I used state.step: https://dmitripavlutin.com/react-useeffect-infinite-loop/
+
+
     
-
-    //var [count] = useState(1) //class variable
-
+    
 
     //const[ step, setStep] = useState("")
 
@@ -100,27 +151,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }] = useRetrieveSessionStatesMutation();
     
 
-    const setValuesSessionState = async () => {
+    const setValuesSessionState_TEST = async () => {
 
-        const formattedData = {
-            address: "TestAddress",
-            stateType: 1,
-        }
-
-        console.log("formattedData.address: " + formattedData.address)
-        console.log("formattedData.stateType: " + formattedData.stateType)
-
-
-        const sessionStateData: any = await retrieveSessionStatesTrigger({ payload: formattedData });
-        
-
-
-        if (sessionStateData?.data) {
-            console.log("sessionStateData.address: " + sessionStateData?.data?.data?.address)
-            console.log("sessionStateData.jsonData: " + sessionStateData?.data?.data?.jsonData)
-            console.log("sessionStateData.stateType: " + sessionStateData?.data?.data?.stateType)
-
-        }
 
         //
 
@@ -177,12 +209,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
     
-    useEffect(() => {
 
-        //setValuesSessionState();
-
-    }, []);
-    
 
 
 
@@ -217,6 +244,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any) => {
 
+        console.log("================== refreshCreateOrUpdateSessionStateTransaction ===========")
         console.log("step: " + step)
         console.log("tokenId: " + tokenId)
         console.log("scAddress: " + scAddress)
@@ -232,7 +260,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         console.log("formattedData.jsonData: " + formattedData.jsonData)
 
 
-        const response: any = refreshCreateOrUpdateSessionStatesTrigger({ payload: formattedData });
+        const response: any = await refreshCreateOrUpdateSessionStatesTrigger({ payload: formattedData });
 
 
         if (response.error) {
@@ -241,6 +269,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         }
 
     };
+    
     
     
 
@@ -341,13 +370,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     {                
                         const data = httpRequest.responseText;
 
-                        try {
-                            const jsonResponse2 = JSON.parse(data);
-                          } catch (error) {
-                            console.error(" =================== PARSE ERRROR:" + error);
-                            return;
-                          }
-
                           
                         const jsonResponse = JSON.parse(data);
                         const actionName = GetTransactionActionName(jsonResponse)
@@ -356,25 +378,25 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         
                         switch(actionName) 
                         {
-                            case "issueNonFungible":
+                            case "issueNonFungible":  //step 1 completed
                             {
                                 HandleIssueNonFungibleAction(resultData);
                                 
                                 break;
                             } 
-                            case "deployNFTTemplateContract":
+                            case "deployNFTTemplateContract":  //step 2 completed
                             {
                                 HandledeployNFTTemplateContractAction(resultData);
 
                                 break;
                             }
-                            case "changeOwner":
+                            case "changeOwner": //step 3 completed
                             {
                                 HandleChangeOwnerAction(resultData);
                                 
                                 break;
                             }
-                            case "setSpecialRole":
+                            case "setSpecialRole": //step 4 completed
                             {
                                 HandleSetSpecialRoleAction(resultData);
 
@@ -408,6 +430,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         inputName.readOnly = true;
      
         sessionStorage.setItem("tokenId", tokenID);
+
+        /*
+        //After Step1 completed: Create it to SessionState DB
+        refreshCreateOrUpdateSessionStateTransaction(2,             //2 since step 1 is completed
+                                                     tokenID,       //token id from Smart Contract
+                                                     "EMPTY");      //empty since SC Address not known yet
+        */
     }
 
 
@@ -420,6 +449,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         inputName.value = contractAddress;
         
         sessionStorage.setItem("contractAddress", contractAddress);
+
+
+        /*
+        //let's get 
+        //After Step1 completed: Create it to SessionState DB
+        refreshCreateOrUpdateSessionStateTransaction(3,     //3 since step 2 is completed
+            vTokenID,                                        //token id from Smart Contract
+            contractAddress);                               //SC Address not known yet
+        */
+            
 
     }
 
@@ -481,6 +520,62 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 ShowElement("divStep5");
                 break;
             }
+            default:
+            {
+
+            } 
+        }        
+    }
+
+
+    function HandlePageStateBySessionState()
+    {        
+        console.log("HandlePageStateBySessionState")
+
+        console.log("step: " + vStep )
+        console.log("tokenID: " + vTokenID )
+        console.log("scAddress: " + vSCAddress )
+
+        //hide all divs
+        HideElement("divStep1");
+        HideElement("divStep2");
+        HideElement("divStep3");
+        HideElement("divStep4");                
+        HideElement("divStep5");
+
+
+        switch(vStep) 
+        {
+            case 2:  //
+            {
+
+                //set the token id 
+                var inputName = document.getElementById("tokenId") as HTMLInputElement;
+                inputName.value = vTokenID;
+                inputName.readOnly = true;
+
+                ShowElement("divStep2");
+
+                break;
+            } 
+            case 3:
+            {
+                ShowElement("divStep3");
+
+                break;
+            } 
+            case 4:
+            {
+                ShowElement("divStep4");
+
+                break;
+            }     
+            case 5:
+            {
+                ShowElement("divStep5");
+
+                break;
+            }                     
             default:
             {
 
@@ -585,10 +680,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     });
 
     const onSubmitStep1 = (data: any) => {
-
-
-
-        //createSessionStateTransaction(5, "ABC-01");
 
         const { name, ticker } = data;
 

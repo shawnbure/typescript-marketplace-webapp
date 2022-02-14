@@ -1,3 +1,7 @@
+import { routePaths } from 'constants/router';
+import { Link } from "react-router-dom";
+
+
 export const Footer = () => {
   return (
     <footer className="c-footer">
@@ -11,8 +15,11 @@ export const Footer = () => {
             <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="">Resources</a>            
             &nbsp;
             |
+              <Link to={routePaths.dao} className="c-navbar_list-link">
+                ENFT-DAO 
+              </Link>
 
-            ENFT-DAO                         
+                                    
           </p>
       </div>
     </footer>

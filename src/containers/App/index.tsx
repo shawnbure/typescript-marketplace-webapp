@@ -9,7 +9,7 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage } from 'containers/pages';
+import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, DaoPage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
 
 
@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux';
 import { setAccessToken, setJWT } from 'redux/slices/user';
 import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
 import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
+
 
 
 // import ReactGA from 'react-ga';
@@ -186,6 +187,13 @@ export const App: () => JSX.Element = () => {
                             </AuthProtected>
 
                         </Route>
+
+                        <Route path={routePaths.dao} exact={true} >
+
+                            <DaoPage />
+
+                        </Route>
+
 
                         <Route path={"/pigselated"} exact={true} >
 
