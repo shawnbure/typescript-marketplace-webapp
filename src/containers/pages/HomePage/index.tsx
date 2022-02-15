@@ -8,8 +8,9 @@ import * as faBrandIcons from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Footer } from 'components/index';
+import { useEffect, useState } from "react";
 
-import { asciiToHex,  GetTransactionRequestHttpURL, GetJSONResultData, GetTransactionActionName, GetTransactionTokenID} from "utils";
+import { formatImgLink } from "utils";
 
 import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -17,8 +18,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
 
-import { hexToAscii } from "utils";
 
+import { useGetAllCollectionMutation } from 'services/collections';
 
 
 
@@ -26,75 +27,80 @@ SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 
 
-
-function hex_to_ascii(str1:any)
- {
-	var hex  = str1.toString();
-	var str = '';
-	for (var n = 0; n < hex.length; n += 2) {
-		str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
-	}
-	return str;
- }
-
-
-
 export const HomePage = () => {
 
+    const [collectionList, setCollectionList] = useState<Array<any>>([]);
 
-    const mapCarouselImgHolders = () => {
-
-        const pics = [];
-
-        for (let index = 1; index <= 26; index++) {
-
-            const imgSrc = `./img/carousel/${index}.png`;
-
-            pics.push(
-                <SwiperSlide className="" key={`sp-${index}`}>
+    const [getAllCollectionTrigger, {
+        data: allCollections
+    }] = useGetAllCollectionMutation();
 
 
-                    {/* <div className="c-card_img-container">
-                    <img className="c-carousel_item" src={imgSrc} alt={`Carousel img #${index}`} />
+    useEffect(() => {
 
-                                    </div> */}
+        //This is called once on render
+        getAllCollectionTrigger({});
 
-                    <div className="col-xs-12">
+        initializeAllCollection();        
+      }, []);
+      
+      
+
+    const initializeAllCollection = async () => {
+
+        const formattedData = {
+            //add any data for post (here as a placeholder)
+        }
+
+        //retrieve the session state
+        const collectionsData: any = await getAllCollectionTrigger(formattedData);
+        
+        if( collectionsData?.data )
+        {
+            //set the api collection data call to the state array variable
+            setCollectionList(collectionsData.data.data);
+        }   
+    }
+
+
+    const mapCollections = () => {
+        return collectionList.map((userCollection: any) => {
+            const {
+              id,
+              name,
+              tokenId,
+              profileImageLink
+            } = userCollection;
+            return (
+                    <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
+
+                    <Link to={`/collection/${tokenId}/`}>
                         <div className="u-margin-tb-spacing-4">
-
                             <div className={`c-card c-card--homepage-feature`}>
 
                                 <div className="c-card_img-container">
-                                    <img src={imgSrc} className="c-card_img" alt="" />
+                                    <img src={ formatImgLink(profileImageLink ? profileImageLink : './img/collections/CollectionProfileImageEmpty.jpg') } className="c-card_img" alt="" />
                                 </div>
 
-                                {/* <div className="c-card_info">
-                                        <img src={'./img/collections/moonkeyz/moonkeyz-promo-1.png'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'Moonkey #XYZ'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
-                                                {'Moonkeyz'}
-                                            </span>
-                                        </div>
-                                    </div> */}
+                                <div className="c-card_info">
+                                    <div className="c-card_details">
+                                        <span className="c-card_collection-name">
+                                            {name}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
-                    </div>
 
-
-                </SwiperSlide>
-            )
-
-
-        }
-
-        return pics;
-
-
+                    </Link>
+                </div>
+              );
+            });            
     };
+
+
+
+
 
 
     return (
@@ -296,6 +302,22 @@ export const HomePage = () => {
 
 
 
+<<<<<<< HEAD
+=======
+                        
+                    <div className="grid grid-cols-12">
+
+                        {Boolean(collectionList.length) ? (
+                        mapCollections()
+                        ) : (
+                        <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+                            no collections
+                        </div>
+                        )}
+
+                    </div>
+
+>>>>>>> c93758d02e64ad39278d5691d88912f995f60a11
 
 
                     <br/><br/>
