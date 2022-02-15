@@ -5,6 +5,7 @@ export { ProfilePage } from './ProfilePage';
 export { RankingsPage } from './RankingsPage';
 export { RoyaltiesPage} from './RoyaltiesPage';
 export { SellTokenPage } from './SellTokenPage';
+export { InsertTokenPage } from './InsertTokenPage';
 export { CollectionPage } from './CollectionPage';
 export { CollectionEditPage } from './CollectionEditPage';
 export { AccountSettingsPage } from './AccountSettingsPage';

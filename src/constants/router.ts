@@ -19,6 +19,7 @@ export const routePaths = {
     resources: "https://erdseanft.gitbook.io/docs/",
     collectionEdit: '/collection/:collectionId/edit',
     sellToken: "/token/:walletAddress/:collectionId/:tokenNonce/sell",
+    insertToken: "/token/:collectionId/:tokenNonce/insert",
     unlistedToken: "/token/:walletAddress/:collectionId/:tokenNonce",
     dao: "/dao",
 };

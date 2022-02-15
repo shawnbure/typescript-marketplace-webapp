@@ -16,6 +16,8 @@ export const tokensApi = createApi({
 
     }),
 
+    //this is the endpoint call for the GOLANG API
+
     endpoints: (builder) => ({
 
         createToken: builder.mutation<any, any>({
@@ -31,7 +33,7 @@ export const tokensApi = createApi({
                         "Authorization": `Bearer ${accessToken}`,
                     },
                     body: JSON.stringify(payload),
-                    url: `${mainPath}/create`
+                    url: `${mainPath}/create/${payload.walletAddress}/${payload.tokenName}/${payload.tokenNonce}`
 
                 }
 

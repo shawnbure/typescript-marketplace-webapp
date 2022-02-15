@@ -20,7 +20,7 @@ import { formatImgLink, shorterAddress, GetTransactionRequestHttpURL, GetJSONRes
 import { BUY } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
-import { useCreateTokenMutation } from "services/tokens";
+//import { useCreateTokenMutation } from "services/tokens";
 import { routePaths } from 'constants/router';
 
 
@@ -92,8 +92,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     const shouldRedirectHome: boolean = false
 
 
-    const [createTokenTrigger,] = useCreateTokenMutation
-    ();
+    //const [createTokenTrigger,] = useCreateTokenMutation();
 
     useEffect(() => {
 
@@ -184,27 +183,23 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     const handleListFixedPrice = () => {
 
-        signTemplateTransaction({
-
-            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
-            getTemplateData: { userWalletAddress, collectionId, tokenNonce, price: requestedAmount },
-            getTemplateTrigger: getListNftTemplateQueryTrigger,
-
-        });        
-    };
-
-     const handleCreateToken = () => {
-
-        
-        //console.log(userWalletAddress) //account address string
-        //console.log(gatewayTokenData.data.tokenData["tokenIdentifier"]) //tokenName string
-        //console.log(tokenNonce) // tokenNonce string
-        
         //database nonce is bigint - this value needs to be hexidecimal. basically adding 0 to the first position is the len = 1
         let hexNonce = tokenNonce;
         if(tokenNonce.length == 1){
             hexNonce = "0" + tokenNonce;
         }
+
+        signTemplateTransaction({
+
+            succesCallbackRoute: '/token/' + collectionId +'/' + tokenNonce + '/insert',
+            //succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
+            getTemplateData: { userWalletAddress, collectionId, tokenNonce, price: requestedAmount },
+            getTemplateTrigger: getListNftTemplateQueryTrigger,
+
+        });        
+    };
+/*
+    const handleCreateToken = () => {
         
         const formattedData = {
             walletAddress: userWalletAddress,
@@ -229,8 +224,9 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
             return;
         }  
+ 
     };
-
+ */
 
     const handleListAuction = () => {
 
@@ -311,23 +307,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         handleListAuction();
 
     };
-
-    /****************************************************************************************************************************************************/
-    //this is new - added this because the page originally redirected to the accounts page - need to stop that
-    //now, we need add the database record after we return from adding the token to the marketplace contract
-
-    const queryString = window.location.search;
-    const params = new URLSearchParams(window.location.search)
-    const transferredTokenToMarketplaceStatus = params.get("status")
-    const txtHash = params.get("txHash")    
-  
-    if(txtHash !== null && transferredTokenToMarketplaceStatus == "success") {
-
-       // handleCreateToken();    
-    }
-    
-    /****************************************************************************************************************************************************/
-    
     
     return (
 
@@ -524,12 +503,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                                 <button type="submit" className="c-button c-button--primary u-margin-right-spacing-2">
                                     <span>
                                         List
-                                    </span>
-                                </button>
-
-                                <button type="button" onClick={handleCreateToken} className="c-button c-button--primary u-margin-right-spacing-2">
-                                    <span>
-                                        Set Data 
                                     </span>
                                 </button>
 
