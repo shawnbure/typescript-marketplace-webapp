@@ -9,7 +9,7 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, DaoPage } from 'containers/pages';
+import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
 
 
@@ -185,12 +185,6 @@ export const App: () => JSX.Element = () => {
                             <AuthProtected>
                                 <RoyaltiesPage />
                             </AuthProtected>
-
-                        </Route>
-
-                        <Route path={routePaths.dao} exact={true} >
-
-                            <DaoPage />
 
                         </Route>
 

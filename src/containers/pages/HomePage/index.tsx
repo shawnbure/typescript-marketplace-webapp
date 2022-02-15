@@ -19,7 +19,7 @@ import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
 
 
-import { useGetAllCollectionMutation } from 'services/collections';
+// import { useGetAllCollectionMutation } from 'services/collections';
 
 
 
@@ -31,15 +31,15 @@ export const HomePage = () => {
 
     const [collectionList, setCollectionList] = useState<Array<any>>([]);
 
-    const [getAllCollectionTrigger, {
-        data: allCollections
-    }] = useGetAllCollectionMutation();
+    // const [getAllCollectionTrigger, {
+    //     data: allCollections
+    // }] = useGetAllCollectionMutation();
 
 
     useEffect(() => {
 
         //This is called once on render
-        getAllCollectionTrigger({});
+        // getAllCollectionTrigger({});
 
         initializeAllCollection();        
       }, []);
@@ -53,13 +53,13 @@ export const HomePage = () => {
         }
 
         //retrieve the session state
-        const collectionsData: any = await getAllCollectionTrigger(formattedData);
+        // const collectionsData: any = await getAllCollectionTrigger(formattedData);
         
-        if( collectionsData?.data )
-        {
-            //set the api collection data call to the state array variable
-            setCollectionList(collectionsData.data.data);
-        }   
+        // if( collectionsData?.data )
+        // {
+        //     //set the api collection data call to the state array variable
+        //     setCollectionList(collectionsData.data.data);
+        // }   
     }
 
 
@@ -302,8 +302,6 @@ export const HomePage = () => {
 
 
 
-<<<<<<< HEAD
-=======
                         
                     <div className="grid grid-cols-12">
 
@@ -317,7 +315,6 @@ export const HomePage = () => {
 
                     </div>
 
->>>>>>> c93758d02e64ad39278d5691d88912f995f60a11
 
 
                     <br/><br/>
