@@ -164,20 +164,20 @@ export const HomePage = () => {
 
                         <div className="col-xs-12 col-md-6">
 
-                            <Link to={'/collection/PIGSEL-91e91b'}>
+                            <Link to={'/collection/HELIOS-d263f3'}>
                                 <div className="u-margin-top-spacing-9">
 
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'./img/collections/regal-eagles/regal-eagles-promo.png'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'./img/collections/regal-eagles/regal-eagles-profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 <span className="c-card_title">
-                                                    {'Regal Eagles'}
+                                                    {'Helios Staking'}
                                                 </span>
 
                                             </div>
@@ -295,46 +295,6 @@ export const HomePage = () => {
                     </div>
 
 
-
-
-                    <div className="grid grid-cols-12">
-
-
-
-
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-
-
-                            <Link to={`/collection/HELIOS22`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Helios'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>
-                        </div>
-
-                    </div>
 
 
 
