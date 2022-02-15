@@ -8,8 +8,9 @@ import * as faBrandIcons from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Footer } from 'components/index';
+import { useEffect, useState } from "react";
 
-import { asciiToHex,  GetTransactionRequestHttpURL, GetJSONResultData, GetTransactionActionName, GetTransactionTokenID} from "utils";
+import { formatImgLink } from "utils";
 
 import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -17,8 +18,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
 
-import { hexToAscii } from "utils";
 
+import { useGetAllCollectionMutation } from 'services/collections';
 
 
 
@@ -26,75 +27,80 @@ SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 
 
-
-function hex_to_ascii(str1:any)
- {
-	var hex  = str1.toString();
-	var str = '';
-	for (var n = 0; n < hex.length; n += 2) {
-		str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
-	}
-	return str;
- }
-
-
-
 export const HomePage = () => {
 
+    const [collectionList, setCollectionList] = useState<Array<any>>([]);
 
-    const mapCarouselImgHolders = () => {
-
-        const pics = [];
-
-        for (let index = 1; index <= 26; index++) {
-
-            const imgSrc = `./img/carousel/${index}.png`;
-
-            pics.push(
-                <SwiperSlide className="" key={`sp-${index}`}>
+    const [getAllCollectionTrigger, {
+        data: allCollections
+    }] = useGetAllCollectionMutation();
 
 
-                    {/* <div className="c-card_img-container">
-                    <img className="c-carousel_item" src={imgSrc} alt={`Carousel img #${index}`} />
+    useEffect(() => {
 
-                                    </div> */}
+        //This is called once on render
+        getAllCollectionTrigger({});
 
-                    <div className="col-xs-12">
+        initializeAllCollection();        
+      }, []);
+      
+      
+
+    const initializeAllCollection = async () => {
+
+        const formattedData = {
+            //add any data for post (here as a placeholder)
+        }
+
+        //retrieve the session state
+        const collectionsData: any = await getAllCollectionTrigger(formattedData);
+        
+        if( collectionsData?.data )
+        {
+            //set the api collection data call to the state array variable
+            setCollectionList(collectionsData.data.data);
+        }   
+    }
+
+
+    const mapCollections = () => {
+        return collectionList.map((userCollection: any) => {
+            const {
+              id,
+              name,
+              tokenId,
+              profileImageLink
+            } = userCollection;
+            return (
+                    <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
+
+                    <Link to={`/collection/${tokenId}/`}>
                         <div className="u-margin-tb-spacing-4">
-
                             <div className={`c-card c-card--homepage-feature`}>
 
                                 <div className="c-card_img-container">
-                                    <img src={imgSrc} className="c-card_img" alt="" />
+                                    <img src={ formatImgLink(profileImageLink ? profileImageLink : './img/collections/CollectionProfileImageEmpty.jpg') } className="c-card_img" alt="" />
                                 </div>
 
-                                {/* <div className="c-card_info">
-                                        <img src={'./img/collections/moonkeyz/moonkeyz-promo-1.png'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'Moonkey #XYZ'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
-                                                {'Moonkeyz'}
-                                            </span>
-                                        </div>
-                                    </div> */}
+                                <div className="c-card_info">
+                                    <div className="c-card_details">
+                                        <span className="c-card_collection-name">
+                                            {name}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
-                    </div>
 
-
-                </SwiperSlide>
-            )
-
-
-        }
-
-        return pics;
-
-
+                    </Link>
+                </div>
+              );
+            });            
     };
+
+
+
+
 
 
     return (
@@ -296,187 +302,16 @@ export const HomePage = () => {
 
 
 
-
+                        
                     <div className="grid grid-cols-12">
 
-
-
-
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-
-
-                            <Link to={`/collection/TinyWings`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/TinyWings/Promo_TinyWings.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'./img/collections/TinyWings/Profile_TinyWings.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Tiny Wings'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>
+                        {Boolean(collectionList.length) ? (
+                        mapCollections()
+                        ) : (
+                        <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+                            no collections
                         </div>
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/MNROBOS-39ece5`}>
-                                <div className="u-margin-tb-spacing-4">
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/mini-robos/mini-robos-promo-1.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'./img/carousel/8.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-
-                                                <span className="c-card_collection-name">
-                                                    {'Mini Robos'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </Link>
-                        </div>
-
-
-
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-
-                            <Link to={`/collection/DUCKERDS-348dd3`}>
-                                <div className="u-margin-tb-spacing-4">
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/duckerds/duckerds-promo-2.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'./img/carousel/17.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                {/* <span className="c-card_title">
-                                                {'Duckerd #XYZ'}
-                                            </span> */}
-                                                <span className="c-card_collection-name">
-                                                    {'Duckerds'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </Link>
-                        </div>
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-
-                            <Link to={`/collection/MOONKEYZ-7af2e1`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/moonkeyz/moonkeyz-promo-1.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'./img/carousel/9.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_collection-name">
-                                                    {'Moonkeyz'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </Link>
-                        </div>
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-
-                            <Link to={`/collection/LADIES-677dc6`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/pixel-ladies/pixel-ladies-promo-1.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'./img/carousel/10.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_collection-name">
-                                                    {'Pixel Ladies'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </Link>
-                        </div>
-
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-
-                            <Link to={'/collection/PIGSEL-91e91b'}>
-
-                                <div className="u-margin-top-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/avatar.jpg'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636990119/erd1dtug93adfr7jd8q35u8jjp34prnpwscpvgtrfe8gltmdas44zppspzhgje.profile.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Pigselated'}
-                                                </span>
-
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                </div>
-
-                            </Link>
-
-                        </div>
-
+                        )}
 
                     </div>
 

@@ -118,6 +118,22 @@ export const collectionsApi = createApi({
             },
         }),
 
+
+        getAllCollection: builder.mutation<any, any>({
+
+            query: ({payload}): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: POST,
+                    body: JSON.stringify(payload),
+                    url: `/${mainPath}/all`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+
         registerCollection: builder.mutation<any, any>({
 
             query: ({ userWalletAddress, payload }): FetchArgs => {
@@ -206,4 +222,5 @@ export const {
     useGetCollectionTokensMutation,
     useRegisterCollectionMutation,
     useCreateCollectionMutation,
-    useGetCollectionByIdMutation, } = collectionsApi;
+    useGetCollectionByIdMutation, 
+    useGetAllCollectionMutation, } = collectionsApi;
