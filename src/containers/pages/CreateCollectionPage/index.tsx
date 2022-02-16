@@ -36,23 +36,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {
         
-        console.log("======= STEP TRACKER MODIFIIED $$$$$$$$$$$$$$$$$$$$$$$$$")
-        console.log("StepTracker: " + stepTracker)
-
-
         //take the step tracker and convert to JSObject
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
-        console.log("step: " + sessionStateJSONData.step )
-        console.log("scAddress: " + sessionStateJSONData.scAddress )
-        console.log("tokenID: " + sessionStateJSONData.tokenID )
-        console.log("price: " + sessionStateJSONData.price)
 
 
         if( sessionStateJSONData.step > 1 &&           // first step should be not saved 
             !initialFetch )                             //if initialFetch, don't save
         {
-            console.log("======= REFRESH (CREATE/UPDATE) =====");
-
             //Refresh / Create it to SessionState DB
             refreshCreateOrUpdateSessionStateTransaction(sessionStateJSONData.step,            
                                                          sessionStateJSONData.tokenID,       
@@ -62,21 +52,15 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
         setInitialFetch(false);
 
-        console.log("======= EXITING STEP TRACKER MODIFIED =====");
-
       },[stepTracker]);
 
 
 
     useEffect(() => {
-        
-        //ONLY HAPPENS ONCE
-        console.log("======= CreateCollectionPage UseEffect [][][][ONLY HAPPENS ONCE] %%%%%%%%%%%%%%%%%%%%% ")
 
-        //deleteSessionStateTransaction();
         initializeSessionStateJSON();
 
-      },[]);
+      },[]);  //ONLY HAPPENS ONCE - due to []
 
 
 
@@ -132,24 +116,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //check data and initialize it to variable
         if (sessionStateData?.data) {
 
-            console.log("sessionStateData?.data?.data?.jsonData:" + sessionStateData?.data?.data?.jsonData )
-
             const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
-            console.log("step: " + sessionStateJSONData.step )
-            console.log("tokenID: " + sessionStateJSONData.tokenID )
-            console.log("scAddress: " + sessionStateJSONData.scAddress )
-            console.log("price: " + sessionStateJSONData.price )
-            
-
-            console.log("Before setting it to StepTracker");
             
             setInitialFetch(true);
             
             //save it variable
             setStepTracker('{ "step": ' + sessionStateJSONData.step + ', "tokenID": "' + sessionStateJSONData.tokenID + '", "scAddress": "' + sessionStateJSONData.scAddress + '", "price":' + sessionStateJSONData.price +'}')
 
-            
-
+        
             //set the page state based on teh sessonState
             HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price);            
         }       
@@ -175,9 +149,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             stateType: 1,
         }
 
-        console.log("formattedData.address: " + formattedData.address)
-        console.log("formattedData.stateType: " + formattedData.stateType)
-
         const response: any = deleteSessionStatesByAccountIdByStateTypeTrigger({ payload: formattedData });
 
         if (response.error) {
@@ -193,12 +164,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [refreshCreateOrUpdateSessionStatesTrigger] = useRefreshCreateOrUpdateSessionStatesMutation();
 
     const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any, price: any) => {
-
-        console.log("================== refreshCreateOrUpdateSessionStateTransaction ===========")
-        console.log("step: " + step)
-        console.log("tokenId: " + tokenId)
-        console.log("scAddress: " + scAddress)
-        console.log("price: " + price)
         
         const formattedData = {
             address: userWalletAddress,
@@ -206,13 +171,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             jsonData: CreateJSONDataStringForSessionState(step, tokenId, scAddress, price),
         }
 
-        console.log("formattedData.address: " + formattedData.address)
-        console.log("formattedData.stateType: " + formattedData.stateType)
-        console.log("formattedData.jsonData: " + formattedData.jsonData)
-
-
         const response: any = await refreshCreateOrUpdateSessionStatesTrigger({ payload: formattedData });
-
 
         if (response.error) {
             //handle any error here
@@ -227,20 +186,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     
     {    
-
-        console.log("$$$$$$$$$$$ before window.location.search  %%%%%%%%%%%%%%%%%%%%%%% ")
-
         const queryString = window.location.search;
 
         const params = new URLSearchParams(window.location.search)
 
         const txtHash = params.get("txHash")
         
-        console.log("after txHash");
-
         if(txtHash != null )
         {
-            console.log("after txHash != null");
 
             const httpRequest = new XMLHttpRequest();
             const url= GetTransactionRequestHttpURL(txtHash); 
@@ -252,8 +205,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 
                 if (httpRequest.readyState == 4 && httpRequest.status == 200)
                 {
-                    console.log("after httpRequest.readyState == 4");
-
                     if( httpRequest.responseText )
                     {                
 
@@ -429,9 +380,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     function HandlePageStateBySessionState(step: number, tokenID: string, scAddress: string, price: number)
     {        
-        console.log("HandlePageStateBySessionState")
-
-
         //hide all divs
         HideElement("divStep1");
         HideElement("divStep2");
@@ -659,8 +607,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //set to to saleStart
         data.saleStart = d.getTime() / 1000;
 
-        //price is set to zero(0) to the request
-        //data.price = 0 
+        //Append on .json to the MetaDataBase (based on Hashlips standards)
+        data.metadataBase = data.metadataBase + ".json"
 
 
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
@@ -782,8 +730,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         data.ContractAddress = new Address(contractAddress).toString();
 
         const sPrice = "" + sessionStateJSONData.price; 
-
-        console.log("sPrice: " + sPrice);
 
         data.mintPricePerTokenString = sPrice
 

@@ -24,9 +24,7 @@ export const sessionStatesApi = createApi({
 
             query: ({ payload }): FetchArgs => {
 
-                
-                console.log("payload JSON: " + JSON.stringify(payload))
-
+            
                 const accessToken: string = selectAccessToken(store.getState());
 
                 const customRequestArg: FetchArgs = {
@@ -51,8 +49,6 @@ export const sessionStatesApi = createApi({
             query: ({ payload }): FetchArgs => {
 
                 
-                console.log("payload JSON: " + JSON.stringify(payload))
-
                 const accessToken: string = selectAccessToken(store.getState());
 
                 const customRequestArg: FetchArgs = {
@@ -75,9 +71,6 @@ export const sessionStatesApi = createApi({
         retrieveSessionStates: builder.mutation<any, any>({
 
             query: ({ payload }): FetchArgs => {
-
-                
-                console.log("payload JSON: " + JSON.stringify(payload))
 
                 const accessToken: string = selectAccessToken(store.getState());
 
@@ -102,9 +95,6 @@ export const sessionStatesApi = createApi({
         updateSessionStates: builder.mutation<any, any>({
 
             query: ({ payload }): FetchArgs => {
-
-                
-                console.log("payload JSON: " + JSON.stringify(payload))
 
                 const accessToken: string = selectAccessToken(store.getState());
 
@@ -131,9 +121,6 @@ export const sessionStatesApi = createApi({
 
             query: ({ accountId, stateType, payload }): FetchArgs => {
                 
-                console.log("payload: " + payload)
-                console.log("payload JSON: " + JSON.stringify(payload))
-
                 const accessToken: string = selectAccessToken(store.getState());
 
                 console.log("accessToken: " + accessToken)
