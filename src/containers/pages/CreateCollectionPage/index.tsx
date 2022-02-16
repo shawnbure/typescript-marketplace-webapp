@@ -31,7 +31,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
     const [stepTracker, setStepTracker] = useState('{ "step": 0, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0 }');  
 
-    
+
+
+
     useEffect(() => {
         
         console.log("======= STEP TRACKER MODIFIIED $$$$$$$$$$$$$$$$$$$$$$$$$")
@@ -71,9 +73,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //ONLY HAPPENS ONCE
         console.log("======= CreateCollectionPage UseEffect [][][][ONLY HAPPENS ONCE] %%%%%%%%%%%%%%%%%%%%% ")
 
+        //deleteSessionStateTransaction();
         initializeSessionStateJSON();
 
       },[]);
+
+
 
 
     const {
@@ -223,6 +228,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
     {    
 
+        console.log("$$$$$$$$$$$ before window.location.search  %%%%%%%%%%%%%%%%%%%%%%% ")
+
         const queryString = window.location.search;
 
         const params = new URLSearchParams(window.location.search)
@@ -249,51 +256,62 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                     if( httpRequest.responseText )
                     {                
+
                         const data = httpRequest.responseText;
 
-                          
-                        const jsonResponse = JSON.parse(data);
-                        const actionName = GetTransactionActionName(jsonResponse)
-
-                        const resultData = GetJSONResultData(jsonResponse);
-                        
-                        switch(actionName) 
-                        {
-                            case "issueNonFungible":  //step 1 completed
+                        try {
+                            const jsonResponse = JSON.parse(data);
+                            const actionName = GetTransactionActionName(jsonResponse)
+    
+                            const resultData = GetJSONResultData(jsonResponse);
+                            
+                            switch(actionName) 
                             {
-                                HandleIssueNonFungibleAction(resultData);
-                                
-                                break;
-                            } 
-                            case "deployNFTTemplateContract":  //step 2 completed
-                            {
-                                HandledeployNFTTemplateContractAction(resultData);
-
-                                break;
+                                case "issueNonFungible":  //step 1 completed
+                                {
+                                    HandleIssueNonFungibleAction(resultData);
+                                    
+                                    break;
+                                } 
+                                case "deployNFTTemplateContract":  //step 2 completed
+                                {
+                                    HandledeployNFTTemplateContractAction(resultData);
+    
+                                    break;
+                                }
+                                case "changeOwner": //step 3 completed
+                                {
+                                    HandleChangeOwnerAction(resultData);
+                                    
+                                    break;
+                                }
+                                case "setSpecialRole": //step 4 completed
+                                {
+                                    HandleSetSpecialRoleAction(resultData);
+    
+                                    break;
+                                }
+                                default:
+                                {
+    
+                                } 
                             }
-                            case "changeOwner": //step 3 completed
-                            {
-                                HandleChangeOwnerAction(resultData);
-                                
-                                break;
-                            }
-                            case "setSpecialRole": //step 4 completed
-                            {
-                                HandleSetSpecialRoleAction(resultData);
-
-                                break;
-                            }
-                            default:
-                            {
-
-                            } 
+    
+                            HandlePageStateByActionName(actionName)
+                        } catch(e) {
+                            //alert(e); // error in the above string (in this case, yes)!
                         }
 
-                        HandlePageStateByActionName(actionName)
+
                     }
                 }                
             }
         }  
+
+            
+
+  
+
     
     }
 
@@ -523,6 +541,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const { pathname } = useLocation();
     const sendTransaction = Dapp.useSendTransaction();
+    
 
     const signTemplateTransaction = async (settings: any) => {
 
@@ -555,6 +574,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             transaction: unconsumedTransaction,
             callbackRoute: succesCallbackRoute
         });
+
 
     };
 
