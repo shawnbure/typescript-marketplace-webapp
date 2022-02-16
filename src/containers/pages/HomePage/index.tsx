@@ -39,7 +39,6 @@ export const HomePage = () => {
     useEffect(() => {
 
         //This is called once on render
-        getAllCollectionTrigger({});
 
         initializeAllCollection();        
       }, []);

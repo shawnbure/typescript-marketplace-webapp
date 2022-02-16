@@ -24,15 +24,59 @@ import { useGetRoyaltiesAmountTemplateMutation, useGetRoyaltiesRemainingTemplate
 
 export const DaoPage = () => {
 
+
+
+    // CONSTANT: #1
+    const [count] = useState(100);   //initial with 100
+
+
+    //AGE VARIABLE: #2
+    //const [stateValue, updaterFn] = useState(initialStateValue);
+    const [age, setAge] = useState(19);  //initial with 19
+    const handleClick = () => { setAge(age + 1); } //modified
+
+
+
     useEffect(() => {
         
-        console.log("useeffect")
-      }); 
+        console.log("useeffect will only run once")
+        
+      },[]);   //if we put the [], it call useEffect only once
+
+
+      useEffect(() => {
+        
+        console.log("======= Age changed ======== " + age)
+
+      },[age]);
+
+
+
+
 
     return (
-        <div className="p-account-settings-page">
-            dao page
+        <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+
+            DAO Page
+          
+           {/* CONSTANT: #1 */}
+            <div> 
+                State variable is {count}
+            </div>
+
+            <br/><br/>
+
+
+            {/* AGE VARIABLE: #2 */}
+            <div>                
+                Today I am {age} Years of Age <br/>
+                <button onClick={handleClick}>Get older! </button>
+            </div>
+
+
+
         </div>
+      
     );
 };
 
