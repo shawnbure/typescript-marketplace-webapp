@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/react';
-
 import { BASE_URL_API, GET, POST } from 'constants/api';
 import { selectAccessToken } from 'redux/selectors/user';
 import store from 'redux/store';
@@ -25,6 +24,8 @@ export const tokensApi = createApi({
             query: ({ payload }): FetchArgs => {
 
                 const accessToken: string = selectAccessToken(store.getState());
+
+                //console.log("TOKEN:" + store.getState())
 
                 const customRequestArg: FetchArgs = {
 
