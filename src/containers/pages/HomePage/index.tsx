@@ -19,7 +19,7 @@ import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
 
 
-import { useGetAllCollectionMutation } from 'services/collections';
+ import { useGetAllCollectionMutation } from 'services/collections';
 
 
 
@@ -32,13 +32,14 @@ export const HomePage = () => {
     const [collectionList, setCollectionList] = useState<Array<any>>([]);
 
     const [getAllCollectionTrigger, {
-        data: allCollections
-    }] = useGetAllCollectionMutation();
+         data: allCollections
+     }] = useGetAllCollectionMutation();
 
 
     useEffect(() => {
 
         //This is called once on render
+        getAllCollectionTrigger({});
 
         initializeAllCollection();        
       }, []);
@@ -54,11 +55,11 @@ export const HomePage = () => {
         //retrieve the session state
         const collectionsData: any = await getAllCollectionTrigger(formattedData);
         
-        if( collectionsData?.data )
-        {
-            //set the api collection data call to the state array variable
-            setCollectionList(collectionsData.data.data);
-        }   
+         if( collectionsData?.data )
+         {
+             //set the api collection data call to the state array variable
+             setCollectionList(collectionsData.data.data);
+         }   
     }
 
 
@@ -169,20 +170,20 @@ export const HomePage = () => {
 
                         <div className="col-xs-12 col-md-6">
 
-                            <Link to={'/collection/PIGSEL-91e91b'}>
+                            <Link to={'/collection/HELIOS-d263f3'}>
                                 <div className="u-margin-top-spacing-9">
 
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'./img/collections/regal-eagles/regal-eagles-promo.png'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'./img/collections/regal-eagles/regal-eagles-profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 <span className="c-card_title">
-                                                    {'Regal Eagles'}
+                                                    {'Helios Staking'}
                                                 </span>
 
                                             </div>
