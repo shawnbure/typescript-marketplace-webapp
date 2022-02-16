@@ -27,16 +27,22 @@ import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStates
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
+    const {
+        address: userWalletAddress,
+    } = Dapp.useContext();
+    
+    
+    //check for initial retrieval of the SessionData from DB and setting it to StepTracker - don't want it to treat it as an user action event vs system set of value event
     const [initialFetch, setInitialFetch] = useState(true)
     
+    //json of the step (use for SessionData)
     const [stepTracker, setStepTracker] = useState('{ "step": 0, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0 }');  
-
 
 
 
     useEffect(() => {
         
-        //take the step tracker and convert to JSObject
+        //Convert the step tracker to JSObject
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
 
@@ -50,9 +56,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                                          sessionStateJSONData.price);  
         }
     
+        //once it pass all the logic above, initial fetch should be accounted for
         setInitialFetch(false);
 
-      },[stepTracker]);
+      },[stepTracker]);  //this use effect gets called everytime 'stepTracker' is modified
+
 
 
 
@@ -60,16 +68,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         initializeSessionStateJSON();
 
-      },[]);  //ONLY HAPPENS ONCE - due to []
+      },[]);  //only called once since it's the empty [] parameters
 
 
 
 
-    const {
-        address: userWalletAddress,
-    } = Dapp.useContext();
 
 
+    //javascript class to hold JSON data
     interface SessionStateJSONData 
     {
         step: number;
@@ -99,6 +105,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
+    //used in the initializeSessionStateJSON func
+    const [retrieveSessionStatesTrigger, {
+        data: sessionStateData,
+    }] = useRetrieveSessionStatesMutation();
+    
+
+
 
 
     //This initialize the varSessionStateJSON
@@ -116,15 +129,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //check data and initialize it to variable
         if (sessionStateData?.data) {
 
+            //set the DB Json string to sessionStateJSONData object
             const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
             
+            //true to prevent resetting to DB from retrieval
             setInitialFetch(true);
             
             //save it variable
             setStepTracker('{ "step": ' + sessionStateJSONData.step + ', "tokenID": "' + sessionStateJSONData.tokenID + '", "scAddress": "' + sessionStateJSONData.scAddress + '", "price":' + sessionStateJSONData.price +'}')
-
         
-            //set the page state based on teh sessonState
+            //set the page state based on the sessionState
             HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price);            
         }       
     }
@@ -133,15 +147,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-    const [retrieveSessionStatesTrigger, {
-        data: sessionStateData,
-    }] = useRetrieveSessionStatesMutation();
-    
 
   
-
+    
     const [deleteSessionStatesByAccountIdByStateTypeTrigger] = useDeleteSessionStatesByAccountIdByStateTypeMutation();
 
+    //when the collection is created, then delete the sessionState from DB 
     const deleteSessionStateTransaction = async () => {
 
         const formattedData = {
@@ -153,7 +164,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         if (response.error) {
              //handle any error here
-            //return;
+            return;
         }
 
     };
@@ -163,6 +174,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const [refreshCreateOrUpdateSessionStatesTrigger] = useRefreshCreateOrUpdateSessionStatesMutation();
 
+    // this refresh OR create the sessionState in DB
     const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any, price: any) => {
         
         const formattedData = {
@@ -175,7 +187,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         if (response.error) {
             //handle any error here
-            //return;
+            return;
         }
 
     };
@@ -190,6 +202,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const params = new URLSearchParams(window.location.search)
 
+        //get the query param 'txHash'
         const txtHash = params.get("txHash")
         
         if(txtHash != null )
@@ -202,12 +215,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             
             httpRequest.onreadystatechange = (e) => 
             {
-                
+                //check read state and status
                 if (httpRequest.readyState == 4 && httpRequest.status == 200)
                 {
                     if( httpRequest.responseText )
                     {                
-
                         const data = httpRequest.responseText;
 
                         try {
@@ -249,21 +261,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             }
     
                             HandlePageStateByActionName(actionName)
-                        } catch(e) {
-                            //alert(e); // error in the above string (in this case, yes)!
+                        } catch(e) 
+                        {
+                            //there's a parse error - handle it here 
                         }
-
-
                     }
                 }                
             }
         }  
-
-            
-
-  
-
-    
     }
 
 
@@ -343,6 +348,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         HideElement("divStep4");                
         HideElement("divStep5");
 
+        //show element based on the actionName from transaction
         switch(actionName) 
         {
             case "Init":
@@ -380,7 +386,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     function HandlePageStateBySessionState(step: number, tokenID: string, scAddress: string, price: number)
     {        
-        //hide all divs
+        //hide all div initially and the switch below will show appropriate ones
         HideElement("divStep1");
         HideElement("divStep2");
         HideElement("divStep3");
