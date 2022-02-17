@@ -85,8 +85,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     }] = useGetCollectionByIdMutation();
 
-    //const shouldRedirectHome: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
-    const shouldRedirectHome: boolean = false
+    const [shouldRedirect, setShouldRedirect] = useState(false);
 
     useEffect(() => {
 
@@ -94,15 +93,17 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
 
+        //const shouldRedirect: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
+        setShouldRedirect(false);
+
     }, []);
 
     //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
     useEffect(() => 
     {
+
         if( ! initialStore )
-        {
-            //console.log("useEffect ====== =")
-            //console.log(store.getState())      
+        {     
     
             if( store.getState().user.accessToken != "" )
             {
@@ -119,7 +120,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     //execute when the authtoken is ready - save the token record to the DB - only if the tx is successful
     useEffect(() => 
     {
-        //console.log("setStoreDataExist 55555 ====== =")
 
         if( !initialStore ) {
             return
@@ -129,14 +129,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         const urlParams = new URLSearchParams(queryString);
         const status = urlParams.get('status')
 
-        //console.log(store.getState())
-
         if(status == "success"){
-
-            //const pathArray = window.location.pathname.split('/');
-            //const walletAddress = userWalletAddress;
-            //const tokenName = pathArray[2]
-            //const tokenNonce = pathArray[3]
 
             //this value needs to be hexidecimal. add 0 to the first position if the len = 1
             let hexNonce = tokenNonce;
@@ -148,15 +141,14 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                 walletAddress: userWalletAddress,
                 tokenName: collectionId,
                 tokenNonce: hexNonce,
-            }
+            }   
 
-            //console.log("useEffect getState #### ====== =")
-            //console.log(store.getState())      
+            //console.log(formattedData)
 
             const response: any = createTokenTrigger({ payload: formattedData });
 
-            //window.location.replace("/token/" + tokenName + "/" + hexNonce);
-
+            setShouldRedirect(true);
+            
         }    
     }, [storeDataExist]);
 
@@ -168,11 +160,10 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     }
 
-
-    if (shouldRedirectHome) {
+    if (shouldRedirect) {
 
         return (
-            <Redirect to={routePaths.home} />
+            <Redirect to={routePaths.collection.replace(":collectionId", collectionId)} />
         );
 
     };
@@ -310,10 +301,16 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         };
 
+         //database nonce is bigint - this value needs to be hexidecimal. basically adding 0 to the first position is the len = 1
+         let hexNonce = tokenNonce;
+         if(tokenNonce.length == 1){
+             hexNonce = "0" + tokenNonce;
+         }
 
         signTemplateTransaction({
 
-            succesCallbackRoute: '/account',
+            //succesCallbackRoute: '/account',
+            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: unixStartDate, deadline: unixEndDate },
             getTemplateTrigger: getStartAuctionNftTemplateTrigger,
 
