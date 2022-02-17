@@ -206,7 +206,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
             userWalletAddress: userWalletAddress
         });
 
-        console.log(response.error);
+        //console.log(response.error);
 
 
         /*
@@ -264,7 +264,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
         if (accountData?.data) {
 
-            console.log(accountData?.data?.data?.name);
+            //console.log(accountData?.data?.data?.name);
             
             setValueEdit("name", accountData?.data?.data?.name);
             setValueEdit("description", accountData?.data?.data?.description);

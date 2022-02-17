@@ -61,11 +61,12 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
     const all = Dapp.useContext();
 
 
-
+    /*    
     console.log({
         all
     });
-
+    */
+   
     localStorage.setItem("token",randomToken) //temp hack TODO
     const webWalletLogin = Dapp.useWebWalletLogin({
         callbackRoute: pathname,

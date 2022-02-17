@@ -11,21 +11,19 @@ import { ToastContainer, toast } from 'react-toastify';
 import DateTimePicker from 'react-datetime-picker';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGetBuyNftTemplateMutation, useGetListNftTemplateMutation, useGetStartAuctionNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenCollectionAvailablityMutation, useGetTokenDataMutation } from "services/tokens";
+import { useGetTokenCollectionAvailablityMutation, useGetTokenDataMutation, useCreateTokenMutation } from "services/tokens";
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
-import { formatImgLink, shorterAddress } from "utils";
+import { formatImgLink, shorterAddress, GetTransactionRequestHttpURL, GetJSONResultData } from "utils";
 import { BUY } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
 import { routePaths } from 'constants/router';
-
-
+import store from 'redux/store';
 
 export const SellTokenPage: (props: any) => any = ({ }) => {
-
 
     const history = useHistory();
     const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
@@ -35,14 +33,14 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     const [startDate, setStartDate] = useState<any>();
     const [endDate, setEndDate] = useState<any>();
 
-
     const {
         loggedIn,
-        address: userWalletAddress,
+        address: userWalletAddress
     } = Dapp.useContext();
 
-    const sendTransaction = Dapp.useSendTransaction();
+    const [createTokenTrigger] = useCreateTokenMutation();
 
+    const sendTransaction = Dapp.useSendTransaction();
 
     const handleChangeRequestedAmount = (e: any) => {
 
@@ -53,7 +51,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     const handleChangeStartDate = (value: any) => {
 
         setStartDate(value);
-
 
     }
 
@@ -88,17 +85,72 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     }] = useGetCollectionByIdMutation();
 
-    const shouldRedirectHome: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
+    const [shouldRedirect, setShouldRedirect] = useState(false);
 
     useEffect(() => {
-
 
         getCollectionByIdTrigger({ collectionId: collectionId });
 
         getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
 
+        //const shouldRedirect: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
+        setShouldRedirect(false);
+
     }, []);
 
+    //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
+    useEffect(() => 
+    {
+
+        if( ! initialStore )
+        {     
+    
+            if( store.getState().user.accessToken != "" )
+            {
+                setInitialStore(true)
+                setStoreDataExist(true)
+            }
+        }
+
+    });
+
+    const [initialStore, setInitialStore] = useState(false)
+    const [storeDataExist, setStoreDataExist] = useState(false)
+
+    //execute when the authtoken is ready - save the token record to the DB - only if the tx is successful
+    useEffect(() => 
+    {
+
+        if( !initialStore ) {
+            return
+        }
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const status = urlParams.get('status')
+
+        if(status == "success"){
+
+            //this value needs to be hexidecimal. add 0 to the first position if the len = 1
+            let hexNonce = tokenNonce;
+            if(tokenNonce?.length == 1){
+                hexNonce = "0" + tokenNonce;
+            }
+
+            const formattedData = {
+                walletAddress: userWalletAddress,
+                tokenName: collectionId,
+                tokenNonce: hexNonce,
+            }   
+
+            //console.log(formattedData)
+
+            const response: any = createTokenTrigger({ payload: formattedData });
+
+            setShouldRedirect(true);
+            
+        }    
+    }, [storeDataExist]);
 
     // gatewayTokenData?.data?.tokenData?.creator
 
@@ -108,11 +160,10 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
     }
 
-
-    if (shouldRedirectHome) {
+    if (shouldRedirect) {
 
         return (
-            <Redirect to={routePaths.home} />
+            <Redirect to={routePaths.collection.replace(":collectionId", collectionId)} />
         );
 
     };
@@ -177,24 +228,25 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
             transaction: unconsumedTransaction,
             callbackRoute: succesCallbackRoute
         });
-
     };
-
 
     const handleListFixedPrice = () => {
 
+        //database nonce is bigint - this value needs to be hexidecimal. basically adding 0 to the first position is the len = 1
+        let hexNonce = tokenNonce;
+        if(tokenNonce.length == 1){
+            hexNonce = "0" + tokenNonce;
+        }
 
         signTemplateTransaction({
 
-            succesCallbackRoute: '/account',
+            //succesCallbackRoute: '/token/' + collectionId +'/' + tokenNonce + '/insert',
+            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, price: requestedAmount },
             getTemplateTrigger: getListNftTemplateQueryTrigger,
 
-        });
-
+        });        
     };
-
-
 
     const handleListAuction = () => {
 
@@ -249,18 +301,22 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         };
 
+         //database nonce is bigint - this value needs to be hexidecimal. basically adding 0 to the first position is the len = 1
+         let hexNonce = tokenNonce;
+         if(tokenNonce.length == 1){
+             hexNonce = "0" + tokenNonce;
+         }
 
         signTemplateTransaction({
 
-            succesCallbackRoute: '/account',
+            //succesCallbackRoute: '/account',
+            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: unixStartDate, deadline: unixEndDate },
             getTemplateTrigger: getStartAuctionNftTemplateTrigger,
 
         });
 
     };
-
-
 
     const handleSubmitListing = (e: any) => {
 
@@ -277,7 +333,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         handleListAuction();
 
     };
-
+    
     return (
 
         <div className="p-sell-token-page">
