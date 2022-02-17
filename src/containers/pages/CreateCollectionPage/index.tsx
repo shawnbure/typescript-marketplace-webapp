@@ -21,6 +21,7 @@ import { Address} from '@elrondnetwork/erdjs/out';
 
 import { routePaths } from "constants/router";
 import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
+import store from "redux/store";
 
 
 
@@ -35,6 +36,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     //check for initial retrieval of the SessionData from DB and setting it to StepTracker - don't want it to treat it as an user action event vs system set of value event
     const [initialFetch, setInitialFetch] = useState(true)
     
+
     //json of the step (use for SessionData)
     const [stepTracker, setStepTracker] = useState('{ "step": 0, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0 }');  
 
@@ -66,6 +68,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {
 
+        deleteSessionStateTransaction();
+        
         initializeSessionStateJSON();
 
       },[]);  //only called once since it's the empty [] parameters
@@ -197,7 +201,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     
-    {    
+     {   
+          
         const queryString = window.location.search;
 
         const params = new URLSearchParams(window.location.search)
@@ -207,7 +212,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         
         if(txtHash != null )
         {
-
             const httpRequest = new XMLHttpRequest();
             const url= GetTransactionRequestHttpURL(txtHash); 
             httpRequest.open("GET", url);
@@ -215,7 +219,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             
             httpRequest.onreadystatechange = (e) => 
             {
-                //check read state and status
+                //check read state (4: done) and status
                 if (httpRequest.readyState == 4 && httpRequest.status == 200)
                 {
                     if( httpRequest.responseText )
@@ -407,7 +411,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 var inputName = document.getElementById("tokenId") as HTMLInputElement;
                 inputName.value = tokenID;
                 inputName.readOnly = true;
-
+                
                 ShowElement("divStep2");
 
                 break;
@@ -419,6 +423,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 step3SCAddress.readOnly = true;
 
                 ShowElement("divStep3");
+                OnFocusElement("submit_step3");
 
                 break;
             } 
@@ -431,8 +436,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 var setRoleTokenId = document.getElementById("SetRole_TokenId") as HTMLInputElement;
                 setRoleTokenId.value = tokenID;
                 setRoleTokenId.readOnly = true;
-
+                
                 ShowElement("divStep4");
+                OnFocusElement("submit_step4");
 
                 break;
             }     
@@ -477,12 +483,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         var element = document.getElementById(elementID) as HTMLInputElement;
         element.hidden = false;
     }
+
+
+    function OnFocusElement(elementID: string)
+    {
+        var element = document.getElementById(elementID) as HTMLInputElement;
+        element.focus();
+
+    }
     
     
-
-
-
-
 
 
 
@@ -563,6 +573,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         signTemplateTransaction({ getTemplateTrigger, getTemplateData, succesCallbackRoute: pathname });
 
+        
     };
 
 
@@ -634,6 +645,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             getTemplateTrigger: getDeployCollectionTemplateTrigger,
         });
 
+        
     };
 
 
@@ -652,6 +664,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     });
 
     const onSubmitStep3 = (data: any) => {
+
         const { hexWalletAddress } = data;
 
         const getTemplateData = { userWalletAddress, contractAddress: new Address(hexWalletAddress).toString() };
@@ -662,6 +675,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             getTemplateTrigger: getChangeOwnerCollectionTemplateTrigger,
         });
 
+        
     };
 
 
@@ -698,6 +712,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             getTemplateTrigger: getSetRolesCollectionTemplateTrigger,
         });
 
+        
     };
 
 
@@ -898,6 +913,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     Step 1 of 5 ┋ Initial NFT Marker
                                 </p>
 
+                                <p className="text-xl mb-2">
+                                    Instruction: Enter the token name and token ticker for the smart contract. <br/><br/>
+                                </p>
+
 
                                 <p className="text-xl mb-2">
                                     Token Name
@@ -923,7 +942,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
-                                <button type="submit" id="submit_step1" className="c-button c-button--primary mb-5" >
+                                <button type="submit" id="submit_step1" className="c-button c-button--primary mb-5"  >
                                     Sign
                                 </button>
 
@@ -950,6 +969,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                             <form onSubmit={handleSubmitStep2(onSubmitStep2)} >
 
+                                <p className="text-xl mb-2">
+                                    Instruction: Enter the attributes and details of the smart contract. <br/><br/>
+                                </p>                                
 
                                 <p className="text-xl mb-2">
                                     Token Id
@@ -1071,7 +1093,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                             <form onSubmit={handleSubmitStep3(onSubmitStep3)} >
 
-
+                                <p className="text-xl mb-2">
+                                    Instruction: Sign the transaction to transfer ownership of the smart contract.<br/><br/>
+                                </p> 
+                                
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
 
@@ -1099,6 +1124,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             </p>
 
                             <form onSubmit={handleSubmitStep4(onSubmitStep4)} >
+
+                                <p className="text-xl mb-2">
+                                    Instruction: Set roles for the smart contract.<br/><br/>
+                                </p> 
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
@@ -1139,6 +1168,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             </p>
 
                             <form onSubmit={handleSubmitStep5(onSubmitStep5)} >
+
+                                <p className="text-xl mb-2">
+                                    Instruction: Enter the name and details of the collection.<br/><br/>
+                                </p> 
 
                                 <p className="text-xl mb-2">
                                     Token ID
