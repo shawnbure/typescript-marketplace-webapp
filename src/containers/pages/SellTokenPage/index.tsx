@@ -11,7 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import DateTimePicker from 'react-datetime-picker';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGetBuyNftTemplateMutation, useGetListNftTemplateMutation, useGetStartAuctionNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenCollectionAvailablityMutation, useGetTokenDataMutation } from "services/tokens";
+import { useGetTokenCollectionAvailablityMutation, useGetTokenDataMutation, useCreateTokenMutation } from "services/tokens";
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
@@ -20,10 +20,8 @@ import { formatImgLink, shorterAddress, GetTransactionRequestHttpURL, GetJSONRes
 import { BUY } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
-//import { useCreateTokenMutation } from "services/tokens";
 import { routePaths } from 'constants/router';
-
-
+import store from 'redux/store';
 
 export const SellTokenPage: (props: any) => any = ({ }) => {
 
@@ -35,14 +33,14 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     const [startDate, setStartDate] = useState<any>();
     const [endDate, setEndDate] = useState<any>();
 
-
     const {
         loggedIn,
-        address: userWalletAddress,
+        address: userWalletAddress
     } = Dapp.useContext();
 
-    const sendTransaction = Dapp.useSendTransaction();
+    const [createTokenTrigger] = useCreateTokenMutation();
 
+    const sendTransaction = Dapp.useSendTransaction();
 
     const handleChangeRequestedAmount = (e: any) => {
 
@@ -53,7 +51,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     const handleChangeStartDate = (value: any) => {
 
         setStartDate(value);
-
 
     }
 
@@ -91,9 +88,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     //const shouldRedirectHome: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
     const shouldRedirectHome: boolean = false
 
-
-    //const [createTokenTrigger,] = useCreateTokenMutation();
-
     useEffect(() => {
 
         getCollectionByIdTrigger({ collectionId: collectionId });
@@ -101,6 +95,70 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
 
     }, []);
+
+    //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
+    useEffect(() => 
+    {
+        if( ! initialStore )
+        {
+            //console.log("useEffect ====== =")
+            //console.log(store.getState())      
+    
+            if( store.getState().user.accessToken != "" )
+            {
+                setInitialStore(true)
+                setStoreDataExist(true)
+            }
+        }
+
+    });
+
+    const [initialStore, setInitialStore] = useState(false)
+    const [storeDataExist, setStoreDataExist] = useState(false)
+
+    //execute when the authtoken is ready - save the token record to the DB - only if the tx is successful
+    useEffect(() => 
+    {
+        //console.log("setStoreDataExist 55555 ====== =")
+
+        if( !initialStore ) {
+            return
+        }
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const status = urlParams.get('status')
+
+        //console.log(store.getState())
+
+        if(status == "success"){
+
+            //const pathArray = window.location.pathname.split('/');
+            //const walletAddress = userWalletAddress;
+            //const tokenName = pathArray[2]
+            //const tokenNonce = pathArray[3]
+
+            //this value needs to be hexidecimal. add 0 to the first position if the len = 1
+            let hexNonce = tokenNonce;
+            if(tokenNonce?.length == 1){
+                hexNonce = "0" + tokenNonce;
+            }
+
+            const formattedData = {
+                walletAddress: userWalletAddress,
+                tokenName: collectionId,
+                tokenNonce: hexNonce,
+            }
+
+            //console.log("useEffect getState #### ====== =")
+            //console.log(store.getState())      
+
+            const response: any = createTokenTrigger({ payload: formattedData });
+
+            //window.location.replace("/token/" + tokenName + "/" + hexNonce);
+
+        }    
+    }, [storeDataExist]);
 
     // gatewayTokenData?.data?.tokenData?.creator
 
@@ -191,42 +249,13 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         signTemplateTransaction({
 
-            succesCallbackRoute: '/token/' + collectionId +'/' + tokenNonce + '/insert',
-            //succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
+            //succesCallbackRoute: '/token/' + collectionId +'/' + tokenNonce + '/insert',
+            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, price: requestedAmount },
             getTemplateTrigger: getListNftTemplateQueryTrigger,
 
         });        
     };
-/*
-    const handleCreateToken = () => {
-        
-        const formattedData = {
-            walletAddress: userWalletAddress,
-            tokenName: gatewayTokenData.data.tokenData["tokenIdentifier"],
-            tokenNonce: hexNonce,
-        }        
- 
-        const response: any = createTokenTrigger({ payload: formattedData });
-
-        if (response.error) {
-
-            const { error, status, } = response.error;
-
-            toast.error(`${error + ' ' + status}`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-            });
-
-            return;
-        }  
- 
-    };
- */
 
     const handleListAuction = () => {
 

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery, FetchArgs } from '@reduxjs/toolkit/query/react';
 import { BASE_URL_API, GET, POST } from 'constants/api';
 import { selectAccessToken } from 'redux/selectors/user';
-import store from 'redux/store';
+import store from 'redux/store/index';
 
 const mainPath = 'tokens';
 
@@ -15,8 +15,6 @@ export const tokensApi = createApi({
 
     }),
 
-    //this is the endpoint call for the GOLANG API
-
     endpoints: (builder) => ({
 
         createToken: builder.mutation<any, any>({
@@ -24,8 +22,6 @@ export const tokensApi = createApi({
             query: ({ payload }): FetchArgs => {
 
                 const accessToken: string = selectAccessToken(store.getState());
-
-                //console.log("TOKEN:" + store.getState())
 
                 const customRequestArg: FetchArgs = {
 
@@ -151,31 +147,6 @@ export const tokensApi = createApi({
 
         }),
 
-        // getTokenMetadata: builder.query<any, any>({
-
-        //     query: ({ metadataLink }): FetchArgs => {
-
-        //         const customRequestArg: FetchArgs = {
-
-                    
-        //             method: GET,
-        //             url: metadataLink,
-        //             headers: {
-        //                 'Access-Control-Allow-Origin':'*',
-        //                 'Access-Control-Allow-Methods':'GET',
-        //                 'Access-Control-Allow-Headers':'application/json',
-        //             }
-
-        //         }
-
-        //         return customRequestArg;
-
-        //     },
-
-        // }),
-
-
-
         getTokenMetadata: builder.mutation<any, any>({
 
             query: ({ metadataLink }): FetchArgs => {
@@ -192,13 +163,10 @@ export const tokensApi = createApi({
                 
             },
         }),
-
-
         
         refreshTokenMetadata: builder.mutation<any, any>({
 
             query: ({ collectionId, tokenNonce }): FetchArgs => {
-
 
                 const accessToken: string = selectAccessToken(store.getState());
 

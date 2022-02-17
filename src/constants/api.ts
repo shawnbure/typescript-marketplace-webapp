@@ -1,4 +1,4 @@
-export const BASE_URL_API: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'http://localhost:5000' : process.env.REACT_APP_NODE_ENV == 'production' ? 'https://api.youbei.io' : 'https://dev-api.youbei.io';
+export const BASE_URL_API: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'http://localhost:5000' : process.env.REACT_APP_NODE_ENV == 'production' ? 'https://api.youbei.io' : 'http://localhost:5000';
 export const ELROND_API: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'https://devnet-api.elrond.com' : process.env.REACT_APP_NODE_ENV == 'production' ? 'https://api.elrond.com' : 'https://devnet-api.elrond.com'; 
 export const ELROND_GATEWAY_API: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'https://devnet-gateway.elrond.com' : process.env.REACT_APP_NODE_ENV == 'production' ? 'https://gateway.elrond.com' : 'https://devnet-gateway.elrond.com'; 
 export const ELROND_WALLET: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'https://devnet-wallet.elrond.com' : process.env.REACT_APP_NODE_ENV == 'production' ? 'https://wallet.elrond.com': 'https://devnet-wallet.elrond.com'; 
