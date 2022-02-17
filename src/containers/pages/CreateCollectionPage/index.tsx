@@ -68,8 +68,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {
 
-        deleteSessionStateTransaction();
-        
+
         initializeSessionStateJSON();
 
       },[]);  //only called once since it's the empty [] parameters
