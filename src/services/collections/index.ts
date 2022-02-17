@@ -24,6 +24,7 @@ export const collectionsApi = createApi({
 
                 const accessToken: string = selectAccessToken(store.getState());
 
+                
                 const customRequestArg: FetchArgs = {
 
                     method: POST,
