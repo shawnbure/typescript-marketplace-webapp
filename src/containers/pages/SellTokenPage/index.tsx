@@ -143,9 +143,24 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                 tokenNonce: hexNonce,
             }   
 
-            //console.log(formattedData)
-
             const response: any = createTokenTrigger({ payload: formattedData });
+
+            if (response.error) {
+
+                const { status, data: { error } } = response.error;
+    
+                toast.error(`${status} | ${error}`, {
+                    autoClose: 5000,
+                    draggable: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    hideProgressBar: false,
+                    position: "bottom-right",
+                });
+    
+                return;
+    
+            }
 
             setShouldRedirect(true);
             
