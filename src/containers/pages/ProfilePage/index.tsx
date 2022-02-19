@@ -6,7 +6,7 @@ import * as faIcons from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { formatImgLink, shorterAddress } from "utils";
+import { formatHexMetaImage, formatImgLink, shorterAddress } from "utils";
 import {
   useGetAccountCollectionsMutation,
   useGetAccountGatewayTokensMutation,
@@ -260,7 +260,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
             <div className={`c-card c-card--colection`}>
               <div className="c-card_img-container">
                 <img
-                  src={formatImgLink(imageLink)}
+                  src={formatHexMetaImage(imageLink)}
                   className="c-card_img"
                   alt=""
                 />
