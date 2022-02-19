@@ -68,7 +68,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {
 
+        //deleteSessionStateTransaction()
 
+    
         initializeSessionStateJSON();
 
       },[]);  //only called once since it's the empty [] parameters
@@ -578,7 +580,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     // ================================== STEP 2 ==================================
-    
+
     const [mediaTypeSelect, setMediaTypeSelect] = useState<any>({ value: '.png', label: 'PNG' });
 
     const optionsMediaType = [
