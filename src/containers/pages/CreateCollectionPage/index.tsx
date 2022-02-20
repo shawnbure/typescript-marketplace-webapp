@@ -36,21 +36,94 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     //check for initial retrieval of the SessionData from DB and setting it to StepTracker - don't want it to treat it as an user action event vs system set of value event
     const [initialFetch, setInitialFetch] = useState(true)
     
+    //const [initSessionStateDone, setInitSessionStateDone] = useState(false)
 
     //json of the step (use for SessionData)
-    const [stepTracker, setStepTracker] = useState('{ "step": 0, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0 }');  
+    const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0 }');  
+
+
+    const [urlTxtHashHandler, setUrlTxtHashHandler] = useState(false)
+
+
+    const [inputPrice, setInputPrice] = useState(0)
+
+    const [responseTextProcessed, setResponseTextProcessed] = useState(false)
+
+    
+    useEffect(() => {  //Invoked when "stepTracker" is SET (setStepTracker)
+        
+        if( urlTxtHashHandler )
+        {
+            const queryString = window.location.search;
+
+            const params = new URLSearchParams(window.location.search)
+    
+            //get the query param 'txHash'
+            const txtHash = params.get("txHash")
+            
+            console.log("responseTextProcessed: " + responseTextProcessed)
+            
+            if( ! responseTextProcessed )
+            {
+                console.log("responseTextProcessed inside")
+            }
+    
+            if( txtHash != null && ! responseTextProcessed )
+            {
+                console.log("BEFORE XMLHttpRequest")
+    
+                const httpRequest = new XMLHttpRequest();
+                const url= GetTransactionRequestHttpURL(txtHash); 
+                httpRequest.open("GET", url);
+                httpRequest.send();
+                
+                httpRequest.onreadystatechange = (e) => 
+                {
+                    //check read state (4: done) and status
+                    if (httpRequest.readyState == 4 && httpRequest.status == 200)
+                    {
+                        console.log("(httpRequest.readyState == 4 && httpRequest.status == 200)")
+    
+                        if( httpRequest.responseText  )
+                        {                
+                            const data = httpRequest.responseText;
+    
+                            try {
+    
+                                const jsonResponse = JSON.parse(data);
+                                setResponseTextProcessed(true);
+                                
+                                const actionName = GetTransactionActionName(jsonResponse)
+        
+                                const resultData = GetJSONResultData(jsonResponse);
+                                                                
+                                initializeSessionStateJSON(false, resultData, actionName);
+    
+                            } catch(e) 
+                            {
+                                //there's a parse error - handle it here 
+                            }
+                        }
+                    }                
+                }
+            }  
+        }
+
+
+      },[urlTxtHashHandler]);
 
 
 
-    useEffect(() => {
+    useEffect(() => {  //Invoked when "stepTracker" is SET (setStepTracker)
         
         //Convert the step tracker to JSObject
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
 
-        if( sessionStateJSONData.step > 1 &&           // first step should be not saved 
-            !initialFetch )                             //if initialFetch, don't save
+        if( !initialFetch )                             //if initialFetch, don't save
         {
+            console.log( "before refreshCreateOrUpdateSessionStateTransaction");
+
             //Refresh / Create it to SessionState DB
             refreshCreateOrUpdateSessionStateTransaction(sessionStateJSONData.step,            
                                                          sessionStateJSONData.tokenID,       
@@ -66,10 +139,49 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-    useEffect(() => {
+    useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
+
+        /*
+        deleteSessionStateTransaction()
+        return;
+        */
+
+        console.log("useEffect : ONCE");
+
+        const queryString = window.location.search;
+
+        const params = new URLSearchParams(window.location.search)
+
+        //get the query param 'txHash'
+        const txtHash = params.get("txHash")
+        
+        //only time we need to initialize SessionState JSON is when URL isn't from webwallet / maiar wallet 
+        //it's coming from profile page (create collection)
+        if(txtHash == null )  
+        {
+            initializeSessionStateJSON(true, "", "");
+        } 
+        else
+        {
+            setUrlTxtHashHandler(true);
+        }
 
 
-        initializeSessionStateJSON();
+        /*
+        const queryString = window.location.search;
+
+        const params = new URLSearchParams(window.location.search)
+
+        //get the query param 'txHash'
+        const txtHash = params.get("txHash")
+        
+        //only time we need to setup the initialize SessionState JSON is when URL isn't from webwallet / maiar wallet 
+        //it's coming from profile page (create collection)
+        if(txtHash == null )  
+        {
+            initializeSessionStateJSON(true);
+        }        
+        */
 
       },[]);  //only called once since it's the empty [] parameters
 
@@ -103,6 +215,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     function GetSessionStateJSONDataFromString(jstrJSON: string) : SessionStateJSONData
     {
+        console.log("GetSessionStateJSONDataFromString: " + jstrJSON);
+
         return JSON.parse(jstrJSON);
     }
 
@@ -118,7 +232,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     //This initialize the varSessionStateJSON
-    const initializeSessionStateJSON = async () => {
+    const initializeSessionStateJSON = async (isInitialLoad: boolean, responseData: string, responseActionName: string) => {
 
         //set the request data to pass to triggers
         const formattedData = {
@@ -132,17 +246,142 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //check data and initialize it to variable
         if (sessionStateData?.data) {
 
+
             //set the DB Json string to sessionStateJSONData object
             const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
+
+
+            console.log("sessionStateJSONData: ===>")
+            console.log(sessionStateJSONData);
+            console.log("responseData: " + responseData);
+            console.log("responseActionName: " + responseActionName);
             
+            if( responseData != "" &&  responseActionName != "")
+            {
+                console.log("initializeSessionStateJSON - response data and actionName")
+                
+
+
+                switch(responseActionName) 
+                {
+                    case "issueNonFungible":  //step 1 completed
+                    {
+                        //get the tokenID from the resultData
+                        const tokenID = GetTransactionTokenID(responseData);
+                        sessionStateJSONData.tokenID = tokenID;
+
+                        sessionStateJSONData.step = 2;
+
+                        break;
+                    } 
+                    case "deployNFTTemplateContract":  //step 2 completed
+                    {
+                        const contractAddress = GetTransactionContractAddress(responseData);
+                        sessionStateJSONData.scAddress = contractAddress;
+    
+                        //get the price here
+                        sessionStateJSONData.price = inputPrice
+
+                        sessionStateJSONData.step = 3;
+
+                        break;
+                    }
+                    case "changeOwner": //step 3 completed
+                    {
+                        sessionStateJSONData.step = 4;
+
+                        break;
+                    }
+                    case "setSpecialRole": //step 4 completed
+                    {
+                        sessionStateJSONData.step = 5;
+                        break;
+                    }
+                    default:
+                    {
+
+                    } 
+                }
+
+                //set this so it saves to DB
+                setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
+                               '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
+                               '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
+                               '"price":' + sessionStateJSONData.price + '}')     
+                               
+
+                               
+            } else if( sessionStateJSONData.step == 1 ){
+
+                
+                //set this so it saves to DB
+                setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
+                               '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
+                               '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
+                               '"price":' + sessionStateJSONData.price + '}')   
+            }
+            
+
+
+            console.log("HandlePageStateBySessionState");
+            console.log(sessionStateJSONData)
+
+            //display page state
+            HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price); 
+
+
+
+
+
+            /*
+
+            if( urlResponseData != "" &&  urlResponseActionName != "")
+            {
+                switch(urlResponseActionName) 
+                {
+                    case "issueNonFungible":  //step 1 completed
+                    {
+                        HandleIssueNonFungibleAction(urlResponseData);
+                        
+                        break;
+                    } 
+                    case "deployNFTTemplateContract":  //step 2 completed
+                    {
+                        HandledeployNFTTemplateContractAction(urlResponseData);
+    
+                        break;
+                    }
+                    case "changeOwner": //step 3 completed
+                    {
+                        HandleChangeOwnerAction(urlResponseData);
+                        
+                        break;
+                    }
+                    case "setSpecialRole": //step 4 completed
+                    {
+                        HandleSetSpecialRoleAction(urlResponseData);
+    
+                        break;
+                    }
+                    default:
+                    {
+    
+                    } 
+                }
+            }
+            */
+            /*
             //true to prevent resetting to DB from retrieval
             setInitialFetch(true);
             
             //save it variable
             setStepTracker('{ "step": ' + sessionStateJSONData.step + ', "tokenID": "' + sessionStateJSONData.tokenID + '", "scAddress": "' + sessionStateJSONData.scAddress + '", "price":' + sessionStateJSONData.price +'}')
-        
-            //set the page state based on the sessionState
-            HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price);            
+              
+            //hien: maybe not necessary
+            if( isInitialLoad ){
+                HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price); 
+            }
+            */
         }       
     }
 
@@ -200,6 +439,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     
+    /*
      {   
           
         const queryString = window.location.search;
@@ -209,8 +449,17 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //get the query param 'txHash'
         const txtHash = params.get("txHash")
         
-        if(txtHash != null )
+        console.log("responseTextProcessed: " + responseTextProcessed)
+        
+        if( ! responseTextProcessed )
         {
+            console.log("responseTextProcessed inside")
+        }
+
+        if( txtHash != null && ! responseTextProcessed )
+        {
+            console.log("BEFORE XMLHttpRequest")
+
             const httpRequest = new XMLHttpRequest();
             const url= GetTransactionRequestHttpURL(txtHash); 
             httpRequest.open("GET", url);
@@ -221,49 +470,35 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 //check read state (4: done) and status
                 if (httpRequest.readyState == 4 && httpRequest.status == 200)
                 {
-                    if( httpRequest.responseText )
+                    console.log("(httpRequest.readyState == 4 && httpRequest.status == 200)")
+
+                    if( httpRequest.responseText  )
                     {                
                         const data = httpRequest.responseText;
 
                         try {
+
+                            
+
                             const jsonResponse = JSON.parse(data);
+                            setResponseTextProcessed(true);
+                            
                             const actionName = GetTransactionActionName(jsonResponse)
     
                             const resultData = GetJSONResultData(jsonResponse);
                             
-                            switch(actionName) 
-                            {
-                                case "issueNonFungible":  //step 1 completed
-                                {
-                                    HandleIssueNonFungibleAction(resultData);
-                                    
-                                    break;
-                                } 
-                                case "deployNFTTemplateContract":  //step 2 completed
-                                {
-                                    HandledeployNFTTemplateContractAction(resultData);
-    
-                                    break;
-                                }
-                                case "changeOwner": //step 3 completed
-                                {
-                                    HandleChangeOwnerAction(resultData);
-                                    
-                                    break;
-                                }
-                                case "setSpecialRole": //step 4 completed
-                                {
-                                    HandleSetSpecialRoleAction(resultData);
-    
-                                    break;
-                                }
-                                default:
-                                {
-    
-                                } 
-                            }
-    
-                            HandlePageStateByActionName(actionName)
+                            
+                            console.log("actionName:  " + actionName)
+
+                            
+
+                            setUrlResponseData(resultData);
+                            setUrlResponseActionName(actionName);
+                                                        
+                            initializeSessionStateJSON(false);
+
+
+      
                         } catch(e) 
                         {
                             //there's a parse error - handle it here 
@@ -273,15 +508,17 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             }
         }  
     }
+    */
 
 
 
 
 
-    function HandleIssueNonFungibleAction(resultData: string)
+    function HandleIssueNonFungibleAction(resultData: string) 
     {
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
+    
         //get the tokenID from the resultData
         const tokenID = GetTransactionTokenID(resultData);
 
@@ -307,8 +544,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         inputName.value = contractAddress;
 
         var inputPrice = document.getElementById("price") as HTMLInputElement;
-        const price = inputPrice.value
-        
+        const price = inputPrice
         
         //save to StepTracker
         setStepTracker('{ "step": 3, "tokenID": "' + sessionStateJSONData.tokenID + '", "scAddress": "' + contractAddress + '", "price":' + price + '}')
@@ -437,7 +673,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 setRoleTokenId.readOnly = true;
                 
                 ShowElement("divStep4");
-                OnFocusElement("submit_step4");
 
                 break;
             }     
@@ -578,7 +813,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     // ================================== STEP 2 ==================================
-    
+
     const [mediaTypeSelect, setMediaTypeSelect] = useState<any>({ value: '.png', label: 'PNG' });
 
     const optionsMediaType = [
@@ -628,6 +863,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
+
+        console.log("data.inputPrice: "+ data.inputPrice)
+
+        setInputPrice(data.inputPrice)
+
 
 
         data.imageExt = mediaTypeSelect.value
