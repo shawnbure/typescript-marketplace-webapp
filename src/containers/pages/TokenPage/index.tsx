@@ -587,8 +587,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const handleBuyAction = async () => {
 
-        //TODO: Henry (add logic to check the amount)
-
         const getBuyNFTResponse: any = await getBuyNftTemplateQueryTrigger({ userWalletAddress, collectionId, tokenNonce, price: tokenPrice });
 
         if (getBuyNFTResponse.error) {
