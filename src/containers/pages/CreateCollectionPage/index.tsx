@@ -52,12 +52,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         
         if( urlTxtHashHandler )
         {
-            const queryString = window.location.search;
 
-            const params = new URLSearchParams(window.location.search)
-    
             //get the query param 'txHash'
-            const txtHash = params.get("txHash")
+            const txtHash = getTxHash();
             
 
             if( txtHash != null )
@@ -150,12 +147,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         return;
         */
 
-        const queryString = window.location.search;
-
-        const params = new URLSearchParams(window.location.search)
 
         //get the query param 'txHash'
-        const txtHash = params.get("txHash")
+        const txtHash = getTxHash();
         
         //only time we need to initialize SessionState JSON is when URL isn't from webwallet / maiar wallet 
         //it's coming from profile page (create collection)
@@ -366,6 +360,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     };
     
     
+    function getTxHash()
+    {
+        const queryString = window.location.search;
+
+        const params = new URLSearchParams(window.location.search)
+
+        //get the query param 'txHash'
+        return params.get("txHash")
+    }
+
 
     function UpdatePriceInStepTracker(price: string)
     {
