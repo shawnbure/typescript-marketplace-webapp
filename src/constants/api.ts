@@ -6,6 +6,7 @@ export const ELROND_EXPLORER: string = process.env.REACT_APP_NODE_ENV == 'develo
 export const ELROND_ID: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'devnet': process.env.REACT_APP_NODE_ENV == 'production' ? 'mainnet':'devnet'; 
 export const ELROND_EGLD_LABEL: string = process.env.REACT_APP_NODE_ENV == 'development' ? 'xEGLD': process.env.REACT_APP_NODE_ENV == 'production' ? 'EGLD':'xEGLD'; 
 
+
 export const GET = 'GET';
 export const PUT: string = 'PUT';
 export const POST = 'POST';
