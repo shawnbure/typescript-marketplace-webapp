@@ -20,5 +20,5 @@ export const routePaths = {
     collectionEdit: '/collection/:collectionId/edit',
     sellToken: "/token/:walletAddress/:collectionId/:tokenNonce/sell",
     unlistedToken: "/token/:walletAddress/:collectionId/:tokenNonce",
-
+    dao: "/dao",
 };

@@ -8,8 +8,9 @@ import * as faBrandIcons from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Footer } from 'components/index';
+import { useEffect, useState } from "react";
 
-
+import { formatImgLink } from "utils";
 
 import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -18,65 +19,88 @@ import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
 
 
+ import { useGetAllCollectionMutation } from 'services/collections';
+
+
+
 SwiperCore.use([Autoplay, Pagination, Navigation]);
+
 
 
 export const HomePage = () => {
 
+    const [collectionList, setCollectionList] = useState<Array<any>>([]);
 
-    const mapCarouselImgHolders = () => {
-
-        const pics = [];
-
-        for (let index = 1; index <= 26; index++) {
-
-            const imgSrc = `./img/carousel/${index}.png`;
-
-            pics.push(
-                <SwiperSlide className="" key={`sp-${index}`}>
+    const [getAllCollectionTrigger, {
+         data: allCollections
+     }] = useGetAllCollectionMutation();
 
 
-                    {/* <div className="c-card_img-container">
-                    <img className="c-carousel_item" src={imgSrc} alt={`Carousel img #${index}`} />
+    useEffect(() => {
 
-                                    </div> */}
+        //This is called once on render
+        getAllCollectionTrigger({});
 
-                    <div className="col-xs-12">
+        initializeAllCollection();        
+      }, []);
+      
+      
+
+    const initializeAllCollection = async () => {
+
+        const formattedData = {
+            //add any data for post (here as a placeholder)
+        }
+
+        //retrieve the session state
+        const collectionsData: any = await getAllCollectionTrigger(formattedData);
+        
+         if( collectionsData?.data )
+         {
+             //set the api collection data call to the state array variable
+             setCollectionList(collectionsData.data.data);
+         }   
+    }
+
+
+    const mapCollections = () => {
+        return collectionList.map((userCollection: any) => {
+            const {
+              id,
+              name,
+              tokenId,
+              profileImageLink
+            } = userCollection;
+            return (
+                    <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
+
+                    <Link to={`/collection/${tokenId}/`}>
                         <div className="u-margin-tb-spacing-4">
-
                             <div className={`c-card c-card--homepage-feature`}>
 
                                 <div className="c-card_img-container">
-                                    <img src={imgSrc} className="c-card_img" alt="" />
+                                    <img src={ formatImgLink(profileImageLink ? profileImageLink : './img/collections/CollectionProfileImageEmpty.jpg') } className="c-card_img" alt="" />
                                 </div>
 
-                                {/* <div className="c-card_info">
-                                        <img src={'./img/collections/moonkeyz/moonkeyz-promo-1.png'} className="c-card_creator-avatar" alt="" />
-                                        <div className="c-card_details">
-                                            <span className="c-card_title">
-                                                {'Moonkey #XYZ'}
-                                            </span>
-                                            <span className="c-card_collection-name u-text-theme-blue-place">
-                                                {'Moonkeyz'}
-                                            </span>
-                                        </div>
-                                    </div> */}
+                                <div className="c-card_info">
+                                    <div className="c-card_details">
+                                        <span className="c-card_collection-name">
+                                            {name}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
-                    </div>
 
-
-                </SwiperSlide>
-            )
-
-
-        }
-
-        return pics;
-
-
+                    </Link>
+                </div>
+              );
+            });            
     };
+
+
+
+
 
 
     return (
@@ -97,10 +121,11 @@ export const HomePage = () => {
 
                             <div className="u-margin-top-spacing-13 u-padding-right-spacing-3">
 
-                                <h1 className="u-visually-hidden">Erdsea</h1>
+                                <h1 className="u-visually-hidden">Youbei</h1>
 
                                 <h2 className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white">
-                                    Discover, collect, and sell exceptional NFTs
+                                Get Paid to Collect, Hold-To-Earn.
+
                                 </h2>
 
                                 <div className="row">
@@ -112,24 +137,28 @@ export const HomePage = () => {
                                         </p> */}
 
                                         <p className="u-text-lead u-text-theme-gray-mid u-margin-bottom-spacing-10">
-                                            Erdsea is the first open NFT marketplace on Elrond
+                                        Youbei is the profit-sharing community marketplace for Elrond NFTs. 
+                                        Easy and Fast for Creators, Safe and Reliable for Collectors.
+
                                         </p>
 
                                     </div>
 
                                 </div>
 
+                             
+
                                 <p className="u-margin-bottom-spacing-10 u-hidden-tablet-block">
 
-                                    <a href={'https://discord.gg/VS3bfZVn5J'} className="c-button c-button--primary u-margin-bottom-spacing-4 u-margin-right-spacing-4">Get latest</a>
-                                    <a href={'https://twitter.com/ErdseaNFT'} className="c-button c-button--secondary">Follow us</a>
+                                    <a href={'https://discord.gg/xBh7dEEeBc'} className="c-button c-button--primary u-margin-bottom-spacing-4 u-margin-right-spacing-4">Get latest</a>
+                                    <a href={'https://twitter.com/ElrondNFT'} className="c-button c-button--secondary">Follow us</a>
 
                                 </p>
 
                                 <p className="u-margin-bottom-spacing-10 u-hidden-desktop-block">
 
-                                    <a href={'https://discord.gg/VS3bfZVn5J'} className="c-button c-button--primary u-margin-spacing-2">Get latest</a>
-                                    <a href={'https://twitter.com/ErdseaNFT'} className="c-button c-button--secondary u-margin-spacing-2">Follow us</a>
+                                    <a href={'https://discord.gg/xBh7dEEeBc'} className="c-button c-button--primary u-margin-spacing-2">Get latest</a>
+                                    <a href={'https://twitter.com/ElrondNFT'} className="c-button c-button--secondary u-margin-spacing-2">Follow us</a>
 
                                 </p>
 
@@ -141,20 +170,20 @@ export const HomePage = () => {
 
                         <div className="col-xs-12 col-md-6">
 
-                            <Link to={'/collection/PIGSEL-91e91b'}>
+                            <Link to={'/collection/HELIOS-d263f3'}>
                                 <div className="u-margin-top-spacing-9">
 
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'./img/l8UrAFL.png'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636990119/erd1dtug93adfr7jd8q35u8jjp34prnpwscpvgtrfe8gltmdas44zppspzhgje.profile.png'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 <span className="c-card_title">
-                                                    {'Pigselated'}
+                                                    {'Helios Staking'}
                                                 </span>
 
                                             </div>
@@ -175,8 +204,16 @@ export const HomePage = () => {
                         <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
 
                             <div className="u-padding-lr-spacing-2">
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />
+                                { /*
+                                    <img src = "./img/SVG/icon_create.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
+                                */ }
 
+                                   
+                                
+                            <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />  
+                                
+                     
+                                
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Create collections
@@ -195,9 +232,12 @@ export const HomePage = () => {
 
 
                             <div className="u-padding-lr-spacing-2">
-
+                                { /*  
+                                    <img src = "./img/SVG/icon_minting.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
+                                */ }
+                                
+                                
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faTags} />
-
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Minting NFTs
@@ -217,7 +257,10 @@ export const HomePage = () => {
 
                             <div className="u-padding-lr-spacing-2">
 
+                            { /*  <img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
+
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faCoins} />
+                                
 
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
@@ -225,7 +268,7 @@ export const HomePage = () => {
                                 </h3>
 
                                 <p>
-                                    Erdsea offers minting, listing and bidding* features with zero additional fees
+                                    Youbei offers minting, listing and bidding features with zero additional fees to save collectors crypto
                                 </p>
 
                             </div>
@@ -236,15 +279,19 @@ export const HomePage = () => {
                         <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
 
                             <div className="u-padding-lr-spacing-2">
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faListOl} />
+                                
+                                
+                                { /* <<img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
 
+                                
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faListOl} />
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Rarity ranking
                                 </h3>
 
                                 <p>
-                                    Erdsea displays rarity rank, score and traits statistics for every collection
+                                    Youbei displays rarity rank, score and trait statistics for every collection to give collectors the right information at the right time
                                 </p>
                             </div>
 
@@ -255,192 +302,129 @@ export const HomePage = () => {
 
 
 
-
+                        
                     <div className="grid grid-cols-12">
 
+                        {Boolean(collectionList.length) ? (
+                        mapCollections()
+                        ) : (
+                        <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+                            no collections
+                        </div>
+                        )}
+
+                    </div>
 
 
 
+                    <br/><br/>
 
+                    <h1 className="u-tac u-text-bold">Roadmap</h1>
 
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
+                    <div className="row row--standard-max u-tac">
 
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
 
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
+                            <div className="u-padding-lr-spacing-2">
+                                { /*
+                                    <img src = "./img/SVG/icon_create.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
+                                */ }
 
-                                    <div className={`c-card c-card--homepage-feature`}>
+                                   
+                                
+                            <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessPawn} />  
+                                
+                     
+                                
 
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Alpha Phase: <br/>
+                                    Reward Early Adopters
+                                </h3>
 
-                                        <div className="c-card_info">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-5.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties'}
-                                                </span>
-                                            </div>
-                                        </div>
+                                <p>
+                                
+                                
+                                    2% fee to holders of Onchain Warriors, EGLD Vault and Regal Eagle NFTs.
+.5% fee to DAO Development. 
 
+                                </p>
 
-                                    </div>
+                            </div>
 
-
-                                </div>
-
-                            </Link>
                         </div>
 
 
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/MNROBOS-39ece5`}>
-                                <div className="u-margin-tb-spacing-4">
-                                    <div className={`c-card c-card--homepage-feature`}>
+ 
 
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/mini-robos/mini-robos-promo-1.png'} className="c-card_img" alt="" />
-                                        </div>
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
 
-                                        <div className="c-card_info">
-                                            <img src={'./img/carousel/8.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
 
-                                                <span className="c-card_collection-name">
-                                                    {'Mini Robos'}
-                                                </span>
-                                            </div>
-                                        </div>
+                            <div className="u-padding-lr-spacing-2">
+                                { /*  
+                                    <img src = "./img/SVG/icon_minting.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
+                                */ }
+                                
+                                
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessKnight} />
 
-                                    </div>
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Beta Phase:<br/>
+                                    Reward Our Users 
+                                </h3>
 
-                                </div>
+                                <p>
+                                
+                                
 
-                            </Link>
+                                    80% profits to daily active users in User Basic Income (UBI).
+							 20% profits to DAO Development.
+
+                                </p>
+
+                            </div>
+
+
                         </div>
 
 
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
+
+                            <div className="u-padding-lr-spacing-2">
+
+                            { /*  <img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
+
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessKing} />
+                                
 
 
+                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
+                                    Gamma Phase:<br/>
+                                    Grow Sustainably 
+                                </h3>
 
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
+                                <p>
+                                    
+                                    80% profits to daily active users in User Basic Income (UBI).
+							20% profits to $ENFT Treasury.
 
-                            <Link to={`/collection/DUCKERDS-348dd3`}>
-                                <div className="u-margin-tb-spacing-4">
-                                    <div className={`c-card c-card--homepage-feature`}>
+                                </p>
 
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/duckerds/duckerds-promo-2.png'} className="c-card_img" alt="" />
-                                        </div>
+                            </div>
 
-                                        <div className="c-card_info">
-                                            <img src={'./img/carousel/17.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                {/* <span className="c-card_title">
-                                                {'Duckerd #XYZ'}
-                                            </span> */}
-                                                <span className="c-card_collection-name">
-                                                    {'Duckerds'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </Link>
-                        </div>
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-
-                            <Link to={`/collection/MOONKEYZ-7af2e1`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/moonkeyz/moonkeyz-promo-1.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'./img/carousel/9.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_collection-name">
-                                                    {'Moonkeyz'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </Link>
-                        </div>
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-
-                            <Link to={`/collection/LADIES-677dc6`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/pixel-ladies/pixel-ladies-promo-1.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'./img/carousel/10.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_collection-name">
-                                                    {'Pixel Ladies'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </Link>
                         </div>
 
 
 
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-
-                            <Link to={'/collection/PIGSEL-91e91b'}>
-
-                                <div className="u-margin-top-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/avatar.jpg'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <img src={'https://res.cloudinary.com/deaezbrer/image/upload/v1636990119/erd1dtug93adfr7jd8q35u8jjp34prnpwscpvgtrfe8gltmdas44zppspzhgje.profile.png'} className="c-card_creator-avatar" alt="" />
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Pigselated'}
-                                                </span>
-
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                </div>
-
-                            </Link>
-
-                        </div>
 
 
                     </div>
 
 
+                    <br/>
+
                     <Footer />
+
 
 
 

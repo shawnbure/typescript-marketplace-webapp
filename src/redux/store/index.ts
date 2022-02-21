@@ -1,10 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
 import { reduxBatch } from '@manaflair/redux-batch';
-import logger from 'redux-logger';
 
 import { rootReducer } from 'redux/slices';
-import { txTemplateApi, tokensApi, authApi, oracleApi, collectionsApi, depositApi, royaltiesApi, searchApi,} from 'services/index';
+import { txTemplateApi, tokensApi, authApi, oracleApi, collectionsApi, depositApi, royaltiesApi, searchApi, sessionStatesApi} from 'services/index';
 
 const store = configureStore({
     reducer: rootReducer,
@@ -18,7 +17,8 @@ const store = configureStore({
             .concat(depositApi.middleware)
             .concat(royaltiesApi.middleware)
             .concat(txTemplateApi.middleware)
-            .concat(collectionsApi.middleware),
+            .concat(collectionsApi.middleware)
+            .concat(sessionStatesApi.middleware),
     devTools: false,
     // devTools: process.env.NODE_ENV !== 'production',
     enhancers: [reduxBatch],

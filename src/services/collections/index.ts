@@ -24,6 +24,7 @@ export const collectionsApi = createApi({
 
                 const accessToken: string = selectAccessToken(store.getState());
 
+                
                 const customRequestArg: FetchArgs = {
 
                     method: POST,
@@ -31,7 +32,7 @@ export const collectionsApi = createApi({
                         "Authorization": `Bearer ${accessToken}`,
                     },
                     body: JSON.stringify(payload),
-                    url: `/${mainPath}/create`
+                    url: `${mainPath}/create`
 
                 }
 
@@ -117,6 +118,22 @@ export const collectionsApi = createApi({
                 return customRequestArg;
             },
         }),
+
+
+        getAllCollection: builder.mutation<any, any>({
+
+            query: ({payload}): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: POST,
+                    body: JSON.stringify(payload),
+                    url: `/${mainPath}/all`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
 
         registerCollection: builder.mutation<any, any>({
 
@@ -206,4 +223,5 @@ export const {
     useGetCollectionTokensMutation,
     useRegisterCollectionMutation,
     useCreateCollectionMutation,
-    useGetCollectionByIdMutation, } = collectionsApi;
+    useGetCollectionByIdMutation, 
+    useGetAllCollectionMutation, } = collectionsApi;

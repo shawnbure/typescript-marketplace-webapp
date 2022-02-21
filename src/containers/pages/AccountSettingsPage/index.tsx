@@ -206,8 +206,28 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
             userWalletAddress: userWalletAddress
         });
 
-        console.log(response.error);
+        //console.log(response.error);
 
+
+        /*
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+
+        }
+        */
+   
         if (response.error) {
 
 
@@ -244,7 +264,8 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
         if (accountData?.data) {
 
-
+            //console.log(accountData?.data?.data?.name);
+            
             setValueEdit("name", accountData?.data?.data?.name);
             setValueEdit("description", accountData?.data?.data?.description);
             setValueEdit("website", accountData?.data?.data?.website);

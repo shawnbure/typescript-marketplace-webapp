@@ -6,7 +6,7 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 
-import { handleCopyToClipboard, hexToAscii } from "utils";
+import { handleCopyToClipboard, hexToAscii, asciiToHex } from "utils";
 import { useGetCollectionByIdMutation, useCreateCollectionMutation } from "services/collections";
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
@@ -21,7 +21,8 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
     const [flagSelect, setFlagSelect] = useState<any>({ value: 'art', label: 'Art' });
 
-    const [createCollectionTrigger,] = useCreateCollectionMutation();
+    const [createCollectionTrigger,] = useCreateCollectionMutation
+    ();
 
     const [getCollectionByIdTrigger] = useGetCollectionByIdMutation();
 
@@ -44,18 +45,23 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep1 = async (data: any) => {
 
+        data.tokenId = asciiToHex(data.tokenId);
+
         const formattedData = {
             ...data,
-            tokenId: hexToAscii(data.tokenId),
+            tokenId:hexToAscii(data.tokenId),
             userAddress: userWalletAddress,
             flags: [flagSelect.value],
         }
 
 
+        //TODO: Contract Address, MintPricePerTokenNominal (put in 1 for now)
+
+
+        /*
         const response: any = await createCollectionTrigger({ payload: formattedData });
 
         if (response?.error) {
-
 
             toast.error(`Error register`, {
                 autoClose: 5000,
@@ -69,6 +75,28 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
             return;
 
         };
+        */
+
+
+        const response: any = await createCollectionTrigger({ payload: formattedData });
+
+        if (response.error) {
+
+            const { error, status, } = response.error;
+
+            toast.error(`${error + ' ' + status}`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+        }
+        
+
 
         toast.success(`Succesful register`, {
             autoClose: 5000,
@@ -170,7 +198,7 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                     </div>
 
                     <h2 className="text-2xl md:text-5xl u-text-bold mb-8">
-                        Register collection
+                        Register Collection
                     </h2>
 
                     <div className="grid grid-cols-12">
@@ -186,7 +214,7 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                                         <span>Token ID</span>  <span className="text-red-600">*</span>
                                     </div>
 
-                                    <input  {...registerStep1('tokenId')} autoComplete="off" placeholder="Collection name" type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
+                                    <input  {...registerStep1('tokenId')} autoComplete="off" placeholder="Token ID" type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
 
                                 </label>
 
@@ -196,7 +224,7 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                                         <span>Collection name</span>
                                     </div>
 
-                                    <input  {...registerStep1('collectionName')} autoComplete="off" placeholder="Collection name" type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
+                                    <input  {...registerStep1('collectionName')} autoComplete="off" placeholder="Collection name" maxLength={20} type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
 
                                 </label>
 
@@ -204,7 +232,7 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                                     Description
                                 </p>
 
-                                <textarea  {...registerStep1('description')} autoComplete="off" placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
+                                <textarea {...registerStep1('description')} autoComplete="off"   placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
 
 
                                 <div className="mb-10">
@@ -224,7 +252,7 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                                 <div className="border-1 border-gray-500  rounded-2 overflow-hidden  mb-8">
 
                                     <label className="flex align-items-center bg-opacity-10 hover:bg-opacity-20 bg-white p-3">
-                                        <input {...registerStep1('website')} autoComplete="off" placeholder="yoursite.io" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
+                                        <input {...registerStep1('website')} autoComplete="off" placeholder="http://www.yoursite.io" type="text" className="border-1 bg-transparent placeholder-opacity-10  border-none outline-none  text-white w-full" />
                                     </label>
 
                                     <label className="flex align-items-center bg-opacity-10 bg-white text-gray-400 p-3">
