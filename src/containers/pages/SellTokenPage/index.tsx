@@ -1,6 +1,6 @@
 /* eslint-disable */ 
 import Popup from 'reactjs-popup';
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import Collapsible from 'react-collapsible';
 import { Redirect, Link, useParams, useHistory } from "react-router-dom";
@@ -22,6 +22,7 @@ import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
 import { routePaths } from 'constants/router';
 import store from 'redux/store';
+import { number } from 'yup/lib/locale';
 
 export const SellTokenPage: (props: any) => any = ({ }) => {
 
@@ -29,9 +30,9 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
     const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
     const [isFixedSale, setIsFixedSale] = useState<boolean>(true);
 
-    const [requestedAmount, setRequestedAmount] = useState<number | undefined>(undefined);
-    const [startDate, setStartDate] = useState<any>();
-    const [endDate, setEndDate] = useState<any>();
+    const [requestedAmount, setRequestedAmount] = useState(0);
+    const [startDate, setStartDate] = useState(0);
+    const [endDate, setEndDate] = useState(0);
 
     const {
         loggedIn,
@@ -68,7 +69,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         isError: isErrorGatewayTokenDataQuery,
 
     }] = useGetAccountTokenGatewayMutation();
-
 
     const isTokenDataFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData);
     const shouldRenderPage: boolean = isTokenDataFetched;
@@ -127,29 +127,60 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        const status = urlParams.get('status')
+        const txtHash = urlParams.get("txHash")
+        const status = String(urlParams.get("status"))
+        
+        if(txtHash != null ) {
 
-        if(status == "success"){
+            const saleStatus = String(urlParams.get("saleStatus"))
+            const saleStringPrice = String(urlParams.get("salePrice"))
+            const saleNominalPrice = parseFloat(String(urlParams.get("salePrice")))
+            const saleStartDate = parseInt(String(urlParams.get("saleStartDate")))
+            const saleEndDate = parseInt(String(urlParams.get("saleEndDate")))
 
-            //this value needs to be hexidecimal. add 0 to the first position if the len = 1
-            let hexNonce = tokenNonce;
-            if(tokenNonce?.length == 1){
-                hexNonce = "0" + tokenNonce;
-            }
+            if(status == "success"){
 
-            const formattedData = {
-                walletAddress: userWalletAddress,
-                tokenName: collectionId,
-                tokenNonce: hexNonce,
-            }   
+                //this value needs to be hexidecimal. add 0 to the first position if the len = 1
+                let hexNonce = tokenNonce;
+                if(tokenNonce?.length == 1){
+                    hexNonce = "0" + tokenNonce;
+                }
 
-            const response: any = createTokenTrigger({ payload: formattedData });
+                const formattedData = {
+                    walletAddress: userWalletAddress,
+                    tokenName: collectionId,
+                    tokenNonce: hexNonce,
+                    saleStatus : saleStatus, 
+                    saleStringPrice : saleStringPrice, 
+                    saleNominalPrice : saleNominalPrice, 
+                    saleStartDate: saleStartDate, 
+                    saleEndDate : saleEndDate, 
+                }   
 
-            if (response.error) {
+                const response: any = createTokenTrigger({ payload: formattedData });
 
-                const { status, data: { error } } = response.error;
-    
-                toast.error(`${status} | ${error}`, {
+                if (response.error) {
+
+                    const { status, data: { error } } = response.error;
+        
+                    toast.error(`${status} | ${error}`, {
+                        autoClose: 5000,
+                        draggable: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        hideProgressBar: false,
+                        position: "bottom-right",
+                    });
+        
+                    return;
+        
+                }
+
+                setShouldRedirect(true);
+                
+            }else{
+
+                toast.error(`The blockchain transaction failed, please try again.`, {
                     autoClose: 5000,
                     draggable: true,
                     closeOnClick: true,
@@ -157,14 +188,11 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                     hideProgressBar: false,
                     position: "bottom-right",
                 });
-    
-                return;
-    
-            }
 
-            setShouldRedirect(true);
-            
-        }    
+                return;
+            }    
+        }   
+
     }, [storeDataExist]);
 
     // gatewayTokenData?.data?.tokenData?.creator
@@ -256,7 +284,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         signTemplateTransaction({
 
             //succesCallbackRoute: '/token/' + collectionId +'/' + tokenNonce + '/insert',
-            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
+            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell?saleStatus=List&salePrice='+requestedAmount+'&saleStartDate=0&saleEndDate=0',
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, price: requestedAmount },
             getTemplateTrigger: getListNftTemplateQueryTrigger,
 
@@ -325,7 +353,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         signTemplateTransaction({
 
             //succesCallbackRoute: '/account',
-            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell',
+            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell?saleStatus=Auction&salePrice='+requestedAmount+'&saleStartDate='+unixStartDate+'&saleEndDate='+unixEndDate,
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: unixStartDate, deadline: unixEndDate },
             getTemplateTrigger: getStartAuctionNftTemplateTrigger,
 
