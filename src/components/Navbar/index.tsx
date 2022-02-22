@@ -81,8 +81,8 @@ export const Navbar = () => {
                                 </Link>
                             </li> */}
                             <li className="c-navbar_list-item">
-                                <Link to={routePaths.rankings} className="c-navbar_list-link">
-                                    Rankings
+                                <Link to={routePaths.rewards} className="c-navbar_list-link">
+                                    Rewards
                                 </Link>
                             </li>
 

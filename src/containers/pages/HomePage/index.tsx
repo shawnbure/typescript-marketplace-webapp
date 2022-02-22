@@ -124,7 +124,7 @@ export const HomePage = () => {
                                 <h1 className="u-visually-hidden">Youbei</h1>
 
                                 <h2 className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white">
-                                Get Paid to Collect, Hold-To-Earn.
+                                Get Paid to NFT.
 
                                 </h2>
 
@@ -137,8 +137,9 @@ export const HomePage = () => {
                                         </p> */}
 
                                         <p className="u-text-lead u-text-theme-gray-mid u-margin-bottom-spacing-10">
-                                        Youbei is the profit-sharing community marketplace for Elrond NFTs. 
-                                        Easy and Fast for Creators, Safe and Reliable for Collectors.
+                                        Trade with confidence. Create with ease.
+                                        <br /><br />
+                                        Youbei is the 💰-sharing community marketplace for Elrond NFTs.
 
                                         </p>
 
@@ -318,107 +319,6 @@ export const HomePage = () => {
 
 
                     <br/><br/>
-
-                    <h1 className="u-tac u-text-bold">Roadmap</h1>
-
-                    <div className="row row--standard-max u-tac">
-
-                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
-
-                            <div className="u-padding-lr-spacing-2">
-                                { /*
-                                    <img src = "./img/SVG/icon_create.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
-                                */ }
-
-                                   
-                                
-                            <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessPawn} />  
-                                
-                     
-                                
-
-                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
-                                    Alpha Phase: <br/>
-                                    Reward Early Adopters
-                                </h3>
-
-                                <p>
-                                
-                                
-                                    2% fee to holders of Onchain Warriors, EGLD Vault and Regal Eagle NFTs.
-.5% fee to DAO Development. 
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
- 
-
-                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
-
-
-                            <div className="u-padding-lr-spacing-2">
-                                { /*  
-                                    <img src = "./img/SVG/icon_minting.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
-                                */ }
-                                
-                                
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessKnight} />
-
-                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
-                                    Beta Phase:<br/>
-                                    Reward Our Users 
-                                </h3>
-
-                                <p>
-                                
-                                
-
-                                    80% profits to daily active users in User Basic Income (UBI).
-							 20% profits to DAO Development.
-
-                                </p>
-
-                            </div>
-
-
-                        </div>
-
-
-                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
-
-                            <div className="u-padding-lr-spacing-2">
-
-                            { /*  <img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
-
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessKing} />
-                                
-
-
-                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
-                                    Gamma Phase:<br/>
-                                    Grow Sustainably 
-                                </h3>
-
-                                <p>
-                                    
-                                    80% profits to daily active users in User Basic Income (UBI).
-							20% profits to $ENFT Treasury.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-
-
-
-                    </div>
 
 
                     <br/>
