@@ -49,7 +49,6 @@ export const HomePage = () => {
       
       
     const HandleCreateCollectionClick = () => {
-
         if( loggedIn )
         {
             window.location.href = '/collection/create'
