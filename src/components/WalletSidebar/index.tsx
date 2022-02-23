@@ -284,18 +284,14 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
                         <ul className="">
 
-                            <li onClick={handleOverlayClick} style={{ borderBottom: "1px solid #151b22" }} className="c-navbar_list-item">
-                                <Link to={routePaths.rankings} className="c-navbar_list-link text-lg">
-                                    Rankings
-                                </Link>
-                            </li>
-
                             <li onClick={handleOverlayClick} className="c-navbar_list-item">
-                                <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="c-navbar_list-link text-lg">
-                                    Resources
+                                <a href={routePaths.rewards}className="c-navbar_list-link text-lg">
+                                    Rewards
                                 </a>
                             </li>
                         </ul>
+
+
 
                     </div>
 
@@ -582,16 +578,12 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                                 </Link>
                             </li> */}
                             <li onClick={handleOverlayClick} style={{ borderBottom: "1px solid #151b22" }} className="c-navbar_list-item">
-                                <Link to={routePaths.rankings} className="c-navbar_list-link text-lg">
-                                    Rankings
+                                <Link to={routePaths.rewards} className="c-navbar_list-link text-lg">
+                                    Rewards
                                 </Link>
                             </li>
 
-                            <li onClick={handleOverlayClick} className="c-navbar_list-item">
-                                <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="c-navbar_list-link text-lg">
-                                    Resources
-                                </a>
-                            </li>
+
                         </ul>
 
                     </div>

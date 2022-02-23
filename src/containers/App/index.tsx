@@ -166,7 +166,7 @@ export const App: () => JSX.Element = () => {
                         </Route>
 
                         <Route path={[routePaths.account, routePaths.profile]} exact={true} >
-
+                            
                             <ProfilePage />
 
                         </Route>

@@ -50,7 +50,7 @@ export const RewardsPage = () => {
 
             <br/>
 
-            <p className="u-margin-bottom-spacing-10 u-hidden-tablet-block">
+            <p className="u-margin-bottom-spacing-10">
 
                 <a href={'https://deadrare.io/collection/ENFT-d40748'} className="c-button c-button--primary u-margin-bottom-spacing-4 u-margin-right-spacing-4" target="_blank">Buy Vaults</a>
                 <a href={'https://discord.gg/xBh7dEEeBc'} className="c-button c-button--secondary u-margin-bottom-spacing-4 u-margin-right-spacing-4" target="_blank">Get latest</a>
