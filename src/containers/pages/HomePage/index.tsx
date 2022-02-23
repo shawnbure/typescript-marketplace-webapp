@@ -1,8 +1,7 @@
 
+import { Link,Redirect } from 'react-router-dom';
 
-import { Link } from 'react-router-dom';
-
-
+import { routePaths } from 'constants/router';
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrandIcons from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,6 +19,8 @@ import 'swiper/swiper.min.css';
 
 
  import { useGetAllCollectionMutation } from 'services/collections';
+ import * as Dapp from "@elrondnetwork/dapp";
+import { url } from 'inspector';
 
 
 
@@ -28,6 +29,8 @@ SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 
 export const HomePage = () => {
+
+    const { loggedIn, address: userAddress } = Dapp.useContext();
 
     const [collectionList, setCollectionList] = useState<Array<any>>([]);
 
@@ -45,6 +48,40 @@ export const HomePage = () => {
       }, []);
       
       
+    const HandleCreateCollectionClick = () => {
+
+        if( loggedIn )
+        {
+            window.location.href = '/collection/create'
+        }
+        else
+        {
+            alert('Please login to Create a Collection');
+        }
+
+    } 
+
+    const HandleRegisterCollectionClick = () => {
+
+        if( loggedIn )
+        {
+            window.location.href = '/collection/register'
+        }
+        else
+        {
+            alert('Please login to Register a Collection');
+        }
+    }
+
+
+    const HandleVerifyClick = () => {
+        window.open(
+        'https://www.notion.so/enftdao/Verification-e874591432eb4e0388df94470a3854a9',
+          '_blank' // <- This is what makes it open in a new window.
+        );
+
+       
+    }      
 
     const initializeAllCollection = async () => {
 
@@ -140,28 +177,29 @@ export const HomePage = () => {
                                         Trade with confidence. Create with ease.
                                         <br /><br />
                                         Youbei is the 💰-sharing community marketplace for Elrond NFTs.
-
                                         </p>
+
 
                                     </div>
 
-                                </div>
+                                </div> 
 
-                             
+                                
 
-                                <p className="u-margin-bottom-spacing-10 u-hidden-tablet-block">
 
-                                    <a href={'https://discord.gg/xBh7dEEeBc'} className="c-button c-button--primary u-margin-bottom-spacing-4 u-margin-right-spacing-4">Get latest</a>
-                                    <a href={'https://twitter.com/ElrondNFT'} className="c-button c-button--secondary">Follow us</a>
+                                <p className="u-margin-bottom-spacing-10">
+                                    {loggedIn && (
+                                        <Link to={routePaths.account} className="c-button c-button--primary">
+                                            List an NFT for Free
+                                        </Link>
+                                    )}
+                                    { ! loggedIn && (
+                                        <a href="javascript:alert('Please login to List an NFT');" className="c-button c-button--primary">List an NFT for Free</a>
 
+                                    )}
                                 </p>
 
-                                <p className="u-margin-bottom-spacing-10 u-hidden-desktop-block">
-
-                                    <a href={'https://discord.gg/xBh7dEEeBc'} className="c-button c-button--primary u-margin-spacing-2">Get latest</a>
-                                    <a href={'https://twitter.com/ElrondNFT'} className="c-button c-button--secondary u-margin-spacing-2">Follow us</a>
-
-                                </p>
+         
 
 
 
@@ -202,7 +240,8 @@ export const HomePage = () => {
 
                     <div className="row row--standard-max u-tac">
 
-                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+                        
+                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10" onClick={HandleCreateCollectionClick}>
 
                             <div className="u-padding-lr-spacing-2">
                                 { /*
@@ -211,37 +250,13 @@ export const HomePage = () => {
 
                                    
                                 
-                            <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />  
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />  
                                 
                      
                                 
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Create collections
-                                </h3>
-
-                                <p>
-                                    Tutorials & docs about how to create your own collection with our ERD-721 standard
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
-
-
-                            <div className="u-padding-lr-spacing-2">
-                                { /*  
-                                    <img src = "./img/SVG/icon_minting.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
-                                */ }
-                                
-                                
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faTags} />
-
-                                <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
-                                    Minting NFTs
                                 </h3>
 
                                 <p>
@@ -254,30 +269,35 @@ export const HomePage = () => {
                         </div>
 
 
-                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10" onClick={HandleRegisterCollectionClick}>
+
 
                             <div className="u-padding-lr-spacing-2">
-
-                            { /*  <img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
-
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faCoins} />
+                                { /*  
+                                    <img src = "./img/SVG/icon_minting.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
+                                */ }
                                 
-
+                                
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faTags} />
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
-                                    Zero fees
+                                    Register Collection
                                 </h3>
 
                                 <p>
-                                    Youbei offers minting, listing and bidding features with zero additional fees to save collectors crypto
+                                    Creators need to register each collection to enable trading on Youbei
                                 </p>
 
                             </div>
 
+
                         </div>
 
 
-                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+
+                        
+
+                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10" onClick={HandleVerifyClick}>
 
                             <div className="u-padding-lr-spacing-2">
                                 
@@ -285,14 +305,14 @@ export const HomePage = () => {
                                 { /* <<img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
 
                                 
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faListOl} />
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faCheckCircle} />
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
-                                    Rarity ranking
+                                    Verify Collection
                                 </h3>
 
                                 <p>
-                                    Youbei displays rarity rank, score and trait statistics for every collection to give collectors the right information at the right time
+                                    Learn how to get your collection verified
                                 </p>
                             </div>
 
@@ -304,18 +324,22 @@ export const HomePage = () => {
 
 
                         
-                    <div className="grid grid-cols-12">
 
-                        {Boolean(collectionList.length) ? (
-                        mapCollections()
-                        ) : (
-                        <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
-                            no collections
-                        </div>
-                        )}
+                    {
+                        /*
+                            <div className="grid grid-cols-12">
 
-                    </div>
+                                {Boolean(collectionList.length) ? (
+                                mapCollections()
+                                ) : (
+                                <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+                                    no collections
+                                </div>
+                                )}
 
+                            </div>
+                        */
+                    }
 
 
                     <br/><br/>
