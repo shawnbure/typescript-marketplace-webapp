@@ -721,7 +721,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                 </div>
 
 
-                <div className="fixed bottom-2 z-50 flex w-full justify-center md:hidden">
+                {/* <div className="fixed bottom-2 z-50 flex w-full justify-center md:hidden">
                     <button onClick={toggleMobileFilters} style={{ display: "flex", minWidth: "230px" }} className="align-items-center c-button c-button--primary justify-center" >
                         <FontAwesomeIcon width={'20px'} className="mr-2" icon={faIcons.faFilter} />
                         Filters
@@ -733,7 +733,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                         </span>
 
                     </button>
-                </div>
+                </div> */}
 
 
 
@@ -741,7 +741,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
 
                     <div className={`overflow-auto h-full md:block ${shouldDisplayMobileFilters || 'hidden'}`}>
 
-                        <div style={columnMobileFiltersStyles} className="c-accordion_trigger absolute md:relative  justify-between cursor-pointer">
+                        {/* <div style={columnMobileFiltersStyles} className="c-accordion_trigger absolute md:relative  justify-between cursor-pointer">
                             <span>
                                 <span className="c-accordion_trigger_icon">
                                     <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faFilter} />
@@ -754,7 +754,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                             <button onClick={toggleMobileFilters} className="c-button c-button--secondary md:hidden" >
                                 Done
                             </button>
-                        </div>
+                        </div> */}
 
                         <div className="pt-24 md:pt-0">
 
