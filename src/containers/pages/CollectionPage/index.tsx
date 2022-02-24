@@ -824,7 +824,7 @@ export const CollectionPage: (props: any) => any = ({ }) => {
                                                         <div className={`c-card c-card--colection`}>
 
                                                             <div className="c-card_img-container">
-                                                                <img src={formatHexMetaImage(token.imageLink)} className="c-card_img" alt="" />
+                                                                <img src={(token.imageLink)} className="c-card_img" alt="" />
                                                             </div>
 
                                                             <div className="c-card_info">
