@@ -9,7 +9,7 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage } from 'containers/pages';
+import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, RewardsPage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
 
 
@@ -108,6 +108,13 @@ export const App: () => JSX.Element = () => {
                         </Route>
 
 
+                        <Route path={routePaths.rewards} exact={true} >
+
+                            <RewardsPage />
+
+                        </Route>
+
+                        
                         {/* <Route path={'/maiar-login'} exact={true} >
 
                             <div className="p-maiar-login">
@@ -159,7 +166,7 @@ export const App: () => JSX.Element = () => {
                         </Route>
 
                         <Route path={[routePaths.account, routePaths.profile]} exact={true} >
-
+                            
                             <ProfilePage />
 
                         </Route>

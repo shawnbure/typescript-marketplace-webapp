@@ -81,16 +81,29 @@ export const Navbar = () => {
                                 </Link>
                             </li> */}
                             <li className="c-navbar_list-item">
-                                <Link to={routePaths.rankings} className="c-navbar_list-link">
-                                    Rankings
+                                <Link to={routePaths.rewards} className="c-navbar_list-link">
+                                    Rewards
                                 </Link>
                             </li>
 
-                            <li className="c-navbar_list-item" onClick={handleToggleSidebar}>
-                                <span className="c-navbar_list-link">
-                                    <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
-                                </span>
-                            </li>
+                            {loggedIn && (
+                                        <li className="c-navbar_list-item" onClick={handleToggleSidebar}>
+                                            <span className="c-navbar_list-link">
+                                                <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                            </span>
+                                        </li>
+                                    )}
+                                    { ! loggedIn && (
+
+                                        <li className="c-navbar_list-item" onClick={handleToggleSidebar}>
+                                            <span className="c-navbar_list-link">Login</span>
+                                                
+                                        </li>
+
+                                    )}
+
+
+
 
 
                         </ul>
