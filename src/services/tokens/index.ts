@@ -186,7 +186,28 @@ export const tokensApi = createApi({
 
         }),
 
+        getWhitelistBuyCountLimitTemplate: builder.mutation<any, any>({
 
+            query: ({ payload }): FetchArgs => {
+
+                //const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    /*
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    */
+                    body: JSON.stringify(payload),
+                    url: `/${mainPath}/whitelist/buycountlimit`
+
+                }
+
+                return customRequestArg;
+            },
+        }),
 
     }),
 })
@@ -201,4 +222,5 @@ export const {
     useGetTokenOffersMutation,
     useGetTokenDataMutation,
     useGetTokenCollectionAvailablityMutation,
-    useGetTokensCollectionsAvailablityMutation } = tokensApi;
+    useGetTokensCollectionsAvailablityMutation,
+    useGetWhitelistBuyCountLimitTemplateMutation } = tokensApi;
