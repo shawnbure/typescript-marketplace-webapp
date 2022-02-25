@@ -39,7 +39,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
 
     //json of the step (use for SessionData)
-    const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0 }');  
+    const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0, "tokenBaseURI": "Empty", "metaDataBaseURI": "Empty", "maxSupply": 0}');  
 
 
     const [urlTxtHashHandler, setUrlTxtHashHandler] = useState(false)
@@ -130,7 +130,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             refreshCreateOrUpdateSessionStateTransaction(sessionStateJSONData.step,            
                                                          sessionStateJSONData.tokenID,       
                                                          sessionStateJSONData.scAddress,
-                                                         sessionStateJSONData.price);  
+                                                         sessionStateJSONData.price,
+                                                         sessionStateJSONData.tokenBaseURI,
+                                                         sessionStateJSONData.metaDataBaseURI,
+                                                         sessionStateJSONData.maxSupply);  
         }
     
         //once it pass all the logic above, initial fetch should be accounted for
@@ -179,18 +182,32 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         tokenID: string;
         scAddress: string;
         price: number;
+        tokenBaseURI: string;
+        metaDataBaseURI: string;
+        maxSupply: number;
     }
 
+
+
+    
+    
 
     function CreateJSONDataStringForSessionState(stepParam: number, 
                                                  tokenIDParam: string, 
                                                  scAddressParam: string,
-                                                 priceParam: number) : string
+                                                 priceParam: number,
+                                                 tokenBaseURIParam: string,
+                                                 metaDataBaseURIParam: string,
+                                                 maxSupplyParam: number) : string
     {
         let jsonObj = { step: stepParam, 
                         tokenID: tokenIDParam, 
                         scAddress: scAddressParam,
-                        price: priceParam }; 
+                        price: priceParam,
+                        tokenBaseURI: tokenBaseURIParam,
+                        metaDataBaseURI: metaDataBaseURIParam,
+                        maxSupply: maxSupplyParam
+                        }; 
 
         return JSON.stringify(jsonObj);
     }
@@ -287,7 +304,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
                                '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
                                '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-                               '"price":' + sessionStateJSONData.price + '}')     
+                               '"price": ' + sessionStateJSONData.price + ', ' +
+                               '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
+                               '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
+                               '"maxSupply":' + sessionStateJSONData.maxSupply + '}')     
                                
 
                                
@@ -298,7 +318,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
                                '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
                                '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-                               '"price":' + sessionStateJSONData.price + '}')   
+                               '"price": ' + sessionStateJSONData.price + ', ' +
+                               '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
+                               '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
+                               '"maxSupply":' + sessionStateJSONData.maxSupply + '}')      
             }
             
 
@@ -380,12 +403,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [refreshCreateOrUpdateSessionStatesTrigger] = useRefreshCreateOrUpdateSessionStatesMutation();
 
     // this refresh OR create the sessionState in DB
-    const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any, price: any) => {
+    const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any, price: any, tokenBaseURI: any, metaDataBaseURI: any, maxSupply: any) => {
         
         const formattedData = {
             address: userWalletAddress,
             stateType: 1,
-            jsonData: CreateJSONDataStringForSessionState(step, tokenId, scAddress, price),
+            jsonData: CreateJSONDataStringForSessionState(step, tokenId, scAddress, price, tokenBaseURI, metaDataBaseURI, maxSupply),
         }
 
         const response: any = await refreshCreateOrUpdateSessionStatesTrigger({ payload: formattedData });
@@ -418,7 +441,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
         '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
         '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-        '"price":' + price+ '}')        
+        '"price":' + price + ', ' +
+        '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
+        '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
+        '"maxSupply":' + sessionStateJSONData.maxSupply + '}')        
+
+
     }
 
 
@@ -663,13 +691,17 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //Append on .json to the MetaDataBase (based on Hashlips standards)
         data.metadataBase = data.metadataBase + ".json"
 
+        console.log( "============= data.metadataBase: " + data.metadataBase)
 
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
         setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
         '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
         '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-        '"price":' + data.price + '}')  
+        '"price":' + data.price + ', ' +
+        '"tokenBaseURI": "' + data.imageBase + '", ' +
+        '"metaDataBaseURI": "' + data.metadataBase + '", ' +
+        '"maxSupply":' + data.maxSupply + '}')  
 
         data.imageExt = mediaTypeSelect.value
 
@@ -777,7 +809,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     }).required();
 
-    const { register: registerStep5, handleSubmit: handleSubmitStep5, formState: { errors: errorsStep5 } } = useForm({
+
+    const { register: registerStep5, handleSubmit: handleSubmitStep5, control: controlStep5, setError: setErrorStep5, clearErrors: clearErrorsStep5, formState: { errors: errorsStep5 } } = useForm({
         resolver: yupResolver(schemaStep5),
     });
 
@@ -792,7 +825,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const sPrice = "" + sessionStateJSONData.price; 
 
+        const sMaxSupply = "" + sessionStateJSONData.maxSupply; 
+
         data.mintPricePerTokenString = sPrice
+        data.tokenBaseURI = sessionStateJSONData.tokenBaseURI
+        data.MetaDataBaseURI = sessionStateJSONData.metaDataBaseURI
+        data.MaxSupply = sMaxSupply
 
         const formattedData = {
             ...data,
@@ -1227,6 +1265,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     Collection Name
                                 </p>
 
+                                <p className="mb-2 text-lg text-red-500">{errorsStep2.collectionName?.message}</p>
+
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
                                         <input {...registerStep5('collectionName')}  autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
@@ -1237,6 +1277,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 <p className="text-xl mb-2">
                                     Description
                                 </p>
+
+                                <p className="mb-2 text-lg text-red-500">{errorsStep2.description?.message}</p>
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
