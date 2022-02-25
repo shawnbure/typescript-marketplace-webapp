@@ -21,6 +21,7 @@ import { Address} from '@elrondnetwork/erdjs/out';
 
 import { routePaths } from "constants/router";
 import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
+import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens";
 import store from "redux/store";
 
 
@@ -142,11 +143,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
 
-       /*
+        /*
         deleteSessionStateTransaction()
         return;
         */
 
+        //getWhitelistCountLimitTemplateTransaction();
 
         //get the query param 'txHash'
         const txtHash = getTxHash();
@@ -339,6 +341,42 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
 
 
+    const [getWhitelistBuyCountLimitTemplateTrigger] = useGetWhitelistBuyCountLimitTemplateMutation();
+
+    // this refresh OR create the sessionState in DB
+    const getWhitelistCountLimitTemplateTransaction = async () => {
+        
+        console.log("userWalletAddress: " + userWalletAddress)
+
+        const formattedData = {
+            contractAddress: "erd1qqqqqqqqqqqqqpgqslkmvrkp82wjm69jpz7z24e2h0tju9axy4wsf2ewsq",  //collection contract address
+            userAddress: userWalletAddress,
+        }
+
+        const response: any = await getWhitelistBuyCountLimitTemplateTrigger({ payload: formattedData });
+
+        if (response.error) {
+            //handle any error here
+            return;
+        }
+
+        const { data: txData } = response.data;
+
+        //csv: count,limit
+        console.log(" ========================== response data: txtData")
+        console.log(response.data)
+        console.log(txData)
+
+        //CSV split
+        var dataArray = txData.split(',');
+
+        console.log("BuyCount: " + dataArray[0]);
+        console.log("BuyLimit: " + dataArray[1]);
+
+        console.log(" ========================== response data: txtData")
+    };
+    
+    
     const [refreshCreateOrUpdateSessionStatesTrigger] = useRefreshCreateOrUpdateSessionStatesMutation();
 
     // this refresh OR create the sessionState in DB
@@ -358,8 +396,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         }
 
     };
-    
-    
+
+
+
+
     function getTxHash()
     {
         const queryString = window.location.search;
