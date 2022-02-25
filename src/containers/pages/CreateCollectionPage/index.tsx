@@ -40,7 +40,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     //json of the step (use for SessionData)
     const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0, "tokenBaseURI": "Empty", "metaDataBaseURI": "Empty", "maxSupply": 0}');  
-
+    //const [stepTracker, setStepTracker] = useState('{ "step": 5, "tokenID": "TESTTOKE-22", "scAddress": "00000000000000000500d8aa0fbd26b0df250c3dd7fdb9fa200e6b373419255d", "price": 8, "tokenBaseURI": "TestTokenBaseURI", "metaDataBaseURI": "TestMetadataBaseURI", "maxSupply": 88}');  
 
     const [urlTxtHashHandler, setUrlTxtHashHandler] = useState(false)
 
@@ -146,7 +146,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
 
-        /*
+       /*
         deleteSessionStateTransaction()
         return;
         */
@@ -825,12 +825,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const sPrice = "" + sessionStateJSONData.price; 
 
-        const sMaxSupply = "" + sessionStateJSONData.maxSupply; 
-
         data.mintPricePerTokenString = sPrice
         data.tokenBaseURI = sessionStateJSONData.tokenBaseURI
         data.MetaDataBaseURI = sessionStateJSONData.metaDataBaseURI
-        data.MaxSupply = sMaxSupply
+        data.MaxSupply = sessionStateJSONData.maxSupply
 
         const formattedData = {
             ...data,
