@@ -661,7 +661,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         data.saleStart = d.getTime() / 1000;
 
         //Append on .json to the MetaDataBase (based on Hashlips standards)
-        data.metadataBase = data.metadataBase + ".json"
+        data.metadataBase = data.metadataBase //+ ".json"
 
 
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
@@ -793,7 +793,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         const sPrice = "" + sessionStateJSONData.price; 
 
         data.mintPricePerTokenString = sPrice
-
+        console.log(data)
         const formattedData = {
             ...data,
             tokenId:tokenId,

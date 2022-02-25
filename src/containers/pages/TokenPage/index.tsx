@@ -197,7 +197,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
         const imageLink: string = isOurs ? token.imageLink : atob(token?.uris?.[0] || '');
         const metadataLink: string = isOurs ? token.metadataLink : atob(token?.uris?.[1] || '');
         const royaltiesPercent = isOurs ? token.royaltiesPercent : parseFloat(token.royalties) / 100;
-
         const baseData = {
 
             name,

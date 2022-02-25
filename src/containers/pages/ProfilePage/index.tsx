@@ -260,7 +260,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
             <div className={`c-card c-card--colection`}>
               <div className="c-card_img-container">
                 <img
-                  src={formatHexMetaImage(imageLink)}
+                  src={(imageLink)}
                   className="c-card_img"
                   alt=""
                 />

@@ -16,7 +16,7 @@ import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
-import { formatImgLink, shorterAddress, GetTransactionRequestHttpURL, GetJSONResultData } from "utils";
+import { formatImgLink, shorterAddress, GetTransactionRequestHttpURL, GetJSONResultData, formatHexMetaImage } from "utils";
 import { BUY } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
@@ -586,7 +586,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                             <div className={`c-card`}>
 
                                 <div className="c-card_img-container">
-                                    <img src={formatImgLink(imageLink)} className="c-card_img" alt="" />
+                                    <img src={(imageLink)} className="c-card_img" alt="" />
                                 </div>
                                 <div className="c-card_info">
 
