@@ -29,6 +29,8 @@ export const RewardsPage = () => {
 
         <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
 
+            <br />
+            
             <h1 className="u-tac u-text-bold">Rewards</h1>
             
           
