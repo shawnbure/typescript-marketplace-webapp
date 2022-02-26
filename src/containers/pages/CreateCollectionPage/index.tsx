@@ -60,46 +60,64 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
             if( txtHash != null )
             {
-                var successfulResponseHandler = false
+                const queryStatus = getQueryStatus()
 
-                do 
+                if( queryStatus == "fail")
                 {
-                    const httpRequest = new XMLHttpRequest();
-                    const url= GetTransactionRequestHttpURL(txtHash); 
-                    httpRequest.open("GET", url);
-                    httpRequest.send();
-                    
-                    httpRequest.onreadystatechange = (e) => 
-                    {
-                        //check read state (4: done) and status
-                        if (httpRequest.readyState == 4 && httpRequest.status == 200)
-                        {
-                            if( httpRequest.responseText  )
-                            {                
-                                const data = httpRequest.responseText;
-        
-                                try {
-        
-                                    const jsonResponse = JSON.parse(data);
-    
-                                    const actionName = GetTransactionActionName(jsonResponse)
-            
-                                    const resultData = GetJSONResultData(jsonResponse);
-
-                                    initializeSessionStateJSON(false, resultData, actionName);
-    
-                                    successfulResponseHandler = true
-        
-                                } catch(e) 
-                                {
-                                    //there's a parse error - handle it here 
-                                    successfulResponseHandler = false
-                                }
-                            }
-                        }                
-                    }
+                    //hien
+                    toast.error(`Error with BlockChain`, {
+                        autoClose: 5000,
+                        draggable: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        hideProgressBar: false,
+                        position: "bottom-right",
+                    });               
                 }
-                while (successfulResponseHandler);
+                else
+                {
+                    var successfulResponseHandler = false
+
+                    do 
+                    {
+                        const httpRequest = new XMLHttpRequest();
+                        const url= GetTransactionRequestHttpURL(txtHash); 
+                        httpRequest.open("GET", url);
+                        httpRequest.send();
+                        
+                        httpRequest.onreadystatechange = (e) => 
+                        {
+                            //check read state (4: done) and status
+                            if (httpRequest.readyState == 4 && httpRequest.status == 200)
+                            {
+                                if( httpRequest.responseText  )
+                                {                
+                                    const data = httpRequest.responseText;
+            
+                                    try {
+            
+                                        const jsonResponse = JSON.parse(data);
+        
+                                        const actionName = GetTransactionActionName(jsonResponse)
+                
+                                        const resultData = GetJSONResultData(jsonResponse);
+    
+                                        initializeSessionStateJSON(false, resultData, actionName);
+        
+                                        successfulResponseHandler = true
+            
+                                    } catch(e) 
+                                    {
+                                        //there's a parse error - handle it here 
+                                        successfulResponseHandler = false
+                                    }
+                                }
+                            }                
+                        }
+                    }
+                    while (successfulResponseHandler);
+                }
+
             }  
         }
 
@@ -400,6 +418,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         //get the query param 'txHash'
         return params.get("txHash")
+    }
+
+    function getQueryStatus()
+    {
+        const queryString = window.location.search;
+
+        const params = new URLSearchParams(window.location.search)
+
+        //get the query param 'txHash'
+        return params.get("status")
     }
 
 
