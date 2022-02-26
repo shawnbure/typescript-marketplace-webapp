@@ -49,19 +49,24 @@ export const HomePage = () => {
       
       
     const HandleCreateCollectionClick = () => {
+
+        /*
         if( loggedIn )
         {
             window.location.href = '/collection/create'
         }
         else
         {
-            alert('Please login to Create a Collection');
+            alert('Please login to Create a Collection');            
         }
+        */
 
+        alert('This feature will be available in next phase');    
     } 
 
     const HandleRegisterCollectionClick = () => {
 
+        /*
         if( loggedIn )
         {
             window.location.href = '/collection/register'
@@ -70,6 +75,9 @@ export const HomePage = () => {
         {
             alert('Please login to Register a Collection');
         }
+        */
+
+        alert('This feature will be available in next phase'); 
     }
 
 
@@ -240,20 +248,11 @@ export const HomePage = () => {
                     <div className="row row--standard-max u-tac">
 
                         
-                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10" onClick={HandleCreateCollectionClick}>
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10" onClick={HandleCreateCollectionClick}>
 
                             <div className="u-padding-lr-spacing-2">
-                                { /*
-                                    <img src = "./img/SVG/icon_create.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
-                                */ }
-
-                                   
-                                
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />  
                                 
-                     
-                                
-
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Create collections
                                 </h3>
@@ -263,47 +262,31 @@ export const HomePage = () => {
                                 </p>
 
                             </div>
-
-
                         </div>
 
 
-                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10" onClick={HandleRegisterCollectionClick}>
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10" onClick={HandleRegisterCollectionClick}>
 
 
                             <div className="u-padding-lr-spacing-2">
-                                { /*  
-                                    <img src = "./img/SVG/icon_minting.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" />
-                                */ }
-                                
-                                
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faTags} />
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Register Collection
                                 </h3>
-
                                 <p>
                                     Creators need to register each collection to enable trading on Youbei
                                 </p>
-
                             </div>
-
-
                         </div>
 
 
 
                         
 
-                        <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10" onClick={HandleVerifyClick}>
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10" onClick={HandleVerifyClick}>
 
-                            <div className="u-padding-lr-spacing-2">
-                                
-                                
-                                { /* <<img src = "./img/SVG/icon_zero_fees.svg?" alt="My Happy SVG" className="u-text-theme-blue-anchor c-navbar_icon-link" /> */ }
-
-                                
+                            <div className="u-padding-lr-spacing-2">                                
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faCheckCircle} />
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
@@ -326,6 +309,7 @@ export const HomePage = () => {
 
                     {
                         /*
+                            UNCOMMENT TO SHOW THE COLLECTIONS
                             <div className="grid grid-cols-12">
 
                                 {Boolean(collectionList.length) ? (
@@ -341,7 +325,6 @@ export const HomePage = () => {
                     }
 
 
-                    <br/><br/>
 
 
                     <br/>

@@ -18,7 +18,7 @@ import { handleCopyToClipboard } from "utils";
 
 import { toast } from 'react-toastify';
 
-
+import { Footer } from 'components/index';
 
 
 export const RewardsPage = () => {
@@ -29,6 +29,8 @@ export const RewardsPage = () => {
 
         <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
 
+            <br />
+            
             <h1 className="u-tac u-text-bold">Rewards</h1>
             
           
@@ -66,12 +68,12 @@ export const RewardsPage = () => {
             <h2 className="u-tac u-text-bold">Roadmap</h2>
 
             <br/><br/>
-            
+
+
+
             <div className="row row--standard-max u-tac">
 
-                <br/>
-
-                <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+                <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
 
                     <div className="u-padding-lr-spacing-2">
                         
@@ -91,7 +93,7 @@ export const RewardsPage = () => {
 
 
 
-                <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+                <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
 
 
                     <div className="u-padding-lr-spacing-2">
@@ -120,7 +122,7 @@ export const RewardsPage = () => {
 
 
 
-                <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+                <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
 
                     <div className="u-padding-lr-spacing-2">
 
@@ -141,6 +143,12 @@ export const RewardsPage = () => {
                 </div>
 
             </div>
+
+
+
+            <br/>
+
+            <Footer />
 
         </div>
       
