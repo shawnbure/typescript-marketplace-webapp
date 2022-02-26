@@ -64,8 +64,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                 do 
                 {
-                    console.log("BEFORE XMLHttpRequest")
-    
                     const httpRequest = new XMLHttpRequest();
                     const url= GetTransactionRequestHttpURL(txtHash); 
                     httpRequest.open("GET", url);
@@ -76,8 +74,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         //check read state (4: done) and status
                         if (httpRequest.readyState == 4 && httpRequest.status == 200)
                         {
-                            console.log("(httpRequest.readyState == 4 && httpRequest.status == 200)")
-        
                             if( httpRequest.responseText  )
                             {                
                                 const data = httpRequest.responseText;
@@ -89,17 +85,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     const actionName = GetTransactionActionName(jsonResponse)
             
                                     const resultData = GetJSONResultData(jsonResponse);
-                                
-                                    console.log("actionName: " + actionName)
-                                    console.log("resultData: " + resultData)
-    
+
                                     initializeSessionStateJSON(false, resultData, actionName);
     
                                     successfulResponseHandler = true
         
                                 } catch(e) 
                                 {
-                                    console.log(e)
                                     //there's a parse error - handle it here 
                                     successfulResponseHandler = false
                                 }
@@ -124,8 +116,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         if( !initialFetch )                             //if initialFetch, don't save
         {
-            console.log( "before refreshCreateOrUpdateSessionStateTransaction");
-
             //Refresh / Create it to SessionState DB
             refreshCreateOrUpdateSessionStateTransaction(sessionStateJSONData.step,            
                                                          sessionStateJSONData.tokenID,       
@@ -214,8 +204,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     function GetSessionStateJSONDataFromString(jstrJSON: string) : SessionStateJSONData
     {
-        console.log("GetSessionStateJSONDataFromString: " + jstrJSON);
-
         return JSON.parse(jstrJSON);
     }
 
@@ -250,15 +238,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
 
 
-            console.log("sessionStateJSONData: ===>")
-            console.log(sessionStateJSONData);
-            console.log("responseData: " + responseData);
-            console.log("responseActionName: " + responseActionName);
             
             if( responseData != "" &&  responseActionName != "")
             {
-                console.log("initializeSessionStateJSON - response data and actionName")
-                
+
                 switch(responseActionName) 
                 {
                     case "issueNonFungible":  //step 1 completed
@@ -325,13 +308,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             }
             
 
-
-            console.log("HandlePageStateBySessionState");
-            console.log(sessionStateJSONData)
-
             //display page state
             HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price); 
-
         }       
     }
 
@@ -369,8 +347,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     // this refresh OR create the sessionState in DB
     const getWhitelistCountLimitTemplateTransaction = async () => {
         
-        console.log("userWalletAddress: " + userWalletAddress)
-
         const formattedData = {
             contractAddress: "erd1qqqqqqqqqqqqqpgqslkmvrkp82wjm69jpz7z24e2h0tju9axy4wsf2ewsq",  //collection contract address
             userAddress: userWalletAddress,
@@ -385,18 +361,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const { data: txData } = response.data;
 
-        //csv: count,limit
-        console.log(" ========================== response data: txtData")
-        console.log(response.data)
-        console.log(txData)
+
 
         //CSV split
         var dataArray = txData.split(',');
 
-        console.log("BuyCount: " + dataArray[0]);
-        console.log("BuyLimit: " + dataArray[1]);
-
-        console.log(" ========================== response data: txtData")
     };
     
     
@@ -690,8 +659,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         //Append on .json to the MetaDataBase (based on Hashlips standards)
         data.metadataBase = data.metadataBase + ".json"
-
-        console.log( "============= data.metadataBase: " + data.metadataBase)
 
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 

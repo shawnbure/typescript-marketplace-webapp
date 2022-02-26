@@ -66,12 +66,12 @@ export const RewardsPage = () => {
             <h2 className="u-tac u-text-bold">Roadmap</h2>
 
             <br/><br/>
-            
+
+
+
             <div className="row row--standard-max u-tac">
 
-                <br/>
-
-                <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+                <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
 
                     <div className="u-padding-lr-spacing-2">
                         
@@ -91,7 +91,7 @@ export const RewardsPage = () => {
 
 
 
-                <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+                <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
 
 
                     <div className="u-padding-lr-spacing-2">
@@ -120,7 +120,7 @@ export const RewardsPage = () => {
 
 
 
-                <div className="col-xs-12 col-md-3 u-margin-bottom-spacing-10">
+                <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10">
 
                     <div className="u-padding-lr-spacing-2">
 
