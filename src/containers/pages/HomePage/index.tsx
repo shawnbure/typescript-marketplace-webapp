@@ -325,7 +325,6 @@ export const HomePage = () => {
                     }
 
 
-                    <br/><br/>
 
 
                     <br/>

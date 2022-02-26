@@ -18,7 +18,7 @@ import { handleCopyToClipboard } from "utils";
 
 import { toast } from 'react-toastify';
 
-
+import { Footer } from 'components/index';
 
 
 export const RewardsPage = () => {
@@ -143,6 +143,12 @@ export const RewardsPage = () => {
                 </div>
 
             </div>
+
+
+
+            <br/>
+
+            <Footer />
 
         </div>
       
