@@ -12,8 +12,10 @@ export const Footer = () => {
             &nbsp; &nbsp; 
             |
 
-              <a href="mailto:youbei-support@elrondnft.io?subject=Youbei - Feedback" className="c-navbar_list-link">feedback</a>
-
+              <a href="mailto:youbei-support@elrondnft.io?subject=Youbei - Feedback" className="c-navbar_list-link">Support</a>
+            |
+            
+            <a href="https://elrondnft.io/" target="_blank" className="c-navbar_list-link">Made with ❤️ by the ENFT DAO</a>
           </p>
       </div>
     </footer>
