@@ -659,7 +659,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         royalties: yup.string().matches(/^((10)(\.[0-0]{0,2})?$|([0-9])(\.[0-9]{1,2})?$)/, "Numbers must be between 0-10").required(),
         tokenNameBase: yup.string().required("Required Field"),
         imageBase: yup.string().required("Required Field"),
-        price: yup.string().matches(/^\d{0,10}(\.\d{1,2})?$/, "Only positive numbers with 2 decimals allowed.").required(),
+        price: yup.string().matches(/^(0|[1-9]\d*)(\.\d+)?$/, "Only positive numbers with decimals - must include a leading number (0.1)").required(),
         maxSupply: yup.string().matches(/^([1-9][0-9]{0,3}|10000)$/, "Numbers must be between 1-10000").required(),
         metadataBase: yup.string().required("Required Field"),
     }).required();
