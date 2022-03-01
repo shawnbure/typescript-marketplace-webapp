@@ -21,9 +21,6 @@ import { Address} from '@elrondnetwork/erdjs/out';
 
 import { routePaths } from "constants/router";
 import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
-import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens";
-import store from "redux/store";
-
 
 
 
@@ -34,38 +31,64 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     } = Dapp.useContext();
     
     
-    //check for initial retrieval of the SessionData from DB and setting it to StepTracker - don't want it to treat it as an user action event vs system set of value event
-    const [initialFetch, setInitialFetch] = useState(true)
+    //for inital load of the page / useEffect onChange
+    const [intialLoad, setIntialLoad] = useState(false)
+
+    //check for to save StepTracker or not
+    const [doSaveStepTracker, setDoSaveStepTracker] = useState(false)
     
 
-    //json of the step (use for SessionData)
+    //json of the step (use for SessionData) / useEffect onChange
     const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0, "tokenBaseURI": "Empty", "metaDataBaseURI": "Empty", "maxSupply": 0}');  
-    //const [stepTracker, setStepTracker] = useState('{ "step": 5, "tokenID": "TESTTOKE-22", "scAddress": "00000000000000000500d8aa0fbd26b0df250c3dd7fdb9fa200e6b373419255d", "price": 8, "tokenBaseURI": "TestTokenBaseURI", "metaDataBaseURI": "TestMetadataBaseURI", "maxSupply": 88}');  
-
-    const [urlTxtHashHandler, setUrlTxtHashHandler] = useState(false)
 
 
-    const [inputPrice, setInputPrice] = useState(0)
+    // check if TxHash in URL / useEffect onChange
+    const [urlTxHashHandler, setUrlTxHashHandler] = useState(false)
 
+
+
+
+    useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
+
+        /*
+        //UNCOMMENT TO TEST
+        deleteSessionStateTransaction()
+        return;
+        */
+        
+        setIntialLoad(true);
+
+      },[]);  //only called once since it's the empty [] parameters
+
+
+
+    useEffect(() => { 
+        
+        if( intialLoad )
+        {
+            initSessionStateJSONFromDB();            
+        }
+
+    },[intialLoad]);
 
     
-    useEffect(() => {  //Invoked when "stepTracker" is SET (setStepTracker)
-        
-        if( urlTxtHashHandler )
-        {
 
+
+    useEffect(() => {  //Invoked when "urlTxHashHandler" is SET 
+        
+        if( urlTxHashHandler )  //reason to check this is onload, it's false - once we set the value, set to to true to get it
+        {
             //get the query param 'txHash'
             const txtHash = getTxHash();
             
-
-            if( txtHash != null )
+            if( txtHash != null ) // verify it's not null
             {
-                const queryStatus = getQueryStatus()
+                const queryStatus = getQueryStatus()  //check the status
 
                 if( queryStatus == "fail")
                 {
-                    //hien
-                    toast.error(`Error with BlockChain`, {
+                    //fail - with blockchain error
+                    toast.error(`Error with BlockChain Transaction`, {
                         autoClose: 5000,
                         draggable: true,
                         closeOnClick: true,
@@ -76,64 +99,56 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 }
                 else
                 {
-                    var successfulResponseHandler = false
-
-                    do 
+                    const httpRequest = new XMLHttpRequest();
+                    const url= GetTransactionRequestHttpURL(txtHash); 
+                    httpRequest.open("GET", url);
+                    httpRequest.send();
+                    
+                    httpRequest.onreadystatechange = (e) => 
                     {
-                        const httpRequest = new XMLHttpRequest();
-                        const url= GetTransactionRequestHttpURL(txtHash); 
-                        httpRequest.open("GET", url);
-                        httpRequest.send();
-                        
-                        httpRequest.onreadystatechange = (e) => 
+                        //check read state (4: done) and status
+                        if (httpRequest.readyState == 4 && httpRequest.status == 200)
                         {
-                            //check read state (4: done) and status
-                            if (httpRequest.readyState == 4 && httpRequest.status == 200)
-                            {
-                                if( httpRequest.responseText  )
-                                {                
-                                    const data = httpRequest.responseText;
-            
-                                    try {
-            
-                                        const jsonResponse = JSON.parse(data);
+                            if( httpRequest.responseText  )
+                            {                
+                                const data = httpRequest.responseText;
         
-                                        const actionName = GetTransactionActionName(jsonResponse)
-                
-                                        const resultData = GetJSONResultData(jsonResponse);
+                                try {
+        
+                                    const jsonResponse = JSON.parse(data);
     
-                                        initializeSessionStateJSON(false, resultData, actionName);
-        
-                                        successfulResponseHandler = true
+                                    const actionName = GetTransactionActionName(jsonResponse)
             
-                                    } catch(e) 
-                                    {
-                                        //there's a parse error - handle it here 
-                                        successfulResponseHandler = false
-                                    }
-                                }
-                            }                
-                        }
-                    }
-                    while (successfulResponseHandler);
-                }
+                                    const resultData = GetJSONResultData(jsonResponse);
 
+                                    setSessionStateFromQueryData(resultData, actionName);
+
+                                } catch(e) 
+                                {
+                                    //there's a parse error - handle it here 
+                                }
+                            }
+                        }                
+                    }
+                }
             }  
         }
 
 
-      },[urlTxtHashHandler]);
+      },[urlTxHashHandler]);
 
 
 
-    useEffect(() => {  //Invoked when "stepTracker" is SET (setStepTracker)
+
+
+
+    useEffect(() => {  //Invoked when "stepTracker" is SET 
         
-        //Convert the step tracker to JSObject
-        const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
-
-
-        if( !initialFetch )                             //if initialFetch, don't save
+        if( doSaveStepTracker )      
         {
+            //Convert the step tracker to JSObject
+            const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
+
             //Refresh / Create it to SessionState DB
             refreshCreateOrUpdateSessionStateTransaction(sessionStateJSONData.step,            
                                                          sessionStateJSONData.tokenID,       
@@ -144,40 +159,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                                          sessionStateJSONData.maxSupply);  
         }
     
-        //once it pass all the logic above, initial fetch should be accounted for
-        setInitialFetch(false);
-
       },[stepTracker]);  //this use effect gets called everytime 'stepTracker' is modified
-
-
-
-
-    useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
-
-       /*
-        deleteSessionStateTransaction()
-        return;
-        */
-
-        //getWhitelistCountLimitTemplateTransaction();
-
-        //get the query param 'txHash'
-        const txtHash = getTxHash();
-        
-        //only time we need to initialize SessionState JSON is when URL isn't from webwallet / maiar wallet 
-        //it's coming from profile page (create collection)
-        if(txtHash == null )  
-        {
-            initializeSessionStateJSON(true, "", "");
-        } 
-        else
-        {
-            setUrlTxtHashHandler(true);
-        }
-
-
-      },[]);  //only called once since it's the empty [] parameters
-
 
 
 
@@ -196,9 +178,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
 
-
-    
-    
 
     function CreateJSONDataStringForSessionState(stepParam: number, 
                                                  tokenIDParam: string, 
@@ -227,17 +206,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-    //used in the initializeSessionStateJSON func
+    //used in the initialize SessionState func
     const [retrieveSessionStatesTrigger, {
         data: sessionStateData,
     }] = useRetrieveSessionStatesMutation();
     
 
 
-
-
-    //This initialize the varSessionStateJSON
-    const initializeSessionStateJSON = async (isInitialLoad: boolean, responseData: string, responseActionName: string) => {
+    const initSessionStateJSONFromDB = async () => {
 
         //set the request data to pass to triggers
         const formattedData = {
@@ -249,23 +225,61 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         const sessionStateData: any = await retrieveSessionStatesTrigger({ payload: formattedData });
         
         //check data and initialize it to variable
-        if (sessionStateData?.data) {
-
-
+        if (sessionStateData?.data) 
+        {
             //set the DB Json string to sessionStateJSONData object
             const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
 
+            setDoSaveStepTracker(false);  //set to false so it does NOT save to DB
 
-            
-            if( responseData != "" &&  responseActionName != "")
+            setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
+                            '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
+                            '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
+                            '"price": ' + sessionStateJSONData.price + ', ' +
+                            '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
+                            '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
+                            '"maxSupply":' + sessionStateJSONData.maxSupply + '}')   
+         
+            const txtHash = getTxHash();
+
+            //only time we need to initialize SessionState JSON is when URL isn't from webwallet / maiar wallet 
+            //it's coming from profile page (create collection)
+            if( txtHash != null )  
             {
+                /*
+                setTimeout(() => {
+                    setUrlTxHashHandler(true);  //delay for a sec
+                }, 500);
+                */
 
-                switch(responseActionName) 
+                setUrlTxHashHandler(true);
+            }
+            else
+            {
+                //display page state
+                HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price); 
+            }   
+          
+        }       
+    }
+
+
+
+    //This initialize the varSessionStateJSON (async & await)
+    const setSessionStateFromQueryData = (resultData: string, actionName: string) => {
+
+        //setSessionStateJSON(resultData, actionName);
+
+        const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
+
+        if( resultData != "" &&  actionName != "")
+        {
+                switch(actionName) 
                 {
                     case "issueNonFungible":  //step 1 completed
                     {
                         //get the tokenID from the resultData
-                        const tokenID = GetTransactionTokenID(responseData);
+                        const tokenID = GetTransactionTokenID(resultData);
                         sessionStateJSONData.tokenID = tokenID;
 
                         sessionStateJSONData.step = 2;
@@ -274,11 +288,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     } 
                     case "deployNFTTemplateContract":  //step 2 completed
                     {
-                        const contractAddress = GetTransactionContractAddress(responseData);
+                        const contractAddress = GetTransactionContractAddress(resultData);
                         sessionStateJSONData.scAddress = contractAddress;
-    
-                        //get the price here
-                        //sessionStateJSONData.price = 0
 
                         sessionStateJSONData.step = 3;
 
@@ -301,34 +312,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     } 
                 }
 
-                //set this so it saves to DB
-                setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
-                               '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
-                               '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-                               '"price": ' + sessionStateJSONData.price + ', ' +
-                               '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
-                               '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
-                               '"maxSupply":' + sessionStateJSONData.maxSupply + '}')     
-                               
+                setDoSaveStepTracker(true);  //set this so it saves to DB in step Tracker
 
-                               
-            } 
-            else if( sessionStateJSONData.step == 1 )
-            {                
-                //set this so it saves to DB
                 setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
-                               '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
-                               '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-                               '"price": ' + sessionStateJSONData.price + ', ' +
-                               '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
-                               '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
-                               '"maxSupply":' + sessionStateJSONData.maxSupply + '}')      
-            }
-            
+                                '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
+                                '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
+                                '"price": ' + sessionStateJSONData.price + ', ' +
+                                '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
+                                '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
+                                '"maxSupply":' + sessionStateJSONData.maxSupply + '}')     
 
             //display page state
-            HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price); 
-        }       
+            HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price);                                 
+        }
+   
     }
 
 
@@ -360,31 +357,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
 
 
-    const [getWhitelistBuyCountLimitTemplateTrigger] = useGetWhitelistBuyCountLimitTemplateMutation();
-
-    // this refresh OR create the sessionState in DB
-    const getWhitelistCountLimitTemplateTransaction = async () => {
-        
-        const formattedData = {
-            contractAddress: "erd1qqqqqqqqqqqqqpgqslkmvrkp82wjm69jpz7z24e2h0tju9axy4wsf2ewsq",  //collection contract address
-            userAddress: userWalletAddress,
-        }
-
-        const response: any = await getWhitelistBuyCountLimitTemplateTrigger({ payload: formattedData });
-
-        if (response.error) {
-            //handle any error here
-            return;
-        }
-
-        const { data: txData } = response.data;
-
-
-
-        //CSV split
-        var dataArray = txData.split(',');
-
-    };
     
     
     const [refreshCreateOrUpdateSessionStatesTrigger] = useRefreshCreateOrUpdateSessionStatesMutation();
@@ -431,20 +403,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
 
-    function UpdatePriceInStepTracker(price: string)
-    {
-        const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
-
-        setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
-        '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
-        '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-        '"price":' + price + ', ' +
-        '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
-        '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
-        '"maxSupply":' + sessionStateJSONData.maxSupply + '}')        
-
-
-    }
 
 
 
@@ -458,7 +416,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         HideElement("divStep3");
         HideElement("divStep4");                
         HideElement("divStep5");
-
 
         switch(step) 
         {
@@ -688,15 +645,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //Append on .json to the MetaDataBase (based on Hashlips standards)
         data.metadataBase = data.metadataBase //+ ".json"
 
+       
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
+        setDoSaveStepTracker(true);
+        
         setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
-        '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
-        '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-        '"price":' + data.price + ', ' +
-        '"tokenBaseURI": "' + data.imageBase + '", ' +
-        '"metaDataBaseURI": "' + data.metadataBase + '", ' +
-        '"maxSupply":' + data.maxSupply + '}')  
+                          '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
+                          '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
+                          '"price":' + data.price + ', ' +
+                          '"tokenBaseURI": "' + data.imageBase + '", ' +
+                          '"metaDataBaseURI": "' + data.metadataBase + '", ' +
+                          '"maxSupply":' + data.maxSupply + '}')  
+        
+
 
         data.imageExt = mediaTypeSelect.value
 
@@ -977,7 +939,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                     <div className="grid grid-cols-12 p-create-collection">
 
-                        <div className="col-span-12 lg:col-span-5"  id="divStep1" >
+
+
+                        <div className="col-span-12 lg:col-span-5"  id="divStep1"  hidden={true}>
                             <form onSubmit={handleSubmitStep1(onSubmitStep1)}>
 
                                 <p className="text-2xl u-text-bold mb-4">
