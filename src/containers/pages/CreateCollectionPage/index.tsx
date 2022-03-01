@@ -22,9 +22,6 @@ import { Address} from '@elrondnetwork/erdjs/out';
 import { routePaths } from "constants/router";
 import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
 
-import store from "redux/store";
-
-
 
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
@@ -34,21 +31,36 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     } = Dapp.useContext();
     
     
+    //for inital load of the page / useEffect onChange
     const [intialLoad, setIntialLoad] = useState(false)
 
-    //check for initial retrieval of the SessionData from DB and setting it to StepTracker - don't want it to treat it as an user action event vs system set of value event
-    const [initialFetch, setInitialFetch] = useState(true)
+    //check for to save StepTracker or not
+    const [doSaveStepTracker, setDoSaveStepTracker] = useState(false)
     
 
-    //json of the step (use for SessionData)
+    //json of the step (use for SessionData) / useEffect onChange
     const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0, "tokenBaseURI": "Empty", "metaDataBaseURI": "Empty", "maxSupply": 0}');  
 
 
+    // check if TxHash in URL / useEffect onChange
+    const [urlTxHashHandler, setUrlTxHashHandler] = useState(false)
 
-    const [urlTxtHashHandler, setUrlTxtHashHandler] = useState(false)
 
 
-    const [inputPrice, setInputPrice] = useState(0)
+
+    useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
+
+        /*
+        //UNCOMMENT TO TEST
+        deleteSessionStateTransaction()
+        return;
+        */
+        
+        setIntialLoad(true);
+
+      },[]);  //only called once since it's the empty [] parameters
+
+
 
     useEffect(() => { 
         
@@ -56,32 +68,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         {
             initSessionStateJSONFromDB();            
         }
+
     },[intialLoad]);
 
     
 
-    useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
 
-       
-        /*
-        deleteSessionStateTransaction()
-        return;
-        */
+    useEffect(() => {  //Invoked when "urlTxHashHandler" is SET 
         
-  
-        setIntialLoad(true);
-
-      },[]);  //only called once since it's the empty [] parameters
-
-
-
-
-
-    useEffect(() => {  //Invoked when "urlTxtHashHandler" is SET 
-        
-        if( urlTxtHashHandler )  //reason to check this is onload, it's false - once we set the value, set to to true to get it
+        if( urlTxHashHandler )  //reason to check this is onload, it's false - once we set the value, set to to true to get it
         {
-
             //get the query param 'txHash'
             const txtHash = getTxHash();
             
@@ -103,53 +99,43 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 }
                 else
                 {
-                    var successfulResponseHandler = false
-
-                    do 
+                    const httpRequest = new XMLHttpRequest();
+                    const url= GetTransactionRequestHttpURL(txtHash); 
+                    httpRequest.open("GET", url);
+                    httpRequest.send();
+                    
+                    httpRequest.onreadystatechange = (e) => 
                     {
-                        const httpRequest = new XMLHttpRequest();
-                        const url= GetTransactionRequestHttpURL(txtHash); 
-                        httpRequest.open("GET", url);
-                        httpRequest.send();
-                        
-                        httpRequest.onreadystatechange = (e) => 
+                        //check read state (4: done) and status
+                        if (httpRequest.readyState == 4 && httpRequest.status == 200)
                         {
-                            //check read state (4: done) and status
-                            if (httpRequest.readyState == 4 && httpRequest.status == 200)
-                            {
-                                if( httpRequest.responseText  )
-                                {                
-                                    const data = httpRequest.responseText;
-            
-                                    try {
-            
-                                        const jsonResponse = JSON.parse(data);
+                            if( httpRequest.responseText  )
+                            {                
+                                const data = httpRequest.responseText;
         
-                                        const actionName = GetTransactionActionName(jsonResponse)
-                
-                                        const resultData = GetJSONResultData(jsonResponse);
+                                try {
+        
+                                    const jsonResponse = JSON.parse(data);
     
-                                        SetSessionStateJSONFromDB(resultData, actionName);
-        
-                                        successfulResponseHandler = true
+                                    const actionName = GetTransactionActionName(jsonResponse)
             
-                                    } catch(e) 
-                                    {
-                                        //there's a parse error - handle it here 
-                                        successfulResponseHandler = false
-                                    }
-                                }
-                            }                
-                        }
-                    }
-                    while (successfulResponseHandler);
-                }
+                                    const resultData = GetJSONResultData(jsonResponse);
 
+                                    setSessionStateFromQueryData(resultData, actionName);
+
+                                } catch(e) 
+                                {
+                                    //there's a parse error - handle it here 
+                                }
+                            }
+                        }                
+                    }
+                }
             }  
         }
 
 
-      },[urlTxtHashHandler]);
+      },[urlTxHashHandler]);
 
 
 
@@ -158,7 +144,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {  //Invoked when "stepTracker" is SET 
         
-        if( !initialFetch )                             //if initialFetch, don't save
+        if( doSaveStepTracker )      
         {
             //Convert the step tracker to JSObject
             const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
@@ -173,16 +159,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                                          sessionStateJSONData.maxSupply);  
         }
     
-        //once it pass all the logic above, initial fetch should be accounted for
-        setInitialFetch(false);
-
       },[stepTracker]);  //this use effect gets called everytime 'stepTracker' is modified
-
-
-
-
-
-
 
 
 
@@ -201,9 +178,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
 
-
-    
-    
 
     function CreateJSONDataStringForSessionState(stepParam: number, 
                                                  tokenIDParam: string, 
@@ -251,12 +225,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         const sessionStateData: any = await retrieveSessionStatesTrigger({ payload: formattedData });
         
         //check data and initialize it to variable
-        if (sessionStateData?.data) {
-
+        if (sessionStateData?.data) 
+        {
             //set the DB Json string to sessionStateJSONData object
             const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
 
-            setInitialFetch(true);  //set to true so it does NOT save to DB
+            setDoSaveStepTracker(false);  //set to false so it does NOT save to DB
 
             setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
                             '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
@@ -265,10 +239,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
                             '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
                             '"maxSupply":' + sessionStateJSONData.maxSupply + '}')   
-
-
-            //HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price); 
-
          
             const txtHash = getTxHash();
 
@@ -276,7 +246,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             //it's coming from profile page (create collection)
             if( txtHash != null )  
             {
-                setUrlTxtHashHandler(true);
+                /*
+                setTimeout(() => {
+                    setUrlTxHashHandler(true);  //delay for a sec
+                }, 500);
+                */
+
+                setUrlTxHashHandler(true);
             }
             else
             {
@@ -288,52 +264,22 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
 
-    const SetSessionStateJSONFromDB = async (responseData: string, responseActionName: string) => {
 
-        //set the request data to pass to triggers
-        const formattedData = {
-            address: userWalletAddress,
-            stateType: 1,
-        }
-
-        //retrieve the session state
-        const sessionStateData: any = await retrieveSessionStatesTrigger({ payload: formattedData });
-        
-        //check data and initialize it to variable
-        if (sessionStateData?.data) 
-        {
-            //set the DB Json string to sessionStateJSONData object
-            const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
-
-            setInitialFetch(false);  //set to true so it does NOT save to DB
-
-            setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
-                            '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
-                            '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-                            '"price": ' + sessionStateJSONData.price + ', ' +
-                            '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
-                            '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
-                            '"maxSupply":' + sessionStateJSONData.maxSupply + '}')   
-
-            setSessionStateJSON(responseData, responseActionName);
-        }
-
-    }
-
-    
     //This initialize the varSessionStateJSON (async & await)
-    const setSessionStateJSON = (responseData: string, responseActionName: string) => {
+    const setSessionStateFromQueryData = (resultData: string, actionName: string) => {
+
+        //setSessionStateJSON(resultData, actionName);
 
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
-        if( responseData != "" &&  responseActionName != "")
+        if( resultData != "" &&  actionName != "")
         {
-                switch(responseActionName) 
+                switch(actionName) 
                 {
                     case "issueNonFungible":  //step 1 completed
                     {
                         //get the tokenID from the resultData
-                        const tokenID = GetTransactionTokenID(responseData);
+                        const tokenID = GetTransactionTokenID(resultData);
                         sessionStateJSONData.tokenID = tokenID;
 
                         sessionStateJSONData.step = 2;
@@ -342,7 +288,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     } 
                     case "deployNFTTemplateContract":  //step 2 completed
                     {
-                        const contractAddress = GetTransactionContractAddress(responseData);
+                        const contractAddress = GetTransactionContractAddress(resultData);
                         sessionStateJSONData.scAddress = contractAddress;
 
                         sessionStateJSONData.step = 3;
@@ -366,7 +312,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     } 
                 }
 
-                setInitialFetch(false);  //set this so it saves that to DB in step Tracker
+                setDoSaveStepTracker(true);  //set this so it saves to DB in step Tracker
 
                 setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
                                 '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
@@ -470,7 +416,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         HideElement("divStep3");
         HideElement("divStep4");                
         HideElement("divStep5");
-
 
         switch(step) 
         {
@@ -703,7 +648,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
        
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
-        setInitialFetch(false);
+        setDoSaveStepTracker(true);
         
         setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
                           '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
@@ -993,6 +938,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     </h2>
 
                     <div className="grid grid-cols-12 p-create-collection">
+
+
 
                         <div className="col-span-12 lg:col-span-5"  id="divStep1"  hidden={true}>
                             <form onSubmit={handleSubmitStep1(onSubmitStep1)}>
