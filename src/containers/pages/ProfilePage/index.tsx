@@ -504,22 +504,39 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         <>
                           <div className="mb-10 md:text-center">
                             <span className=" mr-4 inline-block mb-6 md:mb-0">
-                              <Link
-                                to={`/collection/create`}
-                                className="c-button c-button--secondary"
-                              >
-                                {" "}
-                                Create collection{" "}
-                              </Link>
+
+
+                              {
+                                /*
+                                  <Link
+                                    to={`/collection/create`}
+                                    className="c-button c-button--secondary"
+                                  >
+                                    {" "}
+                                    Create collection{" "}
+                                  </Link>                                
+                                */
+                              }
+
+                              <a href="javascript:alert('This feature will be enabled with the launch of Youbei Alpha');" className="c-button c-button--secondary inline-block">Create Collection</a>
+
                             </span>
                             <span className=" mr-4 inline-block">
-                              <Link
-                                to={`/collection/register`}
-                                className="c-button c-button--secondary inline-block"
-                              >
-                                {" "}
-                                Register collection{" "}
-                              </Link>
+                              {
+                                /*
+                                  <Link
+                                    to={`/collection/register`}
+                                    className="c-button c-button--secondary inline-block"
+                                  >
+                                    {" "}
+                                    Register collection{" "}
+                                  </Link>
+                                */
+                              }
+
+                            <a href="javascript:alert('This feature will be enabled with the launch of Youbei Alpha');" className="c-button c-button--secondary inline-block">Register Collection</a>
+
+
                             </span>
                           </div>
                           <hr className="text-white mb-10" />

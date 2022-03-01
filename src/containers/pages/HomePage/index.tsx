@@ -61,7 +61,7 @@ export const HomePage = () => {
         }
         */
 
-        alert('This feature will be available in next phase');    
+        alert('This feature will be enabled with the launch of Youbei Alpha');    
     } 
 
     const HandleRegisterCollectionClick = () => {
@@ -75,9 +75,10 @@ export const HomePage = () => {
         {
             alert('Please login to Register a Collection');
         }
+        
         */
 
-        alert('This feature will be available in next phase'); 
+        alert('This feature will be enabled with the launch of Youbei Alpha'); 
     }
 
 
@@ -195,15 +196,22 @@ export const HomePage = () => {
 
 
                                 <p className="u-margin-bottom-spacing-10">
-                                    {loggedIn && (
-                                        <Link to={routePaths.account} className="c-button c-button--primary">
-                                            List an NFT for Free
-                                        </Link>
-                                    )}
-                                    { ! loggedIn && (
-                                        <a href="javascript:alert('Please login to List an NFT');" className="c-button c-button--primary">List an NFT for Free</a>
+                                    {
+                                        /*
+                                            {loggedIn && (
+                                                <Link to={routePaths.account} className="c-button c-button--primary">
+                                                    List an NFT for Free
+                                                </Link>
+                                            )}
+                                            { ! loggedIn && (
+                                                <a href="javascript:alert('Please login to List an NFT');" className="c-button c-button--primary">List an NFT for Free</a>
 
-                                    )}
+                                            )}                                        
+                                        */
+                                    }
+
+                                    <a href="javascript:alert('This feature will be enabled with the launch of Youbei Alpha');" className="c-button c-button--primary">List an NFT for Free</a>
+
                                 </p>
 
          
