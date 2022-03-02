@@ -7,9 +7,7 @@ import * as Dapp from "@elrondnetwork/dapp";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import * as faBrands from "@fortawesome/free-brands-svg-icons";
 
-import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useForm} from "react-hook-form";
 
 import { prepareTransaction } from "utils/transactions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,6 +28,8 @@ export const CollectionPage: (props: any) => any = ({}) => {
   
   const { loggedIn, address: userWalletAddress } = Dapp.useContext();
   const { collectionId } = useParams<UrlParameters>();
+  const [buyLimit,setBuyLimit] = useState<number>(0);
+  const [buyCount,setBuyCount] = useState<number>(0);
 
   const { pathname } = useLocation();
   
@@ -79,9 +79,10 @@ export const CollectionPage: (props: any) => any = ({}) => {
     const { data: txData } = response.data;
 
     var dataArray = txData.split(',');
-
-    var userBuyCount = dataArray[0];
-    var userBuyLimit = dataArray[1];
+    setBuyCount(parseInt(dataArray[0]))
+    setBuyLimit(parseInt(dataArray[1]))
+    // var userBuyCount = dataArray[0];
+    // var userBuyLimit = dataArray[1];
 };
 
   const [hasLoadMore, setHasLoadMore] = useState(true);
@@ -394,6 +395,18 @@ export const CollectionPage: (props: any) => any = ({}) => {
   };
 
   const handleMintTokens = async () => {
+    if (buyCount >= buyLimit && buyLimit != -1){
+
+      toast.error(`${`You have reached your mint limit, Or you are not whitelisted`}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+      return
+    }
     const getBuyNFTResponse: any = await getMintTokensTemplateTrigger({
       userWalletAddress,
       collectionId,
@@ -479,11 +492,12 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
     getCollectionInfoTrigger({ collectionId: collectionId });
 
-    getCollectionByIdTrigger({ collectionId: collectionId });
-
+    getCollectionByIdTrigger({ collectionId: collectionId }).then(r=>{
+      setCollectionDataLoaded(true)
+    }).catch(err=>{
+      console.error(err)
+    });
     getInitialTokens();
-
-    setCollectionDataLoaded(true)
 
   }, []);
 
