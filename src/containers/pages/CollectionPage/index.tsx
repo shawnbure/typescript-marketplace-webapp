@@ -7,9 +7,7 @@ import * as Dapp from "@elrondnetwork/dapp";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import * as faBrands from "@fortawesome/free-brands-svg-icons";
 
-import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useForm} from "react-hook-form";
 
 import { prepareTransaction } from "utils/transactions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,19 +22,29 @@ import {
 } from "services/collections";
 import { shorterAddress } from "utils";
 
+import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens";
+
 export const CollectionPage: (props: any) => any = ({}) => {
+  
   const { loggedIn, address: userWalletAddress } = Dapp.useContext();
+  const { collectionId } = useParams<UrlParameters>();
+  const [buyLimit,setBuyLimit] = useState<number>(0);
+  const [buyCount,setBuyCount] = useState<number>(0);
 
   const { pathname } = useLocation();
+  
   const sendTransaction = Dapp.useSendTransaction();
 
-  const { collectionId } = useParams<UrlParameters>();
-
-  const [getMintTokensTemplateTrigger, {}] = useGetMintTokensTemplateMutation();
+  const [
+    getMintTokensTemplateTrigger, 
+    {}
+  ] = useGetMintTokensTemplateMutation();
 
   const [
-    getCollectionTokensTrigger,
-    { data: collectionTokensData },
+    getCollectionTokensTrigger, 
+    { 
+      data: collectionTokensData 
+    },
   ] = useGetCollectionTokensMutation();
 
   const [
@@ -48,23 +56,41 @@ export const CollectionPage: (props: any) => any = ({}) => {
     },
   ] = useGetCollectionByIdMutation();
 
-  // const [getMintPigsTemplateTrigger, {
-
-  // }] = useGetMintPigsTemplateMutation();
-
   const [
     getCollectionInfoTrigger,
     { data: getCollectionInfoData },
   ] = useGetCollectionInfoMutation();
 
-  const [hasLoadMore, setHasLoadMore] = useState(true);
-  const [shouldDisplayMobileFilters, setShouldDisplayMobileFilters] = useState(
-    false
-  );
+  // this refresh OR create the sessionState in DB
+  const getWhitelistCountLimitTemplateTransaction = async () => {
 
-  const [requestedNumberOfTokens, setRequestedNumberOfTokens] = useState<
-    number
-  >(1);
+    const formattedData = {
+      contractAddress: contractAddress,  //collection contract address
+      userAddress: userWalletAddress,
+    }
+  
+    const response: any = await getWhitelistBuyCountLimitTemplateTrigger({ payload: formattedData });
+
+      if (response.error) {
+        //handle any error here
+        return;
+    }
+
+    const { data: txData } = response.data;
+
+    var dataArray = txData.split(',');
+    setBuyCount(parseInt(dataArray[0]))
+    setBuyLimit(parseInt(dataArray[1]))
+    // var userBuyCount = dataArray[0];
+    // var userBuyLimit = dataArray[1];
+};
+
+  const [hasLoadMore, setHasLoadMore] = useState(true);
+  const [shouldDisplayMobileFilters, setShouldDisplayMobileFilters] = useState(false);
+
+  const [requestedNumberOfTokens, setRequestedNumberOfTokens] = useState<number>(1);
+  
+  const [getWhitelistBuyCountLimitTemplateTrigger] = useGetWhitelistBuyCountLimitTemplateMutation();
 
   const mobileFiltersStyles = shouldDisplayMobileFilters
     ? { zIndex: 100, width: "100%", height: "100%", backgroundColor: "#262b2f" }
@@ -192,6 +218,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const collectionName = collectionData?.data?.collection?.name;
   const collectionTokenId = collectionData?.data?.collection?.tokenId;
   const creatorWalletAddress = collectionData?.data?.creatorWalletAddress;
+  const contractAddress = collectionData?.data?.collection?.contractAddress;
 
   const isCollectionOwner = userWalletAddress === creatorWalletAddress;
 
@@ -368,6 +395,18 @@ export const CollectionPage: (props: any) => any = ({}) => {
   };
 
   const handleMintTokens = async () => {
+    if (buyCount >= buyLimit && buyLimit != -1){
+
+      toast.error(`${`You have reached your mint limit, Or you are not whitelisted`}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+      return
+    }
     const getBuyNFTResponse: any = await getMintTokensTemplateTrigger({
       userWalletAddress,
       collectionId,
@@ -447,13 +486,29 @@ export const CollectionPage: (props: any) => any = ({}) => {
     setShouldDisplayMobileFilters(!shouldDisplayMobileFilters);
   };
 
+  const [collectionDataLoaded, setCollectionDataLoaded] = useState(false);
+
   useEffect(() => {
+
     getCollectionInfoTrigger({ collectionId: collectionId });
 
-    getCollectionByIdTrigger({ collectionId: collectionId });
-
+    getCollectionByIdTrigger({ collectionId: collectionId }).then(r=>{
+      setCollectionDataLoaded(true)
+    }).catch(err=>{
+      console.error(err)
+    });
     getInitialTokens();
+
   }, []);
+
+  useEffect(() => {
+
+    if( collectionDataLoaded ) {
+      console.log(collectionDataLoaded)
+      console.log(contractAddress)
+      getWhitelistCountLimitTemplateTransaction();
+    }
+  }, [collectionDataLoaded]);
 
   if (isErrorGetCollectionData) {
     return (
@@ -584,8 +639,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
               <button
                 onClick={handleMintTokens}
-                className="c-button c-button--primary mb-5"
-              >
+                className="c-button c-button--primary mb-5">
                 Mint now
               </button>
 
