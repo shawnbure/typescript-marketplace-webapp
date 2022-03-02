@@ -24,19 +24,27 @@ import {
 } from "services/collections";
 import { shorterAddress } from "utils";
 
+import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens";
+
 export const CollectionPage: (props: any) => any = ({}) => {
+  
   const { loggedIn, address: userWalletAddress } = Dapp.useContext();
-
-  const { pathname } = useLocation();
-  const sendTransaction = Dapp.useSendTransaction();
-
   const { collectionId } = useParams<UrlParameters>();
 
-  const [getMintTokensTemplateTrigger, {}] = useGetMintTokensTemplateMutation();
+  const { pathname } = useLocation();
+  
+  const sendTransaction = Dapp.useSendTransaction();
 
   const [
-    getCollectionTokensTrigger,
-    { data: collectionTokensData },
+    getMintTokensTemplateTrigger, 
+    {}
+  ] = useGetMintTokensTemplateMutation();
+
+  const [
+    getCollectionTokensTrigger, 
+    { 
+      data: collectionTokensData 
+    },
   ] = useGetCollectionTokensMutation();
 
   const [
@@ -48,23 +56,40 @@ export const CollectionPage: (props: any) => any = ({}) => {
     },
   ] = useGetCollectionByIdMutation();
 
-  // const [getMintPigsTemplateTrigger, {
-
-  // }] = useGetMintPigsTemplateMutation();
-
   const [
     getCollectionInfoTrigger,
     { data: getCollectionInfoData },
   ] = useGetCollectionInfoMutation();
 
-  const [hasLoadMore, setHasLoadMore] = useState(true);
-  const [shouldDisplayMobileFilters, setShouldDisplayMobileFilters] = useState(
-    false
-  );
+  // this refresh OR create the sessionState in DB
+  const getWhitelistCountLimitTemplateTransaction = async () => {
 
-  const [requestedNumberOfTokens, setRequestedNumberOfTokens] = useState<
-    number
-  >(1);
+    const formattedData = {
+      contractAddress: contractAddress,  //collection contract address
+      userAddress: userWalletAddress,
+    }
+  
+    const response: any = await getWhitelistBuyCountLimitTemplateTrigger({ payload: formattedData });
+
+      if (response.error) {
+        //handle any error here
+        return;
+    }
+
+    const { data: txData } = response.data;
+
+    var dataArray = txData.split(',');
+
+    var userBuyCount = dataArray[0];
+    var userBuyLimit = dataArray[1];
+};
+
+  const [hasLoadMore, setHasLoadMore] = useState(true);
+  const [shouldDisplayMobileFilters, setShouldDisplayMobileFilters] = useState(false);
+
+  const [requestedNumberOfTokens, setRequestedNumberOfTokens] = useState<number>(1);
+  
+  const [getWhitelistBuyCountLimitTemplateTrigger] = useGetWhitelistBuyCountLimitTemplateMutation();
 
   const mobileFiltersStyles = shouldDisplayMobileFilters
     ? { zIndex: 100, width: "100%", height: "100%", backgroundColor: "#262b2f" }
@@ -192,6 +217,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const collectionName = collectionData?.data?.collection?.name;
   const collectionTokenId = collectionData?.data?.collection?.tokenId;
   const creatorWalletAddress = collectionData?.data?.creatorWalletAddress;
+  const contractAddress = collectionData?.data?.collection?.contractAddress;
 
   const isCollectionOwner = userWalletAddress === creatorWalletAddress;
 
@@ -447,13 +473,28 @@ export const CollectionPage: (props: any) => any = ({}) => {
     setShouldDisplayMobileFilters(!shouldDisplayMobileFilters);
   };
 
+  const [collectionDataLoaded, setCollectionDataLoaded] = useState(false);
+
   useEffect(() => {
+
     getCollectionInfoTrigger({ collectionId: collectionId });
 
     getCollectionByIdTrigger({ collectionId: collectionId });
 
     getInitialTokens();
+
+    setCollectionDataLoaded(true)
+
   }, []);
+
+  useEffect(() => {
+
+    if( collectionDataLoaded ) {
+      console.log(collectionDataLoaded)
+      console.log(contractAddress)
+      getWhitelistCountLimitTemplateTransaction();
+    }
+  }, [collectionDataLoaded]);
 
   if (isErrorGetCollectionData) {
     return (
@@ -584,8 +625,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
               <button
                 onClick={handleMintTokens}
-                className="c-button c-button--primary mb-5"
-              >
+                className="c-button c-button--primary mb-5">
                 Mint now
               </button>
 
