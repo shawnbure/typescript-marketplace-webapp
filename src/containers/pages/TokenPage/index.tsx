@@ -28,29 +28,9 @@ import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
-// import { routePaths } from 'constants/router';
+import { alphaToastMessage } from 'components/AlphaToastError';
 
 export const TokenPage: (props: any) => any = ({ }) => {
-
-
-    /****************************TEMP PRE ALPHA*********************************/
-
-    const alpha_toast_message = () => {
-
-        toast.error("This feature will be enabled with the launch of Youbei Alpha.", {
-            autoClose: 5000,
-            draggable: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            hideProgressBar: false,
-            position: "bottom-right",
-        });
-
-    return;
-
-    };
-
-    /****************************TEMP PRE ALPHA*********************************/
 
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
@@ -1309,7 +1289,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                 */
                                                 !isOnSale &&
                                                 <div>
-                                                     <div className="c-button c-button--primary u-margin-right-spacing-2"  onClick={alpha_toast_message}>
+                                                     <div className="c-button c-button--primary u-margin-right-spacing-2"  onClick={alphaToastMessage}>
                                                         <span className="u-padding-right-spacing-2">
                                                             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
                                                         </span>
