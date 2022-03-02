@@ -32,6 +32,26 @@ import { useGetCollectionByIdMutation } from 'services/collections';
 
 export const TokenPage: (props: any) => any = ({ }) => {
 
+
+    /****************************TEMP PRE ALPHA*********************************/
+
+    const alpha_toast_message = () => {
+
+        toast.error("This feature will be enabled with the launch of Youbei Alpha.", {
+            autoClose: 5000,
+            draggable: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            hideProgressBar: false,
+            position: "bottom-right",
+        });
+
+    return;
+
+    };
+
+    /****************************TEMP PRE ALPHA*********************************/
+
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
     const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
@@ -1274,6 +1294,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             }
 
                                             {
+                                                /*
                                                 !isOnSale &&
                                                 <div>
                                                     <Link to={`/token/${walletAddressParam}/${collectionId}/${tokenNonce}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
@@ -1284,6 +1305,18 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                             Sell
                                                         </span>
                                                     </Link>
+                                                </div>
+                                                */
+                                                !isOnSale &&
+                                                <div>
+                                                     <div className="c-button c-button--primary u-margin-right-spacing-2"  onClick={alpha_toast_message}>
+                                                        <span className="u-padding-right-spacing-2">
+                                                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                        </span>
+                                                        <span>
+                                                            Sell
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             }
 
