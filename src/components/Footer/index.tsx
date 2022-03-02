@@ -9,17 +9,13 @@ export const Footer = () => {
           <p className="u-text-small u-tac">
             Copyright © 2022 Youbei 
             
+            &nbsp; &nbsp; 
             |
 
-            &nbsp;
-            <a href={'https://erdseanft.gitbook.io/docs/'} target="_blank" className="">Resources</a>            
-            &nbsp;
+              <a href="mailto:youbei-support@elrondnft.io?subject=Youbei - Feedback" className="c-navbar_list-link">Support</a>
             |
-              <Link to={routePaths.dao} className="c-navbar_list-link">
-                ENFT-DAO 
-              </Link>
-
-                                    
+            
+            <a href="https://elrondnft.io/" target="_blank" className="c-navbar_list-link">Made with ❤️ by the ENFT DAO</a>
           </p>
       </div>
     </footer>

@@ -195,9 +195,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
         const name = isOurs ? token.tokenName : token.name;
         const ownerWalletAddress = isOurs ? tokenData.ownerWalletAddress : walletAddressParam;
         const imageLink: string = isOurs ? token.imageLink : atob(token?.uris?.[0] || '');
-        const metadataLink: string = isOurs ? token.metadataLink : atob(token?.uris?.[1] || '');
+        let metadataLink: string = isOurs ? token.metadataLink : atob(token?.uris?.[1] || '');
         const royaltiesPercent = isOurs ? token.royaltiesPercent : parseFloat(token.royalties) / 100;
-
+        if (metadataLink.indexOf(".json") == -1){
+            metadataLink = metadataLink+".json" //TODO REMOVE , shoudl be added to contract ? 
+        }
         const baseData = {
 
             name,
@@ -1145,8 +1147,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                 </span>
 
                                                 <span className="u-text-theme-anchor-link">
-
-                                                    <a href={metadataLink} target="_blank">
+                                                    <a href={metadataLink} target="_blank"> 
                                                         <FontAwesomeIcon style={{ width: 15, height: 15, cursor: "pointer" }} className="inline-block " icon={faIcons.faExternalLinkAlt} />
                                                     </a>
 

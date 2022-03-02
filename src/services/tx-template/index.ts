@@ -129,6 +129,7 @@ export const txTemplateApi = createApi({
             },
         }),
 
+        
         getDeployCollectionTemplate: builder.mutation<any, any>({
 
             query: ({
