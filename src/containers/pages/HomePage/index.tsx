@@ -21,7 +21,7 @@ import 'swiper/swiper.min.css';
  import { useGetAllCollectionMutation } from 'services/collections';
  import * as Dapp from "@elrondnetwork/dapp";
 import { url } from 'inspector';
-
+import { alphaToastMessage } from 'components/AlphaToastError';
 
 
 SwiperCore.use([Autoplay, Pagination, Navigation]);
@@ -61,7 +61,7 @@ export const HomePage = () => {
         }
         */
 
-        alert('This feature will be enabled with the launch of Youbei Alpha');    
+        alphaToastMessage();  
     } 
 
     const HandleRegisterCollectionClick = () => {
@@ -78,7 +78,7 @@ export const HomePage = () => {
         
         */
 
-        alert('This feature will be enabled with the launch of Youbei Alpha'); 
+        alphaToastMessage();
     }
 
 
@@ -210,7 +210,7 @@ export const HomePage = () => {
                                         */
                                     }
 
-                                    <a href="javascript:alert('This feature will be enabled with the launch of Youbei Alpha');" className="c-button c-button--primary">List an NFT for Free</a>
+                                    <div onClick={alphaToastMessage} className="c-button c-button--primary">List an NFT for Free</div>
 
                                 </p>
 
@@ -218,7 +218,7 @@ export const HomePage = () => {
 
 
 
-                            </div>
+                            </div>ß
 
                         </div>
 

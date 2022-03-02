@@ -28,7 +28,7 @@ import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
-// import { routePaths } from 'constants/router';
+import { alphaToastMessage } from 'components/AlphaToastError';
 
 export const TokenPage: (props: any) => any = ({ }) => {
 
@@ -1274,6 +1274,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             }
 
                                             {
+                                                /*
                                                 !isOnSale &&
                                                 <div>
                                                     <Link to={`/token/${walletAddressParam}/${collectionId}/${tokenNonce}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
@@ -1284,6 +1285,18 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                             Sell
                                                         </span>
                                                     </Link>
+                                                </div>
+                                                */
+                                                !isOnSale &&
+                                                <div>
+                                                     <div className="c-button c-button--primary u-margin-right-spacing-2"  onClick={alphaToastMessage}>
+                                                        <span className="u-padding-right-spacing-2">
+                                                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                        </span>
+                                                        <span>
+                                                            Sell
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             }
 

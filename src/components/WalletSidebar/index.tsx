@@ -19,7 +19,7 @@ import { useGetDepositTemplateMutation } from "services/deposit";
 import Collapsible from "react-collapsible";
 import { SearchBar } from "components";
 import { useGetAccessTokenMutation } from "services/auth";
-
+import { alphaToastMessage } from 'components/AlphaToastError';
 export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any = ({
     overlayClickCallback
 }) => {
@@ -384,7 +384,19 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
 
                 <div className="mb-5">
 
-                    <Popup
+                    {/**************Remove after alpha ****************************************/}
+                    <div onClick={alphaToastMessage} className="c-button c-button--secondary u-margin-top-spacing-2">
+                        <span className="u-padding-right-spacing-2">
+                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faPiggyBank} />
+                        </span>
+                        <span>
+                            Deposit
+                        </span>
+                    </div>
+                    {/**************Remove after alpha below pop up is the production code****************************************/}
+                    {/*
+
+                    <Popup 
                         modal
                         className="c-modal_container"
                         trigger={
@@ -557,7 +569,8 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                             </div>
                         )}
                     </Popup>
-
+                    
+                    */}
 
                 </div>
 
