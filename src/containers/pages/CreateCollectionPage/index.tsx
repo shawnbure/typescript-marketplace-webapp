@@ -30,6 +30,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         address: userWalletAddress,
     } = Dapp.useContext();
     
+    const [isOpenLoading, setIsOpenLoading] = useState(true)
+
     
     //for inital load of the page / useEffect onChange
     const [intialLoad, setIntialLoad] = useState(false)
@@ -46,14 +48,79 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [urlTxHashHandler, setUrlTxHashHandler] = useState(false)
 
 
+    {
+        console.log("********* inside { } *********  ");
 
+
+
+        /*
+        const txtHash = getTxHash();
+
+        if( txtHash != null ) // verify it's not null
+        {
+
+        }
+
+        
+        if( isOpenLoading )
+        {
+            console.log("inside - isOpenLoading");
+            
+            const txtHash = getTxHash();
+
+            if( txtHash != null ) // verify it's not null
+            {
+                console.log("txtHast is NOT NULL")
+            }
+            else
+            {
+                console.log("txtHast is null")
+            }
+
+            
+
+
+            setIsOpenLoading(false);
+
+            setIntialLoad(true);
+        }
+        */
+
+    }
+
+
+    
 
     useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
 
+        console.log("======== inside useEffect [] ");
+
+        
         /*
         //UNCOMMENT TO TEST
         deleteSessionStateTransaction()
         return;
+        */
+
+
+
+
+
+        //deleteSessionStatesByAccountIdByStateTypeTrigger
+
+        /*
+            useEffect(() => {
+
+                getCollectionInfoTrigger({ collectionId: collectionId });
+
+                getCollectionByIdTrigger({ collectionId: collectionId }).then(r=>{
+                setCollectionDataLoaded(true)
+                }).catch(err=>{
+                console.error(err)
+                });
+                getInitialTokens();
+
+            }, []);        
         */
         
         setIntialLoad(true);
@@ -427,27 +494,44 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case 2:  
             {
                 //set the token id 
+               
+                /*
                 var inputName = document.getElementById("tokenId") as HTMLInputElement;
                 inputName.value = tokenID;
                 inputName.readOnly = true;
-                
+                */
+
+                var spanTokenId = document.getElementById("spanTokenId") as HTMLInputElement;
+                spanTokenId.innerHTML = tokenID;
+
                 ShowElement("divStep2");
 
                 break;
             } 
             case 3:
             {
+                /*
                 var step3SCAddress = document.getElementById("step3SCAddress") as HTMLInputElement;
                 step3SCAddress.value = scAddress;
                 step3SCAddress.readOnly = true;
-
+                */
+                
+                var spanStep3SCAddress = document.getElementById("step3SCAddress") as HTMLInputElement;
+                spanStep3SCAddress.innerHTML = scAddress;
+                
                 ShowElement("divStep3");
-                OnFocusElement("submit_step3");
 
                 break;
             } 
             case 4:
             {
+                var spanSetRoleAddress = document.getElementById("SetRole_Address") as HTMLInputElement;
+                spanSetRoleAddress.innerHTML = scAddress;
+
+                var spanSetRoleTokenId = document.getElementById("SetRole_TokenId") as HTMLInputElement;
+                spanSetRoleTokenId.innerHTML = tokenID;
+
+                /*
                 var setRoleAddress = document.getElementById("SetRole_Address") as HTMLInputElement;
                 setRoleAddress.value = scAddress;
                 setRoleAddress.readOnly = true;
@@ -455,16 +539,22 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 var setRoleTokenId = document.getElementById("SetRole_TokenId") as HTMLInputElement;
                 setRoleTokenId.value = tokenID;
                 setRoleTokenId.readOnly = true;
-                
+                */
+
                 ShowElement("divStep4");
 
                 break;
             }     
             case 5:
             {
+                var spanCollectionTokenId = document.getElementById("collectionTokenId") as HTMLInputElement;
+                spanCollectionTokenId.innerHTML = tokenID;
+                
+                /*
                 var collectionTokenId = document.getElementById("collectionTokenId") as HTMLInputElement;
                 collectionTokenId.value = tokenID;
                 collectionTokenId.readOnly = true;
+                */
 
                 ShowElement("divStep5");
 
@@ -643,13 +733,17 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         data.saleStart = d.getTime() / 1000;
 
         //Append on .json to the MetaDataBase (based on Hashlips standards)
-        data.metadataBase = data.metadataBase //+ ".json"
+        //data.metadataBase = data.metadataBase //+ ".json"
 
        
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
         setDoSaveStepTracker(true);
-        
+  
+        //set the token cause it was
+        //data.tokenID = sessionStateJSONData.tokenID 
+
+  
         setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
                           '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
                           '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
@@ -662,6 +756,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         data.imageExt = mediaTypeSelect.value
 
+         
+
         const formattedData = {
             ...data,
             imageExt: mediaTypeSelect.value,
@@ -673,7 +769,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             succesCallbackRoute: pathname,
             getTemplateTrigger: getDeployCollectionTemplateTrigger,
         });
-
+      
         
     };
 
@@ -682,7 +778,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const schemaStep3 = yup.object({
         
-        hexWalletAddress: yup.string().required(),
+        //hexWalletAddress: yup.string().required(),
 
     }).required();
 
@@ -694,9 +790,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep3 = (data: any) => {
 
-        const { hexWalletAddress } = data;
+        const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
-        const getTemplateData = { userWalletAddress, contractAddress: new Address(hexWalletAddress).toString() };
+        
+        //const { hexWalletAddress } = data;
+
+
+        
+        const getTemplateData = { userWalletAddress, contractAddress: new Address(sessionStateJSONData.scAddress).toString() };
 
         signTemplateTransaction({
             getTemplateData,
@@ -712,8 +813,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     // ================================== STEP 4 ==================================
 
     const schemaStep4 = yup.object({
-        collectionId: yup.string().required(),
-        hexWalletAddress: yup.string().required(),
+        //collectionId: yup.string().required(),
+        //hexWalletAddress: yup.string().required(),
     }).required();
 
     const { register: registerStep4, handleSubmit: handleSubmitStep4, formState: { errors: errorsStep4 } } = useForm({
@@ -724,15 +825,24 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep4 = (data: any) => {
 
-        const { hexWalletAddress, collectionId } = data;
+        //const { hexWalletAddress, collectionId } = data;
+
+        //userAddress := c.Param("userAddress")
+        //tokenId := c.Param("tokenId")
+        //contractAddress := c.Param("contractAddress")
 
 
-        data.collectionId = asciiToHex(data.collectionId)
+        const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
+
+        console.log( "sessionStateJSONData.tokenID: " + sessionStateJSONData.tokenID)
+        console.log( "sessionStateJSONData.scAddress: " + sessionStateJSONData.scAddress)
+
+        
 
         const getTemplateData = {
             userWalletAddress,
-            collectionId: hexToAscii(data.collectionId),
-            contractAddress: new Address(hexWalletAddress).toString()
+            collectionId: sessionStateJSONData.tokenID,
+            contractAddress: new Address(sessionStateJSONData.scAddress).toString()
         };
 
         signTemplateTransaction({
@@ -762,7 +872,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         telegramLink: yup.string(),
         twitterLink: yup.string(),
         website: yup.string(),
-        collectionTokenId: yup.string(),
 
     }).required();
 
@@ -930,7 +1039,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 <div className="col-span-12 m-4 md:m-20">
 
                     <div className="mb-10">
-                        <Link to={`/account`}> {`< Back to account`}</Link>
+                        <Link to={`/account`}> {`< Back to account`}</Link> |
+
                     </div>
 
                     <h2 className="text-2xl md:text-5xl u-text-bold mb-20">
@@ -1008,15 +1118,22 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     Instruction: Enter the attributes and details of the smart contract. <br/><br/>
                                 </p>                                
 
-                                <p className="text-xl mb-2">
+                              <p className="text-xl mb-2">
                                     Token Id
                                 </p>
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <input id="tokenId" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                        <span id="spanTokenId" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">TokenID</span>
+
+                                        {
+                                            /*
+                                            <input id="tokenId" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                            */
+                                        }
+                                        
                                     </div>
-                                </div>
+                                </div>  
 
                                 <p>
                                     Royalties
@@ -1132,12 +1249,33 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     Instruction: Sign the transaction to transfer ownership of the smart contract.<br/><br/>
                                 </p> 
                                 
+
+                                <p className="text-xl mb-2">
+                                    Minter Contract Address (Hex Encoded)
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <span id="step3SCAddress" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">SC Address</span>
+
+                                        {
+                                            /*
+                                            <span className="block mb-2">  Minter Contract Address (Hex Encoded)</span>
+                                            <input {...registerStep3('hexWalletAddress')} id="step3SCAddress" autoComplete="off" readOnly={true} type="text" className="text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+
+
+                                            <input id="tokenId" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                            */
+                                        }
+                                        
+                                    </div>
+                                </div>
+
+
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
 
                                         <label className="block w-full">
-                                            <span className="block mb-2">  Minter Contract Address (Hex Encoded)</span>
-                                            <input {...registerStep3('hexWalletAddress')} id="step3SCAddress" autoComplete="off" readOnly={true} type="text" className="text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
                                         </label>
                                     </div>
@@ -1167,6 +1305,34 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
 
+
+
+                                    <p className="text-xl mb-2">
+                                        Minter Contract Address (Hex Encoded):
+                                    </p>
+
+                                    <div className="grid grid-cols-9 mb-4">
+                                        <div className="col-span-12">
+                                            <span id="SetRole_Address" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">SC Address</span>
+                                            
+                                        </div>
+                                    </div>
+
+                                    
+                                    <p className="text-xl mb-2">
+                                        Token ID:
+                                    </p>
+
+                                    <div className="grid grid-cols-9 mb-4">
+                                        <div className="col-span-12">
+                                            <span id="SetRole_TokenId" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">SC Address</span>
+                                            
+                                        </div>
+                                    </div>
+
+
+                                    {
+                                        /*
                                         <div className="mb-4">
                                             <label className="block w-full">
 
@@ -1175,7 +1341,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                             </label>
                                         </div>
-        
+                                        
                                         <div>
                                             <label className="block w-full">
 
@@ -1184,6 +1350,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                             </label>
                                         </div>
+
+
+                                        */
+                                    }
+
+
                                     </div>
                                 </div>
 
@@ -1208,14 +1380,32 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     Instruction: Enter the name and details of the collection.<br/><br/>
                                 </p> 
 
+
                                 <p className="text-xl mb-2">
-                                    Token ID
+                                        Token ID:
                                 </p>
+
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <input {...registerStep5('collectionTokenId')}  id="collectionTokenId" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                        <span id="collectionTokenId" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">SC Address</span>
+                                        
                                     </div>
                                 </div>
+
+
+                                {
+                                    /*
+                                        <p className="text-xl mb-2">
+                                            Token ID
+                                        </p>
+                                        <div className="grid grid-cols-9 mb-4">
+                                            <div className="col-span-12">
+                                                <input {...registerStep5('collectionTokenId')}  id="collectionTokenId" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                            </div>
+                                        </div>                                    
+                                    */
+                                }
+
 
 
                                 <p className="text-xl mb-2">
