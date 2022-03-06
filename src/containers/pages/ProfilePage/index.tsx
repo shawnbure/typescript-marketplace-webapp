@@ -20,6 +20,8 @@ import { Collapse } from "components";
 
 import * as faBrands from "@fortawesome/free-brands-svg-icons";
 
+import { alphaToastMessage } from 'components/AlphaToastError';
+
 export const ProfilePage: (props: any) => any = ({}) => {
   const { walletAddress: walletAddressParam } = useParams<UrlParameters>();
 
@@ -518,7 +520,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                                 */
                               }
 
-                              <a href="javascript:alert('This feature will be enabled with the launch of Youbei Alpha');" className="c-button c-button--secondary inline-block">Create Collection</a>
+                              <div onClick={alphaToastMessage} className="c-button c-button--secondary inline-block">Create Collection</div>
 
                             </span>
                             <span className=" mr-4 inline-block">
@@ -534,7 +536,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                                 */
                               }
 
-                            <a href="javascript:alert('This feature will be enabled with the launch of Youbei Alpha');" className="c-button c-button--secondary inline-block">Register Collection</a>
+                            <div onClick={alphaToastMessage} className="c-button c-button--secondary inline-block">Register Collection</div>
 
 
                             </span>
