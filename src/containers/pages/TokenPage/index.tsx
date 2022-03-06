@@ -935,7 +935,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                             const itemsTotal = collectionData?.data?.statistics?.itemsTotal || 0;
 
-                                            const trait = collectionData?.data?.statistics?.attributes?.find((attribute: any) => attribute.trait_type === trait_type && attribute.value === value);
+                                            const trait = collectionData?.data?.statistics?.attributes?.find((attribute: any) => {
+                                                return attribute.trait_type === trait_type && attribute.value === value
+                                            });
 
                                             return (
                                                 <div className="c-property">
