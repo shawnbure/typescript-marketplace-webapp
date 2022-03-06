@@ -255,14 +255,14 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
 
-    if (!isOurs && tokenData.tokenData.balance === "0" && walletAddressParam) {
+    // if (!isOurs && tokenData.tokenData.balance === "0" && walletAddressParam) {
 
-        return (<>
-            <p className="my-10 text-2xl text-center">{walletAddressParam}</p>
-            <p className="my-10 text-2xl text-center">is not the owner of  {collectionId} {tokenNonce}</p>
-        </>)
+    //     return (<>
+    //         <p className="my-10 text-2xl text-center">{walletAddressParam}</p>
+    //         <p className="my-10 text-2xl text-center">is not the owner of  {collectionId} {tokenNonce}</p>
+    //     </>)
 
-    }
+    // }
 
 
     if (Boolean(metadataLink) && isUninitializedGetTokenMetadata) {
