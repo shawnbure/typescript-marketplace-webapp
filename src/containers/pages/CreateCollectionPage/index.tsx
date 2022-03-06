@@ -131,6 +131,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => { 
         
+        console.log("initialLoad started")
         if( intialLoad )
         {
             initSessionStateJSONFromDB();            
@@ -143,11 +144,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {  //Invoked when "urlTxHashHandler" is SET 
         
+        console.log("urlTxHashHandler: " + urlTxHashHandler)
+
         if( urlTxHashHandler )  //reason to check this is onload, it's false - once we set the value, set to to true to get it
         {
+            
             //get the query param 'txHash'
             const txtHash = getTxHash();
             
+            console.log("txtHash: " + txtHash )
+
             if( txtHash != null ) // verify it's not null
             {
                 const queryStatus = getQueryStatus()  //check the status
@@ -171,6 +177,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     httpRequest.open("GET", url);
                     httpRequest.send();
                     
+                    console.log("url: " + url)
+
                     httpRequest.onreadystatechange = (e) => 
                     {
                         //check read state (4: done) and status
@@ -178,6 +186,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         {
                             if( httpRequest.responseText  )
                             {                
+                                console.log("httpRequest.responseText: " + httpRequest.responseText )
+
                                 const data = httpRequest.responseText;
         
                                 try {
@@ -190,9 +200,42 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                     setSessionStateFromQueryData(resultData, actionName);
 
+                                    //sessionStorage.setItem("RefreshURLEncoded", "0");
+                                    
                                 } catch(e) 
                                 {
+                                    console.log(e)
                                     //there's a parse error - handle it here 
+
+                                    window.location.reload()
+
+
+
+
+                                    /*
+                                    setTimeout(() => {
+                                        sessionStorage.setItem("RefreshURLEncoded", "1");
+                                 
+                                        window.location.reload() //reload will redo the page to parse again           
+                                        
+                                    }, 1000);
+
+                                    var refreshURLEncoded = sessionStorage.getItem("RefreshURLEncoded");
+                            
+                                    if( refreshURLEncoded == null || refreshURLEncoded == "0" )
+                                    {
+ 
+                                        setTimeout(() => {
+                                            sessionStorage.setItem("RefreshURLEncoded", "1");
+                                     
+                                            window.location.reload() //reload will redo the page to parse again           
+                                            
+                                        }, 500);
+
+
+                                    }
+                                    */
+                                    
                                 }
                             }
                         }                
@@ -282,6 +325,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const initSessionStateJSONFromDB = async () => {
 
+        console.log("initSessionStateJSONFromDB");
+
         //set the request data to pass to triggers
         const formattedData = {
             address: userWalletAddress,
@@ -318,7 +363,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     setUrlTxHashHandler(true);  //delay for a sec
                 }, 500);
                 */
-
+                console.log("setUrlTxHashHandler")
                 setUrlTxHashHandler(true);
             }
             else
@@ -395,11 +440,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
    
     }
 
+    const handleStartOver = async () => {
 
+        console.log("handleStartOver - deleteSessionStateTransaction")
+        deleteSessionStateTransaction();
 
-
-
-
+        
+    }
+    
   
     
     const [deleteSessionStatesByAccountIdByStateTypeTrigger] = useDeleteSessionStatesByAccountIdByStateTypeMutation();
@@ -412,8 +460,15 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             stateType: 1,
         }
 
-        const response: any = deleteSessionStatesByAccountIdByStateTypeTrigger({ payload: formattedData });
-
+        const response: any = deleteSessionStatesByAccountIdByStateTypeTrigger({ payload: formattedData }).then(r=>{
+            
+            console.log("Complete Delete")
+            initSessionStateJSONFromDB();
+            
+            }).catch(err=>{
+                console.error(err)
+            });
+        
         if (response.error) {
              //handle any error here
             return;
@@ -484,11 +539,22 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         HideElement("divStep4");                
         HideElement("divStep5");
 
+        console.log("STEP: " + step)
+
         switch(step) 
         {
             case 1:  
             {
+                 
+
+                var inputTokenName = document.getElementById("token_name") as HTMLInputElement;
+                inputTokenName.value = "";
+
+                var inputTokenTicker = document.getElementById("token_ticker") as HTMLInputElement;
+                inputTokenTicker.value = "";
+
                 ShowElement("divStep1");
+
                 break;
             }
             case 2:  
@@ -1035,11 +1101,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         <div className="p-account-settings-page">
 
             <div className="grid grid-cols-12">
-
+            pathname
                 <div className="col-span-12 m-4 md:m-20">
 
                     <div className="mb-10">
-                        <Link to={`/account`}> {`< Back to account`}</Link> |
+                        <Link to={`/account`}> &lt; Back to account </Link> 
+                        &nbsp; <span className=" mb-2">|</span> &nbsp;
+                        <Link to={pathname} onClick={handleStartOver}>Reset &amp; Start Over</Link>
 
                     </div>
 
@@ -1066,7 +1134,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 <p className="text-xl mb-2">
                                     Token Name
                                 </p>
-
+                                
                                 <p className="mb-2 text-lg text-red-500">{errorsStep1.name?.message}</p>
 
                                 <div className="grid grid-cols-9 mb-4">
