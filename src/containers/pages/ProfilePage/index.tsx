@@ -381,7 +381,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                 </Link>
               </div>
 
-              <div className="c-icon-band_item">
+              {/* <div className="c-icon-band_item">
                 <Link className="inline-block" to={`/royalties`}>
                   <FontAwesomeIcon
                     className="text-white"
@@ -389,7 +389,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                     icon={faIcons.faCrown}
                   />
                 </Link>
-              </div>
+              </div> */}
             </div>
           )}
 
