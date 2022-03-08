@@ -380,7 +380,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                   />
                 </Link>
               </div>
-
+            {/* TODO UNCOMMENT */}
               {/* <div className="c-icon-band_item">
                 <Link className="inline-block" to={`/royalties`}>
                   <FontAwesomeIcon
