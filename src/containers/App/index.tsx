@@ -198,7 +198,7 @@ export const App: () => JSX.Element = () => {
 
                         <Route path={"/pigselated"} exact={true} >
 
-                            <Redirect to={"/collection/HELIOS-d263f3"} />
+                            <Redirect to={"/collection/HELIOS2022-1ea0f2"} />
 
                         </Route>
 
