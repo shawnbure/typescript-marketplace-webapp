@@ -30,6 +30,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         address: userWalletAddress,
     } = Dapp.useContext();
     
+    const [isOpenLoading, setIsOpenLoading] = useState(true)
+
     
     //for inital load of the page / useEffect onChange
     const [intialLoad, setIntialLoad] = useState(false)
@@ -46,16 +48,57 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [urlTxHashHandler, setUrlTxHashHandler] = useState(false)
 
 
+    const [isButtonClicked, setIsButtonClicked] = useState(false)
 
+    {
+        console.log("********* inside { } *********  ");
+
+
+
+
+        /*
+        const txtHash = getTxHash();
+
+        if( txtHash != null ) // verify it's not null
+        {
+
+        }
+
+        
+        if( isOpenLoading )
+        {
+            console.log("inside - isOpenLoading");
+            
+            const txtHash = getTxHash();
+
+            if( txtHash != null ) // verify it's not null
+            {
+                console.log("txtHast is NOT NULL")
+            }
+            else
+            {
+                console.log("txtHast is null")
+            }
+
+            
+
+
+            setIsOpenLoading(false);
+
+            setIntialLoad(true);
+        }
+        */
+
+    }
+
+
+    
 
     useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
 
-        /*
-        //UNCOMMENT TO TEST
-        deleteSessionStateTransaction()
-        return;
-        */
-        
+        console.log("======== inside useEffect [] ");
+
+
         setIntialLoad(true);
 
       },[]);  //only called once since it's the empty [] parameters
@@ -64,6 +107,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => { 
         
+        console.log("initialLoad started")
         if( intialLoad )
         {
             initSessionStateJSONFromDB();            
@@ -76,11 +120,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {  //Invoked when "urlTxHashHandler" is SET 
         
+        console.log("urlTxHashHandler: " + urlTxHashHandler)
+
         if( urlTxHashHandler )  //reason to check this is onload, it's false - once we set the value, set to to true to get it
         {
+            
             //get the query param 'txHash'
             const txtHash = getTxHash();
             
+            console.log("txtHash: " + txtHash )
+
             if( txtHash != null ) // verify it's not null
             {
                 const queryStatus = getQueryStatus()  //check the status
@@ -104,6 +153,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     httpRequest.open("GET", url);
                     httpRequest.send();
                     
+                    console.log("url: " + url)
+
                     httpRequest.onreadystatechange = (e) => 
                     {
                         //check read state (4: done) and status
@@ -111,6 +162,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         {
                             if( httpRequest.responseText  )
                             {                
+                                console.log("httpRequest.responseText: " + httpRequest.responseText )
+
                                 const data = httpRequest.responseText;
         
                                 try {
@@ -123,9 +176,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                     setSessionStateFromQueryData(resultData, actionName);
 
+                                    
                                 } catch(e) 
                                 {
+                                    console.log(e)
                                     //there's a parse error - handle it here 
+
+                                    window.location.reload()
+                                    
                                 }
                             }
                         }                
@@ -215,6 +273,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const initSessionStateJSONFromDB = async () => {
 
+        console.log("initSessionStateJSONFromDB");
+
         //set the request data to pass to triggers
         const formattedData = {
             address: userWalletAddress,
@@ -251,7 +311,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     setUrlTxHashHandler(true);  //delay for a sec
                 }, 500);
                 */
-
+                console.log("setUrlTxHashHandler")
                 setUrlTxHashHandler(true);
             }
             else
@@ -328,11 +388,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
    
     }
 
+    const handleStartOver = async () => {
 
+        console.log("handleStartOver - deleteSessionStateTransaction")
+        deleteSessionStateTransaction();
 
-
-
-
+        
+    }
+    
   
     
     const [deleteSessionStatesByAccountIdByStateTypeTrigger] = useDeleteSessionStatesByAccountIdByStateTypeMutation();
@@ -345,8 +408,15 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             stateType: 1,
         }
 
-        const response: any = deleteSessionStatesByAccountIdByStateTypeTrigger({ payload: formattedData });
-
+        const response: any = deleteSessionStatesByAccountIdByStateTypeTrigger({ payload: formattedData }).then(r=>{
+            
+            console.log("Complete Delete")
+            initSessionStateJSONFromDB();
+            
+            }).catch(err=>{
+                console.error(err)
+            });
+        
         if (response.error) {
              //handle any error here
             return;
@@ -417,55 +487,60 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         HideElement("divStep4");                
         HideElement("divStep5");
 
+        console.log("STEP: " + step)
+
         switch(step) 
         {
             case 1:  
             {
+                 
+
+                var inputTokenName = document.getElementById("token_name") as HTMLInputElement;
+                inputTokenName.value = "";
+
+                var inputTokenTicker = document.getElementById("token_ticker") as HTMLInputElement;
+                inputTokenTicker.value = "";
+
                 ShowElement("divStep1");
+
                 break;
             }
             case 2:  
             {
-                //set the token id 
-                var inputName = document.getElementById("tokenId") as HTMLInputElement;
-                inputName.value = tokenID;
-                inputName.readOnly = true;
-                
+
+                var spanTokenId = document.getElementById("spanTokenId") as HTMLInputElement;
+                spanTokenId.innerHTML = tokenID;
+
                 ShowElement("divStep2");
 
                 break;
             } 
             case 3:
             {
-                var step3SCAddress = document.getElementById("step3SCAddress") as HTMLInputElement;
-                step3SCAddress.value = scAddress;
-                step3SCAddress.readOnly = true;
-
+                var spanStep3SCAddress = document.getElementById("step3SCAddress") as HTMLInputElement;
+                spanStep3SCAddress.innerHTML = scAddress;
+                
                 ShowElement("divStep3");
-                OnFocusElement("submit_step3");
 
                 break;
             } 
             case 4:
             {
-                var setRoleAddress = document.getElementById("SetRole_Address") as HTMLInputElement;
-                setRoleAddress.value = scAddress;
-                setRoleAddress.readOnly = true;
+                var spanSetRoleAddress = document.getElementById("SetRole_Address") as HTMLInputElement;
+                spanSetRoleAddress.innerHTML = scAddress;
 
-                var setRoleTokenId = document.getElementById("SetRole_TokenId") as HTMLInputElement;
-                setRoleTokenId.value = tokenID;
-                setRoleTokenId.readOnly = true;
-                
+                var spanSetRoleTokenId = document.getElementById("SetRole_TokenId") as HTMLInputElement;
+                spanSetRoleTokenId.innerHTML = tokenID;
+
                 ShowElement("divStep4");
 
                 break;
             }     
             case 5:
             {
-                var collectionTokenId = document.getElementById("collectionTokenId") as HTMLInputElement;
-                collectionTokenId.value = tokenID;
-                collectionTokenId.readOnly = true;
-
+                var spanCollectionTokenId = document.getElementById("collectionTokenId") as HTMLInputElement;
+                spanCollectionTokenId.innerHTML = tokenID;
+                
                 ShowElement("divStep5");
 
                 break;
@@ -570,28 +645,26 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const { register: registerStep1, handleSubmit: handleSubmitStep1, control: controlStep1, setError: setErrorStep1, clearErrors: clearErrorsStep1, formState: { errors: errorsStep1 } } = useForm({
 
-        // defaultValues: {
-        //     name: "",
-        //     ticker: ""
-        // },
-
         resolver: yupResolver(schemaStep1),
 
     });
 
     const onSubmitStep1 = (data: any) => {
 
-        const { name, ticker } = data;
+        if( ! isButtonClicked )
+        {
+            setIsButtonClicked(true)
 
-        //ticker is force to be upper
-        const getTemplateData = { userWalletAddress, tokenName: name, tokenTicker: ticker };
+            const { name, ticker } = data;
 
-
-        const getTemplateTrigger = getIssueNftTemplateTrigger;
-
-        signTemplateTransaction({ getTemplateTrigger, getTemplateData, succesCallbackRoute: pathname });
-
-        
+            //ticker is force to be upper
+            const getTemplateData = { userWalletAddress, tokenName: name, tokenTicker: ticker };
+    
+    
+            const getTemplateTrigger = getIssueNftTemplateTrigger;
+    
+            signTemplateTransaction({ getTemplateTrigger, getTemplateData, succesCallbackRoute: pathname });           
+        }
     };
 
 
@@ -623,10 +696,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const { register: registerStep2, handleSubmit: handleSubmitStep2, control: controlStep2, setError: setErrorStep2, clearErrors: clearErrorsStep2, formState: { errors: errorsStep2 } } = useForm({
 
-        // defaultValues: {
-        //     name: "",
-        //     ticker: ""
-        // },
 
         resolver: yupResolver(schemaStep2),
 
@@ -635,45 +704,52 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
     const onSubmitStep2 = (data: any) => {
 
-        //sale start date is now current date with time of 12am 
-        var d = new Date();     //current date
-        d.setHours(0,0,0,0);    //set to 12am
 
-        //set to to saleStart
-        data.saleStart = d.getTime() / 1000;
+        if( ! isButtonClicked )
+        {
+            setIsButtonClicked(true)
 
-        //Append on .json to the MetaDataBase (based on Hashlips standards)
-        data.metadataBase = data.metadataBase //+ ".json"
+            //sale start date is now current date with time of 12am 
+            var d = new Date();     //current date
+            d.setHours(0,0,0,0);    //set to 12am
 
-       
-        const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
-
-        setDoSaveStepTracker(true);
-        
-        setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
-                          '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
-                          '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
-                          '"price":' + data.price + ', ' +
-                          '"tokenBaseURI": "' + data.imageBase + '", ' +
-                          '"metaDataBaseURI": "' + data.metadataBase + '", ' +
-                          '"maxSupply":' + data.maxSupply + '}')  
-        
+            //set to to saleStart
+            data.saleStart = d.getTime() / 1000;
 
 
-        data.imageExt = mediaTypeSelect.value
+            const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
-        const formattedData = {
-            ...data,
-            imageExt: mediaTypeSelect.value,
-            tokenId: sessionStateJSONData.tokenID, 
-        };
+            setDoSaveStepTracker(true);
+    
+    
+            setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
+                            '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
+                            '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
+                            '"price":' + data.price + ', ' +
+                            '"tokenBaseURI": "' + data.imageBase + '", ' +
+                            '"metaDataBaseURI": "' + data.metadataBase + '", ' +
+                            '"maxSupply":' + data.maxSupply + '}')  
+            
 
-        signTemplateTransaction({
-            getTemplateData: { ...formattedData, userWalletAddress },
-            succesCallbackRoute: pathname,
-            getTemplateTrigger: getDeployCollectionTemplateTrigger,
-        });
 
+            data.imageExt = mediaTypeSelect.value
+
+            
+            const formattedData = {
+                ...data,
+                imageExt: mediaTypeSelect.value,
+                tokenId: sessionStateJSONData.tokenID, 
+            };
+
+            signTemplateTransaction({
+                getTemplateData: { ...formattedData, userWalletAddress },
+                succesCallbackRoute: pathname,
+                getTemplateTrigger: getDeployCollectionTemplateTrigger,
+            });
+        }
+
+
+      
         
     };
 
@@ -682,7 +758,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const schemaStep3 = yup.object({
         
-        hexWalletAddress: yup.string().required(),
+        //hexWalletAddress: yup.string().required(),
 
     }).required();
 
@@ -694,17 +770,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep3 = (data: any) => {
 
-        const { hexWalletAddress } = data;
+        if( ! isButtonClicked )
+        {
+            setIsButtonClicked(true)
 
-        const getTemplateData = { userWalletAddress, contractAddress: new Address(hexWalletAddress).toString() };
+            const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
-        signTemplateTransaction({
-            getTemplateData,
-            succesCallbackRoute: pathname,
-            getTemplateTrigger: getChangeOwnerCollectionTemplateTrigger,
-        });
-
-        
+            const getTemplateData = { userWalletAddress, contractAddress: new Address(sessionStateJSONData.scAddress).toString() };
+    
+            signTemplateTransaction({
+                getTemplateData,
+                succesCallbackRoute: pathname,
+                getTemplateTrigger: getChangeOwnerCollectionTemplateTrigger,
+            });
+        }
     };
 
 
@@ -712,8 +791,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     // ================================== STEP 4 ==================================
 
     const schemaStep4 = yup.object({
-        collectionId: yup.string().required(),
-        hexWalletAddress: yup.string().required(),
+        //collectionId: yup.string().required(),
+
     }).required();
 
     const { register: registerStep4, handleSubmit: handleSubmitStep4, formState: { errors: errorsStep4 } } = useForm({
@@ -724,24 +803,29 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep4 = (data: any) => {
 
-        const { hexWalletAddress, collectionId } = data;
+        if( ! isButtonClicked )
+        {
+            setIsButtonClicked(true)
 
+            const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
-        data.collectionId = asciiToHex(data.collectionId)
-
-        const getTemplateData = {
-            userWalletAddress,
-            collectionId: hexToAscii(data.collectionId),
-            contractAddress: new Address(hexWalletAddress).toString()
-        };
-
-        signTemplateTransaction({
-            getTemplateData,
-            succesCallbackRoute: pathname,
-            getTemplateTrigger: getSetRolesCollectionTemplateTrigger,
-        });
-
-        
+            console.log( "sessionStateJSONData.tokenID: " + sessionStateJSONData.tokenID)
+            console.log( "sessionStateJSONData.scAddress: " + sessionStateJSONData.scAddress)
+    
+            
+    
+            const getTemplateData = {
+                userWalletAddress,
+                collectionId: sessionStateJSONData.tokenID,
+                contractAddress: new Address(sessionStateJSONData.scAddress).toString()
+            };
+    
+            signTemplateTransaction({
+                getTemplateData,
+                succesCallbackRoute: pathname,
+                getTemplateTrigger: getSetRolesCollectionTemplateTrigger,
+            });            
+        }
     };
 
 
@@ -762,7 +846,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         telegramLink: yup.string(),
         twitterLink: yup.string(),
         website: yup.string(),
-        collectionTokenId: yup.string(),
 
     }).required();
 
@@ -773,36 +856,65 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep5 = async (data: any) => {
 
-        const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
+        if( ! isButtonClicked )
+        {
+            setIsButtonClicked(true)
+            
+            const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
-        const tokenId = sessionStateJSONData.tokenID;   
-        const contractAddress = sessionStateJSONData.scAddress;  
-
-        data.ContractAddress = new Address(contractAddress).toString();
-
-        const sPrice = "" + sessionStateJSONData.price; 
-
-        data.mintPricePerTokenString = sPrice
-        data.tokenBaseURI = sessionStateJSONData.tokenBaseURI
-        data.MetaDataBaseURI = sessionStateJSONData.metaDataBaseURI
-        data.MaxSupply = sessionStateJSONData.maxSupply
-
-        const formattedData = {
-            ...data,
-            tokenId:tokenId,
-            userAddress: userWalletAddress,
-            flags: [flagSelect.value],
-        }
-
-
-
-        const response: any = await createCollectionTrigger({ payload: formattedData });
-
-        if (response.error) {
-
-            const { error, status, } = response.error;
-
-            toast.error(`${error + ' ' + status}`, {
+            const tokenId = sessionStateJSONData.tokenID;   
+            const contractAddress = sessionStateJSONData.scAddress;  
+    
+            data.ContractAddress = new Address(contractAddress).toString();
+    
+            const sPrice = "" + sessionStateJSONData.price; 
+    
+            data.mintPricePerTokenString = sPrice
+            data.tokenBaseURI = sessionStateJSONData.tokenBaseURI
+            data.MetaDataBaseURI = sessionStateJSONData.metaDataBaseURI
+            data.MaxSupply = sessionStateJSONData.maxSupply
+    
+            const formattedData = {
+                ...data,
+                tokenId:tokenId,
+                userAddress: userWalletAddress,
+                flags: [flagSelect.value],
+            }
+    
+    
+    
+            const response: any = await createCollectionTrigger({ payload: formattedData });
+    
+            if (response.error) {
+    
+                const { error, status, } = response.error;
+    
+                toast.error(`${error + ' ' + status}`, {
+                    autoClose: 5000,
+                    draggable: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    hideProgressBar: false,
+                    position: "bottom-right",
+                });
+    
+                return;
+            }
+            else
+            {
+                //delete all the session state data from DB
+                deleteSessionStateTransaction();
+    
+    
+                HideElement("submit_step5");
+                ShowElement("linkBackToProfile");
+            }
+            
+            
+            
+    
+            
+            toast.success(`Succesful register`, {
                 autoClose: 5000,
                 draggable: true,
                 closeOnClick: true,
@@ -810,33 +922,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 hideProgressBar: false,
                 position: "bottom-right",
             });
-
-            return;
         }
-        else
-        {
-            //delete all the session state data from DB
-            deleteSessionStateTransaction();
-
-
-            HideElement("submit_step5");
-            ShowElement("linkBackToProfile");
-        }
-        
-        
-        
-
-        
-        toast.success(`Succesful register`, {
-            autoClose: 5000,
-            draggable: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            hideProgressBar: false,
-            position: "bottom-right",
-        });
-        
-
     };
 
     
@@ -882,12 +968,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             return {}
         },
         singleValue: (provided: any, state: any) => {
-            // const opacity = state.isDisabled ? 0.5 : 1;
-            // const transition = 'opacity 300ms';
 
-            // return { ...provided, opacity, transition };
-
-            // return provided;
             return {
                 ...provided,
                 color: "white",
@@ -926,11 +1007,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         <div className="p-account-settings-page">
 
             <div className="grid grid-cols-12">
-
+            pathname
                 <div className="col-span-12 m-4 md:m-20">
 
                     <div className="mb-10">
-                        <Link to={`/account`}> {`< Back to account`}</Link>
+                        <Link to={`/account`}> &lt; Back to account </Link> 
+                        &nbsp; <span className=" mb-2">|</span> &nbsp;
+                        <Link to={pathname} onClick={ async () => {if (window.confirm('This will RESET the Create Collection process, and you will lose all your progress / fees spent and start over.  Would you like to continue?')) { handleStartOver(); } }}>Reset &amp; Start Over</Link>
+
                     </div>
 
                     <h2 className="text-2xl md:text-5xl u-text-bold mb-20">
@@ -948,7 +1032,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     Step 1 of 5 ┋ Initial NFT Marker
                                 </p>
 
-                                <p className="text-xl mb-2">
+                                <p className="text-lg mb-2 text-gray-400">
                                     Instruction: Enter the token name and token ticker for the smart contract. <br/><br/>
                                 </p>
 
@@ -956,7 +1040,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 <p className="text-xl mb-2">
                                     Token Name
                                 </p>
-
+                                
                                 <p className="mb-2 text-lg text-red-500">{errorsStep1.name?.message}</p>
 
                                 <div className="grid grid-cols-9 mb-4">
@@ -977,18 +1061,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
+                                <br/>
                                 <button type="submit" id="submit_step1" className="c-button c-button--primary mb-5"  >
                                     Sign
                                 </button>
 
-
-
-
                             </form>
-
-
-
-
 
                         </div>
 
@@ -1004,19 +1082,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                             <form onSubmit={handleSubmitStep2(onSubmitStep2)} >
 
-                                <p className="text-xl mb-2">
+                                <p className="text-lg mb-2 text-gray-400">
                                     Instruction: Enter the attributes and details of the smart contract. <br/><br/>
                                 </p>                                
 
-                                <p className="text-xl mb-2">
+                              <p className="text-xl mb-2">
                                     Token Id
                                 </p>
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <input id="tokenId" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                        <span id="spanTokenId" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">TokenID</span>
+                                        
                                     </div>
-                                </div>
+                                </div>  
 
                                 <p>
                                     Royalties
@@ -1108,7 +1187,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </div>
 
 
-
+                                <br/>
                                 <button type="submit" id="submit_step2" className="c-button c-button--primary mb-5" >
                                     Sign
                                 </button>
@@ -1128,21 +1207,33 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                             <form onSubmit={handleSubmitStep3(onSubmitStep3)} >
 
-                                <p className="text-xl mb-2">
+                                <p className="text-lg mb-2 text-gray-400">
                                     Instruction: Sign the transaction to transfer ownership of the smart contract.<br/><br/>
                                 </p> 
                                 
+
+                                <p className="text-xl mb-2">
+                                    Minter Contract Address (Hex Encoded)
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <span id="step3SCAddress" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">SC Address</span>
+                                        
+                                    </div>
+                                </div>
+
+
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
 
                                         <label className="block w-full">
-                                            <span className="block mb-2">  Minter Contract Address (Hex Encoded)</span>
-                                            <input {...registerStep3('hexWalletAddress')} id="step3SCAddress" autoComplete="off" readOnly={true} type="text" className="text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
                                         </label>
                                     </div>
                                 </div>
 
+                                <br/>
                                 <button type="submit" id="submit_step3" className="c-button c-button--primary mb-5" >
                                     Sign
                                 </button>
@@ -1160,33 +1251,44 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                             <form onSubmit={handleSubmitStep4(onSubmitStep4)} >
 
-                                <p className="text-xl mb-2">
+                                <p className="text-lg mb-2 text-gray-400">
                                     Instruction: Set roles for the smart contract.<br/><br/>
                                 </p> 
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
 
-                                        <div className="mb-4">
-                                            <label className="block w-full">
 
-                                                <span className="block mb-2">  Minter Contract Address (Hex Encoded)</span>
-                                                <input {...registerStep4('hexWalletAddress')} id="SetRole_Address" autoComplete="off" readOnly={true} type="text" className="text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                    <p className="text-xl mb-2">
+                                        Token ID:
+                                    </p>
 
-                                            </label>
+                                    <div className="grid grid-cols-9 mb-4">
+                                        <div className="col-span-12">
+                                            <span id="SetRole_TokenId" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">SC Address</span>
+                                            
                                         </div>
-        
-                                        <div>
-                                            <label className="block w-full">
+                                    </div>
 
-                                                <span className="block mb-2">  Token ID </span>
-                                                <input {...registerStep4('collectionId')} id="SetRole_TokenId" autoComplete="off" type="text" readOnly={true} className="text-xl bg-opacity-10 bg-white border-1 border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
 
-                                            </label>
+
+                                    <p className="text-xl mb-2">
+                                        Minter Contract Address (Hex Encoded):
+                                    </p>
+
+                                    <div className="grid grid-cols-9 mb-4">
+                                        <div className="col-span-12">
+                                            <span id="SetRole_Address" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">SC Address</span>
+                                            
                                         </div>
+                                    </div>
+
+                                
+
                                     </div>
                                 </div>
 
+                                <br/>
                                 <button type="submit" id="submit_step4" className="c-button c-button--primary mb-5" >
                                     Sign
                                 </button>
@@ -1204,18 +1306,24 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                             <form onSubmit={handleSubmitStep5(onSubmitStep5)} >
 
-                                <p className="text-xl mb-2">
+                                <p className="text-lg mb-2 text-gray-400">
                                     Instruction: Enter the name and details of the collection.<br/><br/>
                                 </p> 
 
+
                                 <p className="text-xl mb-2">
-                                    Token ID
+                                        Token ID:
                                 </p>
+
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
-                                        <input {...registerStep5('collectionTokenId')}  id="collectionTokenId" readOnly={true} autoComplete="off" type="text" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full" />
+                                        <span id="collectionTokenId" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full">SC Address</span>
+                                        
                                     </div>
                                 </div>
+
+
+
 
 
                                 <p className="text-xl mb-2">
@@ -1290,6 +1398,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                 </div>
                                 
+                                <br/>
 
                                 <button type="submit" id="submit_step5" className="c-button c-button--primary mb-5" >
                                     Create
