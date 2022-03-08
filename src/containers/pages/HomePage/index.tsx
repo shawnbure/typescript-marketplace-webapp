@@ -224,7 +224,7 @@ export const HomePage = () => {
 
                         <div className="col-xs-12 col-md-6">
 
-                            <Link to={'/collection/HELIOS-d263f3'}>
+                            <Link to={'/collection/HELIOS2022-1ea0f2'}>
                                 <div className="u-margin-top-spacing-9">
 
                                     <div className={`c-card c-card--homepage-feature`}>
