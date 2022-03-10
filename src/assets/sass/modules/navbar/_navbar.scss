@@ -84,12 +84,24 @@
             color: var(--t-text-color);
             color: $white;
             text-decoration: none;
-            margin: 0 $spacing-point-4;
+            margin: 0 5px 0 $spacing-point-4;
 
             &:hover {
 
                 color: var(--t-text-color);
             }
+        }
+
+        &-name-sub {
+
+
+            color: var(--t-text-color);
+            color: $white;
+            text-decoration: none;
+            margin: 0;
+            font-size: small;
+
+
         }
 
         &-logo {
