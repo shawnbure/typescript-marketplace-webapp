@@ -262,7 +262,7 @@ export const HomePage = () => {
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />  
                                 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
-                                    Create collections
+                                    Create Collections
                                 </h3>
 
                                 <p>
