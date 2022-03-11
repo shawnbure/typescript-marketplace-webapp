@@ -24,6 +24,7 @@ import { Address} from '@elrondnetwork/erdjs/out';
 
 import { routePaths } from "constants/router";
 import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
+import { configureStore } from "@reduxjs/toolkit";
 
 
 
@@ -52,6 +53,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     const [isButtonClicked, setIsButtonClicked] = useState(false)
+    const [routeTokenID, setRouteTokenID] = useState("")
 
     {
         console.log("********* inside { } *********  ");
@@ -654,7 +656,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     // ================================== STEP 1 ==================================
 
     const schemaStep1 = yup.object({
-        name: yup.string().min(3, "Must be between 3-10 AlphaNumeric Characters").max(10, "Must be between 3-10 AlphaNumeric Characters").matches(/^[a-zA-Z0-9]+$/, "Must be AlphaNumeric ONLY").required(),
+        name: yup.string().min(3, "Must be between 3-20 AlphaNumeric Characters").max(20, "Must be between 3-20 AlphaNumeric Characters").matches(/^[a-zA-Z0-9]+$/, "Must be AlphaNumeric ONLY").required(),
         ticker: yup.string().min(3, "Must be between 3-10 AlphaNumeric Uppercase Characters").max(10, "Must be between 3-10 AlphaNumeric Uppercase Characters").matches(/^[A-Z0-9]+$/, "Must be Uppercase AlphaNumeric ONLY").required(),
 
     }).required();
@@ -878,6 +880,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             
             const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
+            setRouteTokenID(sessionStateJSONData.tokenID);
+
             const tokenId = sessionStateJSONData.tokenID;   
             const contractAddress = sessionStateJSONData.scAddress;  
     
@@ -890,6 +894,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             data.MetaDataBaseURI = sessionStateJSONData.metaDataBaseURI
             data.MaxSupply = sessionStateJSONData.maxSupply
     
+            console.log("mintPricePerTokenString: " + data.mintPricePerTokenString)
+            console.log("mintPricePerTokenString: " + data.mintPricePerTokenString)
+
+            console.log("maxSupply: " + data.MaxSupply)
+
             const formattedData = {
                 ...data,
                 tokenId:tokenId,
@@ -903,9 +912,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
             if (response.error) {
     
-                const { error, status, } = response.error;
-    
-                toast.error(`${error + ' ' + status}`, {
+                toast.error(`${response.error.data.error}`, {
                     autoClose: 5000,
                     draggable: true,
                     closeOnClick: true,
@@ -1400,7 +1407,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                 <p className="text-xl u-text-bold mb-2">
                                     Collection Name: &nbsp;
-                                    <a href="javascript:alert('The Collection Name to be displayed on the Youbei NFT Marketplace.  Allowed to have spaces and must be not longer than 17 characters.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                    <a href="javascript:alert('The Collection Name to be displayed on the Youbei NFT Marketplace.  Allowed to have spaces and must be not longer than 20 characters.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.collectionName?.message}</p>
@@ -1482,10 +1489,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </button>
 
 
-                                <Link to={routePaths.account} id="linkBackToProfile" hidden={true} className="c-button c-button--primary" >                        
+                                <Link to={`/collection/${routeTokenID}`} id="linkBackToProfile" hidden={true} className="c-button c-button--primary" >                        
                                     <div className="inline-flex">
                                         <span>
-                                            Back to Profile
+                                            Continue to Details
                                         </span>
                                     </div>
                                 </Link>
