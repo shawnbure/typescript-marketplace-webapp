@@ -1,7 +1,7 @@
 on:
   push:
-    tags:
-      - v0.*.*
+    branches:
+      - main
 env:
   GITHUB_SHA: ${{ github.sha }}
   GITHUB_REF: ${{ github.ref }}
