@@ -6,12 +6,14 @@ import { useAppDispatch } from "redux/store";
 import { setJWT, setUserTokenData } from "redux/slices/user";
 import { useGetEgldPriceQuery } from "services/oracle";
 
-
-import * as faIcons from '@fortawesome/free-solid-svg-icons';
-import * as faBrandIcons from '@fortawesome/free-brands-svg-icons';
+import * as faIcons from "@fortawesome/free-solid-svg-icons";
+import * as faBrandIcons from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { createVerifiedPayload, generateId, shorterAddress } from "utils";
-import { useGetAddDepositEgldTemplateMutation, useGetWithdrawDepositTemplateMutation } from "services/tx-template";
+import {
+  useGetAddDepositEgldTemplateMutation,
+  useGetWithdrawDepositTemplateMutation,
+} from "services/tx-template";
 import { prepareTransaction } from "utils/transactions";
 import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
@@ -19,382 +21,364 @@ import { useGetDepositTemplateMutation } from "services/deposit";
 import Collapsible from "react-collapsible";
 import { SearchBar } from "components";
 import { useGetAccessTokenMutation } from "services/auth";
-import { alphaToastMessage } from 'components/AlphaToastError';
-export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any = ({
-    overlayClickCallback
-}) => {
+import { alphaToastMessage } from "components/AlphaToastError";
+import LedgerLogin from "components/Login/Ledger";
+export const WalletSidebar: (Props: {
+  overlayClickCallback?: Function;
+}) => any = ({ overlayClickCallback }) => {
+  // const randomToken = generateId(32);
 
-    // const randomToken = generateId(32);
+  const history = useHistory();
+  const dispatch = useAppDispatch();
+  const { pathname } = useLocation();
+  const dappLogout = Dapp.useLogout();
 
+  const [
+    getDepositTemplateTrigger,
+    { data: userDepositData },
+  ] = useGetDepositTemplateMutation();
+  const [
+    getAddDepositEgldTemplateTrigger,
+  ] = useGetAddDepositEgldTemplateMutation();
+  const [
+    getWithdrawDepositTemplateTrigger,
+  ] = useGetWithdrawDepositTemplateMutation();
 
-    const history = useHistory();
-    const dispatch = useAppDispatch();
-    const { pathname } = useLocation();
-    const dappLogout = Dapp.useLogout();
+  const [randomToken] = useState(generateId(32));
 
-    const [getDepositTemplateTrigger, {
-        data: userDepositData,
-    }] = useGetDepositTemplateMutation();
-    const [getAddDepositEgldTemplateTrigger] = useGetAddDepositEgldTemplateMutation();
-    const [getWithdrawDepositTemplateTrigger] = useGetWithdrawDepositTemplateMutation();
+  const [getAccessTokenRequestTrigger] = useGetAccessTokenMutation();
 
+  const [addDepositAmount, setAddDepositAmount] = useState<
+    number | undefined
+  >();
+  const [shouldDisplayMaiarLogin, setShouldDisplayMaiarLogin] = useState<
+    boolean
+  >(false);
+  const [withdrawDepositAmount, setWithdrawDepositAmount] = useState<
+    number | undefined
+  >();
 
-    const [randomToken] = useState(generateId(32));
+  const sendTransaction = Dapp.useSendTransaction();
 
-    const [getAccessTokenRequestTrigger,] = useGetAccessTokenMutation();
+  const {
+    tokenLogin,
+    account,
+    address: userWalletAddress,
+    loggedIn: isUserLoggedIn,
+  } = Dapp.useContext();
 
+  const all = Dapp.useContext();
 
-    const [addDepositAmount, setAddDepositAmount] = useState<number | undefined>();
-    const [shouldDisplayMaiarLogin, setShouldDisplayMaiarLogin] = useState<boolean>(false);
-    const [withdrawDepositAmount, setWithdrawDepositAmount] = useState<number | undefined>();
-
-
-    const sendTransaction = Dapp.useSendTransaction();
-
-    const {
-        tokenLogin,
-        account,
-        address: userWalletAddress,
-        loggedIn: isUserLoggedIn, } = Dapp.useContext();
-
-
-    const all = Dapp.useContext();
-
-
-    /*    
+  /*    
     console.log({
         all
     });
     */
-   
-    localStorage.setItem("token",randomToken) //temp hack TODO
-    const webWalletLogin = Dapp.useWebWalletLogin({
-        callbackRoute: pathname,
-        token: randomToken,
-    });
 
+  localStorage.setItem("token", randomToken); //temp hack TODO
+  const webWalletLogin = Dapp.useWebWalletLogin({
+    callbackRoute: pathname,
+    token: randomToken,
+  });
+
+  const {
+    data: egldPriceData,
+    isError: isErrorEgldPriceQuery,
+    isLoading: isLoadingEgldPriceQuery,
+    isSuccess: isSuccessEgldPriceQuery,
+  } = useGetEgldPriceQuery();
+
+  const handleOverlayClick = () => {
+    overlayClickCallback?.();
+  };
+
+  const toggleShouldDisplayMaiarLogin = () => {
+    setShouldDisplayMaiarLogin(!shouldDisplayMaiarLogin);
+  };
+
+  const handleLogOut = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    overlayClickCallback?.();
+
+    dappLogout({ callbackUrl: `${window.location.origin}/` });
+
+    history.push(pathname);
+  };
+
+  const signTemplateTransaction = async (settings: any) => {
     const {
+      getTemplateTrigger,
+      getTemplateData,
+      succesCallbackRoute,
+    } = settings;
 
-        data: egldPriceData,
-        isError: isErrorEgldPriceQuery,
-        isLoading: isLoadingEgldPriceQuery,
-        isSuccess: isSuccessEgldPriceQuery,
+    const response: any = await getTemplateTrigger({ ...getTemplateData });
 
-    } = useGetEgldPriceQuery();
+    if (response.error) {
+      const {
+        status,
+        data: { error },
+      } = response.error;
 
-    const handleOverlayClick = () => {
+      toast.error(`${status} | ${error}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
 
-        overlayClickCallback?.();
-
+      return;
     }
 
+    const { data: txData } = response.data;
 
-    const toggleShouldDisplayMaiarLogin = () => {
+    const unconsumedTransaction = prepareTransaction(txData);
 
-        setShouldDisplayMaiarLogin(!shouldDisplayMaiarLogin);
+    sendTransaction({
+      transaction: unconsumedTransaction,
+      callbackRoute: succesCallbackRoute,
+    });
+  };
 
-    }
-
-    const handleLogOut = (e: React.MouseEvent) => {
-
-        e.preventDefault();
-
-        overlayClickCallback?.();
-
-        dappLogout({ callbackUrl: `${window.location.origin}/` });
-
-        history.push(pathname);
-
+  const handleAddDeposit = async () => {
+    const getTemplateData = {
+      userWalletAddress: userWalletAddress,
+      amount: addDepositAmount,
     };
 
-    const signTemplateTransaction = async (settings: any) => {
+    signTemplateTransaction({
+      succesCallbackRoute: pathname,
+      getTemplateData: getTemplateData,
+      getTemplateTrigger: getAddDepositEgldTemplateTrigger,
+    });
+  };
 
-        const { getTemplateTrigger, getTemplateData, succesCallbackRoute } = settings;
-
-        const response: any = await getTemplateTrigger({ ...getTemplateData });
-
-        if (response.error) {
-
-            const { status, data: { error } } = response.error;
-
-            toast.error(`${status} | ${error}`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-            });
-
-            return;
-
-        }
-
-        const { data: txData } = response.data;
-
-        const unconsumedTransaction = prepareTransaction(txData);
-
-        sendTransaction({
-            transaction: unconsumedTransaction,
-            callbackRoute: succesCallbackRoute
-        });
-
+  const handleWithdrawDeposit = async () => {
+    const getTemplateData = {
+      userWalletAddress: userWalletAddress,
+      amount: withdrawDepositAmount,
     };
 
-    const handleAddDeposit = async () => {
+    signTemplateTransaction({
+      succesCallbackRoute: pathname,
+      getTemplateData: getTemplateData,
+      getTemplateTrigger: getWithdrawDepositTemplateTrigger,
+    });
+  };
 
-        const getTemplateData = { userWalletAddress: userWalletAddress, amount: addDepositAmount };
+  const MaiarWrapper = (
+    <div className="p-maiar-login">
+      {
+        <button
+          onClick={webWalletLogin}
+          className="c-button c-button--secondary "
+        >
+          Web Wallet
+        </button>
+      }
+      <LedgerLogin />
+      <button
+        onClick={toggleShouldDisplayMaiarLogin}
+        className="c-button c-button--secondary "
+      >
+        Cancel
+      </button>
+      <Dapp.Pages.WalletConnect
+        callbackRoute={pathname}
+        logoutRoute={pathname}
+        title="Maiar Login"
+        lead="Scan the QR code using Maiar"
+        token={randomToken}
+      />
+    </div>
+  );
 
-        signTemplateTransaction({
-
-            succesCallbackRoute: pathname,
-            getTemplateData: getTemplateData,
-            getTemplateTrigger: getAddDepositEgldTemplateTrigger,
-
-        });
-
-
-    };
-
-
-    const handleWithdrawDeposit = async () => {
-
-        const getTemplateData = { userWalletAddress: userWalletAddress, amount: withdrawDepositAmount };
-
-        signTemplateTransaction({
-
-            succesCallbackRoute: pathname,
-            getTemplateData: getTemplateData,
-            getTemplateTrigger: getWithdrawDepositTemplateTrigger,
-
-        });
-
-
-    };
-
-
-
-    const MaiarWrapper = (
-
-        <div className="p-maiar-login">
-
-
-            { <button onClick={webWalletLogin} className="c-button c-button--secondary " >Web Wallet</button> }
-
-            <button onClick={toggleShouldDisplayMaiarLogin} className="c-button c-button--secondary " >
-                Cancel
-            </button>
-            <Dapp.Pages.WalletConnect
-                callbackRoute={pathname}
-                logoutRoute={pathname}
-                title="Maiar Login"
-                lead="Scan the QR code using Maiar"
-                token={randomToken}
-            />
-
-        </div>
-
+  const resove = async () => {
+    const verifiedPayload: any = createVerifiedPayload(
+      userWalletAddress,
+      tokenLogin?.loginToken,
+      tokenLogin?.signature,
+      {}
+    );
+    const accessResult: any = await getAccessTokenRequestTrigger(
+      verifiedPayload
     );
 
-
-    const resove = async () => {
-
-        const verifiedPayload: any = createVerifiedPayload(userWalletAddress, tokenLogin?.loginToken, tokenLogin?.signature, {});
-        const accessResult: any = await getAccessTokenRequestTrigger(verifiedPayload);
-
-        if (!accessResult.data) {
-            return;
-        }
-
-        const { data: jtwData } = accessResult;
-
-        dispatch(setJWT(jtwData.data));
-
-        localStorage.setItem("_e_", JSON.stringify(jtwData.data));
-
+    if (!accessResult.data) {
+      return;
     }
 
-    useEffect(() => {
+    const { data: jtwData } = accessResult;
 
+    dispatch(setJWT(jtwData.data));
 
-        if (Boolean(tokenLogin?.loginToken) && Boolean(tokenLogin?.signature) ) {
+    localStorage.setItem("_e_", JSON.stringify(jtwData.data));
+  };
 
-            resove();
-
-        }
-
-
-    }, [tokenLogin,])
-
-
-    useEffect(() => {
-
-        if (!isUserLoggedIn) {
-            return;
-        }
-
-        getDepositTemplateTrigger({ userWalletAddress });
-
-    }, [isUserLoggedIn]);
-
-    if (shouldDisplayMaiarLogin && !isUserLoggedIn) {
-
-        return (
-            <aside className="c-wallet-sidebar">
-
-
-
-
-                <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay w-0/12 lg:w-6/12 lg:w-8/12"></div>
-
-                <div className="c-wallet-sidebar_container w-full md:w-12/12 lg:w-4/12">
-
-                    {MaiarWrapper}
-                </div>
-
-
-            </aside>
-        )
-
+  useEffect(() => {
+    if (Boolean(tokenLogin?.loginToken) && Boolean(tokenLogin?.signature)) {
+      resove();
     }
+  }, [tokenLogin]);
 
-
+  useEffect(() => {
     if (!isUserLoggedIn) {
-        return (
+      return;
+    }
 
-            <aside className="c-wallet-sidebar">
+    getDepositTemplateTrigger({ userWalletAddress });
+  }, [isUserLoggedIn]);
 
-
-
-                <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay w-0/12  lg:w-8/12"></div>
-
-
-                <div className="c-wallet-sidebar_container w-full md:w-12/12 lg:w-4/12">
-
-                    <SearchBar wrapperClassNames={"px-6 block lg:hidden"} />
-                    <div className="mt-10">
-                        <button onClick={toggleShouldDisplayMaiarLogin} className="c-button c-button--primary " >
-                            Login
-                        </button>
-
-                    </div>
-
-
-                    <div style={{ border: "1px solid #151b22" }} className="lg:hidden m-10 mb-0 mt-4 p-1 rounded-3xl">
-
-                        <ul className="">
-
-                            <li onClick={handleOverlayClick} className="c-navbar_list-item">
-                                <a href={routePaths.rewards}className="c-navbar_list-link text-lg">
-                                    Rewards
-                                </a>
-                            </li>
-                        </ul>
-
-
-
-                    </div>
-
-                </div>
-
-
-            </aside>
-        );
-    };
-
-    const { balance } = account;
-    const egldPriceString = egldPriceData?.data || 0;
-    const shortWalletAddress: string = shorterAddress(userWalletAddress, 7, 4);
-
-    const egldBalance = (parseFloat(balance) / 1000000000000000000).toFixed(3);
-    const usdBalance = (Number(egldBalance) * parseFloat(egldPriceString)).toFixed(2);
-
-    const deposit = userDepositData?.data || 0;
-    const usdDeposit = (deposit * parseFloat(egldPriceString)).toFixed(2);
-
+  if (shouldDisplayMaiarLogin && !isUserLoggedIn) {
     return (
+      <aside className="c-wallet-sidebar">
+        <div
+          onClick={handleOverlayClick}
+          className="c-wallet-sidebar_overlay w-0/12 lg:w-6/12 lg:w-8/12"
+        ></div>
 
-        <aside className="c-wallet-sidebar">
+        <div className="c-wallet-sidebar_container w-full md:w-12/12 lg:w-4/12">
+          {MaiarWrapper}
+        </div>
+      </aside>
+    );
+  }
 
-            <div onClick={handleOverlayClick} className="c-wallet-sidebar_overlay w-0/12 md:w-6/12 lg:w-8/12"></div>
+  if (!isUserLoggedIn) {
+    return (
+      <aside className="c-wallet-sidebar">
+        <div
+          onClick={handleOverlayClick}
+          className="c-wallet-sidebar_overlay w-0/12  lg:w-8/12"
+        ></div>
 
-            <div className="c-wallet-sidebar_container w-full md:w-6/12 lg:w-4/12">
+        <div className="c-wallet-sidebar_container w-full md:w-12/12 lg:w-4/12">
+          <SearchBar wrapperClassNames={"px-6 block lg:hidden"} />
+          <div className="mt-10">
+            <button
+              onClick={toggleShouldDisplayMaiarLogin}
+              className="c-button c-button--primary "
+            >
+              Login
+            </button>
+          </div>
 
+          <div
+            style={{ border: "1px solid #151b22" }}
+            className="lg:hidden m-10 mb-0 mt-4 p-1 rounded-3xl"
+          >
+            <ul className="">
+              <li onClick={handleOverlayClick} className="c-navbar_list-item">
+                <a
+                  href={routePaths.rewards}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Rewards
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    );
+  }
 
-                <div className="block lg:hidden">
+  const { balance } = account;
+  const egldPriceString = egldPriceData?.data || 0;
+  const shortWalletAddress: string = shorterAddress(userWalletAddress, 7, 4);
 
-                    <SearchBar wrapperClassNames={"px-6 mb-10"} />
+  const egldBalance = (parseFloat(balance) / 1000000000000000000).toFixed(3);
+  const usdBalance = (
+    Number(egldBalance) * parseFloat(egldPriceString)
+  ).toFixed(2);
 
-                </div>
+  const deposit = userDepositData?.data || 0;
+  const usdDeposit = (deposit * parseFloat(egldPriceString)).toFixed(2);
 
-                <p className="flex justify-around">
+  return (
+    <aside className="c-wallet-sidebar">
+      <div
+        onClick={handleOverlayClick}
+        className="c-wallet-sidebar_overlay w-0/12 md:w-6/12 lg:w-8/12"
+      ></div>
 
-                    <span className="u-text-theme-gray-light text-sm">
-                        My wallet
-                    </span>
+      <div className="c-wallet-sidebar_container w-full md:w-6/12 lg:w-4/12">
+        <div className="block lg:hidden">
+          <SearchBar wrapperClassNames={"px-6 mb-10"} />
+        </div>
 
-                    <span className="text-gray-400 text-sm">
-                        <a href={`https://explorer.elrond.com/accounts/${userWalletAddress}`} target="_blank">
-                            {shortWalletAddress}
-                        </a>
-                    </span>
+        <p className="flex justify-around">
+          <span className="u-text-theme-gray-light text-sm">My wallet</span>
 
-                </p>
+          <span className="text-gray-400 text-sm">
+            <a
+              href={`https://explorer.elrond.com/accounts/${userWalletAddress}`}
+              target="_blank"
+            >
+              {shortWalletAddress}
+            </a>
+          </span>
+        </p>
 
-                <div style={{ border: "1px solid #151b22" }} className="m-10 mb-0 mt-4 p-1 rounded-t-3xl">
-                    <p className="text-gray-400 text-sm">
-                        Total balance
-                    </p>
-                    <p className="text-xl u-text-bold">
-                        ${usdBalance} USD
-                    </p>
-                    <p className="u-text-bold text-sm text-gray-400">
-                        {egldBalance} EGLD
-                    </p>
+        <div
+          style={{ border: "1px solid #151b22" }}
+          className="m-10 mb-0 mt-4 p-1 rounded-t-3xl"
+        >
+          <p className="text-gray-400 text-sm">Total balance</p>
+          <p className="text-xl u-text-bold">${usdBalance} USD</p>
+          <p className="u-text-bold text-sm text-gray-400">
+            {egldBalance} EGLD
+          </p>
+        </div>
 
-                </div>
+        <div
+          style={{ border: "1px solid #151b22" }}
+          className="m-10 mt-0 mb-4 p-1 rounded-b-3xl"
+        >
+          <p className="text-gray-400 text-sm u-text-small">Deposit</p>
+          <p className="text-xl u-text-bold">${usdDeposit} USD</p>
+          <p className="u-text-bold text-sm text-gray-400">{deposit} EGLD</p>
+        </div>
 
-                <div style={{ border: "1px solid #151b22" }} className="m-10 mt-0 mb-4 p-1 rounded-b-3xl">
+        <div className="mb-3">
+          <Link
+            to={routePaths.account}
+            onClick={() => {
+              overlayClickCallback?.();
+            }}
+            className="c-button c-button--primary"
+          >
+            <div className="inline-flex">
+              <FontAwesomeIcon
+                width={"20px"}
+                className="c-navbar_icon-link mr-4"
+                icon={faIcons.faUserCircle}
+              />
+              <span>Profile</span>
+            </div>
+          </Link>
+        </div>
 
-                    <p className="text-gray-400 text-sm u-text-small">
-                        Deposit
-                    </p>
-                    <p className="text-xl u-text-bold">
-                        ${usdDeposit} USD
-                    </p>
-                    <p className="u-text-bold text-sm text-gray-400">
-                        {deposit} EGLD
-                    </p>
-
-                </div>
-
-                <div className="mb-3">
-
-                    <Link to={routePaths.account} onClick={() => { overlayClickCallback?.() }} className="c-button c-button--primary" >
-                        <div className="inline-flex">
-
-                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faUserCircle} />
-                            <span>
-                                Profile
-                            </span>
-                        </div>
-                    </Link>
-
-                </div>
-
-                <div className="mb-5">
-
-                    {/**************Remove after alpha ****************************************/}
-                    <div onClick={alphaToastMessage} className="c-button c-button--secondary u-margin-top-spacing-2">
-                        <span className="u-padding-right-spacing-2">
-                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faPiggyBank} />
-                        </span>
-                        <span>
-                            Deposit
-                        </span>
-                    </div>
-                    {/**************Remove after alpha below pop up is the production code****************************************/}
-                    {/*
+        <div className="mb-5">
+          {/**************Remove after alpha ****************************************/}
+          <div
+            onClick={alphaToastMessage}
+            className="c-button c-button--secondary u-margin-top-spacing-2"
+          >
+            <span className="u-padding-right-spacing-2">
+              <FontAwesomeIcon
+                width={"20px"}
+                className="c-navbar_icon-link mr-4"
+                icon={faIcons.faPiggyBank}
+              />
+            </span>
+            <span>Deposit</span>
+          </div>
+          {/**************Remove after alpha below pop up is the production code****************************************/}
+          {/*
 
                     <Popup 
                         modal
@@ -571,51 +555,48 @@ export const WalletSidebar: (Props: { overlayClickCallback?: Function }) => any 
                     </Popup>
                     
                     */}
+        </div>
 
-                </div>
-
-
-
-
-                <div className="block lg:hidden mb-6">
-
-
-                    <div style={{ border: "1px solid #151b22" }} className="m-10 mb-0 mt-4 p-1 rounded-3xl">
-
-                        <ul className="">
-
-                            {/* 
+        <div className="block lg:hidden mb-6">
+          <div
+            style={{ border: "1px solid #151b22" }}
+            className="m-10 mb-0 mt-4 p-1 rounded-3xl"
+          >
+            <ul className="">
+              {/* 
                             <li style={{ borderBottom: "1px solid #151b22" }} className="c-navbar_list-item">
                                 <Link to={routePaths.marketplace} className="c-navbar_list-link text-lg">
                                     Explore
                                 </Link>
                             </li> */}
-                            <li onClick={handleOverlayClick} style={{ borderBottom: "1px solid #151b22" }} className="c-navbar_list-item">
-                                <Link to={routePaths.rewards} className="c-navbar_list-link text-lg">
-                                    Rewards
-                                </Link>
-                            </li>
+              <li
+                onClick={handleOverlayClick}
+                style={{ borderBottom: "1px solid #151b22" }}
+                className="c-navbar_list-item"
+              >
+                <Link
+                  to={routePaths.rewards}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Rewards
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-
-                        </ul>
-
-                    </div>
-
-
-
-                </div>
-
-
-                <div>
-                    <button className="c-button c-button--secondary" onClick={handleLogOut}>
-                        {/* <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faDoorOpen} /> */}
-                        Logout
-                    </button>
-                </div>
-            </div>
-
-        </aside>
-    );
+        <div>
+          <button
+            className="c-button c-button--secondary"
+            onClick={handleLogOut}
+          >
+            {/* <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link mr-4" icon={faIcons.faDoorOpen} /> */}
+            Logout
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
 };
 
 export default WalletSidebar;
