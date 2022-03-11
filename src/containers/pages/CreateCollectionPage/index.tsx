@@ -7,6 +7,9 @@ import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import { prepareTransaction } from "utils/transactions";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as faIcons from '@fortawesome/free-solid-svg-icons';
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
@@ -553,7 +556,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
 
+    function ShowMoreOrLess(showMorelinkName: string, 
+                            showLesslinkName:string,
+                            showDivName: string,
+                            showMore: boolean)
+    {
+        var lnkShowMorelinkName = document.getElementById(showMorelinkName) as HTMLInputElement;
+        lnkShowMorelinkName.hidden = !showMore;
 
+        var lnkShowLesslinkName = document.getElementById(showLesslinkName) as HTMLInputElement;
+        lnkShowLesslinkName.hidden = showMore;    
+        
+        var divShowDivName = document.getElementById(showDivName) as HTMLElement;
+        divShowDivName.hidden = showMore;    
+    }
 
     function DisableButton(buttonName: string, buttonText:string)
     {
@@ -1032,15 +1048,38 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     Step 1 of 5 ┋ Initial NFT Marker
                                 </p>
 
+                                
+                                <hr className="text-white my-10" />
+
                                 <p className="text-lg mb-2 text-gray-400">
-                                    Instruction: Enter the token name and token ticker for the smart contract. <br/><br/>
+                                    <b>Instruction:</b> Before starting on this step, artwork and metadata must be already created. 
+                                    &nbsp; 
+                                    
+                                    <Link to={'#'} id="linkStep1ShowMore" onClick={ async () => {ShowMoreOrLess('linkStep1ShowMore', 'linkStep1ShowLess', 'divStep1MoreInstructions', false);}}>Read More...</Link>
+                                         
+                                    <Link to={'#'} id="linkStep1ShowLess" onClick={ async () => {ShowMoreOrLess('linkStep1ShowMore', 'linkStep1ShowLess', 'divStep1MoreInstructions', true);}} hidden={true}>...Read Less</Link>
+
+                                    
+
+                                    <div id="divStep1MoreInstructions" hidden={true}>
+                                    <br/>
+                                    Haven't generated images or metadata yet? Get started using the free community <a href={'https://www.ElrondNFTGenerator.com'} className="" target="_blank">Elrond NFT Generator.</a>
+                                    
+                                    <br/><br/>
+
+                                    Upload media files and metadata to an IPFS, a decentralized file storage solution (recommend using <a href={'https://www.Pinata.com'} className="" target="_blank">Pinata</a>). Media files should all be in one format (Support Formats: .jpg, .jpeg, .png, .gif, .mp3, and .mp4). Individual metadata upload as #.json (1.json, 2.json etc.). Global metadata upload as metadata.json (optional). Rarity information upload as collection.json (optional).
+
+                                    </div>
                                 </p>
 
+                                <hr className="text-white my-10" />
 
-                                <p className="text-xl mb-2">
-                                    Token Name
+                                <p className="text-xl u-text-bold mb-2">
+                                    Token Name: &nbsp;
+                                    <a href="javascript:alert('The Token Name is the collection name on the blockchain. The name that is displayed in the Youbei Marketplace is determined in Step #5. Token Name must be between 3-20 AlphaNumeric Characters.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
                                 
+       
                                 <p className="mb-2 text-lg text-red-500">{errorsStep1.name?.message}</p>
 
                                 <div className="grid grid-cols-9 mb-4">
@@ -1049,10 +1088,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
-                                <p>
-                                    Token Ticker
-                                </p>
+                                <br/>
 
+                                <p className="text-xl u-text-bold mb-2">
+                                    Token Ticker: &nbsp;
+                                    <a href="javascript:alert('Token Ticker is a token shorter identifier used on the blockchain. It must be between 3-10 AlphaNumeric Uppercase Characters.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+         
                                 <p className="mb-2 text-lg text-red-500">{errorsStep1.ticker?.message}</p>
 
                                 <div className="grid grid-cols-9 mb-4">
@@ -1082,12 +1124,17 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                             <form onSubmit={handleSubmitStep2(onSubmitStep2)} >
 
+                                <hr className="text-white my-10" />
+
                                 <p className="text-lg mb-2 text-gray-400">
-                                    Instruction: Enter the attributes and details of the smart contract. <br/><br/>
+                                    <b>Instruction:</b> By completing this step you will deploy a smart contract onto the blockchain, creating your NFT collection. 
                                 </p>                                
 
-                              <p className="text-xl mb-2">
-                                    Token Id
+                                <hr className="text-white my-10" />
+                                
+                                <p className="text-xl u-text-bold mb-2">
+                                    Token Id: &nbsp;
+                                    <a href="javascript:alert('Token ID is an identifier used on the blockchain and was assigned in the last step.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <div className="grid grid-cols-9 mb-4">
@@ -1097,8 +1144,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>  
 
-                                <p>
-                                    Royalties
+                                <br/>
+
+                                <p className="text-xl u-text-bold mb-2">
+                                    Royalties: &nbsp;
+                                    <a href="javascript:alert('Royalties are from 0 to 10 as a percentage. Inserting “1” would mean 1% royalties would return to the creator's smart contract in real-time for every secondary sale.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.royalties?.message}</p>
@@ -1111,8 +1161,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-                                <p>
-                                    Token Name Base
+                                <p className="text-xl u-text-bold mb-2">
+                                    Token Name Base: &nbsp;
+                                    <a href="javascript:alert('Token Name Base will be used as the display name for each individual NFT. i.e., NAMEBASE #1, NAMEBASE #2')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.tokenNameBase?.message}</p>
@@ -1124,8 +1175,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </div>
 
 
-                                <p>
-                                    Token Base URI
+                                <p className="text-xl u-text-bold mb-2">
+                                    Token Base URI: &nbsp;
+                                    <a href="javascript:alert('Token Base URI is the address of the folder of media files in IPFS. Supported URIs begin with: https://ipfs.io/ipfs, https://gateway.pinata.cloud/ipfs, https://dweb.link/ipfs. We recommend using ipfs.io by inserting your CID from Pinata (https://ipfs.io/ipfs/InsertCID). Do not use a custom gateway.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.imageBase?.message}</p>
@@ -1136,8 +1188,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
-                                <p>
-                                    Media Type
+                                <p className="text-xl u-text-bold mb-2">
+                                    Media Type: &nbsp;
+                                    <a href="javascript:alert('Select the media type uploaded. Media files should all be in one format when uploading to IPFS.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <div className="grid grid-cols-9 mb-4">
@@ -1148,8 +1201,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </div>
 
 
-                                <p>
-                                    Price
+                                <p className="text-xl u-text-bold mb-2">
+                                    Price (EGLD): &nbsp;
+                                    <a href="javascript:alert('Price for each NFT minted in EGLD.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.price?.message}</p>
@@ -1161,8 +1215,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </div>
 
 
-                                <p>
-                                    Max Supply
+                                <p className="text-xl u-text-bold mb-2">
+                                    Max Supply: &nbsp;
+                                    <a href="javascript:alert('Max supply is the total number of NFTs  allocated to be minted')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.maxSupply?.message}</p>
@@ -1174,8 +1229,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </div>
 
 
-                                <p>
-                                    Metadata Base URI
+                                <p className="text-xl u-text-bold mb-2">
+                                    Metadata Base URI: &nbsp;
+                                    <a href="javascript:alert('Metadata Base URI is the address of the folder of metadata. This is often the same as the Token Base URI above.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.metadataBase?.message}</p>
@@ -1207,14 +1263,21 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                             <form onSubmit={handleSubmitStep3(onSubmitStep3)} >
 
+                                <hr className="text-white my-10" />
+
                                 <p className="text-lg mb-2 text-gray-400">
-                                    Instruction: Sign the transaction to transfer ownership of the smart contract.<br/><br/>
+                                    <b>Instruction:</b> This will transfer the ownership of the NFT collection to your wallet address.
                                 </p> 
                                 
+                                <hr className="text-white my-10" />
 
-                                <p className="text-xl mb-2">
-                                    Minter Contract Address (Hex Encoded)
+                                
+                                <p className="text-xl u-text-bold mb-2">
+                                    Minter Contract Address: &nbsp;
+                                    <a href="javascript:alert('Minter Contract Address is the smart contract deployed for the collection in the previous step.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
+
+                                <br/>
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
@@ -1251,16 +1314,21 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                             <form onSubmit={handleSubmitStep4(onSubmitStep4)} >
 
+                                <hr className="text-white my-10" />
+
                                 <p className="text-lg mb-2 text-gray-400">
-                                    Instruction: Set roles for the smart contract.<br/><br/>
+                                    <b>Instruction:</b> Set roles for the smart contract and allows the owner access to its functions.
                                 </p> 
+
+                                <hr className="text-white my-10" />
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
 
 
-                                    <p className="text-xl mb-2">
-                                        Token ID:
+                                    <p className="text-xl u-text-bold mb-2">
+                                        Token ID: &nbsp;
+                                        <a href="javascript:alert('Token ID is an identifier used on the blockchain and was assigned in the previous steps.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                     </p>
 
                                     <div className="grid grid-cols-9 mb-4">
@@ -1270,10 +1338,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                         </div>
                                     </div>
 
+                                    <br/>
 
-
-                                    <p className="text-xl mb-2">
-                                        Minter Contract Address (Hex Encoded):
+                                    <p className="text-xl u-text-bold mb-2">
+                                        Minter Contract Address: &nbsp;
+                                        <a href="javascript:alert('Minter Contract Address is the smart contract deployed for the collection in the previous steps.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                     </p>
 
                                     <div className="grid grid-cols-9 mb-4">
@@ -1305,14 +1374,17 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             </p>
 
                             <form onSubmit={handleSubmitStep5(onSubmitStep5)} >
-
+                                <hr className="text-white my-10" />
+                                
                                 <p className="text-lg mb-2 text-gray-400">
-                                    Instruction: Enter the name and details of the collection.<br/><br/>
+                                    <b>Instruction:</b> This is the final step to register the collection with Youbei - enabling users to search, mint, list, buy, and sell your NFTs.
                                 </p> 
 
+                                <hr className="text-white my-10" />
 
-                                <p className="text-xl mb-2">
-                                        Token ID:
+                                <p className="text-xl u-text-bold mb-2">
+                                    Token ID: &nbsp;
+                                    <a href="javascript:alert('Token ID is an identifier used on the blockchain and was assigned in the previous steps.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <div className="grid grid-cols-9 mb-4">
@@ -1322,12 +1394,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
+                                <br />
 
 
 
-
-                                <p className="text-xl mb-2">
-                                    Collection Name
+                                <p className="text-xl u-text-bold mb-2">
+                                    Collection Name: &nbsp;
+                                    <a href="javascript:alert('The Collection Name to be displayed on the Youbei NFT Marketplace.  Allowed to have spaces and must be not longer than 17 characters.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.collectionName?.message}</p>
@@ -1339,8 +1412,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </div>
                                 
 
-                                <p className="text-xl mb-2">
-                                    Description
+                                <p className="text-xl u-text-bold mb-2">
+                                    Description: &nbsp;
+                                    <a href="javascript:alert('The desription for the collection to be inform users of the details.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                    
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.description?.message}</p>
@@ -1352,8 +1427,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </div>
 
 
-                                <p className="text-xl mb-2">
-                                    Category
+                                <p className="text-xl u-text-bold mb-2">
+                                    Category: &nbsp;
+                                     <a href="javascript:alert('The Category that this NFT collection would fit in.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <div className="grid grid-cols-9 mb-4">
@@ -1364,8 +1440,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </div>
 
 
-                                <p className="text-xl mb-2">
-                                    Links
+                                <p className="text-xl u-text-bold mb-2">
+                                    Links: &nbsp;
+                                    <a href="javascript:alert('Links to more web and social media outlets.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
 
