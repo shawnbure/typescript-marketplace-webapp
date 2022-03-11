@@ -29,10 +29,6 @@ import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStates
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
-    //instructions from Chris
-    //https://docs.google.com/document/d/1zWSIEjwLKkLduQyBLXlDE6WSWlReGcfVYyYO1Isx-9M/edit 
-
-
     const {
         address: userWalletAddress,
     } = Dapp.useContext();
@@ -58,88 +54,15 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [isButtonClicked, setIsButtonClicked] = useState(false)
 
     {
-        console.log("********* Inside GENERAL { } *********  ");
-
-        //1. VERIFY IF THEY IS CALLED AFTER UseEffect [] => 1) YES   OR   2) NO
-        //2. VERIFY if delete SessionState from DB during reset WHEN there TxHash in URL, if URLHandler gets called
+        console.log("********* inside { } *********  ");
 
 
 
-        // =========== PROCESS OF VERIFYING URL FOR PAGE STATE ===========
-
-        const txHash = getTxHash();
-
-        // TxHash EMPTY - INITIAL LOAD
-        if( txHash == null || txHash == "" )  //null or empty 
-        {
-            //initial load - get from SessionStorage DB
-            console.log("TX_HASH_SS: " + "txHash == null")
-
-            console.log("intialLoad: " + intialLoad)
-
-            //if it's initialLoad (true), the useEffect []  is called
-            //NOTE: Need a way to only do ONE INITIAL LOAD (SET IN USEEFFECT [] TO SAY IT'S LOAD)
-        }
-        
-        // TxHash EXIST
-        else
-        {
-            console.log("TX_HASH_SS: " + "txHash != null AND Get from URL")
-
-            console.log("TX_HASH_SS: " + "txHash URL value: " + txHash)
-
-            //URL contain txHash
-            
-
-            //prev txHash from session
-            let txHashSessionPrev = sessionStorage.getItem("Create_Collection_TxHash");            
-
-            console.log("TX_HASH_SS: " + "current txHashSession value: " + txHashSessionPrev)
-
-            //previous txHash not in session
-            if( txHashSessionPrev == null || txHashSessionPrev == "" )
-            {
-                //empty and not in there
-                console.log("TX_HASH_SS: " + "null or empty")
-
-                //set new txtHash to session 
-                sessionStorage.setItem("Create_Collection_TxHash", txHash)
-
-                //call urlTxHashHandler
-                //setUrlTxHashHandler(true);
-            }
-
-            //previous txHash in session but DIFFERENT from current txHash
-            else if( txHashSessionPrev != txHash )
-            {
-                //exist but different 
-                console.log("TX_HASH_SS: " + "exist but different")
-
-                //set new txtHash to session 
-                sessionStorage.setItem("Create_Collection_TxHash", txHash)
-
-                //call urlTxHashHandler
-                //setUrlTxHashHandler(true);
-            }
-            else
-            {
-                //call on rendering and nothing to do 
-                console.log("TX_HASH_SS: " + "same prev and current txHash")
-            }
-        }
-
-
-        //NOTE: 2 place to clear sessionStorage
-        // 1) when JSON Parser error occurs and window location is reloaded
-        // 2) when "create" process is done
-
-
-        
 
         /*
-        const txHash = getTxHash();
+        const txtHash = getTxHash();
 
-        if( txHash != null ) // verify it's not null
+        if( txtHash != null ) // verify it's not null
         {
 
         }
@@ -149,15 +72,15 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         {
             console.log("inside - isOpenLoading");
             
-            const txHash = getTxHash();
+            const txtHash = getTxHash();
 
-            if( txHash != null ) // verify it's not null
+            if( txtHash != null ) // verify it's not null
             {
-                console.log("txHash is NOT NULL")
+                console.log("txtHast is NOT NULL")
             }
             else
             {
-                console.log("txHash is null")
+                console.log("txtHast is null")
             }
 
             
@@ -176,7 +99,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
 
-        console.log("======== inside useEffect [] == CALL ONLY ONCE EVERY RENDERS ");
+        console.log("======== inside useEffect [] ");
+
 
         setIntialLoad(true);
 
@@ -205,11 +129,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         {
             
             //get the query param 'txHash'
-            const txHash = getTxHash();
+            const txtHash = getTxHash();
             
-            console.log("txHash: " + txHash )
+            console.log("txtHash: " + txtHash )
 
-            if( txHash != null ) // verify it's not null
+            if( txtHash != null ) // verify it's not null
             {
                 const queryStatus = getQueryStatus()  //check the status
 
@@ -228,7 +152,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 else
                 {
                     const httpRequest = new XMLHttpRequest();
-                    const url= GetTransactionRequestHttpURL(txHash); 
+                    const url= GetTransactionRequestHttpURL(txtHash); 
                     httpRequest.open("GET", url);
                     httpRequest.send();
                     
@@ -379,11 +303,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
                             '"maxSupply":' + sessionStateJSONData.maxSupply + '}')   
          
-            const txHash = getTxHash();
+            const txtHash = getTxHash();
 
             //only time we need to initialize SessionState JSON is when URL isn't from webwallet / maiar wallet 
             //it's coming from profile page (create collection)
-            if( txHash != null )  
+            if( txtHash != null )  
             {
                 /*
                 setTimeout(() => {
@@ -468,8 +392,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
     const handleStartOver = async () => {
-
-        //TODO: clear out all URL parameters to prevent TxHash
 
         console.log("handleStartOver - deleteSessionStateTransaction")
         deleteSessionStateTransaction();
@@ -690,7 +612,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-    
     const { pathname } = useLocation();
     const sendTransaction = Dapp.useSendTransaction();
     
@@ -732,9 +653,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     // ================================== STEP 1 ==================================
 
-
     const schemaStep1 = yup.object({
-        name: yup.string().min(3, "Must be between 3-20 AlphaNumeric Characters").max(20, "Must be between 3-20 AlphaNumeric Characters").matches(/^[a-zA-Z0-9]+$/, "Must be AlphaNumeric ONLY").required(),
+        name: yup.string().min(3, "Must be between 3-10 AlphaNumeric Characters").max(10, "Must be between 3-10 AlphaNumeric Characters").matches(/^[a-zA-Z0-9]+$/, "Must be AlphaNumeric ONLY").required(),
         ticker: yup.string().min(3, "Must be between 3-10 AlphaNumeric Uppercase Characters").max(10, "Must be between 3-10 AlphaNumeric Uppercase Characters").matches(/^[A-Z0-9]+$/, "Must be Uppercase AlphaNumeric ONLY").required(),
 
     }).required();
@@ -970,16 +890,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             data.MetaDataBaseURI = sessionStateJSONData.metaDataBaseURI
             data.MaxSupply = sessionStateJSONData.maxSupply
     
-            console.log("tokenId: " + tokenId)
-            console.log("contractAddress: " + contractAddress)
-            console.log("data.ContractAddress: " + data.ContractAddress)
-            console.log("sPrice: " + sPrice)
-            console.log("data.mintPricePerTokenString: " + data.mintPricePerTokenString)
-            console.log("data.tokenBaseURI: " + data.tokenBaseURI)
-            console.log("data.MetaDataBaseURI: " + data.MetaDataBaseURI)
-            console.log("data.MaxSupply: " + data.MaxSupply)
-
-
             const formattedData = {
                 ...data,
                 tokenId:tokenId,
