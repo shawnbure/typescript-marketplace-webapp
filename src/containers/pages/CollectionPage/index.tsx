@@ -397,10 +397,10 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const handleMintTokens = async () => {
 
 
-    if(requestedNumberOfTokens < 1 || requestedNumberOfTokens > 7 )
+    if(requestedNumberOfTokens < 1 || requestedNumberOfTokens > 10 )
     {
 
-      toast.error(`${`Currently, minting is limited between 1 and a MAX of 7.`}`, {
+      toast.error(`${`Currently, minting is limited between 1 and a MAX of 10.`}`, {
         autoClose: 5000,
         draggable: true,
         closeOnClick: true,
