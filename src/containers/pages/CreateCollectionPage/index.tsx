@@ -1056,6 +1056,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 </p>
 
                                 
+                                
                                 <hr className="text-white my-10" />
 
                                 <p className="text-lg mb-2 text-gray-400">
@@ -1155,7 +1156,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                                 <p className="text-xl u-text-bold mb-2">
                                     Royalties: &nbsp;
-                                    <a href="javascript:alert('Royalties are from 0 to 10 as a percentage. Inserting “1” would mean 1% royalties would return to the creator's smart contract in real-time for every secondary sale.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                    <a href="javascript:alert('Royalties are from 0 to 10 as a percentage. Inserting 1 would mean 1% royalties would return to the smart contract for the creator in real-time for every secondary sale.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-lg text-red-500">{errorsStep2.royalties?.message}</p>
@@ -1521,3 +1522,5 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 };
 
 export default CreateCollectionPage;
+
+
