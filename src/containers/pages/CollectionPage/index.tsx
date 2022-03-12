@@ -395,6 +395,23 @@ export const CollectionPage: (props: any) => any = ({}) => {
   };
 
   const handleMintTokens = async () => {
+
+
+    if(requestedNumberOfTokens < 1 || requestedNumberOfTokens > 10 )
+    {
+
+      toast.error(`${`Currently, minting is limited between 1 and a MAX of 10.`}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+      return      
+    }
+
+    
     if (buyCount >= buyLimit && buyLimit != -1){
 
       toast.error(`${`You have reached your mint limit, Or you are not whitelisted`}`, {
@@ -407,6 +424,9 @@ export const CollectionPage: (props: any) => any = ({}) => {
       });
       return
     }
+
+
+
     const getBuyNFTResponse: any = await getMintTokensTemplateTrigger({
       userWalletAddress,
       collectionId,
@@ -618,7 +638,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
                 <div className="col-span-12 md:col-start-5 md:col-span-2  p-10 md:p-0 ">
                   <p className="text-sm mb-4">Number of tokens to mint: </p>
                   <input
-                    min={1}
+                    min={1} max={7}
                     onChange={(e: any) => {
                       setRequestedNumberOfTokens(e.target.value);
                     }}

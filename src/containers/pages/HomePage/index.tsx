@@ -224,20 +224,20 @@ export const HomePage = () => {
 
                         <div className="col-xs-12 col-md-6">
 
-                            <Link to={'/collection/HELIOS2022-1ea0f2'}>
+                            <Link to={'/collection/ENFT-e7b4b7'}>
                                 <div className="u-margin-top-spacing-9">
 
                                     <div className={`c-card c-card--homepage-feature`}>
 
                                         <div className="c-card_img-container">
-                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_img" alt="" />
+                                            <img src={'./img/collections/regal-eagles/homepage_gif.gif'} className="c-card_img" alt="" />
                                         </div>
 
                                         <div className="c-card_info">
-                                            <img src={'./img/collections/helios/preview.gif'} className="c-card_creator-avatar" alt="" />
+                                            <img src={'./img/collections/regal-eagles/homepage_gif.gif'} className="c-card_creator-avatar" alt="" />
                                             <div className="c-card_details">
                                                 <span className="c-card_title">
-                                                    {'Helios Staking'}
+                                                    {'Regal Eagles'}
                                                 </span>
 
                                             </div>
