@@ -101,7 +101,7 @@ export const accountsApi = createApi({
       query: ({ userWalletAddress, offset, limit }): FetchArgs => {
         const customRequestArg: FetchArgs = {
           method: GET,
-          url: `/${mainPath}/${userWalletAddress}/tokens/?offset=${offset}&limit=${limit}&filter=${encodeURIComponent(
+          url: `/${mainPath}/${userWalletAddress}/tokens?offset=${offset}&limit=${limit}&filter=${encodeURIComponent(
             "on_sale|true|="
           )}`,
         };

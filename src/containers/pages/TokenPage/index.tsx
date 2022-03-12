@@ -1276,7 +1276,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                             }
 
                                             {
-                                                /*
+                                                
                                                 !isOnSale &&
                                                 <div>
                                                     <Link to={`/token/${walletAddressParam}/${collectionId}/${tokenNonce}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
@@ -1288,18 +1288,18 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                         </span>
                                                     </Link>
                                                 </div>
-                                                */
-                                                !isOnSale &&
-                                                <div>
-                                                     <div className="c-button c-button--primary u-margin-right-spacing-2"  onClick={alphaToastMessage}>
-                                                        <span className="u-padding-right-spacing-2">
-                                                            <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
-                                                        </span>
-                                                        <span>
-                                                            Sell
-                                                        </span>
-                                                    </div>
-                                                </div>
+                                                
+                                                // !isOnSale &&
+                                                // <div>
+                                                //      <div className="c-button c-button--primary u-margin-right-spacing-2"  onClick={alphaToastMessage}>
+                                                //         <span className="u-padding-right-spacing-2">
+                                                //             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
+                                                //         </span>
+                                                //         <span>
+                                                //             Sell
+                                                //         </span>
+                                                //     </div>
+                                                // </div>
                                             }
 
                                             {

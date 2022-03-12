@@ -179,7 +179,7 @@ export const WalletSidebar: (Props: {
           Web Wallet
         </button>
       }
-      <LedgerLogin />
+      {/* <LedgerLogin /> */}
       <button
         onClick={toggleShouldDisplayMaiarLogin}
         className="c-button c-button--secondary "
