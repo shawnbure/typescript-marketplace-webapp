@@ -396,6 +396,20 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
   const handleMintTokens = async () => {
 
+    if( userWalletAddress == null )
+    {
+      toast.error(`${`Please login (link in upper right) before minting.`}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+
+      return
+    }
+
 
     if(requestedNumberOfTokens < 1 || requestedNumberOfTokens > 10 )
     {
@@ -411,7 +425,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
       return      
     }
 
-    
+
     if (buyCount >= buyLimit && buyLimit != -1){
 
       toast.error(`${`You have reached your mint limit, Or you are not whitelisted`}`, {
@@ -438,6 +452,8 @@ export const CollectionPage: (props: any) => any = ({}) => {
         status,
         data: { error },
       } = getBuyNFTResponse.error;
+
+      console.log("handleMintTokens 4 ");
 
       toast.error(`${status} | ${error}`, {
         autoClose: 5000,
@@ -526,7 +542,13 @@ export const CollectionPage: (props: any) => any = ({}) => {
     if( collectionDataLoaded ) {
       console.log(collectionDataLoaded)
       console.log(contractAddress)
-      getWhitelistCountLimitTemplateTransaction();
+
+      if( userWalletAddress != null )
+      {
+        console.log("inside userWalletAddress")
+        getWhitelistCountLimitTemplateTransaction();
+      }
+      
     }
   }, [collectionDataLoaded]);
 
