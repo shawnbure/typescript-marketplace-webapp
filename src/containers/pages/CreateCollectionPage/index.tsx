@@ -595,6 +595,11 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         element.hidden = false;
     }
 
+    function ShowLearnToVerifyAlert()
+    {
+        alert('Want to Verify this Collection? Simply click on the "Learn How to Verify Collections" button')
+    }
+
 
     function OnFocusElement(elementID: string)
     {
@@ -931,13 +936,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
                 HideElement("submit_step5");
                 ShowElement("linkBackToProfile");
+                ShowElement("linkLearnVerifyCollection");
             }
             
             
             
     
             
-            toast.success(`Succesful register`, {
+            toast.success(`Succesful Creation`, {
                 autoClose: 5000,
                 draggable: true,
                 closeOnClick: true,
@@ -945,6 +951,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 hideProgressBar: false,
                 position: "bottom-right",
             });
+
+            ShowLearnToVerifyAlert()
         }
     };
 
@@ -1498,6 +1506,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </Link>
 
+                                <br/> <br/>
+                                <a href={'https://www.notion.so/enftdao/Verification-e874591432eb4e0388df94470a3854a9'} hidden={true} className="c-button c-button--secondary u-margin-bottom-spacing-4 u-margin-right-spacing-4" target="_blank" id="linkLearnVerifyCollection">Learn How to Verify Collections</a>                                 
+
 
                             </form>
 
@@ -1522,5 +1533,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 };
 
 export default CreateCollectionPage;
+
 
 
