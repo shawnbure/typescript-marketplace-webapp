@@ -28,12 +28,22 @@ import { configureStore } from "@reduxjs/toolkit";
 
 
 
+
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const {
         address: userWalletAddress,
     } = Dapp.useContext();
     
+    const history = useHistory() 
+
+    useEffect(() => {
+        return history.listen((location) => { 
+           console.log(`$$$$$$$$$$$$ You changed the page to: ${location.pathname}`) 
+        }) 
+     },[history]) 
+     
+     
     const [isOpenLoading, setIsOpenLoading] = useState(true)
 
     
@@ -55,44 +65,112 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [isButtonClicked, setIsButtonClicked] = useState(false)
     const [routeTokenID, setRouteTokenID] = useState("")
 
+    const [isFinishLoading, setIsFinishLoading] = useState(false)
+
     {
-        console.log("********* inside { } *********  ");
+        console.log("********* inside { GENERAL } *********  ");
 
 
+        const txHashCurrent = getTxHash();
 
-
-        /*
-        const txtHash = getTxHash();
-
-        if( txtHash != null ) // verify it's not null
+        if( txHashCurrent == null )  //initial load 
         {
+            //console.log("-- txHash is NULL ")
 
-        }
-
-        
-        if( isOpenLoading )
-        {
-            console.log("inside - isOpenLoading");
+            //set empty
+            sessionStorage.setItem("Create_Collection_TxHash", "")
             
-            const txtHash = getTxHash();
-
-            if( txtHash != null ) // verify it's not null
+            if( isFinishLoading )
             {
-                console.log("txtHast is NOT NULL")
+                console.log(" ------------- GENERAL {} inside isFinishLoading  ");
+    
+                setIsFinishLoading(false);
+                //setIntialLoad(true);
+            }            
+        }
+        else
+        {
+            
+            //console.log("------ txHash NOT null ")
+
+            //current txHash from session
+            let txHashSession = sessionStorage.getItem("Create_Collection_TxHash");
+            
+            //compare current txHast to one from session
+            if( txHashCurrent != txHashSession ) //different
+            {   
+                console.log("-- DIFFERENT : set new txtHash to session ")
+
+                //set CURRENT as new txtHash to session 
+                sessionStorage.setItem("Create_Collection_TxHash", txHashCurrent)
+
+                //now process txtURL handler
             }
             else
             {
-                console.log("txtHast is null")
+                console.log("-- SAME : Current txHash is same is Session txHash ")
+
+                //don't do much here
+
             }
+        }
+
+
+        /*
+        const txHash = getTxHash();
+
+        if( txHash != null ) 
+        {
+            console.log("-- txHash NOT null ")
+
+            //current txHash from session
+            let txHashSession = sessionStorage.getItem("Create_Collection_TxHash");
+
+            if( txHashSession != txHash ) //different
+            {
+                console.log("-- set new txtHash to session ")
+
+                //set new txtHash to session 
+                sessionStorage.setItem("Create_Collection_TxHash", txHash)
+
+                //setIsFinishLoading(false);
+                //setIntialLoad(true);
+
+                initSessionStateJSONFromDB();  
+
+                console.log("-- DONE set new txtHash to session ")
+            }
+            else
+            {
+                console.log("-- same session txHash ")
+            }
+        }
+        else
+        {
+            console.log("-- txHash is NULL ")
+            
+            //set empty
+            sessionStorage.setItem("Create_Collection_TxHash", "")
+
+
 
             
+            //is coming in the first time - DB state will set the appropriate steps
 
-
-            setIsOpenLoading(false);
-
-            setIntialLoad(true);
-        }
+            if( isFinishLoading )
+            {
+                console.log(" GENERAL {} inside isFinishLoading  ");
+    
+                setIsFinishLoading(false);
+                setIntialLoad(true);
+            }
+    
+        }        
         */
+
+
+
+     
 
     }
 
@@ -103,6 +181,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         console.log("======== inside useEffect [] ");
 
+        setIsFinishLoading(true)
 
         setIntialLoad(true);
 
@@ -125,15 +204,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {  //Invoked when "urlTxHashHandler" is SET 
         
-        console.log("urlTxHashHandler: " + urlTxHashHandler)
 
         if( urlTxHashHandler )  //reason to check this is onload, it's false - once we set the value, set to to true to get it
         {
             
             //get the query param 'txHash'
             const txtHash = getTxHash();
-            
-            console.log("txtHash: " + txtHash )
 
             if( txtHash != null ) // verify it's not null
             {
@@ -158,7 +234,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     httpRequest.open("GET", url);
                     httpRequest.send();
                     
-                    console.log("url: " + url)
 
                     httpRequest.onreadystatechange = (e) => 
                     {
@@ -166,9 +241,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         if (httpRequest.readyState == 4 && httpRequest.status == 200)
                         {
                             if( httpRequest.responseText  )
-                            {                
-                                console.log("httpRequest.responseText: " + httpRequest.responseText )
-
+                            {             
                                 const data = httpRequest.responseText;
         
                                 try {
@@ -184,7 +257,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     
                                 } catch(e) 
                                 {
-                                    console.log(e)
                                     //there's a parse error - handle it here 
 
                                     window.location.reload()
@@ -394,11 +466,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     }
 
     const handleStartOver = async () => {
-
-        console.log("handleStartOver - deleteSessionStateTransaction")
         deleteSessionStateTransaction();
-
-        
     }
     
   
@@ -415,7 +483,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const response: any = deleteSessionStatesByAccountIdByStateTypeTrigger({ payload: formattedData }).then(r=>{
             
-            console.log("Complete Delete")
             initSessionStateJSONFromDB();
             
             }).catch(err=>{
@@ -832,10 +899,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
             const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
-            console.log( "sessionStateJSONData.tokenID: " + sessionStateJSONData.tokenID)
-            console.log( "sessionStateJSONData.scAddress: " + sessionStateJSONData.scAddress)
-    
-            
     
             const getTemplateData = {
                 userWalletAddress,
@@ -899,10 +962,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             data.MetaDataBaseURI = sessionStateJSONData.metaDataBaseURI
             data.MaxSupply = sessionStateJSONData.maxSupply
     
-            console.log("mintPricePerTokenString: " + data.mintPricePerTokenString)
-            console.log("mintPricePerTokenString: " + data.mintPricePerTokenString)
 
-            console.log("maxSupply: " + data.MaxSupply)
 
             const formattedData = {
                 ...data,
