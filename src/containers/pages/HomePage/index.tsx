@@ -139,6 +139,9 @@ export const HomePage = () => {
 
                     </Link>
                 </div>
+
+
+
               );
             });            
     };
@@ -316,22 +319,7 @@ export const HomePage = () => {
 
                         
 
-                    {
-                        /*
-                            UNCOMMENT TO SHOW THE COLLECTIONS
-                            <div className="grid grid-cols-12">
 
-                                {Boolean(collectionList.length) ? (
-                                mapCollections()
-                                ) : (
-                                <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
-                                    no collections
-                                </div>
-                                )}
-
-                            </div>
-                        */
-                    }
 
 
                 
@@ -632,88 +620,16 @@ export const HomePage = () => {
                     <div className="grid grid-cols-12">
 
 
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
+   
+                                {Boolean(collectionList.length) ? (
+                                mapCollections()
+                                ) : (
+                                <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+                                    no collections
                                 </div>
+                                )}
 
-                            </Link>                            
-                        </div>
-
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>                            
-                        </div>
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>                            
-                        </div>                        
+                     
 
                                                 
                     </div>
