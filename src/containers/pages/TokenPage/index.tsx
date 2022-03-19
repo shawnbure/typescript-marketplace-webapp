@@ -153,9 +153,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
             getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
 
-            //this exits the useeffect and then will not fire the gettokendata
-            //SMB Commented out 03/19/22
-            //return;
+            return;
 
         }
 
