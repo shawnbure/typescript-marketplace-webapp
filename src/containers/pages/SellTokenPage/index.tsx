@@ -133,7 +133,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         if(txtHash != null ) {
 
             const saleStatus = String(urlParams.get("saleStatus"))
-            const saleStringPrice = String(urlParams.get("salePrice"))
             const saleNominalPrice = parseFloat(String(urlParams.get("salePrice")))
             const saleStartDate = parseInt(String(urlParams.get("saleStartDate")))
             const saleEndDate = parseInt(String(urlParams.get("saleEndDate")))
@@ -144,6 +143,34 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                 let hexNonce = tokenNonce;
                 if(tokenNonce?.length == 1){
                     hexNonce = "0" + tokenNonce;
+                }
+
+                //fix the string price to correct format
+                let saleStringPriceRaw = String(urlParams.get("salePrice")).replace('0.','').replace('.','');
+
+                let arraySaleStringPrice = saleStringPriceRaw.split('');
+
+                let leadingZeroCount = 0;
+                let digitCount = 0;
+
+                //account for the start pos if the leading zeros
+                //account for the number of digits
+                for (let i = 0; i < arraySaleStringPrice.length; i++) {
+
+                    if(arraySaleStringPrice[i] === "0") {
+                        leadingZeroCount++;
+                    }
+                    if(arraySaleStringPrice[i] != "0") {
+                        digitCount++;
+                    }
+                }
+
+                let numberOfTrailingZeros = leadingZeroCount+digitCount;
+
+                let saleStringPrice = arraySaleStringPrice.join('').replace('0','');
+
+                for (let i = 0; i < 18-numberOfTrailingZeros; i++) {
+                saleStringPrice += "0";
                 }
 
                 const formattedData = {
