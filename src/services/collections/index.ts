@@ -211,6 +211,47 @@ export const collectionsApi = createApi({
         }),
 
 
+        
+        getCollectionVerified: builder.mutation<any, any>({
+
+            query: ({ limit }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/verified/${limit}`
+                }
+
+                return customRequestArg;
+            },
+        }), 
+        
+
+        getCollectionNoteworthy: builder.mutation<any, any>({
+
+            query: ({ limit }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/noteworthy/${limit}`
+                }
+
+                return customRequestArg;
+            },
+        }), 
+        
+        getCollectionTrending: builder.mutation<any, any>({
+
+            query: ({ limit }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/trending/${limit}`
+                }
+
+                return customRequestArg;
+            },
+        }), 
+
     }),
 })
 
@@ -224,4 +265,7 @@ export const {
     useRegisterCollectionMutation,
     useCreateCollectionMutation,
     useGetCollectionByIdMutation, 
-    useGetAllCollectionMutation, } = collectionsApi;
+    useGetAllCollectionMutation,
+    useGetCollectionVerifiedMutation,
+    useGetCollectionNoteworthyMutation,
+    useGetCollectionTrendingMutation, } = collectionsApi;
