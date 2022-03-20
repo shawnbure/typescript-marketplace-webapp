@@ -275,7 +275,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const isListed: boolean = tokenState === 'List';
     const isAuction: boolean = tokenState === 'Auction';
-    const isOnSale: boolean = ownerWalletAddress == userWalletAddress && ( isListed || isAuction);
+    const isOnSale: boolean = ( isListed || isAuction);
     const onSaleText = isListed ? "Current price" : "Min bid"
 
     const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
@@ -1272,7 +1272,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                             {
                                                 
-                                                (!isOnSale) &&
+                                                (!isOnSale) && isCurrentTokenOwner &&
                                                 <div>
                                                     <Link to={`/token/${ownerWalletAddress}/${collectionId}/${tokenNonce}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
                                                         <span className="u-padding-right-spacing-2">
