@@ -13,6 +13,7 @@ import {
   POST,
 } from "constants/api";
 import { selectAccessToken } from "redux/selectors/user";
+import { formatHexMetaImage } from "utils";
 
 const mainPath = "accounts";
 
@@ -112,12 +113,20 @@ export const accountsApi = createApi({
 
     getAccountTokenGateway: builder.mutation<any, any>({
       query: ({ userWalletAddress, identifier, nonce }): FetchArgs => {
+        nonce = parseInt(nonce, 16);
+        nonce = nonce.toString(16);
+        if (nonce.length <2 ){
+          nonce = `0${nonce}`
+        }
         const customRequestArg: FetchArgs = {
           method: GET,
-          url: `${ELROND_GATEWAY_API}/address/${userWalletAddress}/nft/${identifier}/nonce/${nonce}`,
+          url: `${ELROND_API}/nfts/${identifier}-${nonce.toString(16)}`,
         };
 
         return customRequestArg;
+      },
+      transformResponse: async (token: any) => {
+        return {data:{tokenData:token}}
       },
     }),
 
@@ -136,7 +145,7 @@ export const accountsApi = createApi({
       query: ({ userWalletAddress, offset, limit }): FetchArgs => {
         const customRequestArg: FetchArgs = {
           method: GET,
-          url: `${ELROND_API}/accounts/${userWalletAddress}/nfts?from=${offset}&size=${limit}&type=NonFungibleESDT`,
+          url: `${ELROND_API}/accounts/${userWalletAddress}/nfts?from=${offset}&size=${limit}&type=NonFungibleESDT&order=desc`,
         };
 
         return customRequestArg;
