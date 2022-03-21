@@ -18,7 +18,7 @@ import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
 
 
- import { useGetAllCollectionMutation, useGetCollectionVerifiedMutation, useGetCollectionNoteworthyMutation, useGetCollectionTrendingMutation } from 'services/collections';
+ import { useGetCollectionVerifiedMutation, useGetCollectionNoteworthyMutation, useGetCollectionTrendingMutation } from 'services/collections';
  import * as Dapp from "@elrondnetwork/dapp";
 import { url } from 'inspector';
 import { alphaToastMessage } from 'components/AlphaToastError';
@@ -31,12 +31,6 @@ SwiperCore.use([Autoplay, Pagination, Navigation]);
 export const HomePage = () => {
 
     const { loggedIn, address: userAddress } = Dapp.useContext();
-
-    const [collectionList, setCollectionList] = useState<Array<any>>([]);
-
-    const [getAllCollectionTrigger, {
-         data: allCollections
-     }] = useGetAllCollectionMutation();
 
 
      const [collectionVerifiedList, setCollectionVerifiedList] = useState<Array<any>>([]);
@@ -59,10 +53,8 @@ export const HomePage = () => {
 
     useEffect(() => {
 
-        //This is called once on render
-        getAllCollectionTrigger({});
 
-        initializeAllCollection();        
+        initializeCollections();        
       }, []);
       
       
@@ -109,23 +101,15 @@ export const HomePage = () => {
        
     }      
 
-    const initializeAllCollection = async () => {
+    const initializeCollections = async () => {
 
-        const formattedData = {
-            //add any data for post (here as a placeholder)
-        }
-
-        //retrieve the session state
-        const collectionsData: any = await getAllCollectionTrigger(formattedData);
-        
-         if( collectionsData?.data )
-         {
-             //set the api collection data call to the state array variable
-             setCollectionList(collectionsData.data.data);
-         }   
+         //Collection data size
+         const verifiedDataLimit = 3
+         const noteworthyDataLimit = 3
+         const trendingDataLimit = 9
 
 
-         const collectionsVerifiedData: any = await getCollectionVerifiedTrigger({limit: 9});
+         const collectionsVerifiedData: any = await getCollectionVerifiedTrigger({limit: verifiedDataLimit});
         
          if( collectionsVerifiedData?.data )
          {
@@ -133,7 +117,7 @@ export const HomePage = () => {
              setCollectionVerifiedList(collectionsVerifiedData.data.data);
          }            
 
-         const collectionsNoteworthyData: any = await getCollectionNoteworthyTrigger({limit: 9});
+         const collectionsNoteworthyData: any = await getCollectionNoteworthyTrigger({limit: noteworthyDataLimit});
         
          if( collectionsNoteworthyData?.data )
          {
@@ -141,7 +125,7 @@ export const HomePage = () => {
              setCollectionNoteworthyList(collectionsNoteworthyData.data.data);
          } 
 
-         const collectionsTrendingData: any = await getCollectionTrendingTrigger({limit: 9});
+         const collectionsTrendingData: any = await getCollectionTrendingTrigger({limit: trendingDataLimit});
                  
          if( collectionsTrendingData?.data )
          {
