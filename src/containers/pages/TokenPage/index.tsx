@@ -34,8 +34,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
 
+    //this walletAddressParam below actuall gets the contract address for the URL?
+    const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
+   
     const [offerAmount, setOfferAmount] = useState<number>(0);
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
 
@@ -113,11 +115,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isGatewayTokenFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
     const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
 
-    // const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
+    //const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
 
     const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
     const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
-
+    
     useEffect(() => {
 
         getTokenOffersTrigger({
@@ -273,7 +275,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isAuction: boolean = tokenState === 'Auction';
     const isOnSale: boolean = ( isListed || isAuction);
     const onSaleText = isListed ? "Current price" : "Min bid"
-
+   
     const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
     // const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
 
