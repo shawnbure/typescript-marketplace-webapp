@@ -41,7 +41,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const [expireOffer, setExpireOffer] = useState<any>();
 
-
     const {
         loggedIn,
         address: userWalletAddress,
@@ -151,8 +150,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
             return;
         }
 
-
-
     }, []);
 
 
@@ -176,10 +173,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     };
 
-
     let { data: tokenData } = walletAddressParam ? gatewayTokenData : tokenResponseData;
 
-    const isOurs = !Boolean(tokenResponseData.data == undefined);
+    const isOurs = !Boolean(tokenResponseData == undefined);
     if (isOurs === true ) {
         tokenData = tokenResponseData.data
     }
