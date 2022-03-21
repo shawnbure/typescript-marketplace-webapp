@@ -129,9 +129,6 @@ export const HomePage = () => {
         
          if( collectionsVerifiedData?.data )
          {
-            console.log("collectionsVerifiedData DATA")
-            console.log(collectionsVerifiedData)
-                         
              //set the api collection data call to the state array variable
              setCollectionVerifiedList(collectionsVerifiedData.data.data);
          }            
@@ -140,9 +137,6 @@ export const HomePage = () => {
         
          if( collectionsNoteworthyData?.data )
          {
-            console.log("collectionsNoteworthyData DATA")
-            console.log(collectionsNoteworthyData)
-
              //set the api collection data call to the state array variable
              setCollectionNoteworthyList(collectionsNoteworthyData.data.data);
          } 
@@ -151,8 +145,6 @@ export const HomePage = () => {
                  
          if( collectionsTrendingData?.data )
          {
-             console.log("collectionsTrendingData DATA")
-             console.log(collectionsTrendingData)
              //set the api collection data call to the state array variable
              setCollectionTrendingList(collectionsTrendingData.data.data);
          } 
