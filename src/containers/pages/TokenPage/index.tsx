@@ -1192,9 +1192,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             </div>
 
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
-
                                 {
-                                    ((!walletAddressParam || (walletAddressParam && isCurrentTokenOwner)) && Boolean(ownerWalletAddress)) &&
+
                                     <Collapsible
 
                                         open={true}
@@ -1234,7 +1233,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                                 :
                                                 <div className="c-accordion_trigger">
 
-                                                    {!walletAddressParam && <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
+                                                    { <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
                                                         Fixed price
                                                     </p>}
 
