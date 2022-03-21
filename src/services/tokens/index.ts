@@ -41,7 +41,7 @@ export const tokensApi = createApi({
 
 
         getTokenData: builder.mutation<any, any>({
-
+            
             query: ({ collectionId, tokenNonce }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
@@ -50,7 +50,7 @@ export const tokensApi = createApi({
                     url: `/${mainPath}/${collectionId}/${tokenNonce}`
 
                 }
-
+        
                 return customRequestArg;
 
             },

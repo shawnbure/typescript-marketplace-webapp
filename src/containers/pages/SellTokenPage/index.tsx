@@ -93,12 +93,16 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
 
-        //const shouldRedirect: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
-        setShouldRedirect(false);
+        const shouldRedirect: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
+        
+        //this is for clientside token insert
+        //setShouldRedirect(false);
 
     }, []);
 
     //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
+    //this is for clientside token insert
+/*
     useEffect(() => 
     {
 
@@ -113,7 +117,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         }
 
     });
-
+*/
     const [initialStore, setInitialStore] = useState(false)
     const [storeDataExist, setStoreDataExist] = useState(false)
 
@@ -379,8 +383,9 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         signTemplateTransaction({
 
-            //succesCallbackRoute: '/account',
-            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell?saleStatus=Auction&salePrice='+requestedAmount+'&saleStartDate='+unixStartDate+'&saleEndDate='+unixEndDate,
+            succesCallbackRoute: '/account',
+            //below is the client based token add to database
+            //succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell?saleStatus=Auction&salePrice='+requestedAmount+'&saleStartDate='+unixStartDate+'&saleEndDate='+unixEndDate,
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: unixStartDate, deadline: unixEndDate },
             getTemplateTrigger: getStartAuctionNftTemplateTrigger,
 

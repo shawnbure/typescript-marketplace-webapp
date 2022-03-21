@@ -102,10 +102,12 @@ export const SearchBar = ({
 
             const results: any = await searchByStringTrigger({ searchString });
 
-            const accounts = results?.data?.data?.Accounts?.map(({ address: value, name, }: any) => ({ value, label: name, type: "profile" })) || [];
-            const collections = results?.data?.data?.Collections?.map(({ tokenId: value, name, }: any) => ({ value, label: name, type: "collection" })) || [];
 
-            const allResults = [...accounts, ...collections];
+            const collections = results?.data?.data?.Collections?.map(({ tokenId: value, name, }: any) => ({ value, label: "📖  " + name, type: "collection" })) || [];
+            const accounts = results?.data?.data?.Accounts?.map(({ address: value, name, }: any) => ({ value, label: "👤  " + name, type: "profile" })) || [];
+            
+
+            const allResults = [...collections, ...accounts];
 
             resolve(allResults);
 
@@ -117,7 +119,7 @@ export const SearchBar = ({
     return (
 
         <div className={`c-searchbar ${wrapperClassNames}`}>
-            <AsyncSelect placeholder="Search collections and accounts" onChange={handleSearchChange} isClearable isSearchable cacheOptions defaultOptions loadOptions={promiseOptions} className={"text-white w-full"} styles={customStyles} />
+            <AsyncSelect placeholder="Search Collections 📖 &amp; Accounts 👤" onChange={handleSearchChange} isClearable isSearchable cacheOptions defaultOptions loadOptions={promiseOptions} className={"text-white w-full"} styles={customStyles} />
         </div>
     );
 };
