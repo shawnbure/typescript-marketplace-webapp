@@ -36,6 +36,7 @@ export const tokensApi = createApi({
 
     getTokenData: builder.mutation<any, any>({
       query: ({ collectionId, tokenNonce }): FetchArgs => {
+        tokenNonce = parseInt(tokenNonce,16)
         const customRequestArg: FetchArgs = {
           method: GET,
           url: `/${mainPath}/${collectionId}/${tokenNonce}`,
