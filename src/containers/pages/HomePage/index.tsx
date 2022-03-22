@@ -21,7 +21,7 @@ import 'swiper/swiper.min.css';
  import { useGetCollectionVerifiedMutation, useGetCollectionNoteworthyMutation, useGetCollectionTrendingMutation } from 'services/collections';
  import * as Dapp from "@elrondnetwork/dapp";
 import { url } from 'inspector';
-import { alphaToastMessage } from 'components/AlphaToastError';
+
 
 
 SwiperCore.use([Autoplay, Pagination, Navigation]);
@@ -60,7 +60,6 @@ export const HomePage = () => {
       
     const HandleCreateCollectionClick = () => {
 
-        /*
         if( loggedIn )
         {
             window.location.href = '/collection/create'
@@ -69,14 +68,10 @@ export const HomePage = () => {
         {
             alert('Please login to Create a Collection');            
         }
-        */
-
-        alphaToastMessage();  
     } 
 
     const HandleRegisterCollectionClick = () => {
 
-        /*
         if( loggedIn )
         {
             window.location.href = '/collection/register'
@@ -85,10 +80,6 @@ export const HomePage = () => {
         {
             alert('Please login to Register a Collection');
         }
-        
-        */
-
-        alphaToastMessage();
     }
 
 
@@ -226,9 +217,7 @@ export const HomePage = () => {
 
 
                                 <p className="u-margin-bottom-spacing-10">
-                                    {
-                                        /*
-                                            {loggedIn && (
+                                        {loggedIn && (
                                                 <Link to={routePaths.account} className="c-button c-button--primary">
                                                     List an NFT for Free
                                                 </Link>
@@ -236,17 +225,9 @@ export const HomePage = () => {
                                             { ! loggedIn && (
                                                 <a href="javascript:alert('Please login to List an NFT');" className="c-button c-button--primary">List an NFT for Free</a>
 
-                                            )}                                        
-                                        */
-                                    }
-
-                                    <div onClick={alphaToastMessage} className="c-button c-button--primary">List an NFT for Free</div>
+                                            )}   
 
                                 </p>
-
-         
-
-
 
                             </div>
 
