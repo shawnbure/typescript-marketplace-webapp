@@ -18,10 +18,10 @@ import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
 
 
- import { useGetAllCollectionMutation } from 'services/collections';
+ import { useGetCollectionVerifiedMutation, useGetCollectionNoteworthyMutation, useGetCollectionTrendingMutation } from 'services/collections';
  import * as Dapp from "@elrondnetwork/dapp";
 import { url } from 'inspector';
-import { alphaToastMessage } from 'components/AlphaToastError';
+
 
 
 SwiperCore.use([Autoplay, Pagination, Navigation]);
@@ -32,25 +32,34 @@ export const HomePage = () => {
 
     const { loggedIn, address: userAddress } = Dapp.useContext();
 
-    const [collectionList, setCollectionList] = useState<Array<any>>([]);
 
-    const [getAllCollectionTrigger, {
-         data: allCollections
-     }] = useGetAllCollectionMutation();
+     const [collectionVerifiedList, setCollectionVerifiedList] = useState<Array<any>>([]);
+     const [collectionNoteworthyList, setCollectionNoteworthyList] = useState<Array<any>>([]);
+     const [collectionTrendingList, setCollectionTrendingList] = useState<Array<any>>([]);
 
+     const [getCollectionVerifiedTrigger, {
+        data: collectionVerified
+    }] = useGetCollectionVerifiedMutation();
+
+    const [getCollectionNoteworthyTrigger, {
+        data: collectionNoteworthy
+    }] = useGetCollectionNoteworthyMutation();
+    
+    const [getCollectionTrendingTrigger, {
+        data: collectionTrending
+    }] = useGetCollectionTrendingMutation();
+
+    
 
     useEffect(() => {
 
-        //This is called once on render
-        getAllCollectionTrigger({});
 
-        initializeAllCollection();        
+        initializeCollections();        
       }, []);
       
       
     const HandleCreateCollectionClick = () => {
 
-        /*
         if( loggedIn )
         {
             window.location.href = '/collection/create'
@@ -59,14 +68,10 @@ export const HomePage = () => {
         {
             alert('Please login to Create a Collection');            
         }
-        */
-
-        alphaToastMessage();  
     } 
 
     const HandleRegisterCollectionClick = () => {
 
-        /*
         if( loggedIn )
         {
             window.location.href = '/collection/register'
@@ -75,10 +80,6 @@ export const HomePage = () => {
         {
             alert('Please login to Register a Collection');
         }
-        
-        */
-
-        alphaToastMessage();
     }
 
 
@@ -91,24 +92,43 @@ export const HomePage = () => {
        
     }      
 
-    const initializeAllCollection = async () => {
+    const initializeCollections = async () => {
 
-        const formattedData = {
-            //add any data for post (here as a placeholder)
-        }
+         //Collection data size
+         const verifiedDataLimit = 3
+         const noteworthyDataLimit = 3
+         const trendingDataLimit = 9
 
-        //retrieve the session state
-        const collectionsData: any = await getAllCollectionTrigger(formattedData);
+
+         const collectionsVerifiedData: any = await getCollectionVerifiedTrigger({limit: verifiedDataLimit});
         
-         if( collectionsData?.data )
+         if( collectionsVerifiedData?.data )
          {
              //set the api collection data call to the state array variable
-             setCollectionList(collectionsData.data.data);
-         }   
+             setCollectionVerifiedList(collectionsVerifiedData.data.data);
+         }            
+
+         const collectionsNoteworthyData: any = await getCollectionNoteworthyTrigger({limit: noteworthyDataLimit});
+        
+         if( collectionsNoteworthyData?.data )
+         {
+             //set the api collection data call to the state array variable
+             setCollectionNoteworthyList(collectionsNoteworthyData.data.data);
+         } 
+
+         const collectionsTrendingData: any = await getCollectionTrendingTrigger({limit: trendingDataLimit});
+                 
+         if( collectionsTrendingData?.data )
+         {
+             //set the api collection data call to the state array variable
+             setCollectionTrendingList(collectionsTrendingData.data.data);
+         } 
+
+
     }
 
 
-    const mapCollections = () => {
+    const mapCollectionList = (collectionList: any) => {
         return collectionList.map((userCollection: any) => {
             const {
               id,
@@ -139,8 +159,6 @@ export const HomePage = () => {
 
                     </Link>
                 </div>
-
-
 
               );
             });            
@@ -199,9 +217,7 @@ export const HomePage = () => {
 
 
                                 <p className="u-margin-bottom-spacing-10">
-                                    {
-                                        /*
-                                            {loggedIn && (
+                                        {loggedIn && (
                                                 <Link to={routePaths.account} className="c-button c-button--primary">
                                                     List an NFT for Free
                                                 </Link>
@@ -209,17 +225,9 @@ export const HomePage = () => {
                                             { ! loggedIn && (
                                                 <a href="javascript:alert('Please login to List an NFT');" className="c-button c-button--primary">List an NFT for Free</a>
 
-                                            )}                                        
-                                        */
-                                    }
-
-                                    <div onClick={alphaToastMessage} className="c-button c-button--primary">List an NFT for Free</div>
+                                            )}   
 
                                 </p>
-
-         
-
-
 
                             </div>
 
@@ -346,146 +354,16 @@ export const HomePage = () => {
                     </div>
 
 
+
                     <div className="grid grid-cols-12">
 
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
+                                {Boolean(collectionVerifiedList.length) ? (
+                                mapCollectionList(collectionVerifiedList)
+                                ) : (
+                                    <div className="text-white text-center u-text-normal col-span-12 mr-8 mb-8">
+                                    Currently, There are No Verified Collections 
                                 </div>
-
-                            </Link>                            
-                        </div>
-
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>                            
-                        </div>
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>                            
-                        </div>                        
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>                            
-                        </div>     
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>                            
-                        </div>   
-
+                                )}              
                     </div>
 
 
@@ -508,94 +386,15 @@ export const HomePage = () => {
 
 
 
-
                     <div className="grid grid-cols-12">
 
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
+                                {Boolean(collectionNoteworthyList.length) ? (
+                                mapCollectionList(collectionNoteworthyList)
+                                ) : (
+                                <div className="text-white text-center u-text-normal col-span-12 mr-8 mb-8">
+                                    Currently, There are No Noteworthy Collections 
                                 </div>
-
-                            </Link>                            
-                        </div>
-
-
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>                            
-                        </div>
-
-                        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-4 md:mx-4 mb-8">
-                            <Link to={`/collection/KITTIES-fe6016`}>
-                                <div className="u-margin-tb-spacing-4">
-
-                                    <div className={`c-card c-card--homepage-feature`}>
-
-                                        <div className="c-card_img-container">
-                                            <img src={'./img/collections/kool-kitties/kool-kitties-promo-3.png'} className="c-card_img" alt="" />
-                                        </div>
-
-                                        <div className="c-card_info">
-                                            <div className="c-card_details">
-                                                <span className="c-card_title">
-                                                    {'Kool Kitties YouBeI'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-                            </Link>                            
-                        </div>                        
-
-                                                
+                                )}              
                     </div>
 
                     
@@ -619,19 +418,13 @@ export const HomePage = () => {
 
                     <div className="grid grid-cols-12">
 
-
-   
-                                {Boolean(collectionList.length) ? (
-                                mapCollections()
+                                {Boolean(collectionTrendingList.length) ? (
+                                mapCollectionList(collectionTrendingList)
                                 ) : (
-                                <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
-                                    no collections
+                                    <div className="text-white text-center u-text-normal col-span-12 mr-8 mb-8">
+                                    Currently, There are No Trending Collections 
                                 </div>
-                                )}
-
-                     
-
-                                                
+                                )}              
                     </div>
                     
 
