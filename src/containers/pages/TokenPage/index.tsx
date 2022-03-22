@@ -4,7 +4,7 @@ import Table from 'rc-table';
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import Collapsible from 'react-collapsible';
-import { useLocation, Link, useParams } from "react-router-dom";
+import { Redirect, useLocation, Link, useParams } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrands from '@fortawesome/free-brands-svg-icons';
 import { toast } from 'react-toastify';
@@ -30,6 +30,7 @@ import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
 import { alphaToastMessage } from 'components/AlphaToastError';
 import store from 'redux/store';
+import { routePaths } from 'constants/router';
 
 export const TokenPage: (props: any) => any = ({ }) => {
 
@@ -104,6 +105,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const [initialStore, setInitialStore] = useState(false)
     const [storeDataExist, setStoreDataExist] = useState(false)
+    const [shouldRedirect, setShouldRedirect] = useState(false);
 
     const {
 
@@ -226,6 +228,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
                     return;
        
                 }
+
+                setShouldRedirect(true);
                 
             }else{
 
@@ -241,9 +245,20 @@ export const TokenPage: (props: any) => any = ({ }) => {
                 return;
             }    
             
+
+
         }   
 
     }, [storeDataExist]);
+
+
+    if (shouldRedirect) {
+
+        return (
+            <Redirect to={routePaths.collection.replace(":collectionId", collectionId)} />
+        );
+
+    };
 
     if (isErrorGetTokenDataQuery) {
 
