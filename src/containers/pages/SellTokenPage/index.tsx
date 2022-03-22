@@ -23,6 +23,7 @@ import { useGetCollectionByIdMutation } from 'services/collections';
 import { routePaths } from 'constants/router';
 import store from 'redux/store';
 import { number } from 'yup/lib/locale';
+import { alphaToastMessage } from 'components/AlphaToastError';
 
 export const SellTokenPage: (props: any) => any = ({ }) => {
 
@@ -486,12 +487,12 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                                             </span>
 
                                         </div>
-
-                                        <div onClick={() => { setIsFixedSale(false); }} className={`${!isFixedSale && 'c-switcher-action_option--active'} c-switcher-action_option align-items-center col-span-6 flex flex-col py-10`}>
+                                        {/* SMB REMOVE setIsFixedSale(true); to ENABLE AUCTIONS AGAIN ------  REMOVE onClick={alphaToastMessage} TO ENABLE AUCTIONS AGAIN */}
+                                        <div onClick={() => { setIsFixedSale(false);setIsFixedSale(true); }} className={`${!isFixedSale && 'c-switcher-action_option--active'} c-switcher-action_option align-items-center col-span-6 flex flex-col py-10`}>
 
                                             <FontAwesomeIcon className="text-2xl mb-3" icon={faIcons.faClock} />
 
-                                            <span className="u-text-bold">
+                                            <span onClick={alphaToastMessage} className="u-text-bold">
                                                 Timed Auction
                                             </span>
 

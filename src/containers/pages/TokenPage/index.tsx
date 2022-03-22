@@ -884,12 +884,14 @@ export const TokenPage: (props: any) => any = ({ }) => {
   };
 
   const handleMakeOffer = () => {
+    
     const getTemplateData = {
       userWalletAddress,
       collectionId,
       tokenNonce,
       amount: offerAmount,
       expire: new Date(expireOffer).getTime() / 1000,
+      
     };
 
     setOfferAmount(0);
@@ -899,6 +901,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
       getTemplateData: getTemplateData,
       getTemplateTrigger: getMakeOfferTemplateTrigger,
     });
+
   };
 
   const handleMakeBid = () => {
@@ -985,10 +988,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
   const actionsHandlers: { [key: string]: any } = {
     [BUY]: actionHandlerWrapper(handleBuyAction),
     [SELL]: actionHandlerWrapper(handleBuyAction),
+    [WITHDRAW]: actionHandlerWrapper(handleWithdrawAction),
     [MAKE_BID]: actionHandlerWrapper(handleMakeBid),
     [MAKE_OFFER]: actionHandlerWrapper(handleMakeOffer),
     [END_AUCTION]: actionHandlerWrapper(handleEndAuction),
-    [WITHDRAW]: actionHandlerWrapper(handleWithdrawAction),
     [CANCEL_OFFER]: actionHandlerWrapper(handleCancelOffer),
     [ACCEPT_OFFER]: actionHandlerWrapper(handleAcceptOffer),
   };
@@ -1529,7 +1532,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                           )}
 
                           {isAuction && isAuctionOngoing && (
-                            <Popup
+                            <Popup 
                               modal
                               className="c-modal_container"
                               trigger={
@@ -1586,8 +1589,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             </Popup>
                           )}
 
-                          {!(isAuction && hasBidderWinner) && (
-                            <Popup
+                          {
+                          !(isAuction && hasBidderWinner) && (
+                            <Popup disabled 
                               modal
                               className="c-modal_container"
                               trigger={
@@ -1599,7 +1603,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                       icon={faIcons.faTag}
                                     />
                                   </span>
-                                  <span>Make offer</span>
+                                  {/* SMB REMOVE onClick={alphaToastMessage} TO ENABLE MAKE OFFER */}
+                                  <span onClick={alphaToastMessage}>Make offer</span>
                                 </button>
                               }
                             >
@@ -1625,11 +1630,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                           <span className="u-text-theme-gray-light">
                                             Offer expire date
                                           </span>
-
-                                          {/* <span className="u-text-theme-gray-mid">
-        <FontAwesomeIcon width={'20px'} icon={faIcons.faInfoCircle} />
-    </span>
-*/}
+                                          <span className="u-text-theme-gray-mid"><FontAwesomeIcon width={'20px'} icon={faIcons.faInfoCircle} /></span>
                                         </p>
 
                                         <div className="c-date-time-picker">
@@ -1664,7 +1665,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                 </div>
                               )}
                             </Popup>
-                          )}
+                          )
+                          }
                         </div>
                       )}
                     </div>
