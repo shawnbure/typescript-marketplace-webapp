@@ -93,6 +93,27 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
   // const shouldRedirectHome = !loggedIn && !walletAddressParam;
 
+  interface UnlistedJSONData 
+  {
+    identifier: string;
+    collection: string;
+    nonce: number;
+    type: string;
+    name: string;
+    creator: string;
+    royalties: number;
+    url: string;
+    ticker: string;
+  }
+
+
+  function GetUnlistedJSONDataFromString(strJSON: string) : UnlistedJSONData 
+
+  {
+      return JSON.parse(strJSON);
+  }
+
+
   const getOffsetToLimit = async (
     getFunction: any,
     offset: number = 0,
@@ -102,6 +123,8 @@ export const ProfilePage: (props: any) => any = ({}) => {
     flag?: any
   ) => {
     let hasFetchedNewData = false;
+
+    console.log( "userWalletAddress: " + userWalletAddress)
 
     const dataResponse = await getFunction({
       userWalletAddress,
@@ -508,35 +531,26 @@ export const ProfilePage: (props: any) => any = ({}) => {
                             <span className=" mr-4 inline-block mb-6 md:mb-0">
 
 
-                              {
-                                /*
                                   <Link
                                     to={`/collection/create`}
                                     className="c-button c-button--secondary"
                                   >
                                     {" "}
                                     Create collection{" "}
-                                  </Link>                                
-                                */
-                              }
+                                  </Link>   
 
-                              <div onClick={alphaToastMessage} className="c-button c-button--secondary inline-block">Create Collection</div>
+ 
 
                             </span>
                             <span className=" mr-4 inline-block">
-                              {
-                                /*
-                                  <Link
+
+                                <Link
                                     to={`/collection/register`}
                                     className="c-button c-button--secondary inline-block"
                                   >
                                     {" "}
                                     Register collection{" "}
                                   </Link>
-                                */
-                              }
-
-                            <div onClick={alphaToastMessage} className="c-button c-button--secondary inline-block">Register Collection</div>
 
 
                             </span>
@@ -579,12 +593,33 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         icon={faIcons.faClipboardList}
                       />
                     </span>
-                    <span className="c-accordion_trigger_title">On sale</span>
+                    <span className="c-accordion_trigger_title">On Sale</span>
+     
+                    
                   </div>
                 }
               >
+
+                
                 <div className="c-accordion_content bg-transparent">
                   <div className="grid grid-cols-12">
+
+                  <div className="col-span-12">
+                      {isOwnProfile && (
+                        <>
+                          <div className="mb-10 md:text-center">
+                            <span className=" mr-4 inline-block mb-6 md:mb-0">
+                            <input autoComplete="off" type="text" id="txtFilterListed" placeholder="🔍 Filter on NFTs Name" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
+                            
+                            </span>
+
+                          </div>
+                          <hr className="text-white mb-10" />
+                        </>
+                      )}
+                    </div>
+                    
+
                     {Boolean(onSaleNfts.length) ? (
                       mapOnSaleTokens()
                     ) : (
@@ -632,8 +667,29 @@ export const ProfilePage: (props: any) => any = ({}) => {
                   </div>
                 }
               >
+
+
+                
                 <div className="c-accordion_content bg-transparent">
                   <div className="grid grid-cols-12">
+
+                  <div className="col-span-12">
+                      {isOwnProfile && (
+                        <>
+                          <div className="mb-10 md:text-center">
+                            <span className=" mr-4 inline-block mb-6 md:mb-0">
+                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Filter on NFTs Name" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
+                            
+                            </span>
+
+                          </div>
+                          <hr className="text-white mb-10" />
+                        </>
+                      )}
+                    </div>
+                    
+
+
                     {Boolean(availableTokens) &&
                     Boolean(unlistedNfts?.length) ? (
                       mapUnlistedTokens()

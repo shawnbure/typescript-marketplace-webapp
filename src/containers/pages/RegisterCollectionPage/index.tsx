@@ -66,25 +66,13 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
             data.MaxSupply = 0
 
 
-            /*
-            step: number;
-            tokenID: string;
-            scAddress: string;
-            price: number;
-            tokenBaseURI: string;
-            metaDataBaseURI: string;
-            maxSupply: number;
-            */
-
-
-
             setRouteTokenID(data.tokenId);
             
             console.log(data.tokenId)
 
             //data.tokenId = asciiToHex(data.tokenId);
 
-            //console.log(data.tokenId)
+
 
             const formattedData = {
                 ...data,
@@ -130,8 +118,7 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                 position: "bottom-right",
             });
 
-            ShowLearnToVerifyAlert()
-            
+
 
         }
         
@@ -277,9 +264,11 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                                     <a href="javascript:alert('The Collection Name to be displayed on the Youbei NFT Marketplace.  Must be unique, allowed to have spaces, and must be not longer than 20 characters.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
+
                                 <p className="mb-2 text-lg text-red-500">{errorsStep1.collectionName?.message}</p>
 
                                 <input  {...registerStep1('collectionName')} autoComplete="off" placeholder="Collection name" maxLength={20} type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
+
 
 
                                 <p className="text-xl u-text-bold mb-2">
@@ -298,7 +287,6 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                                 </p>
                                 
                                     <div className="mb-10">
-
 
 
                                     <Select onChange={(value) => { setFlagSelect(value) }} options={options} isSearchable={false} defaultValue={flagSelect} styles={customStyles} />
