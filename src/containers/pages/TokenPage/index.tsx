@@ -17,7 +17,7 @@ import moment from 'moment';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, useRefreshTokenMetadataMutation, } from "services/tokens";
+import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, useRefreshTokenMetadataMutation, useWithdrawTokenMutation, } from "services/tokens";
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
@@ -29,6 +29,7 @@ import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
 import { alphaToastMessage } from 'components/AlphaToastError';
+import store from 'redux/store';
 
 export const TokenPage: (props: any) => any = ({ }) => {
 
@@ -103,6 +104,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [getAcceptOfferTemplateTrigger] = useGetAcceptOfferTemplateMutation();
     const [getCancelOfferTemplateTrigger] = useGetCancelOfferTemplateMutation();
     const [refreshMetadataTrigger] = useRefreshTokenMetadataMutation();
+    const [withdrawTokenTrigger] = useWithdrawTokenMutation();
+
+    const [initialStore, setInitialStore] = useState(false)
+    const [storeDataExist, setStoreDataExist] = useState(false)
 
     const {
 
@@ -162,6 +167,90 @@ export const TokenPage: (props: any) => any = ({ }) => {
     }, []);
 
 
+    //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
+    //this is for clientside token withdrawl
+    useEffect(() => 
+    {
+
+        if( ! initialStore )
+        {     
+    
+            if( store.getState().user.accessToken != "" )
+            {
+                setInitialStore(true)
+                setStoreDataExist(true)
+            }
+        }
+
+    });
+
+    //execute when the authtoken is ready - save the token record to the DB - only if the tx is successful
+    useEffect(() => 
+    {
+
+        if( !initialStore ) {
+            return
+        }
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const txtHash = urlParams.get("txHash")
+        const status = String(urlParams.get("status"))
+        
+        if(txtHash != null ) {
+
+            const tokenAction = String(urlParams.get("action"))
+
+            if(status == "success"){
+
+                 //this value needs to be hexidecimal. add 0 to the first position if the len = 1
+                 let hexNonce = tokenNonce;
+                 if(tokenNonce?.length == 1){
+                     hexNonce = "0" + tokenNonce;
+                 }
+
+                const formattedData = {
+                    tokenName: collectionId,
+                    tokenNonce: hexNonce,
+                }   
+                console.log(formattedData)
+
+                const response: any = withdrawTokenTrigger({ payload: formattedData });
+
+                if (response.error) {
+
+                    const { status, data: { error } } = response.error;
+        
+                    toast.error(`${status} | ${error}`, {
+                        autoClose: 5000,
+                        draggable: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        hideProgressBar: false,
+                        position: "bottom-right",
+                    });
+        
+                    return;
+       
+                }
+                
+            }else{
+
+                toast.error(`The blockchain transaction failed, please try again.`, {
+                    autoClose: 5000,
+                    draggable: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    hideProgressBar: false,
+                    position: "bottom-right",
+                });
+
+                return;
+            }    
+            
+        }   
+
+    }, [storeDataExist]);
 
     if (isErrorGetTokenDataQuery) {
 
@@ -252,9 +341,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
         priceNominal: tokenPrice,
 
     } = getBaseTokenData(tokenData);
-
-
-
 
     // if (!isOurs && tokenData.tokenData.balance === "0" && walletAddressParam) {
 
@@ -650,7 +736,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
         sendTransaction({
             transaction: unconsumedTransaction,
-            callbackRoute: '/account'
+            //callbackRoute: '/account'
+            callbackRoute: '/token/' + collectionId +'/' + tokenNonce + '?action=withdraw',
         });
 
 

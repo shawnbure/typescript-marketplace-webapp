@@ -17,7 +17,7 @@ export const tokensApi = createApi({
 
     endpoints: (builder) => ({
 
-        createToken: builder.mutation<any, any>({
+        listTokenFromClient: builder.mutation<any, any>({
 
             query: ({ payload }): FetchArgs => {
 
@@ -30,7 +30,7 @@ export const tokensApi = createApi({
                         "Authorization": `Bearer ${accessToken}`,
                     },
                     body: JSON.stringify(payload),
-                    url: `${mainPath}/create/${payload.walletAddress}/${payload.tokenName}/${payload.tokenNonce}`
+                    url: `${mainPath}/list-fc/${payload.walletAddress}/${payload.tokenName}/${payload.tokenNonce}`
 
                 }
 
@@ -186,6 +186,29 @@ export const tokensApi = createApi({
 
         }),
 
+        withdrawToken: builder.mutation<any, any>({
+
+            query: ({ payload }): FetchArgs => {
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    //body: JSON.stringify(payload),
+                    url: `${mainPath}/withdraw/${payload.tokenName}/${payload.tokenNonce}`,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+
+                }
+
+                return customRequestArg;
+
+            },
+
+        }),
+
         getWhitelistBuyCountLimitTemplate: builder.mutation<any, any>({
 
             query: ({ payload }): FetchArgs => {
@@ -214,7 +237,8 @@ export const tokensApi = createApi({
 
 
 export const {
-    useCreateTokenMutation,
+    useListTokenFromClientMutation,
+    useWithdrawTokenMutation,
     useRefreshTokenMetadataMutation,
     useGetTransactionsMutation,
     useGetTokenMetadataMutation,

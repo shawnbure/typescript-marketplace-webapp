@@ -11,7 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import DateTimePicker from 'react-datetime-picker';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGetBuyNftTemplateMutation, useGetListNftTemplateMutation, useGetStartAuctionNftTemplateMutation } from 'services/tx-template';
-import { useGetTokenCollectionAvailablityMutation, useGetTokenDataMutation, useCreateTokenMutation } from "services/tokens";
+import { useGetTokenCollectionAvailablityMutation, useGetTokenDataMutation, useListTokenFromClientMutation } from "services/tokens";
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
@@ -39,7 +39,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         address: userWalletAddress
     } = Dapp.useContext();
 
-    const [createTokenTrigger] = useCreateTokenMutation();
+    const [listTokenTrigger] = useListTokenFromClientMutation();
 
     const sendTransaction = Dapp.useSendTransaction();
 
@@ -96,13 +96,13 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         const shouldRedirect: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
         
         //this is for clientside token insert
-        //setShouldRedirect(false);
+        setShouldRedirect(false);
 
     }, []);
 
     //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
     //this is for clientside token insert
-/*
+
     useEffect(() => 
     {
 
@@ -117,7 +117,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         }
 
     });
-*/
+
     const [initialStore, setInitialStore] = useState(false)
     const [storeDataExist, setStoreDataExist] = useState(false)
 
@@ -178,6 +178,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                 }
 
                 const formattedData = {
+                    txHash: txtHash,
                     walletAddress: userWalletAddress,
                     tokenName: collectionId,
                     tokenNonce: hexNonce,
@@ -186,9 +187,10 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                     saleNominalPrice : saleNominalPrice, 
                     saleStartDate: saleStartDate, 
                     saleEndDate : saleEndDate, 
+                    saleOnSale: true,
                 }   
 
-                const response: any = createTokenTrigger({ payload: formattedData });
+                const response: any = listTokenTrigger({ payload: formattedData });
 
                 if (response.error) {
 
@@ -383,9 +385,9 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         signTemplateTransaction({
 
-            succesCallbackRoute: '/account',
+            //succesCallbackRoute: '/account',
             //below is the client based token add to database
-            //succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell?saleStatus=Auction&salePrice='+requestedAmount+'&saleStartDate='+unixStartDate+'&saleEndDate='+unixEndDate,
+            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell?saleStatus=Auction&salePrice='+requestedAmount+'&saleStartDate='+unixStartDate+'&saleEndDate='+unixEndDate,
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: unixStartDate, deadline: unixEndDate },
             getTemplateTrigger: getStartAuctionNftTemplateTrigger,
 
