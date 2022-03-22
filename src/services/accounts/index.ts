@@ -113,18 +113,18 @@ export const accountsApi = createApi({
 
     getAccountTokenGateway: builder.mutation<any, any>({
       query: ({ userWalletAddress, identifier, nonce }): FetchArgs => {
-        if (nonce.length <2 ){
-          nonce = `0${nonce}`
-        }
+        let nonceStr = parseInt(nonce).toString(16);
+        console.log(nonceStr);
+        nonceStr = `0${nonceStr}`;
         const customRequestArg: FetchArgs = {
           method: GET,
-          url: `${ELROND_API}/nfts/${identifier}-${nonce}`,
+          url: `${ELROND_API}/nfts/${identifier}-${nonceStr}`,
         };
 
         return customRequestArg;
       },
       transformResponse: async (token: any) => {
-        return {data:{tokenData:token}}
+        return { data: { tokenData: token } };
       },
     }),
 
