@@ -1,6 +1,10 @@
+
 import Select from 'react-select'
 import { useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,7 +13,7 @@ import * as yup from "yup";
 import { handleCopyToClipboard, hexToAscii, asciiToHex } from "utils";
 import { useGetCollectionByIdMutation, useCreateCollectionMutation } from "services/collections";
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { BrowserRouter, Link } from 'react-router-dom';
 
 export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
@@ -26,17 +30,18 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
     const [getCollectionByIdTrigger] = useGetCollectionByIdMutation();
 
-    const schemaStep1 = yup.object({
+    const [isButtonClicked, setIsButtonClicked] = useState(false)
+    const [routeTokenID, setRouteTokenID] = useState("")    
 
-        collectionName: yup.string(),
-        description: yup.string(),
+    const schemaStep1 = yup.object({
+        tokenId: yup.string().max(17, "Must be between 17 or less AlphaNumeric Characters").required("Required Field"),
+        collectionName: yup.string().min(3, "Min of 3 and Max of 20 Characters").max(20,"Min of 3 and Max of 20 Characters").required("Required Field"),
+        description: yup.string().max(1000, "Max of 1000 Characters"),
         discordLink: yup.string(),
         instagramLink: yup.string(),
         telegramLink: yup.string(),
         twitterLink: yup.string(),
         website: yup.string(),
-        tokenId: yup.string(),
-
     }).required();
 
     const { register: registerStep1, handleSubmit: handleSubmitStep1, formState: { errors: errorsStep1 } } = useForm({
@@ -45,25 +50,65 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
     const onSubmitStep1 = async (data: any) => {
 
-        data.tokenId = asciiToHex(data.tokenId);
+        if( ! isButtonClicked )
+        {
+            //setIsButtonClicked(true)
 
-        const formattedData = {
-            ...data,
-            tokenId:hexToAscii(data.tokenId),
-            userAddress: userWalletAddress,
-            flags: [flagSelect.value],
-        }
+            setRouteTokenID(data.tokenId);
 
 
-        //TODO: Contract Address, MintPricePerTokenNominal (put in 1 for now)
+            //contract address - doesn't exist?
+            data.ContractAddress = ""
+
+            data.mintPricePerTokenString = "0"
+            data.tokenBaseURI = ""
+            data.MetaDataBaseURI = ""
+            data.MaxSupply = 0
 
 
-        /*
-        const response: any = await createCollectionTrigger({ payload: formattedData });
 
-        if (response?.error) {
+            setRouteTokenID(data.tokenId);
+            
+            console.log(data.tokenId)
 
-            toast.error(`Error register`, {
+
+
+            const formattedData = {
+                ...data,
+                tokenId:data.tokenId,
+                userAddress: userWalletAddress,
+                flags: [flagSelect.value],
+            }
+    
+    
+        
+    
+            const response: any = await createCollectionTrigger({ payload: formattedData });
+    
+            if (response.error) {
+    
+                toast.error(`${response.error.data.error}`, {
+                    autoClose: 5000,
+                    draggable: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    hideProgressBar: false,
+                    position: "bottom-right",
+                });
+    
+                return;
+            }
+            else
+            {
+                HideElement("btnSubmit");
+                ShowElement("linkContinueToDetails");
+                ShowElement("linkLearnVerifyCollection");
+            }
+            
+
+            
+
+            toast.success(`Succesful register`, {
                 autoClose: 5000,
                 draggable: true,
                 closeOnClick: true,
@@ -72,41 +117,9 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
                 position: "bottom-right",
             });
 
-            return;
 
-        };
-        */
-
-
-        const response: any = await createCollectionTrigger({ payload: formattedData });
-
-        if (response.error) {
-
-            const { error, status, } = response.error;
-
-            toast.error(`${error + ' ' + status}`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-            });
-
-            return;
         }
         
-
-
-        toast.success(`Succesful register`, {
-            autoClose: 5000,
-            draggable: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            hideProgressBar: false,
-            position: "bottom-right",
-        });
-
 
     };
 
@@ -184,6 +197,23 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
         },
     }
 
+    function HideElement(elementID: string)
+    {
+        var element = document.getElementById(elementID) as HTMLInputElement;
+        element.hidden = true;
+    }
+    
+    function ShowElement(elementID: string)
+    {
+        var element = document.getElementById(elementID) as HTMLInputElement;
+        element.hidden = false;
+    }
+
+
+    function ShowLearnToVerifyAlert()
+    {
+        alert('Want to Verify this Collection? Simply click on the "Learn How to Verify Collections" button')
+    }
 
     return (
 
@@ -207,46 +237,62 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
                             <form className="mb-10" onSubmit={handleSubmitStep1(onSubmitStep1)}>
 
+                                <hr className="text-white my-10" />
+                                
+                                <p className="text-lg mb-2 text-gray-400">
+                                    <b>Instruction:</b> Register the collection with Youbei - enabling users to search, mint, list, buy, and sell your NFTs.
+                                </p> 
 
-                                <label className="w-full">
+                                <hr className="text-white my-10" />
 
-                                    <div className="mb-2 text-lg">
-                                        <span>Token ID</span>  <span className="text-red-600">*</span>
-                                    </div>
 
-                                    <input  {...registerStep1('tokenId')} autoComplete="off" placeholder="Token ID" type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
+                                <p className="text-xl u-text-bold mb-2">
+                                    Token ID: &nbsp;
+                                    <a href="javascript:alert('Token ID is an identifier used on the blockchain and identifies your collection.  It is the TickerName (all caps) follow with dash (-) and a unique id.  Must be 17 characters or less.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>                                    
 
-                                </label>
+                                <p className="mb-2 text-lg text-red-500">{errorsStep1.tokenId?.message}</p>
 
-                                <label className="w-full">
+                                <input  {...registerStep1('tokenId')} autoComplete="off" placeholder="Token ID" maxLength={17} type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
 
-                                    <div className="mb-2 text-lg">
-                                        <span>Collection name</span>
-                                    </div>
+        
 
-                                    <input  {...registerStep1('collectionName')} autoComplete="off" placeholder="Collection name" maxLength={20} type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
-
-                                </label>
-
-                                <p className="mb-2">
-                                    Description
+                                <p className="text-xl u-text-bold mb-2">
+                                    Collection Name: &nbsp;
+                                    <a href="javascript:alert('The Collection Name to be displayed on the Youbei NFT Marketplace.  Must be unique, allowed to have spaces, and must be not longer than 20 characters.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
-                                <textarea {...registerStep1('description')} autoComplete="off"   placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
+                                <p className="mb-2 text-lg text-red-500">{errorsStep1.collectionName?.message}</p>
+
+                                <input  {...registerStep1('collectionName')} autoComplete="off" placeholder="Collection name" maxLength={20} type="text" className="bg-opacity-10 bg-white border-1 border-gray-500 p-3 placeholder-opacity-10 rounded-2 text-white w-full mb-8" />
 
 
-                                <div className="mb-10">
+                                <p className="text-xl u-text-bold mb-2">
+                                    Description: &nbsp;
+                                    <a href="javascript:alert('The desription for the collection to be inform users of the details.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>                                    
+                                </p>
 
-                                    <p className="mb-2">
-                                        Category
-                                    </p>
+                                <p className="mb-2 text-lg text-red-500">{errorsStep1.description?.message}</p>
+                                
+                                <textarea {...registerStep1('description')} autoComplete="off" maxLength={1000}   placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
+
+
+                                <p className="text-xl u-text-bold mb-2">
+                                    Category: &nbsp;
+                                     <a href="javascript:alert('The Category that this NFT collection would fit in.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+                                
+                                    <div className="mb-10">
+
+
 
                                     <Select onChange={(value) => { setFlagSelect(value) }} options={options} isSearchable={false} defaultValue={flagSelect} styles={customStyles} />
-                                </div>
+                               
+                                    </div> 
 
-
-                                <p className="mb-2">
-                                    Links
+                                <p className="text-xl u-text-bold mb-2">
+                                    Links: &nbsp;
+                                    <a href="javascript:alert('Links to more web and social media outlets.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <div className="border-1 border-gray-500  rounded-2 overflow-hidden  mb-8">
@@ -277,8 +323,23 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
                                 </div>
 
+                                <br/>
 
-                                <button className="c-button c-button--primary" type="submit">Register</button>
+
+                                <button className="c-button c-button--primary" type="submit" id="btnSubmit">Register</button>
+
+
+                                <Link to={`/collection/${routeTokenID}`} id="linkContinueToDetails" hidden={true} className="c-button c-button--primary" >                        
+                                    <div className="inline-flex">
+                                        <span>
+                                            Continue to Details
+                                        </span>
+                                    </div>
+                                </Link>
+
+                                <br/> <br/>
+                                <a href={'https://www.notion.so/enftdao/Verification-e874591432eb4e0388df94470a3854a9'} hidden={true} className="c-button c-button--secondary u-margin-bottom-spacing-4 u-margin-right-spacing-4" target="_blank" id="linkLearnVerifyCollection">Learn How to Verify Collections</a>                                 
+
 
                             </form>
 
@@ -298,3 +359,4 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 };
 
 export default RegisterCollectionPage;
+
