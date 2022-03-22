@@ -44,7 +44,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const [expireOffer, setExpireOffer] = useState<any>();
 
-
     const {
         loggedIn,
         address: userWalletAddress,
@@ -53,14 +52,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const sendTransaction = Dapp.useSendTransaction();
 
     const [getAccountTokenTrigger, {
-
         data: gatewayTokenData,
         // isLoading: isLoadingGatewayTokenDataQuery,
         isSuccess: isSuccessGatewayTokenDataQuery,
         isError: isErrorGatewayTokenDataQuery,
         // isUninitialized: isUninitializedGatewayTokenDataQuery,
-
-
     }] = useGetAccountTokenGatewayMutation();
 
 
@@ -154,15 +150,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
         getCollectionByIdTrigger({ collectionId: collectionId });
 
-        if (walletAddressParam) {
-
-            getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
-
-            return;
-
-        }
-
         getTokenDataTrigger({ collectionId, tokenNonce });
+
+        if (walletAddressParam) {
+            getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
+            return;
+        }
 
     }, []);
 
@@ -271,12 +264,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     };
 
+    let { data: tokenData } = walletAddressParam ? gatewayTokenData : tokenResponseData;
 
-    const { data: tokenData } = walletAddressParam ? gatewayTokenData : tokenResponseData;
-    
-    const isOurs = !Boolean(walletAddressParam);
-
- 
+    const isOurs = !Boolean(tokenResponseData == undefined);
+    if (isOurs === true ) {
+        tokenData = tokenResponseData.data
+    }
     const getBaseTokenData = (tokenData: any) => {
 
         const token = isOurs ? tokenData.token : tokenData.tokenData;
@@ -334,7 +327,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
         auctionStartTime,
         royaltiesPercent,
         ownerWalletAddress,
-
         id,
         ownerName,
         tokenState,
@@ -367,7 +359,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const isListed: boolean = tokenState === 'List';
     const isAuction: boolean = tokenState === 'Auction';
-    const isOnSale: boolean = isListed || isAuction;
+    const isOnSale: boolean = ( isListed || isAuction);
     const onSaleText = isListed ? "Current price" : "Min bid"
    
     const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
@@ -1365,9 +1357,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                                             {
                                                 
-                                                !isOnSale &&
+                                                (!isOnSale) && isCurrentTokenOwner &&
                                                 <div>
-                                                    <Link to={`/token/${walletAddressParam}/${collectionId}/${tokenNonce}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
+                                                    <Link to={`/token/${ownerWalletAddress}/${collectionId}/${tokenNonce}/sell`} className="c-button c-button--primary u-margin-right-spacing-2">
                                                         <span className="u-padding-right-spacing-2">
                                                             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
                                                         </span>
