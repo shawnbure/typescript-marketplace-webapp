@@ -173,6 +173,52 @@ export const accountsApi = createApi({
         };
       },
     }),
+
+
+
+    //get all tokens gate no limits
+    getAccountGatewayTokensNoLimits: builder.mutation<any, any>({
+      query: ({ userWalletAddress }): FetchArgs => {
+        const customRequestArg: FetchArgs = {
+          method: GET,
+          url: `${ELROND_API}/accounts/${userWalletAddress}/nfts?type=NonFungibleESDT`,
+        };
+
+        return customRequestArg;
+      },
+
+      transformResponse: async (tokens: Array<any>) => {
+        const nfts = tokens.filter((token: any) => {
+          const hasUris: boolean = Boolean(token.uris?.length);
+
+          return hasUris;
+        });
+
+        const allIndentifiers = nfts.map((nft: any) => nft?.identifier);
+
+        let availableTokensData = {};
+
+        await fetch(`${BASE_URL_API}/tokens/available`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            tokens: allIndentifiers,
+          }),
+        })
+          .then((response) => response.json())
+          .then((availableResponse) => {
+            availableTokensData = availableResponse.data.tokens;
+          });
+
+        return {
+          nfts,
+          availableTokensData,
+        };
+      },
+    }),
+
   }),
 });
 
@@ -186,4 +232,5 @@ export const {
   useGetOnSaleAccountTokensMutation,
   useGetAccountGatewayTokensMutation,
   useGetAccountTokenGatewayMutation,
+  useGetAccountGatewayTokensNoLimitsMutation,
 } = accountsApi;
