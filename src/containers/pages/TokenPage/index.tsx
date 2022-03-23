@@ -3,182 +3,144 @@ import Popup from "reactjs-popup";
 import Table from "rc-table";
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
-import Collapsible from "react-collapsible";
-import { useLocation, Link, useParams } from "react-router-dom";
-import * as faIcons from "@fortawesome/free-solid-svg-icons";
-import * as faBrands from "@fortawesome/free-brands-svg-icons";
-import { toast } from "react-toastify";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 
-import DateTimePicker from "react-datetime-picker";
-
-import moment from "moment";
+import Collapsible from 'react-collapsible';
+import { Redirect, useLocation, Link, useParams } from "react-router-dom";
+import * as faIcons from '@fortawesome/free-solid-svg-icons';
+import * as faBrands from '@fortawesome/free-brands-svg-icons';
+import { toast } from 'react-toastify';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import DateTimePicker from 'react-datetime-picker';
+import moment from 'moment';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  useGetAcceptOfferTemplateMutation,
-  useGetBuyNftTemplateMutation,
-  useGetCancelOfferTemplateMutation,
-  useGetEndAuctionTemplateMutation,
-  useGetMakeBidTemplateMutation,
-  useGetMakeOfferTemplateMutation,
-  useGetWithdrawNftTemplateMutation,
-} from "services/tx-template";
-import {
-  useGetTokenBidsMutation,
-  useGetTokenDataMutation,
-  useGetTokenMetadataMutation,
-  useGetTokenOffersMutation,
-  useGetTransactionsMutation,
-  useRefreshTokenMetadataMutation,
-} from "services/tokens";
+import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation } from 'services/tx-template';
+import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, useRefreshTokenMetadataMutation, useWithdrawTokenMutation, } from "services/tokens";
+
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
 import { formatImgLink, shorterAddress } from "utils";
-import {
-  ACCEPT_OFFER,
-  BUY,
-  CANCEL_OFFER,
-  END_AUCTION,
-  MAKE_BID,
-  MAKE_OFFER,
-  SELL,
-  WITHDRAW,
-} from "constants/actions";
+import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW } from "constants/actions";
 import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
-import { useGetAccountTokenGatewayMutation } from "services/accounts";
-import { useGetCollectionByIdMutation } from "services/collections";
-import { alphaToastMessage } from "components/AlphaToastError";
 
-export const TokenPage: (props: any) => any = ({}) => {
-  const dispatch = useAppDispatch();
-  const { pathname } = useLocation();
+import { useGetAccountTokenGatewayMutation } from 'services/accounts';
+import { useGetCollectionByIdMutation } from 'services/collections';
+import { alphaToastMessage } from 'components/AlphaToastError';
+import store from 'redux/store';
+import { routePaths } from 'constants/router';
 
-  //this walletAddressParam below actuall gets the contract address for the URL?
-  const {
-    collectionId,
-    tokenNonce,
-    walletAddress: walletAddressParam,
-  } = useParams<UrlParameters>();
-  const [hasLoadMoreActivity, setHasLoadMoreActivity] = useState(true);
-  const [offerAmount, setOfferAmount] = useState<number>(0);
-  const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
-  const [expireOffer, setExpireOffer] = useState<any>();
-  const [transactions, setTransactions] = useState<any>([]);
-  const { loggedIn, address: userWalletAddress } = Dapp.useContext();
+export const TokenPage: (props: any) => any = ({ }) => {
 
-  const sendTransaction = Dapp.useSendTransaction();
+    const dispatch = useAppDispatch();
+    const { pathname } = useLocation();
 
-  const [
-    getAccountTokenTrigger,
-    {
-      data: gatewayTokenData,
-      // isLoading: isLoadingGatewayTokenDataQuery,
-      isSuccess: isSuccessGatewayTokenDataQuery,
-      isError: isErrorGatewayTokenDataQuery,
-      // isUninitialized: isUninitializedGatewayTokenDataQuery,
-    },
-  ] = useGetAccountTokenGatewayMutation();
+    //this walletAddressParam below actuall gets the contract address for the URL?
+    const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
+    const [hasLoadMoreActivity, setHasLoadMoreActivity] = useState(true);
+    const [offerAmount, setOfferAmount] = useState<number>(0);
+    const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
+    const [expireOffer, setExpireOffer] = useState<any>();
+    const [transactions, setTransactions] = useState<any>([]);
+    const { loggedIn, address: userWalletAddress, } = Dapp.useContext();
 
-  const [
-    getCollectionByIdTrigger,
-    { data: collectionData, isError: isErrorGetCollectionData },
-  ] = useGetCollectionByIdMutation();
+    const sendTransaction = Dapp.useSendTransaction();
 
-  const [
-    getTokenDataTrigger,
-    {
-      data: tokenResponseData,
-      isError: isErrorGetTokenDataQuery,
-      isSuccess: isSuccessGetTokenDataQuery,
-      isUninitialized: isUninitializedGetTokenDataQuery,
-    },
-  ] = useGetTokenDataMutation();
+    const [getAccountTokenTrigger, {
+        data: gatewayTokenData,
+        // isLoading: isLoadingGatewayTokenDataQuery,
+        isSuccess: isSuccessGatewayTokenDataQuery,
+        isError: isErrorGatewayTokenDataQuery,
+        // isUninitialized: isUninitializedGatewayTokenDataQuery,
+    }] = useGetAccountTokenGatewayMutation();
 
-  const [
-    getTokenMetadataTrigger,
-    {
-      data: tokenMetadataData,
-      isUninitialized: isUninitializedGetTokenMetadata,
-    },
-  ] = useGetTokenMetadataMutation();
 
-  const [
-    getTokenOffersTrigger,
-    { data: tokenOffersData },
-  ] = useGetTokenOffersMutation();
+    const [getCollectionByIdTrigger, {
+        data: collectionData,
+        isError: isErrorGetCollectionData,
+    }] = useGetCollectionByIdMutation();
 
-  const [
-    getTokenBidsTrigger,
-    { data: tokenBidsData },
-  ] = useGetTokenBidsMutation();
 
-  const [
-    getTokenTransactionsTrigger,
-    { data: getTokenTransactionsData },
-  ] = useGetTransactionsMutation();
+    const [getTokenDataTrigger, {
 
-  const [getMakeBidTemplateTrigger] = useGetMakeBidTemplateMutation();
-  const [getMakeOfferTemplateTrigger] = useGetMakeOfferTemplateMutation();
-  const [getEndAuctionTemplateTrigger] = useGetEndAuctionTemplateMutation();
-  const [getAcceptOfferTemplateTrigger] = useGetAcceptOfferTemplateMutation();
-  const [getCancelOfferTemplateTrigger] = useGetCancelOfferTemplateMutation();
-  const [refreshMetadataTrigger] = useRefreshTokenMetadataMutation();
+        data: tokenResponseData,
+        isError: isErrorGetTokenDataQuery,
+        isSuccess: isSuccessGetTokenDataQuery,
+        isUninitialized: isUninitializedGetTokenDataQuery,
 
-  const {
-    data: egldPriceData,
-    // isError: isErrorEgldPriceQuery,
-    // isLoading: isLoadingEgldPriceQuery,
-    isSuccess: isSuccessEgldPriceQuery,
-  } = useGetEgldPriceQuery();
+    }] = useGetTokenDataMutation();
 
-  const isEgldPriceFetched: boolean =
-    isSuccessEgldPriceQuery && Boolean(egldPriceData);
-  const isTokenDataFetched: boolean =
-    isSuccessGetTokenDataQuery && Boolean(tokenResponseData?.data?.token);
-  const isGatewayTokenFetched: boolean =
-    isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
-  const shouldRenderPage: boolean = walletAddressParam
-    ? isGatewayTokenFetched
-    : isTokenDataFetched && isEgldPriceFetched;
 
-  //const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
+    const [getTokenMetadataTrigger, {
+        data: tokenMetadataData,
+        isUninitialized: isUninitializedGetTokenMetadata
+    }] = useGetTokenMetadataMutation();
 
-  const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
-  const [
-    getWithdrawNftTemplateQueryTrigger,
-  ] = useGetWithdrawNftTemplateMutation();
+    const [getTokenOffersTrigger, {
+        data: tokenOffersData,
+    }] = useGetTokenOffersMutation();
 
-  const triggerActivityLoad = async ({
-    mergeWithExisting = false,
-    newFilterQuery,
-    newSortQuery,
-  }: {
-    mergeWithExisting?: boolean;
-    newFilterQuery?: any;
-    newSortQuery?: any;
-  }) => {
-    // const filters = newFilterQuery ? newFilterQuery : filterQuery;
-    const offset = mergeWithExisting ? transactions.length : 0;
-    // const sortRules = newSortQuery ? newSortQuery : sort;
+    const [getTokenBidsTrigger, {
+        data: tokenBidsData,
+    }] = useGetTokenBidsMutation();
 
-    const tokenTransactionsResponse: any = await getTokenTransactionsTrigger({
-      collectionId,
-      tokenNonce,
-      offset: offset,
-      limit: 8,
-    });
+
+    const [getTokenTransactionsTrigger, {
+        data: getTokenTransactionsData,
+    }] = useGetTransactionsMutation();
+
+    const [getMakeBidTemplateTrigger] = useGetMakeBidTemplateMutation();
+    const [getMakeOfferTemplateTrigger] = useGetMakeOfferTemplateMutation();
+    const [getEndAuctionTemplateTrigger] = useGetEndAuctionTemplateMutation();
+    const [getAcceptOfferTemplateTrigger] = useGetAcceptOfferTemplateMutation();
+    const [getCancelOfferTemplateTrigger] = useGetCancelOfferTemplateMutation();
+    const [refreshMetadataTrigger] = useRefreshTokenMetadataMutation();
+    const [withdrawTokenTrigger] = useWithdrawTokenMutation();
+
+    const [initialStore, setInitialStore] = useState(false)
+    const [storeDataExist, setStoreDataExist] = useState(false)
+    const [shouldRedirect, setShouldRedirect] = useState(false);
+
+    const {
+
+        data: egldPriceData,
+        // isError: isErrorEgldPriceQuery,
+        // isLoading: isLoadingEgldPriceQuery,
+        isSuccess: isSuccessEgldPriceQuery,
+
+    } = useGetEgldPriceQuery();
+
+    const isEgldPriceFetched: boolean = isSuccessEgldPriceQuery && Boolean(egldPriceData);
+    const isTokenDataFetched: boolean = isSuccessGetTokenDataQuery && Boolean(tokenResponseData?.data?.token);
+    const isGatewayTokenFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
+    const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
+
+    //const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
+
+    const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
+    const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
+    
+    const triggerActivityLoad = async ({
+      mergeWithExisting = false,
+      newFilterQuery,
+      newSortQuery,
+    }: {
+      mergeWithExisting?: boolean;
+      newFilterQuery?: any;
+      newSortQuery?: any;
+    }) => {
+      // const filters = newFilterQuery ? newFilterQuery : filterQuery;
+      const offset = mergeWithExisting ? transactions.length : 0;
+      // const sortRules = newSortQuery ? newSortQuery : sort;
+  
+      const tokenTransactionsResponse: any = await getTokenTransactionsTrigger({
+        collectionId,
+        tokenNonce,
+        offset: offset,
+        limit: 8,
+      });
 
     if (getTokenTransactionsData?.data) {
       const txsResponse = tokenTransactionsResponse?.data?.data;
@@ -194,13 +156,16 @@ export const TokenPage: (props: any) => any = ({}) => {
       setHasLoadMoreActivity(Boolean(txsResponse?.length));
     }
   };
+
   const getInitialTxs = async () => {
+
     const response: any = await getTokenTransactionsTrigger({
       collectionId,
       tokenNonce,
       offset: 0,
       limit: 10,
     });
+
     if (response?.error) {
       toast.error(`Error getting initial transcaction history`, {
         autoClose: 5000,
@@ -215,21 +180,116 @@ export const TokenPage: (props: any) => any = ({}) => {
 
     setTransactions(response.data.data);
   };
-  useEffect(() => {
-    getTokenOffersTrigger({
-      collectionId,
-      tokenNonce,
-      offset: 0,
-      limit: 10,
+
+    //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
+    //this is for clientside token withdrawl
+    useEffect(() => 
+    {
+        if( ! initialStore )
+        {     
+    
+            if( store.getState().user.accessToken != "" )
+            {
+                setInitialStore(true)
+                setStoreDataExist(true)
+            }
+        }
+
     });
 
-    getTokenBidsTrigger({
-      collectionId,
-      tokenNonce,
-      offset: 0,
-      limit: 10,
-    });
+    //execute when the authtoken is ready - save the token record to the DB - only if the tx is successful
+    useEffect(() => 
+    {
 
+        if( !initialStore ) {
+            return
+        }
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const txtHash = urlParams.get("txHash")
+        const status = String(urlParams.get("status"))
+        
+        if(txtHash != null ) {
+
+            const tokenAction = String(urlParams.get("action"))
+
+            if(status == "success"){
+
+                 //this value needs to be hexidecimal. add 0 to the first position if the len = 1
+                 let hexNonce = tokenNonce;
+                 if(tokenNonce?.length == 1){
+                     hexNonce = "0" + tokenNonce;
+                 }
+
+                const formattedData = {
+                    tokenName: collectionId,
+                    tokenNonce: hexNonce,
+                }   
+                console.log(formattedData)
+
+                const response: any = withdrawTokenTrigger({ payload: formattedData });
+
+                if (response.error) {
+
+                    const { status, data: { error } } = response.error;
+        
+                    toast.error(`${status} | ${error}`, {
+                        autoClose: 5000,
+                        draggable: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        hideProgressBar: false,
+                        position: "bottom-right",
+                    });
+        
+                    return;
+       
+                }
+
+                setShouldRedirect(true);
+                
+            }else{
+
+                toast.error(`The blockchain transaction failed, please try again.`, {
+                    autoClose: 5000,
+                    draggable: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    hideProgressBar: false,
+                    position: "bottom-right",
+                });
+
+                return;
+            }    
+        }   
+
+    }, [storeDataExist]);
+
+    if (shouldRedirect) {
+
+        return (
+            <Redirect to={routePaths.collection.replace(":collectionId", collectionId)} />
+        );
+
+    };
+
+    useEffect(() => {
+
+      getTokenOffersTrigger({
+          collectionId,
+          tokenNonce,
+          offset: 0,
+          limit: 10,
+      });
+  
+      getTokenBidsTrigger({
+          collectionId,
+          tokenNonce,
+          offset: 0,
+          limit: 10,
+      });
+  
     getInitialTxs();
 
     getCollectionByIdTrigger({ collectionId: collectionId });
@@ -317,165 +377,144 @@ export const TokenPage: (props: any) => any = ({}) => {
           auctionStartTime: 0,
         };
 
-    return { ...baseData, ...ourExtraData };
-  };
+        return { ...baseData, ...ourExtraData };
+    };
 
-  const {
-    nonce,
-    imageLink,
-    metadataLink,
-    name: tokenName,
-    auctionDeadline,
-    auctionStartTime,
-    royaltiesPercent,
-    ownerWalletAddress,
-    id,
-    ownerName,
-    tokenState,
-    priceNominal: tokenPrice,
-  } = getBaseTokenData(tokenData);
 
-  // if (!isOurs && tokenData.tokenData.balance === "0" && walletAddressParam) {
+    const {
 
-  //     return (<>
-  //         <p className="my-10 text-2xl text-center">{walletAddressParam}</p>
-  //         <p className="my-10 text-2xl text-center">is not the owner of  {collectionId} {tokenNonce}</p>
-  //     </>)
+        nonce,
+        imageLink,
+        metadataLink,
+        name: tokenName,
+        auctionDeadline,
+        auctionStartTime,
+        royaltiesPercent,
+        ownerWalletAddress,
+        id,
+        ownerName,
+        tokenState,
+        priceNominal: tokenPrice,
 
-  // }
+    } = getBaseTokenData(tokenData);
 
-  if (Boolean(metadataLink) && isUninitializedGetTokenMetadata) {
-    getTokenMetadataTrigger({ metadataLink });
-  }
+    // if (!isOurs && tokenData.tokenData.balance === "0" && walletAddressParam) {
 
-  const description = collectionData?.data?.collection?.description;
-  const discordLink = collectionData?.data?.collection?.discordLink;
-  const twitterLink = collectionData?.data?.collection?.twitterLink;
-  const telegramLink = collectionData?.data?.collection?.telegramLink;
-  const instagramLink = collectionData?.data?.collection?.instagramLink;
-  const websiteLink = collectionData?.data?.collection?.website;
+    //     return (<>
+    //         <p className="my-10 text-2xl text-center">{walletAddressParam}</p>
+    //         <p className="my-10 text-2xl text-center">is not the owner of  {collectionId} {tokenNonce}</p>
+    //     </>)
 
-  const isListed: boolean = tokenState === "List";
-  const isAuction: boolean = tokenState === "Auction";
-  const isOnSale: boolean = isListed || isAuction;
-  const onSaleText = isListed ? "Current price" : "Min bid";
+    // }
 
-  const ownerShortWalletAddress: string = shorterAddress(
-    ownerWalletAddress,
-    7,
-    4
-  );
-  // const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
 
-  const displayedOwner = Boolean(ownerName)
-    ? ownerName
-    : ownerShortWalletAddress;
-  // const displayedCreator = creatorName ? creatorName : creatorShortWalletAddress;
+    if (Boolean(metadataLink) && isUninitializedGetTokenMetadata) {
 
-  const isCurrentTokenOwner: boolean = ownerWalletAddress === userWalletAddress;
+        getTokenMetadataTrigger({ metadataLink });
 
-  const hasBidderWinner = Boolean(tokenBidsData?.data?.[0]);
-  const bidderWinnerName = tokenBidsData?.data?.[0]?.bidderName;
-  const isBidderWinnerAddress: boolean =
-    tokenBidsData?.data?.[0]?.bid.bidderAddress === userWalletAddress;
+    };
 
-  const egldPriceString = egldPriceData?.data;
-  const priceTokenDollars = tokenPrice * parseFloat(egldPriceString);
-  const priceTokenDollarsFixed = parseFloat(`${priceTokenDollars}`).toFixed(3);
+    const description = collectionData?.data?.collection?.description;
+    const discordLink = collectionData?.data?.collection?.discordLink;
+    const twitterLink = collectionData?.data?.collection?.twitterLink;
+    const telegramLink = collectionData?.data?.collection?.telegramLink;
+    const instagramLink = collectionData?.data?.collection?.instagramLink;
+    const websiteLink = collectionData?.data?.collection?.website;
 
-  const nowDate = new Date();
-  const auctionDeadlineDate = new Date(auctionDeadline * 1000);
-  const auctionStartTimeDate = new Date(auctionStartTime * 1000);
-  const auctionDeadlineTitle = moment(
-    new Date(auctionDeadlineDate),
-    "YYYY-MM-DD HH:mm:ss"
-  );
-  const auctionStartTimeTitle = moment(
-    new Date(auctionStartTimeDate),
-    "YYYY-MM-DD HH:mm:ss"
-  );
+    const isListed: boolean = tokenState === 'List';
+    const isAuction: boolean = tokenState === 'Auction';
+    const isOnSale: boolean = ( isListed || isAuction);
+    const onSaleText = isListed ? "Current price" : "Min bid"
+   
+    const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
+    // const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
 
-  const isAuctionOngoing: boolean = nowDate < auctionDeadlineDate;
-  const hasAuctionFinished: boolean = auctionDeadlineDate < nowDate;
-  const hasAuctionStarted: boolean = auctionStartTimeDate < nowDate;
 
-  const hasFinishedWithoutWinner = hasAuctionFinished && !hasBidderWinner;
+    const displayedOwner = Boolean(ownerName) ? ownerName : ownerShortWalletAddress;
+    // const displayedCreator = creatorName ? creatorName : creatorShortWalletAddress;
 
-  const shouldDisplayEndAuctionButton =
-    isAuction &&
-    !isAuctionOngoing &&
-    hasBidderWinner &&
-    (isCurrentTokenOwner || isBidderWinnerAddress);
+    const isCurrentTokenOwner: boolean = ownerWalletAddress === userWalletAddress;
 
-  const offersTableColumns = [
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      className: "c-table_column",
-    },
-    {
-      title: "Expiration",
-      dataIndex: "expiration",
-      key: "expiration",
-      className: "c-table_column",
-    },
-    {
-      title: "From",
-      dataIndex: "from",
-      key: "from",
-      className: "c-table_column",
-    },
-  ];
+    const hasBidderWinner = Boolean(tokenBidsData?.data?.[0]);
+    const bidderWinnerName = tokenBidsData?.data?.[0]?.bidderName;
+    const isBidderWinnerAddress: boolean = tokenBidsData?.data?.[0]?.bid.bidderAddress === userWalletAddress;
 
-  const listingTableColumns = [
-    {
-      title: "Type",
-      dataIndex: "event",
-      key: "event",
-      className: "c-table_column",
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      className: "c-table_column",
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      className: "c-table_column",
-    },
-  ];
+    const egldPriceString = egldPriceData?.data;
+    const priceTokenDollars = tokenPrice * parseFloat(egldPriceString);
+    const priceTokenDollarsFixed = parseFloat(`${priceTokenDollars}`).toFixed(3);
 
-  const bidsTableColumns = [
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      className: "c-table_column",
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      className: "c-table_column",
-    },
-    {
-      title: "From",
-      dataIndex: "from",
-      key: "from",
-      className: "c-table_column",
-    },
-  ];
+    const nowDate = new Date();
+    const auctionDeadlineDate = new Date(auctionDeadline * 1000);
+    const auctionStartTimeDate = new Date(auctionStartTime * 1000);
+    const auctionDeadlineTitle = moment(new Date(auctionDeadlineDate), "YYYY-MM-DD HH:mm:ss");
+    const auctionStartTimeTitle = moment(new Date(auctionStartTimeDate), "YYYY-MM-DD HH:mm:ss");
 
-  const tokenBuys = transactions?.filter(
-    (transaction: any) => transaction.type === "Buy"
-  );
+    const isAuctionOngoing: boolean = nowDate < auctionDeadlineDate;
+    const hasAuctionFinished: boolean = auctionDeadlineDate < nowDate;
+    const hasAuctionStarted: boolean = auctionStartTimeDate < nowDate;
 
-  const chartData = tokenBuys
-    ?.map((buy: any, index: number) => {
+    const hasFinishedWithoutWinner = hasAuctionFinished && !hasBidderWinner;
+
+    const shouldDisplayEndAuctionButton = isAuction && !isAuctionOngoing && hasBidderWinner && (isCurrentTokenOwner || isBidderWinnerAddress);
+
+
+    const offersTableColumns = [
+        {
+            title: 'Price',
+            dataIndex: 'price',
+            key: 'price',
+            className: 'c-table_column',
+        }, {
+            title: 'Expiration',
+            dataIndex: 'expiration',
+            key: 'expiration',
+            className: 'c-table_column',
+        }, {
+            title: 'From',
+            dataIndex: 'from',
+            key: 'from',
+            className: 'c-table_column',
+        }
+    ];
+
+    const listingTableColumns = [{
+        title: 'Type',
+        dataIndex: 'event',
+        key: 'event',
+        className: 'c-table_column',
+    }, {
+        title: 'Price',
+        dataIndex: 'price',
+        key: 'price',
+        className: 'c-table_column',
+    }, {
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'date',
+        className: 'c-table_column',
+    }];
+
+    const bidsTableColumns = [{
+        title: 'Price',
+        dataIndex: 'price',
+        key: 'price',
+        className: 'c-table_column',
+    }, {
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'date',
+        className: 'c-table_column',
+    }, {
+        title: 'From',
+        dataIndex: 'from',
+        key: 'from',
+        className: 'c-table_column',
+    }];
+
+    const tokenBuys = getTokenTransactionsData?.data?.filter((transaction: any) => transaction.type === "Buy");
+
+    const chartData = tokenBuys?.map((buy: any, index: number) => {
+      
       const { priceNominal, timestamp } = buy;
 
       const date = moment(new Date(timestamp * 1000), "YYYY-MM-DD HH:mm:ss");
@@ -486,8 +525,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         name: `${month}/${day}`,
         pv: priceNominal,
       };
-    })
-    .reverse();
+    }).reverse();
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -846,12 +884,14 @@ export const TokenPage: (props: any) => any = ({}) => {
   };
 
   const handleMakeOffer = () => {
+    
     const getTemplateData = {
       userWalletAddress,
       collectionId,
       tokenNonce,
       amount: offerAmount,
       expire: new Date(expireOffer).getTime() / 1000,
+      
     };
 
     setOfferAmount(0);
@@ -861,6 +901,7 @@ export const TokenPage: (props: any) => any = ({}) => {
       getTemplateData: getTemplateData,
       getTemplateTrigger: getMakeOfferTemplateTrigger,
     });
+
   };
 
   const handleMakeBid = () => {
@@ -873,6 +914,7 @@ export const TokenPage: (props: any) => any = ({}) => {
     };
 
     setOfferAmount(0);
+
 
     signTemplateTransaction({
       succesCallbackRoute: pathname,
@@ -946,10 +988,10 @@ export const TokenPage: (props: any) => any = ({}) => {
   const actionsHandlers: { [key: string]: any } = {
     [BUY]: actionHandlerWrapper(handleBuyAction),
     [SELL]: actionHandlerWrapper(handleBuyAction),
+    [WITHDRAW]: actionHandlerWrapper(handleWithdrawAction),
     [MAKE_BID]: actionHandlerWrapper(handleMakeBid),
     [MAKE_OFFER]: actionHandlerWrapper(handleMakeOffer),
     [END_AUCTION]: actionHandlerWrapper(handleEndAuction),
-    [WITHDRAW]: actionHandlerWrapper(handleWithdrawAction),
     [CANCEL_OFFER]: actionHandlerWrapper(handleCancelOffer),
     [ACCEPT_OFFER]: actionHandlerWrapper(handleAcceptOffer),
   };
@@ -1490,7 +1532,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                           )}
 
                           {isAuction && isAuctionOngoing && (
-                            <Popup
+                            <Popup 
                               modal
                               className="c-modal_container"
                               trigger={
@@ -1547,8 +1589,9 @@ export const TokenPage: (props: any) => any = ({}) => {
                             </Popup>
                           )}
 
-                          {!(isAuction && hasBidderWinner) && (
-                            <Popup
+                          {
+                          !(isAuction && hasBidderWinner) && (
+                            <Popup disabled 
                               modal
                               className="c-modal_container"
                               trigger={
@@ -1560,7 +1603,8 @@ export const TokenPage: (props: any) => any = ({}) => {
                                       icon={faIcons.faTag}
                                     />
                                   </span>
-                                  <span>Make offer</span>
+                                  {/* SMB REMOVE onClick={alphaToastMessage} TO ENABLE MAKE OFFER */}
+                                  <span onClick={alphaToastMessage}>Make offer</span>
                                 </button>
                               }
                             >
@@ -1586,11 +1630,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                                           <span className="u-text-theme-gray-light">
                                             Offer expire date
                                           </span>
-
-                                          {/* <span className="u-text-theme-gray-mid">
-        <FontAwesomeIcon width={'20px'} icon={faIcons.faInfoCircle} />
-    </span>
-*/}
+                                          <span className="u-text-theme-gray-mid"><FontAwesomeIcon width={'20px'} icon={faIcons.faInfoCircle} /></span>
                                         </p>
 
                                         <div className="c-date-time-picker">
@@ -1625,7 +1665,8 @@ export const TokenPage: (props: any) => any = ({}) => {
                                 </div>
                               )}
                             </Popup>
-                          )}
+                          )
+                          }
                         </div>
                       )}
                     </div>
