@@ -93,12 +93,16 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         getAccountTokenTrigger({ userWalletAddress: walletAddressParam, identifier: collectionId, nonce: tokenNonce });
 
-        //const shouldRedirect: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
-        setShouldRedirect(false);
+        const shouldRedirect: boolean = isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)
+        
+        //this is for clientside token insert
+        //setShouldRedirect(false);
 
     }, []);
 
     //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
+    //this is for clientside token insert
+/*
     useEffect(() => 
     {
 
@@ -113,7 +117,7 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         }
 
     });
-
+*/
     const [initialStore, setInitialStore] = useState(false)
     const [storeDataExist, setStoreDataExist] = useState(false)
 
@@ -133,7 +137,6 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
         if(txtHash != null ) {
 
             const saleStatus = String(urlParams.get("saleStatus"))
-            const saleStringPrice = String(urlParams.get("salePrice"))
             const saleNominalPrice = parseFloat(String(urlParams.get("salePrice")))
             const saleStartDate = parseInt(String(urlParams.get("saleStartDate")))
             const saleEndDate = parseInt(String(urlParams.get("saleEndDate")))
@@ -144,6 +147,34 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
                 let hexNonce = tokenNonce;
                 if(tokenNonce?.length == 1){
                     hexNonce = "0" + tokenNonce;
+                }
+
+                //fix the string price to correct format
+                let saleStringPriceRaw = String(urlParams.get("salePrice")).replace('0.','').replace('.','');
+
+                let arraySaleStringPrice = saleStringPriceRaw.split('');
+
+                let leadingZeroCount = 0;
+                let digitCount = 0;
+
+                //account for the start pos if the leading zeros
+                //account for the number of digits
+                for (let i = 0; i < arraySaleStringPrice.length; i++) {
+
+                    if(arraySaleStringPrice[i] === "0") {
+                        leadingZeroCount++;
+                    }
+                    if(arraySaleStringPrice[i] != "0") {
+                        digitCount++;
+                    }
+                }
+
+                let numberOfTrailingZeros = leadingZeroCount+digitCount;
+
+                let saleStringPrice = arraySaleStringPrice.join('').replace('0','');
+
+                for (let i = 0; i < 18-numberOfTrailingZeros; i++) {
+                saleStringPrice += "0";
                 }
 
                 const formattedData = {
@@ -352,8 +383,9 @@ export const SellTokenPage: (props: any) => any = ({ }) => {
 
         signTemplateTransaction({
 
-            //succesCallbackRoute: '/account',
-            succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell?saleStatus=Auction&salePrice='+requestedAmount+'&saleStartDate='+unixStartDate+'&saleEndDate='+unixEndDate,
+            succesCallbackRoute: '/account',
+            //below is the client based token add to database
+            //succesCallbackRoute: '/token/'+ walletAddressParam +'/' + collectionId +'/' + tokenNonce + '/sell?saleStatus=Auction&salePrice='+requestedAmount+'&saleStartDate='+unixStartDate+'&saleEndDate='+unixEndDate,
             getTemplateData: { userWalletAddress, collectionId, tokenNonce, minBid: requestedAmount, startTime: unixStartDate, deadline: unixEndDate },
             getTemplateTrigger: getStartAuctionNftTemplateTrigger,
 

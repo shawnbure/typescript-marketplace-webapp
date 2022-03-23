@@ -363,7 +363,7 @@ export const WalletSidebar: (Props: {
         </div>
 
         <div className="mb-5">
-          {/**************Remove after alpha ****************************************/}
+          {/**************Remove after alpha ****************************************
           <div
             onClick={alphaToastMessage}
             className="c-button c-button--secondary u-margin-top-spacing-2"
@@ -377,8 +377,8 @@ export const WalletSidebar: (Props: {
             </span>
             <span>Deposit</span>
           </div>
-          {/**************Remove after alpha below pop up is the production code****************************************/}
-          {/*
+          **************Remove after alpha below pop up is the production code****************************************/}
+          
 
                     <Popup 
                         modal
@@ -554,7 +554,7 @@ export const WalletSidebar: (Props: {
                         )}
                     </Popup>
                     
-                    */}
+                    
         </div>
 
         <div className="block lg:hidden mb-6">
