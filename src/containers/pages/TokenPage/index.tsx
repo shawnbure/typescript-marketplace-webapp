@@ -1686,7 +1686,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                 </Collapsible>
               </div>
 
-              {!walletAddressParam && (
+              {
                 <div className="u-border-radius-2 u-overflow-hidden my-10">
                   <Collapsible
                     open={true}
@@ -1733,9 +1733,9 @@ export const TokenPage: (props: any) => any = ({}) => {
                     </div>
                   </Collapsible>
                 </div>
-              )}
+              }
 
-              {!walletAddressParam && (
+              {(
                 <div className="u-border-radius-2 u-overflow-hidden my-10">
                   <Collapsible
                     open={true}
