@@ -34,6 +34,28 @@ export const tokensApi = createApi({
       },
     }),
 
+    listTokenFromClient: builder.mutation<any, any>({
+
+        query: ({ payload }): FetchArgs => {
+
+            const accessToken: string = selectAccessToken(store.getState());
+
+            const customRequestArg: FetchArgs = {
+
+                method: POST,
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify(payload),
+                url: `${mainPath}/list-fc/${payload.walletAddress}/${payload.tokenName}/${payload.tokenNonce}`
+
+            }
+
+            return customRequestArg;
+        },
+
+  }),
+
     getTokenData: builder.mutation<any, any>({
       query: ({ collectionId, tokenNonce }): FetchArgs => {
         const customRequestArg: FetchArgs = {
@@ -121,6 +143,29 @@ export const tokensApi = createApi({
       }
     }),
 
+        withdrawToken: builder.mutation<any, any>({
+
+            query: ({ payload }): FetchArgs => {
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    //body: JSON.stringify(payload),
+                    url: `${mainPath}/withdraw/${payload.tokenName}/${payload.tokenNonce}`,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+
+                }
+
+                return customRequestArg;
+
+            },
+
+        }),
+
     refreshTokenMetadata: builder.mutation<any, any>({
       query: ({ collectionId, tokenNonce }): FetchArgs => {
         const accessToken: string = selectAccessToken(store.getState());
@@ -159,14 +204,14 @@ export const tokensApi = createApi({
 });
 
 export const {
-  useCreateTokenMutation,
-  useRefreshTokenMetadataMutation,
-  useGetTransactionsMutation,
-  useGetTokenMetadataMutation,
-  useGetTokenBidsMutation,
-  useGetTokenOffersMutation,
-  useGetTokenDataMutation,
-  useGetTokenCollectionAvailablityMutation,
-  useGetTokensCollectionsAvailablityMutation,
-  useGetWhitelistBuyCountLimitTemplateMutation,
-} = tokensApi;
+    useListTokenFromClientMutation,
+    useWithdrawTokenMutation,
+    useRefreshTokenMetadataMutation,
+    useGetTransactionsMutation,
+    useGetTokenMetadataMutation,
+    useGetTokenBidsMutation,
+    useGetTokenOffersMutation,
+    useGetTokenDataMutation,
+    useGetTokenCollectionAvailablityMutation,
+    useGetTokensCollectionsAvailablityMutation,
+    useGetWhitelistBuyCountLimitTemplateMutation } = tokensApi;
