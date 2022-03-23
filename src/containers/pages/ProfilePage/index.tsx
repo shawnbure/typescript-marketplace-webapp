@@ -9,10 +9,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatHexMetaImage, formatImgLink, shorterAddress } from "utils";
 import {
   useGetAccountCollectionsMutation,
-  useGetAccountGatewayTokensMutation,
   useGetAccountMutation,
   useGetAccountTokensMutation,
   useGetOnSaleAccountTokensMutation,
+  useGetAccountGatewayTokensNoLimitsMutation,
 } from "services/accounts";
 import { UrlParameters } from "./interfaces";
 import { routePaths } from "constants/router";
@@ -58,14 +58,18 @@ export const ProfilePage: (props: any) => any = ({}) => {
     },
   ] = useGetOnSaleAccountTokensMutation();
 
+
+
   const [
-    getAccountGatewayRequestTrigger,
+    getAccountGatewayTokensNoLimitsTrigger,
     {
-      data: accountGatewayData,
-      isLoading: isLoadingAccountGatewayRequest,
-      isUninitialized: isUninitializedAccountGatewayRequest,
+      data: accountGatewayDataNoLimits,
+      isLoading: isLoadingAccountGatewayNoLimitsRequest,
+      isUninitialized: isUninitializedAccountGatewayNoLimitsRequest,
     },
-  ] = useGetAccountGatewayTokensMutation();
+  ] = useGetAccountGatewayTokensNoLimitsMutation();
+
+
 
   const [
     getAccountCollectionsTrigger,
@@ -91,29 +95,195 @@ export const ProfilePage: (props: any) => any = ({}) => {
   const [loadMoreUnlisted, setLoadMoreUnlisted] = useState<boolean>(true);
   const [loadMoreCollections, setLoadMoreCollections] = useState<boolean>(true);
 
+
+
+  // hold all the NFTs that are unlisted - only gets called once initial load - the base collection to bench from
+  const [unlistedNftsNoLimits, setUnlistedNftsNoLimits] = useState<Array<any>>([]);
+
+  // the list to "grow from" when press "load more" which will put it into the unlistedNFTs
+  const [unlistedNftsFiltered, setUnlistedNftsFiltered] = useState<Array<any>>([]);
+  
+  // number of "get more" nfts offset size
+  const [unlistedNftsNoLimitsOffset, setUnlistedNftsNoLimitsOffset] = useState(8);
+
+
+
   // const shouldRedirectHome = !loggedIn && !walletAddressParam;
 
-  interface UnlistedJSONData 
-  {
-    identifier: string;
-    collection: string;
-    nonce: number;
-    type: string;
-    name: string;
-    creator: string;
-    royalties: number;
-    url: string;
-    ticker: string;
+
+
+
+  // ================================== UNLISTED NFTS ==================================
+
+  const InitialLoadOfUnlistedData = async (
+    getFunctionTrigger: any,
+    ) => {
+
+    let hasFetchedNewData = false;  
+
+    //call function to get unlist from blockchain by user wallet
+    const dataResponse = await getFunctionTrigger({ userWalletAddress });
+
+    if (!dataResponse.data) {
+      return {
+        hasFetchedNewData: false,
+      };
+    }
+    
+    //extract out nft and token data
+    const { nfts, availableTokensData } = dataResponse.data;
+
+    const arrayOfNFTs = [...nfts];
+
+    setUnlistedNftsNoLimits(arrayOfNFTs);
+    setAvailableTokens({...availableTokensData });
+
+    //inital so set it to the "filtered"
+    setUnlistedNftsFiltered(arrayOfNFTs);
+
+    const startIndex = 0
+    const offsetLength = unlistedNftsNoLimitsOffset
+    const arraySplice = arrayOfNFTs.slice(startIndex,offsetLength)
+
+    setUnlistedNfts(arraySplice)
+
+    console.log("========== POPULATE arrayOfNFTs =========")
+    console.log(arrayOfNFTs)
+
+    console.log(arraySplice)
+
+
+    
+
+
+    /*
+    var PATTERN = 'base'
+    const rv = people.filter(
+      record => record.name.match(regex)
+    );
+    //var filtered = newDataArray.filter(function (record.name) { return record.name.indexOf(PATTERN) === -1; });        
+    //console.log(newDataArray)    
+    */
+
+
+    /*
+    const startIndex = 0
+    const offsetLength = 26
+
+    var arraySplice = newDataArray.slice(startIndex,offsetLength)
+    console.log("arraySplice")
+    console.log(arraySplice)    
+
+    console.log("arraySplice.length: " + arraySplice.length)
+
+    var filteredArray = newDataArray.filter(record => record.name.includes(filterText))
+
+    console.log("filteredArray")
+    console.log(filteredArray)
+    */
+
+    return {
+      hasFetchedNewData : true,
+    };
+
+  };
+
+  
+
+  const GetMoreUnlistedProcess = async () => {
+  
+    const startIndex = 0
+    const offsetLength =  unlistedNfts.length + unlistedNftsNoLimitsOffset
+    const arraySlice = unlistedNftsFiltered.slice(startIndex,offsetLength)
+
+    setUnlistedNfts(arraySlice)
+        
+    setLoadMoreUnlisted(unlistedNftsFiltered.length > arraySlice.length);
+    
+    return {
+      hasFetchedNewData : true,
+    };
+
+    /*
+    const displayLoadMoreBool = arraySplice.length < unlistedNftsNoLimits.length
+
+    return {
+      displayLoadMore : displayLoadMoreBool,
+    };
+    */
+    };
+
+
+
+
+
+
+  const handleFilterOnSale = async () => {
+
+    alert("handle Filter On Sale")
+    
   }
 
+  const handleFilterUnlisted = async () =>
+   {
 
-  function GetUnlistedJSONDataFromString(strJSON: string) : UnlistedJSONData 
+    //filter on the existing 
+    var filteredArray = unlistedNftsNoLimits.filter(record => record.name.includes(GetTextboxValue("txtFilterUnlisted")))
 
-  {
-      return JSON.parse(strJSON);
+    setUnlistedNftsFiltered(filteredArray);
+
+    const startIndex = 0
+    const offsetLength =  unlistedNftsNoLimitsOffset
+    const arraySlice = filteredArray.slice(startIndex,offsetLength)
+    
+    setUnlistedNfts(arraySlice)
+
+    const bLoadMoreDisplay = filteredArray.length > unlistedNftsNoLimitsOffset
+
+
+    setLoadMoreUnlisted(bLoadMoreDisplay);
+
   }
+  
+  const handleFilterUnlistedReset = async () => 
+  {
+      setUnlistedNftsFiltered(unlistedNftsNoLimits);
+
+      const startIndex = 0
+      const offsetLength =  unlistedNftsNoLimitsOffset
+      const arraySlice = unlistedNftsNoLimits.slice(startIndex,offsetLength)
+      
+      
+      setUnlistedNfts(arraySlice)
+  
+      const bLoadMoreDisplay = unlistedNftsNoLimits.length > unlistedNftsNoLimitsOffset
 
 
+      setLoadMoreUnlisted(bLoadMoreDisplay);
+      
+      //reset search text box
+      SetTextboxValue("txtFilterUnlisted", "");
+
+  } 
+
+  function GetTextboxValue(elementID: string)
+  {
+      var element = document.getElementById(elementID) as HTMLInputElement;
+
+      return element.value;
+  }
+  
+  
+  function SetTextboxValue(elementID: string, newValue: string)
+  {
+      var element = document.getElementById(elementID) as HTMLInputElement;
+
+      element.value = newValue;
+  }
+  
+  
+
+  
   const getOffsetToLimit = async (
     getFunction: any,
     offset: number = 0,
@@ -121,10 +291,10 @@ export const ProfilePage: (props: any) => any = ({}) => {
     dataArray: Array<any>,
     setDataArray: any,
     flag?: any
-  ) => {
+  ) => { 
     let hasFetchedNewData = false;
 
-    console.log( "userWalletAddress: " + userWalletAddress)
+    
 
     const dataResponse = await getFunction({
       userWalletAddress,
@@ -314,19 +484,18 @@ export const ProfilePage: (props: any) => any = ({}) => {
     });
   };
 
-  const getMoreUnlistedTokens = async () => {
-    const { hasFetchedNewData } = await getOffsetToLimit(
-      getAccountGatewayRequestTrigger,
-      unlistedNfts.length,
-      8,
-      unlistedNfts,
-      setUnlistedNfts,
-      "gateway"
-    );
 
-    setLoadMoreUnlisted(hasFetchedNewData);
+
+
+  const getMoreUnlistedTokens = async () => {
+
+    const { hasFetchedNewData } = await GetMoreUnlistedProcess();
+
+    //setLoadMoreUnlisted(unlistedNftsFiltered.length > unlistedNfts.length);
+    
   };
 
+  
   const getMoreOnSaleTokens = async () => {
     const { hasFetchedNewData } = await getOffsetToLimit(
       getOnSaleAccountTokensRequestTrigger,
@@ -358,9 +527,22 @@ export const ProfilePage: (props: any) => any = ({}) => {
     dateOptions
   );
 
+
+
   useEffect(() => {
+
     getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
+
+    InitialLoadOfUnlistedData( getAccountGatewayTokensNoLimitsTrigger );
+
   }, []);
+
+
+
+
+
+
+
 
   // if (shouldRedirectHome) {
 
@@ -530,10 +712,10 @@ export const ProfilePage: (props: any) => any = ({}) => {
                           <div className="mb-10 md:text-center">
                             <span className=" mr-4 inline-block mb-6 md:mb-0">
 
-
+                            
                                   <Link
                                     to={`/collection/create`}
-                                    className="c-button c-button--secondary"
+                                    className="c-button c-button--primary"
                                   >
                                     {" "}
                                     Create collection{" "}
@@ -546,7 +728,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
                                 <Link
                                     to={`/collection/register`}
-                                    className="c-button c-button--secondary inline-block"
+                                    className="c-button c-button--primary inline-block"
                                   >
                                     {" "}
                                     Register collection{" "}
@@ -604,6 +786,8 @@ export const ProfilePage: (props: any) => any = ({}) => {
                 <div className="c-accordion_content bg-transparent">
                   <div className="grid grid-cols-12">
 
+                  {
+                    /*
                   <div className="col-span-12">
                       {isOwnProfile && (
                         <>
@@ -618,6 +802,9 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         </>
                       )}
                     </div>
+                    */
+                  }
+
                     
 
                     {Boolean(onSaleNfts.length) ? (
@@ -650,9 +837,12 @@ export const ProfilePage: (props: any) => any = ({}) => {
                 open={false}
                 className="c-accordion"
                 onOpening={() => {
-                  if (isUninitializedAccountGatewayRequest) {
-                    getMoreUnlistedTokens();
-                  }
+
+                  //Get 
+                  //if (isUninitializedAccountGatewayRequest) {
+                  //  getMoreUnlistedTokens();
+                  //}
+
                 }}
                 trigger={
                   <div className="c-accordion_trigger">
@@ -677,9 +867,29 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       {isOwnProfile && (
                         <>
                           <div className="mb-10 md:text-center">
-                            <span className=" mr-4 inline-block mb-6 md:mb-0">
+                            <span className=" mr-4 inline-block">
                             <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Filter on NFTs Name" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
                             
+                            </span>
+
+                            <span className=" mr-4 inline-block">
+                                  &nbsp;
+                                <button
+                                  onClick={handleFilterUnlisted}
+                                  className="c-button c-button--primary">
+                                  Filter
+                              </button>
+
+                            </span>
+
+                            <span className=" mr-4 inline-block">
+                                &nbsp;
+                                <button
+                                  onClick={handleFilterUnlistedReset}
+                                  className="c-button c-button--primary">
+                                  Reset
+                              </button>
+
                             </span>
 
                           </div>
@@ -709,7 +919,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                             Load more
                           </button>
                         </div>
-                        1
+                        
                       </div>
                     )}
                   </div>
