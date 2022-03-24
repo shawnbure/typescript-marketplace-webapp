@@ -1592,7 +1592,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                           {
                           !(isAuction && hasBidderWinner) && (
-                            <Popup 
+                            <Popup disabled //SMB REMOVE TO ENABLE
                               modal
                               className="c-modal_container"
                               trigger={
@@ -1604,7 +1604,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                       icon={faIcons.faTag}
                                     />
                                   </span>
-                                  <span>Make offer</span>
+                                  {/* SMB REMOVE onClick={alphaToastMessage} TO ENABLE MAKE OFFER */}
+                                  <span onClick={alphaToastMessage}>Make offer</span>
                                 </button>
                               }
                             >
