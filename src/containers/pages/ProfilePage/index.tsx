@@ -12,7 +12,7 @@ import {
   useGetAccountMutation,
   useGetAccountTokensMutation,
   useGetOnSaleAccountTokensMutation,
-  useGetAccountGatewayTokensNoLimitsMutation,
+  useGetAccountGatewayTokensMutation,
 } from "services/accounts";
 import { UrlParameters } from "./interfaces";
 import { routePaths } from "constants/router";
@@ -59,15 +59,16 @@ export const ProfilePage: (props: any) => any = ({}) => {
   ] = useGetOnSaleAccountTokensMutation();
 
 
-
   const [
-    getAccountGatewayTokensNoLimitsTrigger,
+    getAccountGatewayRequestTrigger,
     {
-      data: accountGatewayDataNoLimits,
-      isLoading: isLoadingAccountGatewayNoLimitsRequest,
-      isUninitialized: isUninitializedAccountGatewayNoLimitsRequest,
+      data: accountGatewayData,
+      isLoading: isLoadingAccountGatewayRequest,
+      isUninitialized: isUninitializedAccountGatewayRequest,
     },
-  ] = useGetAccountGatewayTokensNoLimitsMutation();
+  ] = useGetAccountGatewayTokensMutation();
+
+  
 
 
 
@@ -121,70 +122,60 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
     let hasFetchedNewData = false;  
 
-    //call function to get unlist from blockchain by user wallet
-    const dataResponse = await getFunctionTrigger({ userWalletAddress });
+    var offset = 0
+    var limit = 25
+    var gotAllRecords = false
+    var arrayNFTs = new Array()
 
-    if (!dataResponse.data) {
-      return {
-        hasFetchedNewData: false,
-      };
+    do 
+    {
+      console.log("enter do loop : offset : " + offset)
+      const dataResponse = await getFunctionTrigger({ userWalletAddress, limit, offset});
+
+      if (!dataResponse.data) {
+        gotAllRecords = true
+      }      
+
+      //extract out nft and token data
+      const { nfts, availableTokensData } = dataResponse.data;
+
+      const newNFTs = [...nfts];
+
+      console.log(newNFTs)
+
+
+      if( newNFTs.length == 0 )
+      {
+        console.log("length of 0 - DONE");
+        gotAllRecords = true
+        break;
+      }
+
+      arrayNFTs = [...arrayNFTs, ...nfts];
+      /*
+      const newDataArray = [...unlistedNftsNoLimits, ...nfts];
+      setUnlistedNftsNoLimits(newDataArray);
+      */
+
+      setAvailableTokens({ ...availableTokens, ...availableTokensData });
+      
+      offset += limit
     }
-    
-    //extract out nft and token data
-    const { nfts, availableTokensData } = dataResponse.data;
+    while (!gotAllRecords);
 
-    const arrayOfNFTs = [...nfts];
-
-    setUnlistedNftsNoLimits(arrayOfNFTs);
-    setAvailableTokens({...availableTokensData });
+    console.log(arrayNFTs);
+    setUnlistedNftsNoLimits(arrayNFTs);
 
     //inital so set it to the "filtered"
-    setUnlistedNftsFiltered(arrayOfNFTs);
+    setUnlistedNftsFiltered(arrayNFTs);
 
     const startIndex = 0
     const offsetLength = unlistedNftsNoLimitsOffset
-    const arraySplice = arrayOfNFTs.slice(startIndex,offsetLength)
+    const arraySplice = arrayNFTs.slice(startIndex,offsetLength)
 
     setUnlistedNfts(arraySplice)
 
-    console.log("========== POPULATE arrayOfNFTs =========")
-    console.log(arrayOfNFTs)
-
-    console.log(arraySplice)
-
-
-    
-
-
-    /*
-    var PATTERN = 'base'
-    const rv = people.filter(
-      record => record.name.match(regex)
-    );
-    //var filtered = newDataArray.filter(function (record.name) { return record.name.indexOf(PATTERN) === -1; });        
-    //console.log(newDataArray)    
-    */
-
-
-    /*
-    const startIndex = 0
-    const offsetLength = 26
-
-    var arraySplice = newDataArray.slice(startIndex,offsetLength)
-    console.log("arraySplice")
-    console.log(arraySplice)    
-
-    console.log("arraySplice.length: " + arraySplice.length)
-
-    var filteredArray = newDataArray.filter(record => record.name.includes(filterText))
-
-    console.log("filteredArray")
-    console.log(filteredArray)
-    */
-
-    return {
-      hasFetchedNewData : true,
-    };
+ 
 
   };
 
@@ -227,8 +218,10 @@ export const ProfilePage: (props: any) => any = ({}) => {
   const handleFilterUnlisted = async () =>
    {
 
+    //let list = data.filter(hotel => hotel.name.toLowerCase().includes(lowerCased ))
+
     //filter on the existing 
-    var filteredArray = unlistedNftsNoLimits.filter(record => record.name.includes(GetTextboxValue("txtFilterUnlisted")))
+    var filteredArray = unlistedNftsNoLimits.filter(record => record.name.toLowerCase().includes(GetTextboxValue("txtFilterUnlisted").toLowerCase()))
 
     setUnlistedNftsFiltered(filteredArray);
 
@@ -533,7 +526,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
     getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
 
-    InitialLoadOfUnlistedData( getAccountGatewayTokensNoLimitsTrigger );
+    InitialLoadOfUnlistedData( getAccountGatewayRequestTrigger );
 
   }, []);
 
@@ -868,7 +861,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         <>
                           <div className="mb-10 md:text-center">
                             <span className=" mr-4 inline-block">
-                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Filter on NFTs Name" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
+                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Filter - NFTs Name" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
                             
                             </span>
 
