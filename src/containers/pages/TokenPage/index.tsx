@@ -166,7 +166,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
       limit: 10,
     });
 
-    if (response?.error) {
+    if (response?.error ) {
       toast.error(`Error getting initial transcaction history`, {
         autoClose: 5000,
         draggable: true,
@@ -294,19 +294,20 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     getCollectionByIdTrigger({ collectionId: collectionId });
 
-    getTokenDataTrigger({ collectionId, tokenNonce });
 
     if (walletAddressParam) {
       getAccountTokenTrigger({
         userWalletAddress: walletAddressParam,
         identifier: collectionId,
         nonce: tokenNonce,
-      });
+      })
       return;
     }
+    getTokenDataTrigger({ collectionId, tokenNonce });
+
   }, []);
 
-  if (isErrorGetTokenDataQuery) {
+  if (isErrorGetTokenDataQuery && !walletAddressParam) {
     return (
       <p className="my-10 text-2xl text-center">
         Token ({collectionId} {tokenNonce}) not found
