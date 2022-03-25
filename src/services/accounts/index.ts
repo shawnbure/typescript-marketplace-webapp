@@ -115,7 +115,9 @@ export const accountsApi = createApi({
       query: ({ userWalletAddress, identifier, nonce }): FetchArgs => {
         let nonceStr = parseInt(nonce).toString(16);
         console.log(nonceStr);
-        nonceStr = `0${nonceStr}`;
+        if (nonceStr.length==1){
+          nonceStr = `0${nonceStr}`;
+        }
         const customRequestArg: FetchArgs = {
           method: GET,
           url: `${ELROND_API}/nfts/${identifier}-${nonceStr}`,
