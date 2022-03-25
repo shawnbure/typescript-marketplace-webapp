@@ -545,7 +545,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
       if( userWalletAddress != null )
       {
-        console.log("inside userWalletAddress")
+        //console.log("inside userWalletAddress")
         getWhitelistCountLimitTemplateTransaction();
       }
       
@@ -893,7 +893,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
                 {tokens?.map((token: any) => {
                   return (
                     <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3 md:mx-4 mb-8 my-3 mx-2">
-                      <Link to={`/token/${token.owner.address}/${collectionId}/${token.nonce}`}>
+                      <Link to={`/token/${collectionId}/${token.nonce}`}>
                         <div className={`c-card c-card--colection`}>
                           <div className="c-card_img-container">
                             <img

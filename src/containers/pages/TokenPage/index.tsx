@@ -226,7 +226,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                     tokenName: collectionId,
                     tokenNonce: hexNonce,
                 }   
-                console.log(formattedData)
+
 
                 const response: any = withdrawTokenTrigger({ payload: formattedData });
 
@@ -328,26 +328,19 @@ export const TokenPage: (props: any) => any = ({ }) => {
     : tokenResponseData;
 
   const isOurs = !Boolean(tokenResponseData == undefined);
+  console.log(gatewayTokenData)
+
   if (isOurs === true) {
     tokenData = tokenResponseData.data;
   }
   const getBaseTokenData = (tokenData: any) => {
     const token = isOurs ? tokenData.token : tokenData.tokenData;
-
     const nonce = token.nonce;
     const name = isOurs ? token.tokenName : token.name;
-    const ownerWalletAddress = isOurs
-      ? tokenData.ownerWalletAddress
-      : walletAddressParam;
-    const imageLink: string = isOurs
-      ? token.imageLink
-      : atob(token?.uris?.[0] || "");
-    let metadataLink: string = isOurs
-      ? token.metadataLink
-      : atob(token?.uris?.[1] || "");
-    const royaltiesPercent = isOurs
-      ? token.royaltiesPercent
-      : parseFloat(token.royalties) / 100;
+    const ownerWalletAddress = isOurs ? tokenData.ownerWalletAddress : walletAddressParam;
+    const imageLink: string = isOurs ? token.imageLink : atob(token?.uris?.[0] || "");
+    let metadataLink: string = isOurs ? token.metadataLink : atob(token?.uris?.[1] || "");
+    const royaltiesPercent = isOurs ? token.royaltiesPercent : parseFloat(token.royalties) / 100;
     if (metadataLink.indexOf(".json") == -1) {
       metadataLink = metadataLink + ".json"; //TODO REMOVE , shoudl be added to contract ?
     }
@@ -1448,7 +1441,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                           </p>
                         </>
                       )}
-
+                      
                       {!isOnSale && isCurrentTokenOwner && (
                         <div>
                           <Link
