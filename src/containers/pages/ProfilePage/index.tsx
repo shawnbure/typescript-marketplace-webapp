@@ -105,7 +105,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
   const [unlistedNftsFiltered, setUnlistedNftsFiltered] = useState<Array<any>>([]);
   
   // number of "get more" nfts offset size
-  const [unlistedNftsNoLimitsOffset, setUnlistedNftsNoLimitsOffset] = useState(8);
+  const [unlistedNftsNoLimitsOffset, setUnlistedNftsNoLimitsOffset] = useState(16);
 
 
 
@@ -148,14 +148,11 @@ export const ProfilePage: (props: any) => any = ({}) => {
       {
         console.log("length of 0 - DONE");
         gotAllRecords = true
+
         break;
       }
 
       arrayNFTs = [...arrayNFTs, ...nfts];
-      /*
-      const newDataArray = [...unlistedNftsNoLimits, ...nfts];
-      setUnlistedNftsNoLimits(newDataArray);
-      */
 
       setAvailableTokens({ ...availableTokens, ...availableTokensData });
       
@@ -172,10 +169,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
     const startIndex = 0
     const offsetLength = unlistedNftsNoLimitsOffset
     const arraySplice = arrayNFTs.slice(startIndex,offsetLength)
-
     setUnlistedNfts(arraySplice)
-
- 
 
   };
 
@@ -217,12 +211,14 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
   const handleFilterUnlisted = async () =>
    {
-
-    //let list = data.filter(hotel => hotel.name.toLowerCase().includes(lowerCased ))
-
     //filter on the existing 
-    var filteredArray = unlistedNftsNoLimits.filter(record => record.name.toLowerCase().includes(GetTextboxValue("txtFilterUnlisted").toLowerCase()))
-
+    let filteredArray = unlistedNftsNoLimits.filter(function (record) {
+      // the current value is an object, so you can check on its properties
+      return record.name.toLowerCase().includes(GetTextboxValue("txtFilterUnlisted").toLowerCase()) || 
+             record.collection.toLowerCase().includes(GetTextboxValue("txtFilterUnlisted").toLowerCase());
+    });
+    
+    
     setUnlistedNftsFiltered(filteredArray);
 
     const startIndex = 0
@@ -265,7 +261,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
       return element.value;
   }
-  
+
   
   function SetTextboxValue(elementID: string, newValue: string)
   {
@@ -426,6 +422,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
     });
   };
 
+
   const mapUnlistedTokens = (): any => {
     return unlistedNfts?.map((tokenData: any) => {
       const {
@@ -443,15 +440,19 @@ export const ProfilePage: (props: any) => any = ({}) => {
       const tokenLink = `/token/${userWalletAddress}/${tokenId}/${nonce}`;
 
       return (
+
+
         <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3 md:mx-4 mb-8">
           <Link to={tokenLink}>
             <div className={`c-card c-card--colection`}>
               <div className="c-card_img-container">
-                <img
-                  src={(imageLink)}
-                  className="c-card_img"
-                  alt=""
-                />
+              <img 
+                src={(formatImgLink(imageLink) )}
+                className="c-card_img"
+                alt=""
+              />  
+
+ 
               </div>
 
               <div className="c-card_info justify-between">
@@ -462,7 +463,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         className="text-gray-500 hover:text-gray-200"
                         to={`/collection/${tokenId}`}
                       >
-                        {tokenIndentData.collection.name}
+                         {tokenIndentData.collection.name}
                       </Link>
                     </p>
                   )}
@@ -861,7 +862,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         <>
                           <div className="mb-10 md:text-center">
                             <span className=" mr-4 inline-block">
-                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Filter - NFTs Name" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
+                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Search Unlisted NFTs" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
                             
                             </span>
 
@@ -898,9 +899,9 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       mapUnlistedTokens()
                     ) : (
                       <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
-                        no NFTs unlisted
-                      </div>
-                    )}
+                        No Unlisted NFTs found
+                        </div>
+                      )}
 
                     {loadMoreUnlisted && Boolean(unlistedNfts.length) && (
                       <div className="col-span-12 mr-8 mb-8">
