@@ -662,10 +662,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         element.hidden = false;
     }
 
-    function ShowLearnToVerifyAlert()
-    {
-        alert('Want to Verify this Collection? Simply click on the "Learn How to Verify Collections" button')
-    }
 
 
     function OnFocusElement(elementID: string)
@@ -1012,7 +1008,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 position: "bottom-right",
             });
 
-            ShowLearnToVerifyAlert()
+
         }
     };
 
@@ -1473,13 +1469,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 <br />
 
 
-
+        
                                 <p className="text-xl u-text-bold mb-2">
                                     Collection Name: &nbsp;
                                     <a href="javascript:alert('The Collection Name to be displayed on the Youbei NFT Marketplace.  Allowed to have spaces and must be not longer than 20 characters.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
-                                <p className="mb-2 text-lg text-red-500">{errorsStep2.collectionName?.message}</p>
+                                <p className="mb-2 text-lg text-red-500">{errorsStep5.collectionName?.message}</p>
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
@@ -1494,13 +1490,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     
                                 </p>
 
-                                <p className="mb-2 text-lg text-red-500">{errorsStep2.description?.message}</p>
+                                <p className="mb-2 text-lg text-red-500">{errorsStep5.description?.message}</p>
 
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
                                         <textarea {...registerStep5('description')} autoComplete="off"   placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
                                     </div>
                                 </div>
+
 
 
                                 <p className="text-xl u-text-bold mb-2">
