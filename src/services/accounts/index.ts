@@ -115,7 +115,7 @@ export const accountsApi = createApi({
       query: ({ userWalletAddress, identifier, nonce }): FetchArgs => {
         let nonceStr = parseInt(nonce).toString(16);
         console.log(nonceStr);
-        if (nonceStr.length==1){
+        if (nonceStr.length % 2 !== 0) {
           nonceStr = `0${nonceStr}`;
         }
         const customRequestArg: FetchArgs = {
@@ -183,8 +183,6 @@ export const accountsApi = createApi({
       },
     }),
 
-
-
     //get all tokens gate no limits
     getAccountGatewayTokensNoLimits: builder.mutation<any, any>({
       query: ({ userWalletAddress }): FetchArgs => {
@@ -227,7 +225,6 @@ export const accountsApi = createApi({
         };
       },
     }),
-
   }),
 });
 
