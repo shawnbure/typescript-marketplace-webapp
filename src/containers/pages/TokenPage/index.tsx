@@ -165,8 +165,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
       offset: 0,
       limit: 10,
     });
-
+   
     if (response?.error ) {
+      if ((response?.error as string).indexOf("record not found") !== -1){
+        return;
+      }
       toast.error(`Error getting initial transcaction history`, {
         autoClose: 5000,
         draggable: true,
@@ -293,7 +296,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
     getInitialTxs();
 
     getCollectionByIdTrigger({ collectionId: collectionId });
-
 
     if (walletAddressParam) {
       getAccountTokenTrigger({
