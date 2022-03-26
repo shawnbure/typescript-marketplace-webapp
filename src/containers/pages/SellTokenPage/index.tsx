@@ -221,7 +221,6 @@ export const SellTokenPage: (props: any) => any = ({}) => {
                 position: "bottom-right",
               });
             } else {
-              setShouldRenderPage(true);
               setShouldRedirect(true);
             }
           })
