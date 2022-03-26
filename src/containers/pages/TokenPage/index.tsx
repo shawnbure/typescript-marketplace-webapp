@@ -167,7 +167,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     });
    
     if (response?.error ) {
-      if ((response?.error as string).indexOf("record not found") !== -1){
+      if ((response?.error.data.error as string).indexOf("record not found") !== -1){
         return;
       }
       toast.error(`Error getting initial transcaction history`, {
