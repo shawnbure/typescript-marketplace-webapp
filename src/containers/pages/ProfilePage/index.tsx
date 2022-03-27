@@ -120,6 +120,8 @@ export const ProfilePage: (props: any) => any = ({}) => {
     getFunctionTrigger: any,
     ) => {
 
+    ShowElement("pLoadingUnlistedNFTs");
+
     let hasFetchedNewData = false;  
 
     var offset = 0
@@ -134,6 +136,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
       if (!dataResponse.data) {
         gotAllRecords = true
+        
       }      
 
       //extract out nft and token data
@@ -159,6 +162,11 @@ export const ProfilePage: (props: any) => any = ({}) => {
       offset += limit
     }
     while (!gotAllRecords);
+
+    if( gotAllRecords )
+    {
+      HideElement("pLoadingUnlistedNFTs");
+    }
 
     console.log(arrayNFTs);
     setUnlistedNftsNoLimits(arrayNFTs);
@@ -199,6 +207,19 @@ export const ProfilePage: (props: any) => any = ({}) => {
     };
 
 
+
+
+    function HideElement(elementID: string)
+    {
+        var element = document.getElementById(elementID) as HTMLInputElement;
+        element.hidden = true;
+    }
+    
+    function ShowElement(elementID: string)
+    {
+        var element = document.getElementById(elementID) as HTMLInputElement;
+        element.hidden = false;
+    }
 
 
 
@@ -862,7 +883,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         <>
                           <div className="mb-10 md:text-center">
                             <span className=" mr-4 inline-block">
-                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Search Unlisted NFTs" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
+                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Unlisted NFTs" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
                             
                             </span>
 
@@ -900,6 +921,11 @@ export const ProfilePage: (props: any) => any = ({}) => {
                     ) : (
                       <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
                         No Unlisted NFTs found
+
+                        <p id="pLoadingUnlistedNFTs" hidden={true} className="my-10 text-2xl text-center">
+                          Loading Unlisted NFTs...
+                        </p>
+
                         </div>
                       )}
 
