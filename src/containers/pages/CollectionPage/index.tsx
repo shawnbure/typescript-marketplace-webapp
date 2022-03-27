@@ -453,8 +453,6 @@ export const CollectionPage: (props: any) => any = ({}) => {
         data: { error },
       } = getBuyNFTResponse.error;
 
-      console.log("handleMintTokens 4 ");
-
       toast.error(`${status} | ${error}`, {
         autoClose: 5000,
         draggable: true,
@@ -540,12 +538,9 @@ export const CollectionPage: (props: any) => any = ({}) => {
   useEffect(() => {
 
     if( collectionDataLoaded ) {
-      console.log(collectionDataLoaded)
-      console.log(contractAddress)
 
       if( userWalletAddress != null )
       {
-        //console.log("inside userWalletAddress")
         getWhitelistCountLimitTemplateTransaction();
       }
       
@@ -654,7 +649,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
             </li>
           </ul>
 
-          {Boolean(collectionData?.data?.collection?.contractAddress) && (
+          {Boolean(collectionData?.data?.collection?.contractAddress) && Boolean(collectionData?.data?.collection?.maxSupply > 0) && (
             <>
               <div className="grid grid-cols-10 mb-4">
                 <div className="col-span-12 md:col-start-5 md:col-span-2  p-10 md:p-0 ">
