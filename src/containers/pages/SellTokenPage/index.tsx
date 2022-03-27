@@ -1,37 +1,23 @@
 /* eslint-disable */
 
 import Popup from "reactjs-popup";
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
-import Collapsible from "react-collapsible";
 import { Redirect, Link, useParams, useHistory } from "react-router-dom";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
-import * as faBrands from "@fortawesome/free-brands-svg-icons";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 import DateTimePicker from "react-datetime-picker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  useGetBuyNftTemplateMutation,
   useGetListNftTemplateMutation,
   useGetStartAuctionNftTemplateMutation,
 } from "services/tx-template";
-import {
-  useGetTokenCollectionAvailablityMutation,
-  useGetTokenDataMutation,
-  useListTokenFromClientMutation,
-} from "services/tokens";
+import { useListTokenFromClientMutation } from "services/tokens";
 import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
-import { useGetEgldPriceQuery } from "services/oracle";
-import {
-  formatImgLink,
-  shorterAddress,
-  GetTransactionRequestHttpURL,
-  GetJSONResultData,
-  formatHexMetaImage,
-} from "utils";
+import { shorterAddress } from "utils";
 import { BUY } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from "services/accounts";
 import { useGetCollectionByIdMutation } from "services/collections";
@@ -115,7 +101,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
       identifier: collectionId,
       nonce: tokenNonce,
     }).then((_) => {
-      setShouldRenderPage(true && (txtHash== null|| txtHash?.length == 0));
+      setShouldRenderPage(true && (txtHash == null || txtHash?.length == 0));
     });
 
     const shouldRedirect: boolean =
@@ -221,6 +207,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
                 position: "bottom-right",
               });
             } else {
+              setShouldRenderPage(true);
               setShouldRedirect(true);
             }
           })
@@ -325,7 +312,9 @@ export const SellTokenPage: (props: any) => any = ({}) => {
 
     const { data: txData } = response.data;
 
-    const unconsumedTransaction = prepareTransaction(txData);
+    const unconsumedTransaction = prepareTransaction(
+      txData
+    );
 
     sendTransaction({
       transaction: unconsumedTransaction,
