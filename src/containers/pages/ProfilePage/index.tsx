@@ -212,13 +212,21 @@ export const ProfilePage: (props: any) => any = ({}) => {
     function HideElement(elementID: string)
     {
         var element = document.getElementById(elementID) as HTMLInputElement;
-        element.hidden = true;
+
+        if( element != null )
+        {
+          element.hidden = true;
+        }        
     }
     
     function ShowElement(elementID: string)
     {
         var element = document.getElementById(elementID) as HTMLInputElement;
-        element.hidden = false;
+
+        if( element != null )
+        {
+          element.hidden = false;
+        }           
     }
 
 

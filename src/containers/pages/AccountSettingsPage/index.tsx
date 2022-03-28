@@ -231,7 +231,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
         if (response.error) {
 
 
-            toast.error(`Error edit changes`, {
+            toast.error(`${response.error.data.error}`, {
                 autoClose: 5000,
                 draggable: true,
                 closeOnClick: true,
