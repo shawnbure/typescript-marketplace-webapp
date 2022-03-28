@@ -15,6 +15,9 @@ export const Footer = () => {
               <a href="mailto:youbei-support@elrondnft.io?subject=Youbei - Feedback" className="c-navbar_list-link">Support</a>
             |
             
+            <a href="https://docs.youbei.io/" className="c-navbar_list-link" target="_blank">Docs</a>
+            |
+
             <a href="https://elrondnft.io/" target="_blank" className="c-navbar_list-link">Made with ❤️ by the ENFT DAO</a>
           </p>
       </div>
