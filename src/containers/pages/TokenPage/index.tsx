@@ -32,6 +32,8 @@ import { alphaToastMessage } from 'components/AlphaToastError';
 import store from 'redux/store';
 import { routePaths } from 'constants/router';
 
+import { Footer } from 'components/index';
+
 export const TokenPage: (props: any) => any = ({ }) => {
 
     const dispatch = useAppDispatch();
@@ -1962,6 +1964,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
               )}
             </div>
           </div>
+
+          <br/>
+
+        <Footer /> 
+                  
         </div>
       </div>
     </div>

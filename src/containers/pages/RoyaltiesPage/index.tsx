@@ -19,6 +19,8 @@ import {
   useGetRoyaltiesRemainingTemplateMutation,
 } from "services/royalties";
 
+import { Footer } from 'components/index';
+
 export const RoyaltiesPage: (props: any) => any = ({}) => {
   const { address: userWalletAddress } = Dapp.useContext();
 
@@ -327,6 +329,10 @@ export const RoyaltiesPage: (props: any) => any = ({}) => {
               </button>
             </div>
           </div>
+          <br/>
+
+        <Footer /> 
+                  
         </div>
       </div>
     </div>

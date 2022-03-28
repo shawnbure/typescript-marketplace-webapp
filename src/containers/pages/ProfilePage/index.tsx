@@ -22,6 +22,8 @@ import * as faBrands from "@fortawesome/free-brands-svg-icons";
 
 import { alphaToastMessage } from 'components/AlphaToastError';
 
+import { Footer } from 'components/index';
+
 export const ProfilePage: (props: any) => any = ({}) => {
   const { walletAddress: walletAddressParam } = useParams<UrlParameters>();
 
@@ -955,6 +957,11 @@ export const ProfilePage: (props: any) => any = ({}) => {
               </Collapsible>
             </div>
           </div>
+
+          <br/>
+
+        <Footer /> 
+                  
         </div>
       </div>
     </div>

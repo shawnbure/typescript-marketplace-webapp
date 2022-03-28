@@ -15,6 +15,8 @@ import { useGetCollectionByIdMutation, useCreateCollectionMutation } from "servi
 import { toast } from 'react-toastify';
 import { BrowserRouter, Link } from 'react-router-dom';
 
+import { Footer } from 'components/index';
+
 export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
 
@@ -351,6 +353,10 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
                     </div>
 
+
+                    <br/>
+
+                    <Footer /> 
 
                 </div>
 
