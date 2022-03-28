@@ -13,6 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { toast } from 'react-toastify';
 
+import { Footer } from 'components/index';
 
 export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
@@ -417,6 +418,9 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
                     </div>
 
+                    <br/>
+                    
+                    <Footer />   
 
                 </div>
 

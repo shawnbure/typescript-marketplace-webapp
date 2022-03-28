@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import { useGetCollectionsRankingsMutation } from 'services/collections';
 import Table from 'rc-table';
+import { Footer } from 'components/index';
 
 
 export const RankingsPage: (props: any) => any = ({ }) => {
@@ -116,6 +117,10 @@ export const RankingsPage: (props: any) => any = ({ }) => {
 
                     <Table className="c-table c-table--rankings" rowClassName="c-table_row" columns={listingTableColumns} data={mapListingTableData} />
 
+
+                    <br/>
+
+                    <Footer /> 
 
                 </div>
 

@@ -14,6 +14,8 @@ import { toast } from "react-toastify";
 
 import { UrlParameters } from './interfaces';
 
+import { Footer } from 'components/index';
+
 export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     const { collectionId } = useParams<UrlParameters>();
@@ -350,6 +352,10 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
                     </div>
 
+                    <br/>
+
+                    <Footer />  
+                    
 
                 </div>
 

@@ -26,6 +26,7 @@ import { routePaths } from "constants/router";
 import { useRefreshCreateOrUpdateSessionStatesMutation, useRetrieveSessionStatesMutation, useDeleteSessionStatesByAccountIdByStateTypeMutation } from "services/session-states";
 import { configureStore } from "@reduxjs/toolkit";
 
+import { Footer } from 'components/index';
 
 
 
@@ -1577,6 +1578,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                     </div>
 
+
+                    <br/>
+
+                    <Footer /> 
 
                 </div>
 

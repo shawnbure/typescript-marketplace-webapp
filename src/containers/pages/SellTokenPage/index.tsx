@@ -26,6 +26,8 @@ import store from "redux/store";
 import { number } from "yup/lib/locale";
 import { alphaToastMessage } from "components/AlphaToastError";
 
+import { Footer } from 'components/index';
+
 export const SellTokenPage: (props: any) => any = ({}) => {
   const history = useHistory();
   const {
@@ -665,6 +667,11 @@ export const SellTokenPage: (props: any) => any = ({}) => {
               </div>
             </div>
           </div>
+
+          <br/>
+
+        <Footer /> 
+                  
         </div>
       </div>
     </div>

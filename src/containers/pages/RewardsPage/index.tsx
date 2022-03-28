@@ -138,8 +138,7 @@ export const RewardsPage = () => {
                                 </h3>
 
                                 <p>                    
-                                    2% fee to holders of Onchain Warriors, EGLD Vault and Regal Eagle NFTs. <br/><br/>
-                                    .5% fee to DAO Development.
+                                    &nbsp;
                                 </p>
                             </div>
                         </div>
@@ -155,10 +154,8 @@ export const RewardsPage = () => {
                                     Beta <br/>
                                     Reward Our Users 
                                 </h3>
-
                                 <p>                    
-                                    2% fee to daily active users in User Basic Income (UBI). <br/><br/>
-                                    .5% fee to DAO Development.
+                                    &nbsp;
                                 </p>
 
                             </div>
@@ -175,9 +172,8 @@ export const RewardsPage = () => {
                                     Grow Sustainably 
                                 </h3>
 
-                                <p>
-                                    2% fee to daily active users in User Basic Income (UBI). <br/><br/>
-                                    .5% fee to $ENFT Treasury.
+                                <p>                    
+                                    &nbsp;
                                 </p>
 
                             </div>

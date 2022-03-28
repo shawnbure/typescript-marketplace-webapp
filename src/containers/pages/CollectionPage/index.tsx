@@ -24,6 +24,8 @@ import { shorterAddress } from "utils";
 
 import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens";
 
+import { Footer } from 'components/index';
+
 export const CollectionPage: (props: any) => any = ({}) => {
   
   const { loggedIn, address: userWalletAddress } = Dapp.useContext();
@@ -961,8 +963,19 @@ export const CollectionPage: (props: any) => any = ({}) => {
                 </div>
               )}
             </div>
+
+
+
+
           </div>
+
+          <br/>
+
+        <Footer /> 
+
         </div>
+ 
+
       </div>
     </div>
   );
