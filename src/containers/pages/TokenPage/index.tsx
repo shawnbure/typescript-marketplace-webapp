@@ -1489,7 +1489,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                 icon={faIcons.faWallet}
                               />
                             </span>
-                            <span>Widthdraw</span>
+                            <span>Withdraw</span>
                           </button>
                         )}
 
