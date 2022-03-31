@@ -18,7 +18,7 @@ import { prepareTransaction } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
 import { shorterAddress } from "utils";
-import { BUY } from "constants/actions";
+import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION, LIST } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from "services/accounts";
 import { useGetCollectionByIdMutation } from "services/collections";
 import { routePaths } from "constants/router";
@@ -41,7 +41,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   const [startDate, setStartDate] = useState(0);
   const [endDate, setEndDate] = useState(0);
   const [shouldRenderPage, setShouldRenderPage] = useState(false);
-
+  const [pageAction, setPageAction] = useState("");
   const { loggedIn, address: userWalletAddress } = Dapp.useContext();
 
   const [listTokenTrigger] = useListTokenFromClientMutation();
@@ -196,7 +196,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
           saleOnSale: true,
         };
         setShouldRenderPage(false);
-        listTokenTrigger({ payload: formattedData })
+        const res: any = listTokenTrigger({ payload: formattedData })
           .then((res: any) => {
             if (res?.error) {
               setShouldRenderPage(true);
@@ -214,6 +214,10 @@ export const SellTokenPage: (props: any) => any = ({}) => {
             }
           })
           .catch((err) => {});
+        
+          return;
+
+        /*
         const response: any = listTokenTrigger({ payload: formattedData });
 
         if (response.error) {
@@ -242,8 +246,9 @@ export const SellTokenPage: (props: any) => any = ({}) => {
           hideProgressBar: false,
           position: "bottom-right",
         });
-
+        
         return;
+        */
       }
     }
   }, [storeDataExist]);
@@ -257,7 +262,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   if (shouldRedirect) {
     return (
       <Redirect
-        to={routePaths.congrats.replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
+        to={routePaths.congrats.replace(":action", collectionId).replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
       />
     );
   }
@@ -435,11 +440,11 @@ export const SellTokenPage: (props: any) => any = ({}) => {
     e.preventDefault();
 
     if (isFixedSale) {
+      setPageAction(LIST);
       handleListFixedPrice();
-
       return;
     }
-
+    setPageAction(AUCTION);
     handleListAuction();
   };
 
@@ -485,8 +490,9 @@ export const SellTokenPage: (props: any) => any = ({}) => {
                     {/* SMB REMOVE TO ENABLE setIsFixedSale(true); to ENABLE AUCTIONS AGAIN ------  REMOVE onClick={alphaToastMessage} TO ENABLE AUCTIONS AGAIN */}
                     <div
                       onClick={() => {
-                        setIsFixedSale(false);
-                        setIsFixedSale(true);
+                        alphaToastMessage
+                        //setIsFixedSale(false);
+                        //setIsFixedSale(true);
                       }}
                       className={`${!isFixedSale &&
                         "c-switcher-action_option--active"} c-switcher-action_option align-items-center col-span-6 flex flex-col py-10`}
