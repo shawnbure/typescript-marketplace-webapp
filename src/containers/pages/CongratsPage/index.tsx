@@ -98,13 +98,13 @@ export const CongratsPage = () => {
 
                             <div className="col-span-12 md:col-span-6 p-token-page_visual-holder u-margin-bottom-spacing-4 justify-center px-6">
                                 
-                            <h2 className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white justify-center"><br/>Congratulations!</h2>
-
-                                <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small">
+                            <h2 style={{textAlign: 'center'}} className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white justify-center"><br/>Congratulations!</h2>
+     
+                                <p style={{textAlign: 'center'}} className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
                                     <Link to={`/collection/${collectionId}`}>{collectionId}</Link>
                                 </p>
-                            
-                                <h2 className="u-text-bold u-margin-top-spacing-5 u-padding-top-spacing-5 center-xs">You have successfully {displayAction + " " + tokenName}!<br/><br/></h2>
+
+                                <h2 style={{textAlign: 'center'}} className="u-text-bold u-margin-top-spacing-5 u-padding-top-spacing-5 center-xs">You have successfully {displayAction + " " + tokenName}!<br/><br/></h2>
                                 
                                 <div className="p-token-page_asset-container">
                                     <img
@@ -125,17 +125,16 @@ export const CongratsPage = () => {
                                     loading asset...
                                     </p>
                                 </div>
-                                <br/><br/>
-                                <p className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
+                           
+                                <p style={{textAlign: 'center'}} className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
                                 <Link to={`/collection/${collectionId}`} className="c-button c-button--primary" >                        
-                                    <div className="inline-flex">
-                                        <span>
+                                    <div className="inline-flex justify-center">
+                                        <span className="justify-center">
                                              See Collection
                                         </span>
                                     </div>
                                 </Link>
                                 </p>
-
                         </div> 
 
                     </div>
