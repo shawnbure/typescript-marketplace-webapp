@@ -190,6 +190,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
+
+
+
+
+
+
     useEffect(() => { 
         
         console.log("initialLoad started")

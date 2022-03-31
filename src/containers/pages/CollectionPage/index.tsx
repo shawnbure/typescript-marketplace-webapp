@@ -182,8 +182,15 @@ export const CollectionPage: (props: any) => any = ({}) => {
     const filters = newFilterQuery ? newFilterQuery : filterQuery;
     const offset = mergeWithExisting ? tokens.length : 0;
     const sortRules = newSortQuery ? newSortQuery : sort;
-    const onSaleFlag = (newOnSaleOption != null) ? newOnSaleOption : onSaleOption;
 
+    const onSaleFlag = (newOnSaleOption != null) ? newOnSaleOption : onSaleOption;
+    const queryFilters = "on_sale" + "|" + onSaleFlag + "|="
+
+    //console.log(queryFilters)
+
+    //on_sale|true|=
+    //on_sale|true|=;AND;date|1231232|>  
+    //    -> on_sale=true AND date > 1231232
 
     const collectionTokensResponse: any = await getCollectionTokensTrigger({
       collectionId,
@@ -192,6 +199,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
       sortRules,
       filters,
       onSaleFlag,
+      queryFilters,
     });
 
     if (collectionTokensData?.data) {
@@ -505,12 +513,18 @@ export const CollectionPage: (props: any) => any = ({}) => {
   
   
   const getInitialTokens = async () => {
+
+    const queryFilters = "on_sale" + "|" + onSaleOption + "|="
+
+    //console.log(queryFilters)
+
     const response: any = await getCollectionTokensTrigger({
       collectionId,
       offset: 0,
       limit: 8,
       sortRules: sort,
       onSaleFlag: onSaleOption,
+      queryFilters: queryFilters,
     });
 
     if (response?.error) {
