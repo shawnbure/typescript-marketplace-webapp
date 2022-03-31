@@ -485,8 +485,9 @@ export const SellTokenPage: (props: any) => any = ({}) => {
                     {/* SMB REMOVE TO ENABLE setIsFixedSale(true); to ENABLE AUCTIONS AGAIN ------  REMOVE onClick={alphaToastMessage} TO ENABLE AUCTIONS AGAIN */}
                     <div
                       onClick={() => {
-                        setIsFixedSale(false);
-                        setIsFixedSale(true);
+                        alphaToastMessage
+                        //setIsFixedSale(false);
+                        //setIsFixedSale(true);
                       }}
                       className={`${!isFixedSale &&
                         "c-switcher-action_option--active"} c-switcher-action_option align-items-center col-span-6 flex flex-col py-10`}
