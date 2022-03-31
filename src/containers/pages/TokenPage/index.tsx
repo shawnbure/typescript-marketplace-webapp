@@ -32,6 +32,9 @@ import { alphaToastMessage } from 'components/AlphaToastError';
 import store from 'redux/store';
 import { routePaths } from 'constants/router';
 
+import { Footer } from 'components/index';
+import { ContractDeployPayloadBuilder } from "@elrondnetwork/erdjs/out";
+
 export const TokenPage: (props: any) => any = ({ }) => {
 
     const dispatch = useAppDispatch();
@@ -330,11 +333,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
     : tokenResponseData;
 
   const isOurs = !Boolean(tokenResponseData == undefined);
-  console.log(gatewayTokenData)
+  //console.log(gatewayTokenData)
 
   if (isOurs === true) {
     tokenData = tokenResponseData.data;
   }
+
   const getBaseTokenData = (tokenData: any) => {
     const token = isOurs ? tokenData.token : tokenData.tokenData;
     const nonce = token.nonce;
@@ -805,8 +809,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: "/account",
+      callbackRoute: `/congrats/${collectionId}/${tokenNonce}`,
     });
+
   };
 
   const handleWithdrawAction = async () => {
@@ -1126,6 +1131,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         );
                       }
                     )}
+
+                    <div className="c-property_value">Rarity Trait % Calculated Only for Items Listed on Youbei</div>
+
+                    
                   </div>
                 </Collapsible>
 
@@ -1489,7 +1498,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                 icon={faIcons.faWallet}
                               />
                             </span>
-                            <span>Widthdraw</span>
+                            <span>Withdraw</span>
                           </button>
                         )}
 
@@ -1962,6 +1971,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
               )}
             </div>
           </div>
+
+          <br/>
+
+        <Footer /> 
+                  
         </div>
       </div>
     </div>

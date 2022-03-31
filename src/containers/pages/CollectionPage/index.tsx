@@ -24,6 +24,8 @@ import { shorterAddress } from "utils";
 
 import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens";
 
+import { Footer } from 'components/index';
+
 export const CollectionPage: (props: any) => any = ({}) => {
   
   const { loggedIn, address: userWalletAddress } = Dapp.useContext();
@@ -135,7 +137,9 @@ export const CollectionPage: (props: any) => any = ({}) => {
     },
   ];
 
-  const [sort, setSort] = useState<any>(options[0].value);
+  const [sort, setSort] = useState<any>(options[2].value);
+  const [onSaleOption, setOnSaleOption] = useState<any>(true);
+
 
   const [tokens, setTokens] = useState<any>([]);
 
@@ -168,14 +172,25 @@ export const CollectionPage: (props: any) => any = ({}) => {
     mergeWithExisting = false,
     newFilterQuery,
     newSortQuery,
+    newOnSaleOption,
   }: {
     mergeWithExisting?: boolean;
     newFilterQuery?: any;
     newSortQuery?: any;
+    newOnSaleOption?: any;
   }) => {
     const filters = newFilterQuery ? newFilterQuery : filterQuery;
     const offset = mergeWithExisting ? tokens.length : 0;
     const sortRules = newSortQuery ? newSortQuery : sort;
+
+    const onSaleFlag = (newOnSaleOption != null) ? newOnSaleOption : onSaleOption;
+    const queryFilters = "on_sale" + "|" + onSaleFlag + "|="
+
+    //console.log(queryFilters)
+
+    //on_sale|true|=
+    //on_sale|true|=;AND;date|1231232|>  
+    //    -> on_sale=true AND date > 1231232
 
     const collectionTokensResponse: any = await getCollectionTokensTrigger({
       collectionId,
@@ -183,6 +198,8 @@ export const CollectionPage: (props: any) => any = ({}) => {
       limit: 8,
       sortRules,
       filters,
+      onSaleFlag,
+      queryFilters,
     });
 
     if (collectionTokensData?.data) {
@@ -453,8 +470,6 @@ export const CollectionPage: (props: any) => any = ({}) => {
         data: { error },
       } = getBuyNFTResponse.error;
 
-      console.log("handleMintTokens 4 ");
-
       toast.error(`${status} | ${error}`, {
         autoClose: 5000,
         draggable: true,
@@ -485,12 +500,31 @@ export const CollectionPage: (props: any) => any = ({}) => {
     triggerFilterAndSort({ newSortQuery: option.value });
   };
 
+
+  const handleOnSaleRadioButtonChange = (option: any) => {
+
+    const onSaleFlagChange = (option.target.value == 1)
+
+    setOnSaleOption(onSaleFlagChange)
+    
+    triggerFilterAndSort({ newOnSaleOption: onSaleFlagChange });
+
+  };
+  
+  
   const getInitialTokens = async () => {
+
+    const queryFilters = "on_sale" + "|" + onSaleOption + "|="
+
+    //console.log(queryFilters)
+
     const response: any = await getCollectionTokensTrigger({
       collectionId,
       offset: 0,
       limit: 8,
       sortRules: sort,
+      onSaleFlag: onSaleOption,
+      queryFilters: queryFilters,
     });
 
     if (response?.error) {
@@ -540,12 +574,9 @@ export const CollectionPage: (props: any) => any = ({}) => {
   useEffect(() => {
 
     if( collectionDataLoaded ) {
-      console.log(collectionDataLoaded)
-      console.log(contractAddress)
 
       if( userWalletAddress != null )
       {
-        //console.log("inside userWalletAddress")
         getWhitelistCountLimitTemplateTransaction();
       }
       
@@ -563,6 +594,9 @@ export const CollectionPage: (props: any) => any = ({}) => {
   if (!isSuccessGetCollectionData && !collectionData) {
     return <p className="my-10 text-2xl text-center">Loading...</p>;
   }
+
+
+
 
   return (
     <div className="p-profile-page">
@@ -586,6 +620,9 @@ export const CollectionPage: (props: any) => any = ({}) => {
         </div>
 
         <div className="col-span-12 text-center mb-10">
+
+
+                                  
           {isCollectionOwner && (
             <div className="c-icon-band mb-6">
               <div className="c-icon-band_item">
@@ -593,6 +630,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
                   className="inline-block"
                   to={`/collection/${collectionId}/edit`}
                 >
+
                   <FontAwesomeIcon
                     className="text-white"
                     style={{ width: 25, height: 25, margin: "10px 15px" }}
@@ -606,6 +644,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
           <h2 className="flex justify-content-center mb-2 text-4xl md:text-5xl u-text-bold">
             {collectionName || collectionTokenId}{" "}
             {Boolean(collectionData?.data?.collection?.isVerified) && (
+       
               <FontAwesomeIcon
                 width={"20px"}
                 className="text-lg u-text-theme-blue-place"
@@ -654,7 +693,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
             </li>
           </ul>
 
-          {Boolean(collectionData?.data?.collection?.contractAddress) && (
+          {Boolean(collectionData?.data?.collection?.contractAddress) && Boolean(collectionData?.data?.collection?.maxSupply > 0) && (
             <>
               <div className="grid grid-cols-10 mb-4">
                 <div className="col-span-12 md:col-start-5 md:col-span-2  p-10 md:p-0 ">
@@ -705,8 +744,11 @@ export const CollectionPage: (props: any) => any = ({}) => {
             </>
           )}
 
+
           <div className="grid grid-cols-3">
             <div className="col-span-3 lg:col-start-2 lg:col-span-1 px-4">
+
+        
               <Collapse>
                 <div>
                   <div className="mb-6">
@@ -868,10 +910,51 @@ export const CollectionPage: (props: any) => any = ({}) => {
                 onChange={handleChangeSelectValue}
                 options={options}
                 isSearchable={false}
-                defaultValue={options[0]}
+                defaultValue={options[2]}
                 styles={customStyles}
               />
+
+
+                    <br/>
+
+                    &nbsp;
+
+                        <input
+                          defaultChecked
+                          value="1"
+                          type="radio"
+                          className="mr-2"
+                          title="On Sale"
+                          name="OnSaleType"
+                          onChange={handleOnSaleRadioButtonChange}
+                      
+                        />
+
+                    <span className="u-text-theme-gray-light">
+                        On Sale
+                      </span>                        
+
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+                      <input
+                          value="0"
+                          type="radio"
+                          className="mr-2"
+                          title="Unlisted"
+                          name="OnSaleType"
+                          onChange={handleOnSaleRadioButtonChange}
+                        />
+
+                    <span className="u-text-theme-gray-light">
+                        Unlisted
+                      </span> 
+
+                      <br /><br/>
+                      <hr className="text-white mb-5" />
+
             </div>
+
+           
 
             <div className="col-span-12 mx-4">
               <p className="text-gray-300 text-sm mb-8">
@@ -918,8 +1001,20 @@ export const CollectionPage: (props: any) => any = ({}) => {
                               </p>
                             </div>
 
+
+
                             <div className="c-card_price">
-                              <p className="text-sm">{token?.priceNominal}</p>
+                              <p className="text-sm">
+                                
+                                { (token?.onsale == true) && (
+                                  <span className="text-gray-500">[On Sale]</span>
+                              )}
+
+                                {" "}
+
+                                {token?.priceNominal} EGLD
+                              
+                              </p>
                               <p className="text-xs">
                                 <span className="text-gray-500">Last</span>{" "}
                                 {token?.lastBuyPriceNominal} EGLD
@@ -946,8 +1041,19 @@ export const CollectionPage: (props: any) => any = ({}) => {
                 </div>
               )}
             </div>
+
+
+
+
           </div>
+
+          <br/>
+
+        <Footer /> 
+
         </div>
+ 
+
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { toast } from 'react-toastify';
 
+import { Footer } from 'components/index';
 
 export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
@@ -231,7 +232,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
         if (response.error) {
 
 
-            toast.error(`Error edit changes`, {
+            toast.error(`${response.error.data.error}`, {
                 autoClose: 5000,
                 draggable: true,
                 closeOnClick: true,
@@ -417,6 +418,9 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
                     </div>
 
+                    <br/>
+                    
+                    <Footer />   
 
                 </div>
 

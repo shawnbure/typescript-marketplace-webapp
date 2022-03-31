@@ -26,6 +26,8 @@ import store from "redux/store";
 import { number } from "yup/lib/locale";
 import { alphaToastMessage } from "components/AlphaToastError";
 
+import { Footer } from 'components/index';
+
 export const SellTokenPage: (props: any) => any = ({}) => {
   const history = useHistory();
   const {
@@ -255,7 +257,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   if (shouldRedirect) {
     return (
       <Redirect
-        to={routePaths.collection.replace(":collectionId", collectionId)}
+        to={routePaths.congrats.replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
       />
     );
   }
@@ -459,34 +461,9 @@ export const SellTokenPage: (props: any) => any = ({}) => {
                     <span className="u-text-theme-gray-light">Type</span>
 
                     <span className="u-text-theme-gray-mid">
-                      <Popup
-                        offsetY={35}
-                        arrow={false}
-                        mouseEnterDelay={0}
-                        mouseLeaveDelay={0}
-                        position="top center"
-                        on={["hover", "focus"]}
-                        trigger={
-                          <FontAwesomeIcon
-                            width={"20px"}
-                            icon={faIcons.faInfoCircle}
-                          />
-                        }
-                      >
-                        {() => (
-                          <div className="rounded-2xl">
-                            <p>
-                              "Fixed Price" sale is when the price stays fixed,
-                              no additional requirements for this type of sale
-                            </p>
 
-                            <p>
-                              "Fixed Price" sale is when the price stays fixed,
-                              no additional requirements for this type of sale
-                            </p>
-                          </div>
-                        )}
-                      </Popup>
+                      <a href="javascript:alert('Fixed Price Sale is when the price stays fixed, no additional requirements for this type of sale')"><FontAwesomeIcon width={"20px"} icon={faIcons.faInfoCircle}  /></a>
+                                  
                     </span>
                   </p>
 
@@ -665,6 +642,11 @@ export const SellTokenPage: (props: any) => any = ({}) => {
               </div>
             </div>
           </div>
+
+          <br/>
+
+        <Footer /> 
+                  
         </div>
       </div>
     </div>

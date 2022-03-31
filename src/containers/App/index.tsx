@@ -9,7 +9,7 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, RewardsPage } from 'containers/pages';
+import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, RewardsPage, CongratsPage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
 
 
@@ -129,6 +129,13 @@ export const App: () => JSX.Element = () => {
                             </AuthProtected>
 
                         </Route>
+
+                        <Route path={routePaths.congrats} exact={true} >
+                            <AuthProtected>
+                                <CongratsPage />
+                            </AuthProtected>
+                        </Route>
+        
 
                         <Route path={[routePaths.token, routePaths.unlistedToken]} exact={true} >
 

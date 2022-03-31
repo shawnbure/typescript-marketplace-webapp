@@ -219,7 +219,7 @@ export const HomePage = () => {
                                 <p className="u-margin-bottom-spacing-10">
                                         {loggedIn && (
                                                 <Link to={routePaths.account} className="c-button c-button--primary">
-                                                    List an NFT for Free
+                                                    List any NFT for Free
                                                 </Link>
                                             )}
                                             { ! loggedIn && (
