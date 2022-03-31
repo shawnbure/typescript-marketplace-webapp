@@ -1132,7 +1132,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                       }
                     )}
 
-                    <div className="c-property_value">Rarity Trait % Calculated Only for Items Listed on Youbei</div>
+                    <div className="c-property_rarity_message">Rarity Trait % Calculated Only for Items Listed on Youbei</div>
 
                     
                   </div>
