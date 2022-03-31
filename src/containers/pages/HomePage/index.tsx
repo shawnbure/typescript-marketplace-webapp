@@ -408,7 +408,7 @@ export const HomePage = () => {
                             
                             &nbsp; 
 
-                            Trending 
+                            Recently Created 
 
                         </h2>
 
