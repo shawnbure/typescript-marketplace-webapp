@@ -1,6 +1,8 @@
 export const BUY: string = "BUY";
+export const LIST: string = "LIST";
 export const SELL: string = "SELL";
 export const LOGIN: string = "LOGIN";
+export const AUCTION: string = "AUCTION";
 export const MAKE_BID: string = "MAKE_BID";
 export const WITHDRAW: string = "WITHDRAW";
 export const MAKE_OFFER: string = "MAKE_OFFER";
