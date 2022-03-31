@@ -257,7 +257,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   if (shouldRedirect) {
     return (
       <Redirect
-        to={routePaths.collection.replace(":collectionId", collectionId)}
+        to={routePaths.congrats.replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
       />
     );
   }
