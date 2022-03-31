@@ -32,10 +32,8 @@
         text-transform: uppercase;
         font-size: 12px;
         margin-bottom: $spacing-point-1;
-
-
-
     }
+
 
 
     &_value {
@@ -56,4 +54,13 @@
 
     }
 
+    &_rarity_message {
+        @include font-family-bold;
+        text-align: center;
+        color: $white;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;  
+        font-size: 12px;     
+    }
 }
