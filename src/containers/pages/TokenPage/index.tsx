@@ -33,6 +33,7 @@ import store from 'redux/store';
 import { routePaths } from 'constants/router';
 
 import { Footer } from 'components/index';
+import { ContractDeployPayloadBuilder } from "@elrondnetwork/erdjs/out";
 
 export const TokenPage: (props: any) => any = ({ }) => {
 
@@ -332,11 +333,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
     : tokenResponseData;
 
   const isOurs = !Boolean(tokenResponseData == undefined);
-  console.log(gatewayTokenData)
+  //console.log(gatewayTokenData)
 
   if (isOurs === true) {
     tokenData = tokenResponseData.data;
   }
+
   const getBaseTokenData = (tokenData: any) => {
     const token = isOurs ? tokenData.token : tokenData.tokenData;
     const nonce = token.nonce;
@@ -807,8 +809,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: "/account",
+      callbackRoute: `/congrats/${collectionId}/${tokenNonce}`,
     });
+
   };
 
   const handleWithdrawAction = async () => {
