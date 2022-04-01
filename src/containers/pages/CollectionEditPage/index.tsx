@@ -254,7 +254,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                     Logo Image
                                 </p>
                                 <p className="mb-2 text-gray-500 text-sm">
-                                    This image will appear as your collection logo. <br /> 350 x 350 recommended. Max 500KB
+                                    This image will appear as your collection logo. <br /> 350 x 350 recommended. Max 5MB
                                 </p>
 
                                 <p className="mb-2">
@@ -280,7 +280,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                     Banner Banner
                                 </p>
                                 <p className="mb-2 text-gray-500 text-sm">
-                                    This image will appear at the top of your collection page. Dimensions change on different devices. <br /> 1400 x 400 recommended. Max 1MB
+                                    This image will appear at the top of your collection page. Dimensions change on different devices. <br /> 1400 x 400 recommended. Max 5MB
                                 </p>
 
                                 <p className="mb-2">
