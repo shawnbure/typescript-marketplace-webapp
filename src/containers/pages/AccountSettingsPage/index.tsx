@@ -322,7 +322,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
                                     Profile Image
                                 </p>
                                 <p className="mb-2 text-gray-500 text-sm">
-                                    This image will appear as your profile avatar image <br /> 350 x 350 recommended. Max 500KB
+                                    This image will appear as your profile avatar image <br /> 350 x 350 recommended. Max 5MB
                                 </p>
 
                                 <p className="mb-2">
@@ -348,7 +348,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
                                     Banner Banner
                                 </p>
                                 <p className="mb-2 text-gray-500 text-sm">
-                                    This image will appear at the top of your profile page. Dimensions change on different devices. <br /> 1400 x 400 recommended. Max 1MB
+                                    This image will appear at the top of your profile page. Dimensions change on different devices. <br /> 1400 x 400 recommended. Max 5MB
                                 </p>
 
                                 <p className="mb-2">
