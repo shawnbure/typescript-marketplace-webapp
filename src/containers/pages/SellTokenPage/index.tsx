@@ -209,6 +209,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
                 position: "bottom-right",
               });
             } else {
+              setPageAction(LIST);
               setShouldRenderPage(true);
               setShouldRedirect(true);
             }
@@ -262,7 +263,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   if (shouldRedirect) {
     return (
       <Redirect
-        to={routePaths.congrats.replace(":action", collectionId).replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
+        to={routePaths.congrats.replace(":action", pageAction).replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
       />
     );
   }
@@ -489,11 +490,8 @@ export const SellTokenPage: (props: any) => any = ({}) => {
                     </div>
                     {/* SMB REMOVE TO ENABLE setIsFixedSale(true); to ENABLE AUCTIONS AGAIN ------  REMOVE onClick={alphaToastMessage} TO ENABLE AUCTIONS AGAIN */}
                     <div
-                      onClick={() => {
-                        alphaToastMessage
-                        //setIsFixedSale(false);
-                        //setIsFixedSale(true);
-                      }}
+                      onClick={alphaToastMessage}
+       
                       className={`${!isFixedSale &&
                         "c-switcher-action_option--active"} c-switcher-action_option align-items-center col-span-6 flex flex-col py-10`}
                     >
