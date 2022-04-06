@@ -1,6 +1,55 @@
-.conatiner {
-    width: 80%;
+.stats {
+    &-conatiner {
+        height: 705px;
 
-    margin: 0 auto;
-    color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        margin: 64px 160px 0 160px;
+        color: #fff;
+    }
+
+    &-reportBox {
+        width: 1080px;
+        height: 100%;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    &-numericResults {
+        width: 480px;
+        height: 100%;
+
+        background-image: linear-gradient(to bottom right, #04111d, #303339);
+        border-radius: 10px;
+        box-shadow: 0 66px 66px 0px rgba(0, 0, 0, 0.05);
+
+        padding: 60px 80px;
+    }
+
+    &-volumeChart {
+        width: 528px;
+        height: 705px;
+
+        padding: 60px 72px;
+    }
+
+    &-topCollections {
+        width: 1080px;
+        height: 100px;
+
+        position: absolute;
+        bottom: 60px;
+
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &-activitiesBox {
+        width: 430px;
+        height: 100%;
+    }
 }
