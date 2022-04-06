@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux';
 import { setAccessToken, setJWT } from 'redux/slices/user';
 import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
 import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
+import StatsPage from 'containers/pages/StatsPage';
 
 
 
@@ -191,6 +192,12 @@ export const App: () => JSX.Element = () => {
                             <AuthProtected>
                                 <CollectionEditPage />
                             </AuthProtected>
+
+                        </Route>
+
+                        <Route path={routePaths.stats} exact={true} >
+
+                            <StatsPage />
 
                         </Route>
 
