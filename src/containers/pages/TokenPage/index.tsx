@@ -38,7 +38,7 @@ import { ContractDeployPayloadBuilder } from "@elrondnetwork/erdjs/out";
 export const TokenPage: (props: any) => any = ({ }) => {
 
     const dispatch = useAppDispatch();
-    const { pathname } = useLocation();
+    //const { pathname } = useLocation();
 
     //this walletAddressParam below actuall gets the contract address for the URL?
     const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
@@ -105,6 +105,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [initialStore, setInitialStore] = useState(false)
     const [storeDataExist, setStoreDataExist] = useState(false)
     const [shouldRedirect, setShouldRedirect] = useState(false);
+    const [pageAction, setPageAction] = useState("");
 
     const {
 
@@ -233,7 +234,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
                     tokenNonce: hexNonce,
                 }   
 
-
                 const response: any = withdrawTokenTrigger({ payload: formattedData });
 
                 if (response.error) {
@@ -252,7 +252,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                     return;
        
                 }
-
+                setPageAction(WITHDRAW);
                 setShouldRedirect(true);
                 
             }else{
@@ -273,12 +273,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
     }, [storeDataExist]);
 
     if (shouldRedirect) {
-
-        return (
-            <Redirect to={routePaths.collection.replace(":collectionId", collectionId)} />
-        );
-
-    };
+      return (
+        <Redirect
+          to={routePaths.confirmation.replace(":action", pageAction).replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
+        />
+      );
+    }
 
     useEffect(() => {
 
@@ -809,7 +809,44 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/congrats/${BUY}/${collectionId}/${tokenNonce}`,
+      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}`,
+    });
+
+  };
+
+  const handleSellAction = async () => {
+    const getBuyNFTResponse: any = await getBuyNftTemplateQueryTrigger({
+      userWalletAddress,
+      collectionId,
+      tokenNonce,
+      price: tokenPrice,
+    });
+
+    if (getBuyNFTResponse.error) {
+      const {
+        status,
+        data: { error },
+      } = getBuyNFTResponse.error;
+
+      toast.error(`${status} | ${error}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+
+      return;
+    }
+
+    const { data: txData } = getBuyNFTResponse.data;
+
+    const unconsumedTransaction = prepareTransaction(txData);
+
+    sendTransaction({
+      transaction: unconsumedTransaction,
+      callbackRoute: `/confirmation/${SELL}/${collectionId}/${tokenNonce}`,
     });
 
   };
@@ -843,7 +880,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: "/account",
+      callbackRoute: `/confirmation/${WITHDRAW}/${collectionId}/${tokenNonce}`,
+      //callbackRoute: `/token/${collectionId}/${tokenNonce}`,
     });
   };
 
@@ -898,7 +936,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
     setOfferAmount(0);
 
     signTemplateTransaction({
-      succesCallbackRoute: pathname,
+      //succesCallbackRoute: pathname,
+      successCallbackRoute: `/confirmation/${MAKE_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getMakeOfferTemplateTrigger,
     });
@@ -918,7 +957,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
     signTemplateTransaction({
-      succesCallbackRoute: pathname,
+      //succesCallbackRoute: pathname,
+      successCallbackRoute: `/confirmation/${MAKE_BID}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getMakeBidTemplateTrigger,
     });
@@ -940,7 +980,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
     };
 
     signTemplateTransaction({
-      succesCallbackRoute: "/account",
+      //succesCallbackRoute: "/account",
+      callbackRoute: `/confirmation/${ACCEPT_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getAcceptOfferTemplateTrigger,
     });
@@ -954,7 +995,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
     };
 
     signTemplateTransaction({
-      succesCallbackRoute: "/account",
+      //succesCallbackRoute: "/account",
+      callbackRoute: `/confirmation/${END_AUCTION}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getEndAuctionTemplateTrigger,
     });
@@ -969,7 +1011,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
     };
 
     signTemplateTransaction({
-      succesCallbackRoute: "/account",
+      //succesCallbackRoute: "/account",
+      callbackRoute: `/confirmation/${CANCEL_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getCancelOfferTemplateTrigger,
     });
@@ -988,7 +1031,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
   const actionsHandlers: { [key: string]: any } = {
     [BUY]: actionHandlerWrapper(handleBuyAction),
-    [SELL]: actionHandlerWrapper(handleBuyAction),
+    [SELL]: actionHandlerWrapper(handleSellAction),
     [WITHDRAW]: actionHandlerWrapper(handleWithdrawAction),
     [MAKE_BID]: actionHandlerWrapper(handleMakeBid),
     [MAKE_OFFER]: actionHandlerWrapper(handleMakeOffer),
