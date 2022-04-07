@@ -8,32 +8,25 @@ import { useGetTokenDataMutation } from "services/tokens";
 import { formatImgLink } from "utils";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { ACCEPT_OFFER, BUY, LIST, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION } from "constants/actions";
+import { ACCEPT_OFFER, BUY, LIST, CANCEL_OFFER, START_AUCTION, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION } from "constants/actions";
+import { 
+    ENG_BUY_TITLE, ENG_BUY_MESSAGE, ENG_LIST_TITLE, ENG_LIST_MESSAGE, ENG_WITHDRAW_TITLE, ENG_WITHDRAW_MESSAGE, ENG_DEFAULT_CONFIRMATION_TITLE, ENG_DEFAULT_CONFIRMATION_MESSAGE,
+    ENG_ACCEPT_OFFER_TITLE, ENG_ACCEPT_OFFER_MESSAGE, ENG_START_AUCTION_MESSAGE, ENG_START_AUCTION_TITLE, ENG_END_AUCTION_TITLE, ENG_END_AUCTION_MESSAGE, ENG_CANCEL_OFFER_TITLE, 
+    ENG_CANCEL_OFFER_MESSAGE, ENG_TX_PROCESSING_MESSAGE,
+} from "constants/messages";
 
-export const CongratsPage = () => {
+export const ConfirmationPage = () => {
     
     const { address: userWalletAddress } = Dapp.useContext();
-    const { tokenNonce, collectionId, action} = useParams<UrlParameters>();
+    const { action, collectionId, tokenNonce} = useParams<UrlParameters>();
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
-    const [imageLink, setImageLink] = useState<any>([]);
-    const [tokenName, setTokenName] = useState<any>([]);
-    let displayAction = "";
+    const [imageLink, setImageLink] = useState("");
+    const [tokenName, setTokenName] = useState("");
+    const [displayTitle, setDisplayTitle] = useState("");
+    const [displayMessage, setDisplayMessage] = useState("");
+    const [priceNominal, setPriceNominal] = useState("");
+    
 
-    //NEEDS TO BE EXPANDED TO HANDLE ACTIONS ON constants/actions.ts
-    switch (action) {
-        case BUY:
-            displayAction = "purchased";
-            break;
-        case LIST:
-            displayAction = "listed";
-            break;
-        case WITHDRAW:
-            displayAction = "withdrawn";
-            break;
-        default:
-            displayAction = "unknown";
-      }
-      
     const [getTokenDataTrigger, {
 
     data: tokenResponseData,
@@ -43,8 +36,43 @@ export const CongratsPage = () => {
 
     }] = useGetTokenDataMutation();
 
+
     useEffect(() => {
 
+        switch (action.toUpperCase()) {
+            case BUY:
+                setDisplayTitle(ENG_BUY_TITLE);
+                setDisplayMessage(ENG_BUY_MESSAGE);
+                break;
+            case LIST:
+                setDisplayTitle(ENG_LIST_TITLE);
+                setDisplayMessage(ENG_LIST_MESSAGE);
+                break;
+            case WITHDRAW:
+                setDisplayTitle(ENG_WITHDRAW_TITLE);
+                setDisplayMessage(ENG_WITHDRAW_MESSAGE);
+                break;
+            case ACCEPT_OFFER:
+                setDisplayTitle(ENG_ACCEPT_OFFER_TITLE);
+                setDisplayMessage(ENG_ACCEPT_OFFER_MESSAGE);
+                break;
+            case CANCEL_OFFER:
+                setDisplayTitle(ENG_CANCEL_OFFER_TITLE);
+                setDisplayMessage(ENG_CANCEL_OFFER_MESSAGE);
+                break;                
+            case START_AUCTION:
+                setDisplayTitle(ENG_START_AUCTION_TITLE);
+                setDisplayMessage(ENG_START_AUCTION_MESSAGE);
+                break;
+            case END_AUCTION:
+                setDisplayTitle(ENG_END_AUCTION_TITLE);
+                setDisplayMessage(ENG_END_AUCTION_MESSAGE);
+                break;                
+            default:
+                setDisplayTitle(ENG_DEFAULT_CONFIRMATION_TITLE);
+                setDisplayMessage(ENG_DEFAULT_CONFIRMATION_MESSAGE);
+        }
+        
         const token = getToken();
         
     }, []);
@@ -56,9 +84,18 @@ export const CongratsPage = () => {
           
         if (response?.error ) {
           if ((response?.error.data.error as string).indexOf("record not found") !== -1){
+
+            toast.error(`Token was not found in our datase.`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+              });
             return;
           }
-          toast.error(`Error getting Token`, {
+          toast.error(`Error getting Token data from blockchain.`, {
             autoClose: 5000,
             draggable: true,
             closeOnClick: true,
@@ -69,6 +106,7 @@ export const CongratsPage = () => {
           return;
         }
         
+        setPriceNominal(response.data.data.token.priceNominal);
         setImageLink(response.data.data.token.imageLink);
         setTokenName(response.data.data.token.tokenName);
       
@@ -98,13 +136,13 @@ export const CongratsPage = () => {
 
                             <div className="col-span-12 md:col-span-6 p-token-page_visual-holder u-margin-bottom-spacing-4 justify-center px-6">
                                 
-                            <h2 style={{textAlign: 'center'}} className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white justify-center"><br/>Congratulations!</h2>
+                            <h2 style={{textAlign: 'center'}} className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white justify-center"><br/>{displayTitle}</h2>
      
                                 <p style={{textAlign: 'center'}} className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
                                     <Link to={`/collection/${collectionId}`}>{collectionId}</Link>
                                 </p>
 
-                                <h2 style={{textAlign: 'center'}} className="u-text-bold u-margin-top-spacing-5 u-padding-top-spacing-5 center-xs">You have successfully {displayAction + " " + tokenName}!<br/><br/></h2>
+                                <h2 style={{textAlign: 'center'}} className="u-text-bold u-margin-top-spacing-5 u-padding-top-spacing-5 center-xs">{displayMessage.toString().replace("{{tokenName}}", tokenName).toString().replace("{{priceNominal}}", priceNominal)}<br/><br/></h2>
                                 
                                 <div className="p-token-page_asset-container">
                                     <img
@@ -126,13 +164,13 @@ export const CongratsPage = () => {
                                     </p>
                                 </div>
                            
+                                <p style={{textAlign: 'center'}} className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">{ENG_TX_PROCESSING_MESSAGE}</p>    
+
                                 <p style={{textAlign: 'center'}} className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
-                                <Link to={`/collection/${collectionId}`} className="c-button c-button--primary" >                        
-                                    <div className="inline-flex justify-center">
-                                        <span className="justify-center">
-                                             See Collection
-                                        </span>
-                                    </div>
+                                <Link to={`/collection/${collectionId}`} className="c-button c-button--primary" >                           
+                                    <span className="justify-center">
+                                            See Collection
+                                    </span>
                                 </Link>
                                 </p>
                         </div> 
@@ -149,4 +187,4 @@ export const CongratsPage = () => {
     //}
 };
 
-export default CongratsPage;
+export default ConfirmationPage;

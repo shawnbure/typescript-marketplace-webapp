@@ -9,7 +9,7 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, RewardsPage, CongratsPage } from 'containers/pages';
+import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, RewardsPage, ConfirmationPage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
 
 
@@ -130,9 +130,9 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
-                        <Route path={routePaths.congrats} exact={true} >
+                        <Route path={routePaths.confirmation} exact={true} >
                             <AuthProtected>
-                                <CongratsPage />
+                                <ConfirmationPage />
                             </AuthProtected>
                         </Route>
         
