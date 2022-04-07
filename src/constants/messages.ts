@@ -2,7 +2,7 @@
 export const ENG_BUY_TITLE: string = "Congratulations!";
 export const ENG_BUY_MESSAGE: string = "You have purchased {{tokenName}}!";
 export const ENG_LIST_TITLE: string = "Success!";
-export const ENG_LIST_MESSAGE: string = "You have listed {{tokenName}} for  {{priceNominal}} eGLD in the Youbei Marketplace.";
+export const ENG_LIST_MESSAGE: string = "You have listed {{tokenName}} for  {{priceNominal}} eGLD on the Youbei Marketplace.";
 export const ENG_WITHDRAW_TITLE: string = "Success!";
 export const ENG_WITHDRAW_MESSAGE: string = "You have withdrawn {{tokenName}} from the Youbei Marketplace.";
 export const ENG_START_AUCTION_TITLE: string = "Congratulations!";
