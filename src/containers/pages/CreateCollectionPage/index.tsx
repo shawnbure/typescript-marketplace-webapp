@@ -1,6 +1,7 @@
 
 import ReactDOM from "react-dom";
 
+
 import { Redirect, Link, Router, useLocation, useHistory } from 'react-router-dom';
 import Select from 'react-select'
 import { useEffect, useState } from "react";
@@ -28,7 +29,7 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import { Footer } from 'components/index';
 
-
+import { formatImgLink, shorterAddress } from "utils";
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
@@ -68,17 +69,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const [isFinishLoading, setIsFinishLoading] = useState(false)
 
+    const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
+    
     {
         console.log("********* inside { GENERAL } *********  ");
 
 
+        //
         const txHashCurrent = getTxHash();
 
         if( txHashCurrent == null )  //initial load 
         {
             //console.log("-- txHash is NULL ")
 
-            //set empty
+            //set empty 
             sessionStorage.setItem("Create_Collection_TxHash", "")
             
             if( isFinishLoading )
@@ -112,66 +116,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 console.log("-- SAME : Current txHash is same is Session txHash ")
 
                 //don't do much here
-
+                
             }
         }
 
-
-        /*
-        const txHash = getTxHash();
-
-        if( txHash != null ) 
-        {
-            console.log("-- txHash NOT null ")
-
-            //current txHash from session
-            let txHashSession = sessionStorage.getItem("Create_Collection_TxHash");
-
-            if( txHashSession != txHash ) //different
-            {
-                console.log("-- set new txtHash to session ")
-
-                //set new txtHash to session 
-                sessionStorage.setItem("Create_Collection_TxHash", txHash)
-
-                //setIsFinishLoading(false);
-                //setIntialLoad(true);
-
-                initSessionStateJSONFromDB();  
-
-                console.log("-- DONE set new txtHash to session ")
-            }
-            else
-            {
-                console.log("-- same session txHash ")
-            }
-        }
-        else
-        {
-            console.log("-- txHash is NULL ")
-            
-            //set empty
-            sessionStorage.setItem("Create_Collection_TxHash", "")
-
-
-
-            
-            //is coming in the first time - DB state will set the appropriate steps
-
-            if( isFinishLoading )
-            {
-                console.log(" GENERAL {} inside isFinishLoading  ");
-    
-                setIsFinishLoading(false);
-                setIntialLoad(true);
-            }
-    
-        }        
-        */
-
-
-
-     
 
     }
 
@@ -180,6 +128,49 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
 
+
+        /*
+        const url = 'https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM';
+
+        const response = fetch(url);
+        const fileType = fileTypeFromStream(response.body);
+        
+        console.log(fileType);
+        */
+
+        
+
+
+        /*
+        fetch('https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM')
+        .then(response => {
+
+            console.log(response)
+
+            response.blob().then(blob => {
+
+                console.log(blob.type);
+
+
+            });
+        });
+        */
+        
+
+        /*
+        fetch("https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM")
+        .then((response) => {
+            return { contentType: response.headers, };})
+        .then((data) => {
+            console.log("inside then data");
+            console.log(data);
+            console.log(data.contentType);
+        });
+        */
+
+
+        
+        
         console.log("======== inside useEffect [] ");
 
         setIsFinishLoading(true)
@@ -199,6 +190,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     useEffect(() => { 
         
         console.log("initialLoad started")
+
         if( intialLoad )
         {
             initSessionStateJSONFromDB();            
@@ -346,6 +338,23 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         return JSON.parse(jstrJSON);
     }
 
+    function confirmMintingStartDate()
+    {
+        var element = document.getElementById("mintStartDate") as HTMLInputElement;
+
+        if( element != null )
+        {
+
+            if( element.value != "" )
+            {
+                if( ! confirm("Minting Start Date will only allow Minting to start on the set date at 12:00 AM (UTC). Would you like confirm it?") )
+                { 
+                    element.value = "";  
+                           
+                }
+            }
+        }
+    }
 
 
     //used in the initialize SessionState func
@@ -575,10 +584,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                  
 
                 var inputTokenName = document.getElementById("token_name") as HTMLInputElement;
-                inputTokenName.value = "";
+
+                if( inputTokenName != null )
+                {
+                    inputTokenName.value = "";
+                }                
+                
 
                 var inputTokenTicker = document.getElementById("token_ticker") as HTMLInputElement;
-                inputTokenTicker.value = "";
+
+                if( inputTokenTicker != null )
+                {
+                    inputTokenTicker.value = "";
+                }
+                
 
                 ShowElement("divStep1");
 
@@ -588,7 +607,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             {
 
                 var spanTokenId = document.getElementById("spanTokenId") as HTMLInputElement;
-                spanTokenId.innerHTML = tokenID;
+
+                if( spanTokenId != null )
+                {
+                    spanTokenId.innerHTML = tokenID;
+                }
+
+                
 
                 ShowElement("divStep2");
 
@@ -597,7 +622,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case 3:
             {
                 var spanStep3SCAddress = document.getElementById("step3SCAddress") as HTMLInputElement;
-                spanStep3SCAddress.innerHTML = scAddress;
+
+                if( spanStep3SCAddress != null )
+                {
+                    spanStep3SCAddress.innerHTML = scAddress;
+                }                
+                
                 
                 ShowElement("divStep3");
 
@@ -606,10 +636,19 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case 4:
             {
                 var spanSetRoleAddress = document.getElementById("SetRole_Address") as HTMLInputElement;
-                spanSetRoleAddress.innerHTML = scAddress;
+
+                if( spanSetRoleAddress != null )
+                {                
+                    spanSetRoleAddress.innerHTML = scAddress;
+                }
 
                 var spanSetRoleTokenId = document.getElementById("SetRole_TokenId") as HTMLInputElement;
-                spanSetRoleTokenId.innerHTML = tokenID;
+
+                if( spanSetRoleTokenId != null )
+                {
+                    spanSetRoleTokenId.innerHTML = tokenID;
+                }                
+                
 
                 ShowElement("divStep4");
 
@@ -618,7 +657,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case 5:
             {
                 var spanCollectionTokenId = document.getElementById("collectionTokenId") as HTMLInputElement;
-                spanCollectionTokenId.innerHTML = tokenID;
+
+                if( spanCollectionTokenId != null )
+                {
+                    spanCollectionTokenId.innerHTML = tokenID;
+                }                
+                
                 
                 ShowElement("divStep5");
 
@@ -638,46 +682,63 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             showMore: boolean)
     {
         var lnkShowMorelinkName = document.getElementById(showMorelinkName) as HTMLInputElement;
-        lnkShowMorelinkName.hidden = !showMore;
+        if( lnkShowMorelinkName != null )
+        {
+            lnkShowMorelinkName.hidden = !showMore;
+        }
+        
 
         var lnkShowLesslinkName = document.getElementById(showLesslinkName) as HTMLInputElement;
-        lnkShowLesslinkName.hidden = showMore;    
+        if( lnkShowLesslinkName != null )
+        {
+            lnkShowLesslinkName.hidden = showMore; 
+        }        
+           
         
         var divShowDivName = document.getElementById(showDivName) as HTMLElement;
-        divShowDivName.hidden = showMore;    
+        if( divShowDivName != null )
+        {
+            divShowDivName.hidden = showMore;  
+        }        
+          
     }
 
     function DisableButton(buttonName: string, buttonText:string)
     {
         var btn = document.getElementById(buttonName) as HTMLInputElement;
 
-        btn.innerHTML = buttonText;
-        btn.className = "c-button c-button--secondary mb-5";
-        btn.disabled = true;
-        btn.hidden = false;
+        if( btn != null )
+        {
+            btn.innerHTML = buttonText;
+            btn.className = "c-button c-button--secondary mb-5";
+            btn.disabled = true;
+            btn.hidden = false;
+        }
     }
 
     function HideElement(elementID: string)
     {
         var element = document.getElementById(elementID) as HTMLInputElement;
-        element.hidden = true;
+
+        if( element != null )
+        {
+            element.hidden = true;
+        }        
+        
     }
     
     function ShowElement(elementID: string)
     {
         var element = document.getElementById(elementID) as HTMLInputElement;
-        element.hidden = false;
+
+        if( element != null )
+        {
+            element.hidden = false;
+        }        
+        
     }
 
 
-
-    function OnFocusElement(elementID: string)
-    {
-        var element = document.getElementById(elementID) as HTMLInputElement;
-        element.focus();
-
-    }
-    
     
 
 
@@ -935,6 +996,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         telegramLink: yup.string(),
         twitterLink: yup.string(),
         website: yup.string(),
+        mintStartDate: yup.string(),
+
 
     }).required();
 
@@ -966,6 +1029,19 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             data.MaxSupply = sessionStateJSONData.maxSupply
     
 
+            if(data.mintStartDate == "" )
+            {
+                //empty
+                data.mintStartDate = 0
+            }
+            else
+            {            
+                //got date
+    
+                var dateInput = new Date(data.mintStartDate);
+     
+                data.mintStartDate = dateInput.getTime()
+            }
 
             const formattedData = {
                 ...data,
@@ -1182,6 +1258,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
+
+
+
+                                
                                 <br/>
                                 <button type="submit" id="submit_step1" className="c-button c-button--primary mb-5"  >
                                     Sign
@@ -1505,6 +1585,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
+                                <p className="text-xl u-text-bold mb-2">
+                                    Minting Start Date (UTC): &nbsp;
+                                    <a href="javascript:alert('Minting Start Date is optional - it will only allow Minting to start on the set date at 12:00 AM (UTC) .')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerStep5('mintStartDate')} id="mintStartDate" onChange={(e) => confirmMintingStartDate()}  autoComplete="off" type="date" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
+                                    </div>
+                                </div>
 
 
                                 <p className="text-xl u-text-bold mb-2">
