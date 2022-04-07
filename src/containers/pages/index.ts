@@ -5,7 +5,7 @@ export { CreatePage } from './CreatePage';
 export { RewardsPage } from './RewardsPage';
 export { ProfilePage } from './ProfilePage';
 export { RankingsPage } from './RankingsPage';
-export { CongratsPage } from './CongratsPage';
+export { ConfirmationPage } from './ConfirmationPage';
 export { RoyaltiesPage} from './RoyaltiesPage';
 export { SellTokenPage } from './SellTokenPage';
 export { CollectionPage } from './CollectionPage';

@@ -217,39 +217,6 @@ export const SellTokenPage: (props: any) => any = ({}) => {
           .catch((err) => {});
         
           return;
-
-        /*
-        const response: any = listTokenTrigger({ payload: formattedData });
-
-        if (response.error) {
-          const {
-            status,
-            data: { error },
-          } = response.error;
-
-          toast.error(`${status} | ${error}`, {
-            autoClose: 5000,
-            draggable: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            hideProgressBar: false,
-            position: "bottom-right",
-          });
-
-          return;
-        }
-      } else {
-        toast.error(`The blockchain transaction failed, please try again.`, {
-          autoClose: 5000,
-          draggable: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          hideProgressBar: false,
-          position: "bottom-right",
-        });
-        
-        return;
-        */
       }
     }
   }, [storeDataExist]);
@@ -263,7 +230,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   if (shouldRedirect) {
     return (
       <Redirect
-        to={routePaths.congrats.replace(":action", pageAction).replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
+        to={routePaths.confirmation.replace(":action", pageAction).replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
       />
     );
   }
