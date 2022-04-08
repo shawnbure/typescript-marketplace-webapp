@@ -1,5 +1,5 @@
 /* eslint-disable */
-
+ 
 import Popup from "reactjs-popup";
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
@@ -9,16 +9,12 @@ import { toast } from "react-toastify";
 
 import DateTimePicker from "react-datetime-picker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  useGetListNftTemplateMutation,
-  useGetStartAuctionNftTemplateMutation,
-} from "services/tx-template";
+import { useGetListNftTemplateMutation, useGetStartAuctionNftTemplateMutation,} from "services/tx-template";
 import { useListTokenFromClientMutation } from "services/tokens";
-import { prepareTransaction } from "utils/transactions";
-
+import { prepareTransaction, getQuerystringValue } from "utils/transactions";
 import { UrlParameters } from "./interfaces";
 import { shorterAddress } from "utils";
-import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION, LIST } from "constants/actions";
+import { AUCTION, LIST } from "constants/actions";
 import { useGetAccountTokenGatewayMutation } from "services/accounts";
 import { useGetCollectionByIdMutation } from "services/collections";
 import { routePaths } from "constants/router";
@@ -379,6 +375,9 @@ export const SellTokenPage: (props: any) => any = ({}) => {
     signTemplateTransaction({
       //succesCallbackRoute: '/account',
       //below is the client based token add to database
+
+      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}?txHash=${getQuerystringValue("txHash")}`,
+
       succesCallbackRoute:
         "/token/" +
         walletAddressParam +
