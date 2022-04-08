@@ -302,6 +302,8 @@ export const SellTokenPage: (props: any) => any = ({}) => {
 
     signTemplateTransaction({
       //succesCallbackRoute: '/token/' + collectionId +'/' + tokenNonce + '/insert',
+      succesCallbackRoute: `/confirmation/${LIST}/${collectionId}/${tokenNonce}?price=${requestedAmount}&txHash=${getQuerystringValue("txHash")}`,
+/*
       succesCallbackRoute:
         "/token/" +
         walletAddressParam +
@@ -312,6 +314,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
         "/sell?saleStatus=List&salePrice=" +
         requestedAmount +
         "&saleStartDate=0&saleEndDate=0",
+        */
       getTemplateData: {
         userWalletAddress,
         collectionId,
@@ -376,8 +379,8 @@ export const SellTokenPage: (props: any) => any = ({}) => {
       //succesCallbackRoute: '/account',
       //below is the client based token add to database
 
-      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}?txHash=${getQuerystringValue("txHash")}`,
-
+      succesCallbackRoute: `/confirmation/${AUCTION}/${collectionId}/${tokenNonce}?price=${requestedAmount}&start_date=${unixStartDate}&end_date=${unixEndDate}&txHash=${getQuerystringValue("txHash")}`,
+/*
       succesCallbackRoute:
         "/token/" +
         walletAddressParam +
@@ -391,6 +394,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
         unixStartDate +
         "&saleEndDate=" +
         unixEndDate,
+        */
       getTemplateData: {
         userWalletAddress,
         collectionId,

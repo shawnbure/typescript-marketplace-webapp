@@ -47,7 +47,7 @@ export const tokensApi = createApi({
                     "Authorization": `Bearer ${accessToken}`,
                 },
                 body: JSON.stringify(payload),
-                url: `${mainPath}/list-fc/${payload.walletAddress}/${payload.TokenId}/${payload.StrNonce}`
+                url: `${mainPath}/list-fc/${payload.OwnerAddress}/${payload.TokenId}/${payload.StrNonce}`
 
             }
 

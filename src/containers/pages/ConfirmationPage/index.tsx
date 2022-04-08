@@ -36,6 +36,8 @@ export const ConfirmationPage = () => {
     const [imageLink, setImageLink] = useState("");
     const [tokenName, setTokenName] = useState("");
     const [priceNominal, setPriceNominal] = useState("");
+    const [startDate, setStartDate] = useState<number>(0);
+    const [endDate, setEndDate] = useState<number>(0);
     const [listTokenFromClientTrigger] = useListTokenFromClientMutation();
     const [buyTokenFromClientTrigger] = useBuyTokenFromClientMutation();
     const [withdrawTokenTrigger] = useWithdrawTokenMutation();
@@ -122,6 +124,8 @@ export const ConfirmationPage = () => {
                         //console.log(jsonResponse)
                         setImageLink(jsonResponse.url);
                         setTokenName(jsonResponse.name);
+                        setStartDate(Number(getQuerystringValue("start_date")) || 0);
+                        setEndDate(Number(getQuerystringValue("end_date")) || 0);
                         setPriceNominal(getQuerystringValue("price") || "");
                         setGlobalToken(jsonResponse);
                         setIsTokenLoaded(true);
@@ -191,7 +195,7 @@ export const ConfirmationPage = () => {
         if(tokenNonce?.length == 1){
             hexNonce = "0" + tokenNonce;
         }
-    
+
         let metadataLink = "";
         if(globalToken.uris.length > 1){
             metadataLink = atob(globalToken.uris[1]);
@@ -207,23 +211,59 @@ export const ConfirmationPage = () => {
             }
         }
 
+        //formats a price string to 18 places
+        let stringPrice = "";
+        if(priceNominal){
+            //fix the string price to correct format
+            
+            let stringPriceRaw = priceNominal.replace("0.", "").replace(".", "");
+
+            let arraySaleStringPrice = stringPriceRaw.split("");
+
+            let leadingZeroCount = 0;
+            let digitCount = 0;
+
+            //account for the start pos if the leading zeros
+            //account for the number of digits
+            for (let i = 0; i < arraySaleStringPrice.length; i++) {
+                if (arraySaleStringPrice[i] === "0") {
+                    leadingZeroCount++;
+                }
+                if (arraySaleStringPrice[i] != "0") {
+                    digitCount++;
+                }
+            }
+
+            let numberOfTrailingZeros = leadingZeroCount + digitCount;
+
+            stringPrice = arraySaleStringPrice.join("").replace("0", "");
+
+            for (let i = 0; i < 18 - numberOfTrailingZeros; i++) {
+                stringPrice += "0";
+            }
+        }
+
         const formattedData = {
             TokenId: collectionId,
-            StrNonce: hexNonce,
+            NonceStr: hexNonce,
             TxHash: qsTxHash,
             OwnerAddress: userWalletAddress,
             BuyerAddress: userWalletAddress,
             TokenName: tokenName,
             FirstLink: imageLink,
             SecondLink: metadataLink,
-            Price:  priceNominal,
-            NominalPrice:  priceNominal,
+            Price:  stringPrice,
+            AuctionStartTime: startDate,
+            AuctionDeadline: endDate,
+            PriceNominal:  priceNominal,
             RoyaltiesPercent: globalToken.royalties,
             Timestamp: globalToken.timestamp,
             TxConfirmed: txConfirmed,
             OnSale: onSale,
         }   
-console.log(formattedData)
+
+        console.log(formattedData)
+
         var response = null;
         switch (action.toUpperCase()) {
             case BUY:
