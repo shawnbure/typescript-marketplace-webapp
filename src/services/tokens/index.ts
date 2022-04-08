@@ -47,7 +47,7 @@ export const tokensApi = createApi({
                     "Authorization": `Bearer ${accessToken}`,
                 },
                 body: JSON.stringify(payload),
-                url: `${mainPath}/list-fc/${payload.OwnerAddress}/${payload.TokenId}/${payload.StrNonce}`
+                url: `${mainPath}/list-fc/${payload.OwnerAddress}/${payload.TokenId}/${payload.Nonce}`
 
             }
 
@@ -69,7 +69,7 @@ export const tokensApi = createApi({
                 "Authorization": `Bearer ${accessToken}`,
             },
             body: JSON.stringify(payload),
-            url: `${mainPath}/buy-fc/${payload.BuyerAddress}/${payload.TokenId}/${payload.StrNonce}`
+            url: `${mainPath}/buy-fc/${payload.BuyerAddress}/${payload.TokenId}/${payload.Nonce}`
 
         }
 
@@ -175,7 +175,7 @@ export const tokensApi = createApi({
 
                     method: POST,
                     //body: JSON.stringify(payload),
-                    url: `${mainPath}/withdraw/${payload.TokenId}/${payload.StrNonce}`,
+                    url: `${mainPath}/withdraw/${payload.TokenId}/${payload.Nonce}`,
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
                     },

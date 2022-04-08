@@ -11,7 +11,8 @@ import { getQuerystringValue } from "utils/transactions";
 import { useWithdrawTokenMutation, useListTokenFromClientMutation, useBuyTokenFromClientMutation } from "services/tokens";
 
 import { GetTransactionRequestHttpURL, GetTokenRequestHttpURL, hexToAscii} from "utils";
-import { ACCEPT_OFFER, BUY, LIST, CANCEL_OFFER, START_AUCTION, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION } from "constants/actions";
+import { ACCEPT_OFFER, BUY, LIST, CANCEL_OFFER, START_AUCTION, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION, 
+    LIST_SC_CONTRACT_FUNCTION_NAME, BUY_SC_CONTRACT_FUNCTION_NAME, WITHDRAW_SC_CONTRACT_FUNCTION_NAME } from "constants/actions";
 import { 
     ENG_BUY_TITLE, ENG_BUY_MESSAGE, ENG_LIST_TITLE, ENG_LIST_MESSAGE, ENG_WITHDRAW_TITLE, ENG_WITHDRAW_MESSAGE, ENG_DEFAULT_CONFIRMATION_TITLE, ENG_DEFAULT_CONFIRMATION_MESSAGE,
     ENG_ACCEPT_OFFER_TITLE, ENG_ACCEPT_OFFER_MESSAGE, ENG_START_AUCTION_MESSAGE, ENG_START_AUCTION_TITLE, ENG_END_AUCTION_TITLE, ENG_END_AUCTION_MESSAGE, ENG_CANCEL_OFFER_TITLE, 
@@ -87,13 +88,20 @@ export const ConfirmationPage = () => {
 
         let transaction = {} as any;
         if(!isTransactionSuccessful){
-            transaction = setInterval(() => { getTransaction(); }, 1000);
+            transaction = setInterval(() => { getTransaction(); }, 2000);
         }
         return () => clearInterval(transaction);
        
     }, [isTransactionSuccessful]);
 
+    useEffect(() => {
 
+        if( isTransactionSuccessful && !isDataSet){
+
+            setDatabaseRecord();
+        }
+
+    }, [isDataSet, isTokenLoaded, isTransactionLoaded]);
 
     const getToken = async () => {
 
@@ -143,9 +151,53 @@ export const ConfirmationPage = () => {
 
     const getTransaction = async () => {
 
+
+        /*
+        
+        It Seems that every function will have a unique result set and we have to account for that.
+
+        List =   2 child transactions, 1 containing the putNftForSale@price command and the follow up @ok message.
+
+        */
+        
+        
         const qsTxHash = getQuerystringValue("txHash") || "";
         const httpRequest = new XMLHttpRequest();
         const url = GetTransactionRequestHttpURL(qsTxHash); 
+
+        let resultCount = 0;
+        let fuctionName = "";
+        
+        switch (action.toUpperCase()) {
+            case BUY:
+                resultCount = 5;
+                fuctionName = BUY_SC_CONTRACT_FUNCTION_NAME;
+                break;
+            case LIST:
+                resultCount = 2;
+                fuctionName = LIST_SC_CONTRACT_FUNCTION_NAME;
+                break;
+            case WITHDRAW:
+                resultCount = 2;
+                fuctionName = WITHDRAW_SC_CONTRACT_FUNCTION_NAME;
+                break;
+            case ACCEPT_OFFER:
+ 
+                break;
+            case CANCEL_OFFER:
+
+                break;                
+            case START_AUCTION:
+    
+                break;
+            case END_AUCTION:
+
+                break;                
+            default:
+
+                break;
+        }
+
         httpRequest.open("GET", url);
         httpRequest.send();
         httpRequest.onreadystatechange = (e) => 
@@ -160,17 +212,23 @@ export const ConfirmationPage = () => {
                     try {
 
                         const jsonResponse = JSON.parse(data);
-                        
-                        setGlobalTransaction(jsonResponse);
-                        //const txStatus = hexToAscii(atob(jsonResponse.results[0].data).replace("@", ""));
-                        //console.log(jsonResponse)
-                        //console.log(txStatus)
-                        const txStatus = jsonResponse.status;
-                        setTxStatus(txStatus)
 
-                        if (txStatus == "success"){
-                            setIsTransactionSuccessful(true);
-                        }
+                        for (let i = 0; i < jsonResponse.results.length; i++) {
+
+                            const resultFunction = atob(jsonResponse.results[i].data);
+                            const resultOK = hexToAscii(atob(jsonResponse.results[i].data).replace("@",""));
+
+                            if(resultFunction.includes("fuctionName")){
+                                
+                                //TO DO SORT OUT PRICE FROM CHAIN FOR DIFFERENT TXS
+                                //setPriceNominal(result.substring(result.indexOf('@') + 1));
+                            }    
+                            if (resultOK.includes("ok")){
+                                setIsTransactionSuccessful(true);
+                            }
+                        }  
+
+                        setTxStatus(txStatus)
                         setIsTransactionLoaded(true);
 
                     } catch(e) 
@@ -200,15 +258,7 @@ export const ConfirmationPage = () => {
             metadataLink = atob(globalToken.uris[1]);
         }
 
-        let txConfirmed = false;
-        let onSale = false;
-
-        if(txStatus == "success"){
-            txConfirmed = true;
-            if(action.toUpperCase() == LIST){
-                onSale = true;
-            }
-        }
+        const onSale = (action.toUpperCase() == LIST);
 
         //formats a price string to 18 places
         let stringPrice = "";
@@ -244,6 +294,7 @@ export const ConfirmationPage = () => {
 
         const formattedData = {
             TokenId: collectionId,
+            Nonce: tokenNonce,
             NonceStr: hexNonce,
             TxHash: qsTxHash,
             OwnerAddress: userWalletAddress,
@@ -257,11 +308,9 @@ export const ConfirmationPage = () => {
             PriceNominal:  priceNominal,
             RoyaltiesPercent: globalToken.royalties,
             Timestamp: globalToken.timestamp,
-            TxConfirmed: txConfirmed,
+            TxConfirmed: isTransactionSuccessful,
             OnSale: onSale,
         }   
-
-        //console.log(formattedData)
 
         var response = null;
         switch (action.toUpperCase()) {
@@ -293,7 +342,7 @@ export const ConfirmationPage = () => {
         
         setIsDataSet(true);
 
-        if(txStatus == "success"){
+        if(isTransactionSuccessful){
             
             toast.success(ENG_TX_SUCCESS_MESSAGE.toString().replace("{{tokenName}}", tokenName), {
                 autoClose: 5000,
@@ -307,14 +356,6 @@ export const ConfirmationPage = () => {
         }
 
     };
-
-    //this will file the data insert after the token, transaction is loaded, and the data has not been set.
-    {
-        if(isTokenLoaded && isTransactionLoaded && !isDataSet){
-            setDatabaseRecord();
-        }
-    };
-
    
     if (!userWalletAddress) {
         return (
