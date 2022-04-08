@@ -85,7 +85,6 @@ export const ConfirmationPage = () => {
 
     useEffect(() => {
 
-        //const transaction = getTransaction();
         let transaction = {} as any;
         if(!isTransactionSuccessful){
             transaction = setInterval(() => { getTransaction(); }, 1000);
@@ -262,7 +261,7 @@ export const ConfirmationPage = () => {
             OnSale: onSale,
         }   
 
-        console.log(formattedData)
+        //console.log(formattedData)
 
         var response = null;
         switch (action.toUpperCase()) {
@@ -289,6 +288,7 @@ export const ConfirmationPage = () => {
                 break;                
             default:
 
+                break;
         }
         
         setIsDataSet(true);
