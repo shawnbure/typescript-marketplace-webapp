@@ -619,7 +619,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                     </div>
                                     <button onClick={handleSaveProfileImage} className="c-button c-button--primary">upload</button>
                                 </div>
-
+                                
                             </div>
 
                             <br/>

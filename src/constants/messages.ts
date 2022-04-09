@@ -16,4 +16,5 @@ export const ENG_CANCEL_OFFER_MESSAGE: string = "You have cancelled your offer f
 export const ENG_DEFAULT_CONFIRMATION_TITLE: string = "Default Success";
 export const ENG_DEFAULT_CONFIRMATION_MESSAGE: string = "default";
 export const ENG_TX_PROCESSING_MESSAGE: string = "Your transaction has been recorded on the Youbei Marketplace and sent to the Elrond network. Currently, we are verifying the status and some features will be available after your transaction is complete.";
+export const ENG_TX_SUCCESS_MESSAGE: string = "The network has successfully finished your transaction for {{tokenName}}."
 //#############################################################Confirmation Page#############################################################//
