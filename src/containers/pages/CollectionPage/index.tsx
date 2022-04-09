@@ -556,6 +556,15 @@ export const CollectionPage: (props: any) => any = ({}) => {
     setShouldDisplayMobileFilters(!shouldDisplayMobileFilters);
   };
 
+
+  const ShowDate = (dateTime: any) => 
+  {
+    const cDateTime = new Date(collectionData?.data?.collection?.mintStartDate)
+    const year = cDateTime.getFullYear();
+    const month = cDateTime.getMonth() + 1;
+    const day = cDateTime.getDate();
+    return month + '/' + day + '/' + year;
+  }
   const [collectionDataLoaded, setCollectionDataLoaded] = useState(false);
 
   useEffect(() => {
@@ -569,11 +578,17 @@ export const CollectionPage: (props: any) => any = ({}) => {
     });
     getInitialTokens();
 
+
+
   }, []);
 
   useEffect(() => {
 
     if( collectionDataLoaded ) {
+
+      console.log("collectionData?.data?.collection?.mintStartDate")
+      console.log(collectionData?.data?.collection?.mintStartDate)
+
 
       if( userWalletAddress != null )
       {
@@ -693,7 +708,24 @@ export const CollectionPage: (props: any) => any = ({}) => {
             </li>
           </ul>
 
-          {Boolean(collectionData?.data?.collection?.contractAddress) && Boolean(collectionData?.data?.collection?.maxSupply > 0) && (
+          { Boolean((collectionData?.data?.collection?.mintStartDate != 0 && collectionData?.data?.collection?.mintStartDate > new Date().getTime())) &&  (
+              <>
+              <div className="grid grid-cols-10 mb-4">
+                <div className="col-span-12 md:col-start-5 md:col-span-2  p-10 md:p-0 ">
+                <p className="my-10 text-2xl text-center"> 
+                  Minting for this Collection is Coming Soon.
+                  {
+                    /*ShowDate(collectionData?.data?.collection?.mintStartDate) */                 
+                  }
+                </p>
+                </div>
+              </div>  
+              </>    
+          )}
+
+          { Boolean(collectionData?.data?.collection?.contractAddress) && 
+            Boolean(collectionData?.data?.collection?.maxSupply > 0) &&
+            Boolean((collectionData?.data?.collection?.mintStartDate == 0 || collectionData?.data?.collection?.mintStartDate < new Date().getTime())) &&  (
             <>
               <div className="grid grid-cols-10 mb-4">
                 <div className="col-span-12 md:col-start-5 md:col-span-2  p-10 md:p-0 ">

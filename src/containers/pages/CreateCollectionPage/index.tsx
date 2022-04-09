@@ -57,7 +57,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     
 
     //json of the step (use for SessionData) / useEffect onChange
-    const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0, "tokenBaseURI": "Empty", "metaDataBaseURI": "Empty", "maxSupply": 0}');  
+    const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0, "tokenBaseURI": "Empty", "metaDataBaseURI": "Empty", "maxSupply": 0, "saleStart": 0}');  
 
 
     // check if TxHash in URL / useEffect onChange
@@ -258,6 +258,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 {
                                     //there's a parse error - handle it here 
 
+                                    //HENRY UNCOMMENT OUT
                                     window.location.reload()
                                     
                                 }
@@ -290,7 +291,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                                          sessionStateJSONData.price,
                                                          sessionStateJSONData.tokenBaseURI,
                                                          sessionStateJSONData.metaDataBaseURI,
-                                                         sessionStateJSONData.maxSupply);  
+                                                         sessionStateJSONData.maxSupply,
+                                                         sessionStateJSONData.saleStart);  
         }
     
       },[stepTracker]);  //this use effect gets called everytime 'stepTracker' is modified
@@ -309,6 +311,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         tokenBaseURI: string;
         metaDataBaseURI: string;
         maxSupply: number;
+        saleStart: number;
     }
 
 
@@ -319,7 +322,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                                  priceParam: number,
                                                  tokenBaseURIParam: string,
                                                  metaDataBaseURIParam: string,
-                                                 maxSupplyParam: number) : string
+                                                 maxSupplyParam: number,
+                                                 saleStartParam: number) : string
     {
         let jsonObj = { step: stepParam, 
                         tokenID: tokenIDParam, 
@@ -327,7 +331,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         price: priceParam,
                         tokenBaseURI: tokenBaseURIParam,
                         metaDataBaseURI: metaDataBaseURIParam,
-                        maxSupply: maxSupplyParam
+                        maxSupply: maxSupplyParam,
+                        saleStart: saleStartParam
                         }; 
 
         return JSON.stringify(jsonObj);
@@ -347,6 +352,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
             if( element.value != "" )
             {
+                // eslint-disable-next-line no-restricted-globals
                 if( ! confirm("Minting Start Date will only allow Minting to start on the set date at 12:00 AM (UTC). Would you like confirm it?") )
                 { 
                     element.value = "";  
@@ -391,7 +397,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             '"price": ' + sessionStateJSONData.price + ', ' +
                             '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
                             '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
-                            '"maxSupply":' + sessionStateJSONData.maxSupply + '}')   
+                            '"maxSupply":' + sessionStateJSONData.maxSupply + ', ' +
+                            '"saleStart":' + sessionStateJSONData.saleStart + '}')   
          
             const txtHash = getTxHash();
 
@@ -424,6 +431,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //setSessionStateJSON(resultData, actionName);
 
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
+
+        console.log("********* sessionStateJSONData: " )
+        console.log(sessionStateJSONData)
 
         if( resultData != "" &&  actionName != "")
         {
@@ -473,7 +483,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 '"price": ' + sessionStateJSONData.price + ', ' +
                                 '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
                                 '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
-                                '"maxSupply":' + sessionStateJSONData.maxSupply + '}')     
+                                '"maxSupply":' + sessionStateJSONData.maxSupply + ', ' + 
+                                '"saleStart":' + sessionStateJSONData.saleStart + '}')     
 
             //display page state
             HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price);                                 
@@ -520,12 +531,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [refreshCreateOrUpdateSessionStatesTrigger] = useRefreshCreateOrUpdateSessionStatesMutation();
 
     // this refresh OR create the sessionState in DB
-    const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any, price: any, tokenBaseURI: any, metaDataBaseURI: any, maxSupply: any) => {
+    const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any, price: any, tokenBaseURI: any, metaDataBaseURI: any, maxSupply: any, saleStart: any) => {
         
         const formattedData = {
             address: userWalletAddress,
             stateType: 1,
-            jsonData: CreateJSONDataStringForSessionState(step, tokenId, scAddress, price, tokenBaseURI, metaDataBaseURI, maxSupply),
+            jsonData: CreateJSONDataStringForSessionState(step, tokenId, scAddress, price, tokenBaseURI, metaDataBaseURI, maxSupply, saleStart),
         }
 
         const response: any = await refreshCreateOrUpdateSessionStatesTrigger({ payload: formattedData });
@@ -846,6 +857,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         price: yup.string().matches(/^(0|[1-9]\d*)(\.\d+)?$/, "Only positive numbers with decimals - must include a leading number (0.1)").required(),
         maxSupply: yup.string().matches(/^([1-9][0-9]{0,3}|10000)$/, "Numbers must be between 1-10000").required(),
         metadataBase: yup.string().required("Required Field"),
+        mintStartDate: yup.string(),
     }).required();
 
     const { register: registerStep2, handleSubmit: handleSubmitStep2, control: controlStep2, setError: setErrorStep2, clearErrors: clearErrorsStep2, formState: { errors: errorsStep2 } } = useForm({
@@ -863,28 +875,48 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         {
             setIsButtonClicked(true)
 
+            /*
             //sale start date is now current date with time of 12am 
             var d = new Date();     //current date
             d.setHours(0,0,0,0);    //set to 12am
 
             //set to to saleStart
             data.saleStart = d.getTime() / 1000;
+            */
 
+            var mintStartDateForDB = 0
+
+            if(data.mintStartDate == "" )
+            {
+                //empty
+                data.saleStart = 0
+            }
+            else
+            {            
+                //got date    
+                var dateInput = new Date(data.mintStartDate);
+     
+                mintStartDateForDB = dateInput.getTime()
+
+                data.saleStart = dateInput.getTime() / 1000
+            }
+                        
 
             const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
             setDoSaveStepTracker(true);
     
-    
+            
             setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
                             '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
                             '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
                             '"price":' + data.price + ', ' +
                             '"tokenBaseURI": "' + data.imageBase + '", ' +
                             '"metaDataBaseURI": "' + data.metadataBase + '", ' +
-                            '"maxSupply":' + data.maxSupply + '}')  
+                            '"maxSupply":' + data.maxSupply + ', ' + 
+                            '"saleStart":' + mintStartDateForDB + '}')  
             
-
+            
 
             data.imageExt = mediaTypeSelect.value
 
@@ -996,9 +1028,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         telegramLink: yup.string(),
         twitterLink: yup.string(),
         website: yup.string(),
-        mintStartDate: yup.string(),
-
-
+       
     }).required();
 
 
@@ -1027,21 +1057,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             data.tokenBaseURI = sessionStateJSONData.tokenBaseURI
             data.MetaDataBaseURI = sessionStateJSONData.metaDataBaseURI
             data.MaxSupply = sessionStateJSONData.maxSupply
-    
+            data.mintStartDate = sessionStateJSONData.saleStart
 
-            if(data.mintStartDate == "" )
-            {
-                //empty
-                data.mintStartDate = 0
-            }
-            else
-            {            
-                //got date
-    
-                var dateInput = new Date(data.mintStartDate);
-     
-                data.mintStartDate = dateInput.getTime()
-            }
+            console.log("data.mintStartDate: " + data.mintStartDate)
 
             const formattedData = {
                 ...data,
@@ -1401,6 +1419,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
+                                <p className="text-xl u-text-bold mb-2">
+                                    Minting Start Date (UTC): &nbsp;
+                                    <a href="javascript:alert('Minting Start Date is optional - it will only allow Minting to start on the set date at 12:00 AM (UTC) .')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerStep2('mintStartDate')} id="mintStartDate" onChange={(e) => confirmMintingStartDate()}  autoComplete="off" type="date" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
+                                    </div>
+                                </div>
 
                                 <br/>
                                 <button type="submit" id="submit_step2" className="c-button c-button--primary mb-5" >
@@ -1585,16 +1613,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
-                                <p className="text-xl u-text-bold mb-2">
-                                    Minting Start Date (UTC): &nbsp;
-                                    <a href="javascript:alert('Minting Start Date is optional - it will only allow Minting to start on the set date at 12:00 AM (UTC) .')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
-                                </p>
 
-                                <div className="grid grid-cols-9 mb-4">
-                                    <div className="col-span-12">
-                                        <input {...registerStep5('mintStartDate')} id="mintStartDate" onChange={(e) => confirmMintingStartDate()}  autoComplete="off" type="date" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
-                                    </div>
-                                </div>
 
 
                                 <p className="text-xl u-text-bold mb-2">
