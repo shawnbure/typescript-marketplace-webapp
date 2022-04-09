@@ -17,8 +17,6 @@ import { toast } from "react-toastify";
 import { UrlParameters } from './interfaces';
 
 import { Footer } from 'components/index';
-import { inputCSS } from "react-select/dist/declarations/src/components/Input";
-import { valueTernary } from "react-select/dist/declarations/src/utils";
 
 import { prepareTransaction } from "utils/transactions";
 
