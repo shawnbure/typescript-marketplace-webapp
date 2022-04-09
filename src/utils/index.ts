@@ -102,6 +102,10 @@ export function GetTransactionRequestHttpURL(txHash: string) {
   return ELROND_API + "/transactions/" + txHash;
 }
 
+export function GetTokenRequestHttpURL(tokenIdentifier: string) {
+  return ELROND_API + "/nfts/" + tokenIdentifier;
+}
+
 export function GetJSONResultData(jsonParse: any) {
   return jsonParse["results"][0]["data"];
 }
@@ -140,6 +144,7 @@ export default {
   handleCopyToClipboard,
   createVerifiedPayload,
   GetTransactionRequestHttpURL,
+  GetTokenRequestHttpURL,
   GetJSONResultData,
   GetTransactionActionName,
   GetTransactionTokenID,

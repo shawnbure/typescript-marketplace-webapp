@@ -212,11 +212,13 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
         {
             if( element.value != "" )
             {
+                // eslint-disable-next-line no-restricted-globals
                 if( ! confirm("Minting Start Date will only allow Minting to start on the set date at 12:00 AM (UTC). Would you like confirm it?") )
                 { 
                     element.value = "";  
                            
                 }
+                
             }
         }
     }
@@ -355,7 +357,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                     </div>
                                     <button onClick={handleSaveProfileImage} className="c-button c-button--primary">upload</button>
                                 </div>
-
+                                
                             </div>
 
                             <br/>

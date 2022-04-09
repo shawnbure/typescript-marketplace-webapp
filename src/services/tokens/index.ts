@@ -47,7 +47,7 @@ export const tokensApi = createApi({
                     "Authorization": `Bearer ${accessToken}`,
                 },
                 body: JSON.stringify(payload),
-                url: `${mainPath}/list-fc/${payload.walletAddress}/${payload.tokenName}/${payload.tokenNonce}`
+                url: `${mainPath}/list-fc/${payload.OwnerAddress}/${payload.TokenId}/${payload.Nonce}`
 
             }
 
@@ -55,6 +55,28 @@ export const tokensApi = createApi({
         },
 
   }),
+
+  buyTokenFromClient: builder.mutation<any, any>({
+
+    query: ({ payload }): FetchArgs => {
+
+        const accessToken: string = selectAccessToken(store.getState());
+
+        const customRequestArg: FetchArgs = {
+
+            method: POST,
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(payload),
+            url: `${mainPath}/buy-fc/${payload.BuyerAddress}/${payload.TokenId}/${payload.Nonce}`
+
+        }
+
+        return customRequestArg;
+    },
+
+}),
 
     getTokenData: builder.mutation<any, any>({
       query: ({ collectionId, tokenNonce }): FetchArgs => {
@@ -153,7 +175,7 @@ export const tokensApi = createApi({
 
                     method: POST,
                     //body: JSON.stringify(payload),
-                    url: `${mainPath}/withdraw/${payload.tokenName}/${payload.tokenNonce}`,
+                    url: `${mainPath}/withdraw/${payload.TokenId}/${payload.Nonce}`,
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
                     },
@@ -205,6 +227,7 @@ export const tokensApi = createApi({
 
 export const {
     useListTokenFromClientMutation,
+    useBuyTokenFromClientMutation,
     useWithdrawTokenMutation,
     useRefreshTokenMetadataMutation,
     useGetTransactionsMutation,
