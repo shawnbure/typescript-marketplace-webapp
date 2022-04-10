@@ -490,7 +490,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
     sendTransaction({
       transaction: unconsumedTransaction,
       //callbackRoute: pathname,
-      callbackRoute: `/confirmation/${MINT}/${collectionId}/${tokens.nonce}?number_minted=${requestedNumberOfTokens}&txHash=${getQuerystringValue("txHash")}`,
+      callbackRoute: `/confirmation/${MINT}/${collectionId}/${tokens.nonce}/number_minted=${requestedNumberOfTokens}|txHash=${getQuerystringValue("txHash")}`,
     });
   };
 

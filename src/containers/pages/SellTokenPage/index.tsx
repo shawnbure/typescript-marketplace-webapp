@@ -301,8 +301,8 @@ export const SellTokenPage: (props: any) => any = ({}) => {
     }
 
     signTemplateTransaction({
-      //succesCallbackRoute: '/token/' + collectionId +'/' + tokenNonce + '/insert',
-      succesCallbackRoute: `/confirmation/${LIST}/${collectionId}/${tokenNonce}?price=${requestedAmount}&txHash=${getQuerystringValue("txHash")}`,
+      // succesCallbackRoute: '/token/' + collectionId +'/' + tokenNonce + "/insert",
+      succesCallbackRoute: `/confirmation/${LIST}/${collectionId}/${tokenNonce}/price=${requestedAmount}|txHash=${getQuerystringValue("txHash")}`,
 /*
       succesCallbackRoute:
         "/token/" +
@@ -379,7 +379,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
       //succesCallbackRoute: '/account',
       //below is the client based token add to database
 
-      succesCallbackRoute: `/confirmation/${AUCTION}/${collectionId}/${tokenNonce}?price=${requestedAmount}&start_date=${unixStartDate}&end_date=${unixEndDate}&txHash=${getQuerystringValue("txHash")}`,
+      succesCallbackRoute: `/confirmation/${AUCTION}/${collectionId}/${tokenNonce}/price=${requestedAmount}|start_date=${unixStartDate}|end_date=${unixEndDate}`,
 /*
       succesCallbackRoute:
         "/token/" +

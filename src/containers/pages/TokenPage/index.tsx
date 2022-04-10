@@ -846,7 +846,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${SELL}/${collectionId}/${tokenNonce}?txHash=${getQuerystringValue("txHash")}`,
+      callbackRoute: `/confirmation/${SELL}/${collectionId}/${tokenNonce}`,
     });
 
   };
@@ -880,7 +880,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${WITHDRAW}/${collectionId}/${tokenNonce}?txHash=${getQuerystringValue("txHash")}`,
+      callbackRoute: `/confirmation/${WITHDRAW}/${collectionId}/${tokenNonce}`,
       //callbackRoute: `/token/${collectionId}/${tokenNonce}`,
     });
   };
@@ -937,7 +937,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     signTemplateTransaction({
       //succesCallbackRoute: pathname,
-      successCallbackRoute: `/confirmation/${MAKE_OFFER}/${collectionId}/${tokenNonce}?txHash=${getQuerystringValue("txHash")}`,
+      successCallbackRoute: `/confirmation/${MAKE_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getMakeOfferTemplateTrigger,
     });
@@ -958,7 +958,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     signTemplateTransaction({
       //succesCallbackRoute: pathname,
-      successCallbackRoute: `/confirmation/${MAKE_BID}/${collectionId}/${tokenNonce}?txHash=${getQuerystringValue("txHash")}`,
+      successCallbackRoute: `/confirmation/${MAKE_BID}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getMakeBidTemplateTrigger,
     });
@@ -981,7 +981,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     signTemplateTransaction({
       //succesCallbackRoute: "/account",
-      callbackRoute: `/confirmation/${ACCEPT_OFFER}/${collectionId}/${tokenNonce}?txHash=${getQuerystringValue("txHash")}`,
+      callbackRoute: `/confirmation/${ACCEPT_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getAcceptOfferTemplateTrigger,
     });
@@ -996,7 +996,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     signTemplateTransaction({
       //succesCallbackRoute: "/account",
-      callbackRoute: `/confirmation/${END_AUCTION}/${collectionId}/${tokenNonce}?txHash=${getQuerystringValue("txHash")}`,
+      callbackRoute: `/confirmation/${END_AUCTION}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getEndAuctionTemplateTrigger,
     });
@@ -1012,7 +1012,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     signTemplateTransaction({
       //succesCallbackRoute: "/account",
-      callbackRoute: `/confirmation/${CANCEL_OFFER}/${collectionId}/${tokenNonce}?txHash=${getQuerystringValue("txHash")}`,
+      callbackRoute: `/confirmation/${CANCEL_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getCancelOfferTemplateTrigger,
     });
