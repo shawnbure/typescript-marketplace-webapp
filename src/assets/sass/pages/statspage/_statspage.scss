@@ -8,6 +8,21 @@
 
         margin: 64px 160px 0 160px;
         color: #fff;
+
+        @include respond-to(desktop-high-large) {
+            flex-wrap: wrap;
+            height: 100%;
+            width: 1080px;
+            margin: 64px auto 0 auto;
+        }
+
+        @include respond-to(max-large-desktop) {
+            width: 680px;
+        }
+
+        @include respond-to(mobile) {
+            width: 340px;
+        }
     }
 
     &-reportBox {
@@ -15,8 +30,24 @@
         height: 100%;
 
         display: flex;
-        justify-content: space-between;
         align-items: flex-start;
+
+        @include respond-to(desktop-high-large) {
+            width: 100%;
+            height: 705px;
+            margin: 0 0 64px 0;
+        }
+
+        @include respond-to(max-large-desktop) {
+            width: 680px;
+            height: auto;
+            flex-wrap: wrap;
+            margin: 0;
+        }
+
+        @include respond-to(mobile) {
+            width: 340px;
+        }
     }
 
     &-numericResults {
@@ -28,6 +59,13 @@
         box-shadow: 0 66px 66px 0px rgba(0, 0, 0, 0.05);
 
         padding: 60px 80px;
+        margin: 0 80px 0 0;
+
+        @include respond-to(max-large-desktop) {
+            height: 500px;
+            width: 100%;
+            margin: 0;
+        }
 
         &__dailyVolume {
             display: flex;
@@ -66,6 +104,11 @@
                 font-size: 24px;
                 font-weight: bold;
                 line-height: 1;
+
+                @include respond-to(mobile) {
+                    font-size: 16px;
+                    font-weight: bold;
+                }
             }
 
             span:nth-child(2) {
@@ -81,6 +124,12 @@
                 align-items: center;
 
                 margin: 0 0 0 16px;
+
+                @include respond-to(mobile) {
+                    width: 40px;
+                    height: 24px;
+                    font-size: 13px;
+                }
             }
         }
 
@@ -105,6 +154,10 @@
 
                 margin: 0 8px;
 
+                @include respond-to(mobile) {
+                    margin: 0;
+                }
+
                 div {
                     width: 24px;
                     background: #fff;
@@ -120,6 +173,10 @@
                     font-size: 16px;
                     text-align: center;
                     line-height: 1;
+
+                    @include respond-to(mobile) {
+                        font-size: 13px;
+                    }
                 }
             }
         }
@@ -136,6 +193,12 @@
         color: #fff;
 
         padding: 60px 72px;
+
+        @include respond-to(max-large-desktop) {
+            width: 100%;
+            height: auto;
+            align-items: center;
+        }
 
         span:nth-child(1) {
             font-size: 48px;
@@ -172,6 +235,14 @@
         display: flex;
         justify-content: flex-end;
         align-items: flex-end;
+
+        @include respond-to(desktop-high-large) {
+            bottom: 880px;
+        }
+
+        @include respond-to(max-large-desktop) {
+            display: none;
+        }
 
         &__collection {
             width: 160px;
@@ -242,6 +313,10 @@
         align-items: flex-start;
         justify-content: flex-start;
 
+        @include respond-to(desktop-high-large) {
+            width: 100%;
+        }
+
         &__nftsValue {
             width: 430px;
             height: 232px;
@@ -255,15 +330,29 @@
 
             margin: 0 0 48px 0;
 
+            @include respond-to(desktop-high-large) {
+                width: 100%;
+            }
+
             &--bannerBox {
                 width: 326px;
                 height: 100%;
                 background-image: url("/assets/img/banner.png");
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position-y: center;
+                background-position-x: center;
+
+                border-radius: 8px;
 
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+
+                @include respond-to(desktop-high-large) {
+                    width: 100%;
+                }
 
                 span:nth-child(1) {
                     font-weight: bold;
@@ -285,6 +374,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
+
+            @include respond-to(desktop-high-large) {
+                width: 100%;
+            }
+
+            @include respond-to(desktop-high-large) {
+                margin: 0 0 64px 0;
+            }
 
             &--title {
                 width: 100%;
@@ -337,14 +434,26 @@
 
                     span:nth-child(1) {
                         font-weight: normal;
+
+                        @include respond-to(mobile) {
+                            font-size: 13px;
+                        }
                     }
 
                     span:nth-child(2) {
                         font-weight: bold;
+
+                        @include respond-to(mobile) {
+                            font-size: 13px;
+                        }
                     }
 
                     span:nth-child(3) {
                         font-weight: bold;
+
+                        @include respond-to(mobile) {
+                            font-size: 13px;
+                        }
                     }
                 }
             }
@@ -366,6 +475,16 @@
                 border: none;
                 border-radius: 8px;
                 box-shadow: 0 33px 66px 0px rgba(0, 0, 0, 0.05);
+
+                @include respond-to(mobile) {
+                    width: 160px;
+                    height: 48px;
+                    font-size: 13px;
+                }
+
+                @include respond-to(desktop-high-large) {
+                    bottom: 64px;
+                }
             }
         }
     }
@@ -375,5 +494,9 @@
         border-radius: 8px;
 
         padding: 5px 16px;
+
+        @include respond-to(mobile) {
+            font-size: 13px;
+        }
     }
 }
