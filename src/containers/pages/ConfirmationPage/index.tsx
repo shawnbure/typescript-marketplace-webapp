@@ -198,7 +198,6 @@ export const ConfirmationPage = () => {
     if (hexNonce?.length % 2 != 0) {
       hexNonce = "0" + hexNonce;
     }
-    console.log("NONCE");
     const httpRequest = new XMLHttpRequest();
     const url = GetTokenRequestHttpURL(collectionId + "-" + hexNonce);
     httpRequest.open("GET", url);
