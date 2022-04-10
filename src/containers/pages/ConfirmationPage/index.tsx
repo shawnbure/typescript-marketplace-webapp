@@ -8,6 +8,7 @@ import { formatImgLink } from "utils";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getQuerystringValue } from "utils/transactions";
+import {BASE_URL_API} from "constants/api";
 import { useWithdrawTokenMutation, useListTokenFromClientMutation, useBuyTokenFromClientMutation } from "services/tokens";
 
 import { GetTransactionRequestHttpURL, GetTokenRequestHttpURL, hexToAscii} from "utils";
@@ -63,6 +64,7 @@ export const ConfirmationPage = () => {
                 setDisplayTitle(ENG_MINT_TITLE);
                 setDisplayMessage(ENG_MINT_MESSAGE);
                 setNumberMinted(Number(getQuerystringValue("number_minted")) || 0);
+                setImageLink(`${BASE_URL_API}/image/${collectionId}.profile`)
                 break;    
             case WITHDRAW:
                 setDisplayTitle(ENG_WITHDRAW_TITLE);
@@ -144,7 +146,9 @@ export const ConfirmationPage = () => {
                         //need to load some page values so it displayys, then set db values
                         const jsonResponse = JSON.parse(data);
                         //console.log(jsonResponse)
-                        setImageLink(jsonResponse.url);
+                        if(action.toUpperCase() != MINT){
+                            setImageLink(jsonResponse.url);
+                        }
                         setTokenName(jsonResponse.name);
                         setGlobalToken(jsonResponse);
                         setIsTokenLoaded(true);
@@ -315,7 +319,7 @@ export const ConfirmationPage = () => {
                                     className={`p-token-page_img ${
                                         isAssetLoaded ? `` : `u-visually-hidden`
                                     }`}
-                                    src={formatImgLink(imageLink)}
+                                    src={imageLink}
                                     alt=""
                                     onLoad={() => {
                                         setIsAssetLoaded(true);
