@@ -195,10 +195,10 @@ export const ConfirmationPage = () => {
 
   const getToken = async () => {
     let hexNonce = parseInt(tokenNonce, 10).toString(16);
-    if (tokenNonce?.length % 2 != 0) {
-      hexNonce = "0" + tokenNonce;
+    if (hexNonce?.length % 2 != 0) {
+      hexNonce = "0" + hexNonce;
     }
-
+    console.log("NONCE");
     const httpRequest = new XMLHttpRequest();
     const url = GetTokenRequestHttpURL(collectionId + "-" + hexNonce);
     httpRequest.open("GET", url);
