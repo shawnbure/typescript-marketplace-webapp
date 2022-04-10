@@ -809,7 +809,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}?price=${tokenPrice}&txHash=${getQuerystringValue("txHash")}`,
+      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}`,
     });
 
   };
