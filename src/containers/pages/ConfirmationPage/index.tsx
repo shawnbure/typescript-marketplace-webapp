@@ -76,9 +76,7 @@ export const ConfirmationPage = () => {
   const [transactionHash, setTransactionHash] = useState(
     getQuerystringValue("txHash") || ""
   );
-  const [txStatus, setTxStatus] = useState(
-    getQuerystringValue("status") || ""
-  );
+  const [txStatus, setTxStatus] = useState(getQuerystringValue("status") || "");
   const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
   const [isTransactionSuccessful, setIsTransactionSuccessful] = useState<
     boolean
@@ -110,12 +108,12 @@ export const ConfirmationPage = () => {
   };
 
   useEffect(() => {
-    let infoStr = info as string
-    let infoParts =infoStr.split("|")
-    let infoMap = new Map<string,any>()
-    for (let i = 0 ; i < infoParts.length;i++ ){
-        let qPart=infoParts[i].split("=")
-        infoMap.set(qPart[0],qPart[1])
+    let infoStr = info as string;
+    let infoParts = infoStr.split("|");
+    let infoMap = new Map<string, any>();
+    for (let i = 0; i < infoParts.length; i++) {
+      let qPart = infoParts[i].split("=");
+      infoMap.set(qPart[0], qPart[1]);
     }
     switch (action.toUpperCase()) {
       case BUY:
@@ -123,40 +121,56 @@ export const ConfirmationPage = () => {
         setDisplayMessage(ENG_BUY_MESSAGE);
         break;
       case LIST:
-        txStatus == "true" ? setDisplayTitle(ENG_LIST_TITLE): setDisplayTitle(ENG_LIST_TITLE_FAIL);
+        txFailed == false
+          ? setDisplayTitle(ENG_LIST_TITLE)
+          : setDisplayTitle(ENG_LIST_TITLE_FAIL);
         setDisplayMessage(ENG_LIST_MESSAGE);
         setPriceNominal(infoMap.get("price") || "");
         break;
       case MINT:
-        txStatus == "true" ? setDisplayTitle(ENG_MINT_TITLE): setDisplayTitle(ENG_MINT_TITLE_FAIL);
+        txFailed == false
+          ? setDisplayTitle(ENG_MINT_TITLE)
+          : setDisplayTitle(ENG_MINT_TITLE_FAIL);
         setDisplayMessage(ENG_MINT_MESSAGE);
         setNumberMinted(Number(infoMap.get("number_minted")) || 0);
         setImageLink(`${BASE_URL_API}/image/${collectionId}.profile`);
         break;
       case WITHDRAW:
-        txStatus == "true" ? setDisplayTitle(ENG_WITHDRAW_TITLE): setDisplayTitle(ENG_WITHDRAW_TITLE_FAIL);
+        txFailed == false
+          ? setDisplayTitle(ENG_WITHDRAW_TITLE)
+          : setDisplayTitle(ENG_WITHDRAW_TITLE_FAIL);
         setDisplayMessage(ENG_WITHDRAW_MESSAGE);
         break;
       case ACCEPT_OFFER:
-        txStatus == "true" ? setDisplayTitle(ENG_ACCEPT_OFFER_TITLE): setDisplayTitle(ENG_ACCEPT_OFFER_TITLE_FAIL);
+        txFailed == false
+          ? setDisplayTitle(ENG_ACCEPT_OFFER_TITLE)
+          : setDisplayTitle(ENG_ACCEPT_OFFER_TITLE_FAIL);
         setDisplayMessage(ENG_ACCEPT_OFFER_MESSAGE);
         break;
       case CANCEL_OFFER:
-        txStatus == "true" ? setDisplayTitle(ENG_CANCEL_OFFER_TITLE): setDisplayTitle(ENG_CANCEL_OFFER_TITLE_FAIL);
+        txFailed == false
+          ? setDisplayTitle(ENG_CANCEL_OFFER_TITLE)
+          : setDisplayTitle(ENG_CANCEL_OFFER_TITLE_FAIL);
         setDisplayMessage(ENG_CANCEL_OFFER_MESSAGE);
         break;
       case START_AUCTION:
-        txStatus == "true" ? setDisplayTitle(ENG_START_AUCTION_TITLE): setDisplayTitle(ENG_START_AUCTION_TITLE_FAIL);
+        txFailed == false
+          ? setDisplayTitle(ENG_START_AUCTION_TITLE)
+          : setDisplayTitle(ENG_START_AUCTION_TITLE_FAIL);
         setDisplayMessage(ENG_START_AUCTION_MESSAGE);
         setStartDate(Number(infoMap.get("start_date")) || 0);
         setEndDate(Number(infoMap.get("end_date")) || 0);
         break;
       case END_AUCTION:
-        txStatus == "true" ? setDisplayTitle(ENG_END_AUCTION_TITLE): setDisplayTitle(ENG_END_AUCTION_TITLE_FAIL);
+        txFailed == false
+          ? setDisplayTitle(ENG_END_AUCTION_TITLE)
+          : setDisplayTitle(ENG_END_AUCTION_TITLE_FAIL);
         setDisplayMessage(ENG_END_AUCTION_MESSAGE);
         break;
       default:
-        txStatus == "true" ? setDisplayTitle(ENG_DEFAULT_CONFIRMATION_TITLE): setDisplayTitle(ENG_DEFAULT_CONFIRMATION_TITLE_FAIL);
+        txFailed == false
+          ? setDisplayTitle(ENG_DEFAULT_CONFIRMATION_TITLE)
+          : setDisplayTitle(ENG_DEFAULT_CONFIRMATION_TITLE_FAIL);
         setDisplayMessage(ENG_DEFAULT_CONFIRMATION_MESSAGE);
     }
 
