@@ -38,18 +38,25 @@ import {
   ENG_BUY_TITLE,
   ENG_BUY_MESSAGE,
   ENG_LIST_TITLE,
+  ENG_LIST_TITLE_FAIL,
   ENG_LIST_MESSAGE,
   ENG_WITHDRAW_TITLE,
+  ENG_WITHDRAW_TITLE_FAIL,
   ENG_WITHDRAW_MESSAGE,
   ENG_DEFAULT_CONFIRMATION_TITLE,
+  ENG_DEFAULT_CONFIRMATION_TITLE_FAIL,
   ENG_DEFAULT_CONFIRMATION_MESSAGE,
   ENG_ACCEPT_OFFER_TITLE,
+  ENG_ACCEPT_OFFER_TITLE_FAIL,
   ENG_ACCEPT_OFFER_MESSAGE,
   ENG_START_AUCTION_MESSAGE,
   ENG_START_AUCTION_TITLE,
+  ENG_START_AUCTION_TITLE_FAIL,
   ENG_END_AUCTION_TITLE,
+  ENG_END_AUCTION_TITLE_FAIL,
   ENG_END_AUCTION_MESSAGE,
   ENG_CANCEL_OFFER_TITLE,
+  ENG_CANCEL_OFFER_TITLE_FAIL,
   ENG_CANCEL_OFFER_MESSAGE,
   ENG_TX_PROCESSING_MESSAGE,
   ENG_TX_SUCCESS_MESSAGE,
@@ -57,6 +64,7 @@ import {
   ENG_TX_COMPETED_MESSAGE,
   ENG_LOADING_ASSET,
   ENG_MINT_TITLE,
+  ENG_MINT_TITLE_FAIL,
   ENG_MINT_MESSAGE,
   ENG_TX_FAILED_MESSAGE,
 } from "constants/messages";
@@ -67,6 +75,9 @@ export const ConfirmationPage = () => {
   const [globalToken, setGlobalToken] = useState<any>({});
   const [transactionHash, setTransactionHash] = useState(
     getQuerystringValue("txHash") || ""
+  );
+  const [txStatus, setTxStatus] = useState(
+    getQuerystringValue("status") || ""
   );
   const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
   const [isTransactionSuccessful, setIsTransactionSuccessful] = useState<
@@ -112,40 +123,40 @@ export const ConfirmationPage = () => {
         setDisplayMessage(ENG_BUY_MESSAGE);
         break;
       case LIST:
-        setDisplayTitle(ENG_LIST_TITLE);
+        txStatus == "true" ? setDisplayTitle(ENG_LIST_TITLE): setDisplayTitle(ENG_LIST_TITLE_FAIL);
         setDisplayMessage(ENG_LIST_MESSAGE);
         setPriceNominal(infoMap.get("price") || "");
         break;
       case MINT:
-        setDisplayTitle(ENG_MINT_TITLE);
+        txStatus == "true" ? setDisplayTitle(ENG_MINT_TITLE): setDisplayTitle(ENG_MINT_TITLE_FAIL);
         setDisplayMessage(ENG_MINT_MESSAGE);
         setNumberMinted(Number(infoMap.get("number_minted")) || 0);
         setImageLink(`${BASE_URL_API}/image/${collectionId}.profile`);
         break;
       case WITHDRAW:
-        setDisplayTitle(ENG_WITHDRAW_TITLE);
+        txStatus == "true" ? setDisplayTitle(ENG_WITHDRAW_TITLE): setDisplayTitle(ENG_WITHDRAW_TITLE_FAIL);
         setDisplayMessage(ENG_WITHDRAW_MESSAGE);
         break;
       case ACCEPT_OFFER:
-        setDisplayTitle(ENG_ACCEPT_OFFER_TITLE);
+        txStatus == "true" ? setDisplayTitle(ENG_ACCEPT_OFFER_TITLE): setDisplayTitle(ENG_ACCEPT_OFFER_TITLE_FAIL);
         setDisplayMessage(ENG_ACCEPT_OFFER_MESSAGE);
         break;
       case CANCEL_OFFER:
-        setDisplayTitle(ENG_CANCEL_OFFER_TITLE);
+        txStatus == "true" ? setDisplayTitle(ENG_CANCEL_OFFER_TITLE): setDisplayTitle(ENG_CANCEL_OFFER_TITLE_FAIL);
         setDisplayMessage(ENG_CANCEL_OFFER_MESSAGE);
         break;
       case START_AUCTION:
-        setDisplayTitle(ENG_START_AUCTION_TITLE);
+        txStatus == "true" ? setDisplayTitle(ENG_START_AUCTION_TITLE): setDisplayTitle(ENG_START_AUCTION_TITLE_FAIL);
         setDisplayMessage(ENG_START_AUCTION_MESSAGE);
         setStartDate(Number(infoMap.get("start_date")) || 0);
         setEndDate(Number(infoMap.get("end_date")) || 0);
         break;
       case END_AUCTION:
-        setDisplayTitle(ENG_END_AUCTION_TITLE);
+        txStatus == "true" ? setDisplayTitle(ENG_END_AUCTION_TITLE): setDisplayTitle(ENG_END_AUCTION_TITLE_FAIL);
         setDisplayMessage(ENG_END_AUCTION_MESSAGE);
         break;
       default:
-        setDisplayTitle(ENG_DEFAULT_CONFIRMATION_TITLE);
+        txStatus == "true" ? setDisplayTitle(ENG_DEFAULT_CONFIRMATION_TITLE): setDisplayTitle(ENG_DEFAULT_CONFIRMATION_TITLE_FAIL);
         setDisplayMessage(ENG_DEFAULT_CONFIRMATION_MESSAGE);
     }
 
