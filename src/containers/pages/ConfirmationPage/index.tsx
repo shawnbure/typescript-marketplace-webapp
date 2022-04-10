@@ -8,15 +8,17 @@ import { formatImgLink } from "utils";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getQuerystringValue } from "utils/transactions";
+import {BASE_URL_API} from "constants/api";
 import { useWithdrawTokenMutation, useListTokenFromClientMutation, useBuyTokenFromClientMutation } from "services/tokens";
 
 import { GetTransactionRequestHttpURL, GetTokenRequestHttpURL, hexToAscii} from "utils";
-import { ACCEPT_OFFER, BUY, LIST, CANCEL_OFFER, START_AUCTION, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION, 
-    LIST_SC_CONTRACT_FUNCTION_NAME, BUY_SC_CONTRACT_FUNCTION_NAME, WITHDRAW_SC_CONTRACT_FUNCTION_NAME } from "constants/actions";
+import { ACCEPT_OFFER, BUY, LIST, CANCEL_OFFER, START_AUCTION, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, MINT, WITHDRAW, AUCTION, 
+ } from "constants/actions";
 import { 
     ENG_BUY_TITLE, ENG_BUY_MESSAGE, ENG_LIST_TITLE, ENG_LIST_MESSAGE, ENG_WITHDRAW_TITLE, ENG_WITHDRAW_MESSAGE, ENG_DEFAULT_CONFIRMATION_TITLE, ENG_DEFAULT_CONFIRMATION_MESSAGE,
     ENG_ACCEPT_OFFER_TITLE, ENG_ACCEPT_OFFER_MESSAGE, ENG_START_AUCTION_MESSAGE, ENG_START_AUCTION_TITLE, ENG_END_AUCTION_TITLE, ENG_END_AUCTION_MESSAGE, ENG_CANCEL_OFFER_TITLE, 
-    ENG_CANCEL_OFFER_MESSAGE, ENG_TX_PROCESSING_MESSAGE, ENG_TX_SUCCESS_MESSAGE
+    ENG_CANCEL_OFFER_MESSAGE, ENG_TX_PROCESSING_MESSAGE, ENG_TX_SUCCESS_MESSAGE, ENG_COLLECTION_BUTTON, ENG_TX_COMPETED_MESSAGE, ENG_LOADING_ASSET, ENG_MINT_TITLE, ENG_MINT_MESSAGE,
+    ENG_TX_FAILED_MESSAGE
 } from "constants/messages";
 
 
@@ -25,12 +27,12 @@ export const ConfirmationPage = () => {
     const { address: userWalletAddress } = Dapp.useContext();
     const { action, collectionId, tokenNonce} = useParams<UrlParameters>();
     const [globalToken, setGlobalToken] = useState<any>({}); 
-    const [globalTransaction, setGlobalTransaction] = useState<any>({}); 
+    const [transactionHash, setTransactionHash] = useState(getQuerystringValue("txHash") || ""); 
     const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
     const [isTransactionSuccessful, setIsTransactionSuccessful] = useState<boolean>(false);
     const [isTransactionLoaded, setIsTransactionLoaded] = useState<boolean>(false);
     const [isDataSet, setIsDataSet] = useState<boolean>(false);
-    const [txStatus, setTxStatus] = useState("Processing");
+    const [txFailed, setTxFailed] = useState<boolean>(false); 
     const [displayTitle, setDisplayTitle] = useState("");
     const [displayMessage, setDisplayMessage] = useState("");
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
@@ -38,11 +40,13 @@ export const ConfirmationPage = () => {
     const [tokenName, setTokenName] = useState("");
     const [priceNominal, setPriceNominal] = useState("");
     const [startDate, setStartDate] = useState<number>(0);
+    const [numberMinted, setNumberMinted] = useState<number>(0);
     const [endDate, setEndDate] = useState<number>(0);
     const [listTokenFromClientTrigger] = useListTokenFromClientMutation();
     const [buyTokenFromClientTrigger] = useBuyTokenFromClientMutation();
     const [withdrawTokenTrigger] = useWithdrawTokenMutation();
     
+    const imageBoxStyle = { display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' };
 
     useEffect(() => {
 
@@ -54,7 +58,14 @@ export const ConfirmationPage = () => {
             case LIST:
                 setDisplayTitle(ENG_LIST_TITLE);
                 setDisplayMessage(ENG_LIST_MESSAGE);
+                setPriceNominal(getQuerystringValue("price") || "");
                 break;
+            case MINT:
+                setDisplayTitle(ENG_MINT_TITLE);
+                setDisplayMessage(ENG_MINT_MESSAGE);
+                setNumberMinted(Number(getQuerystringValue("number_minted")) || 0);
+                setImageLink(`${BASE_URL_API}/image/${collectionId}.profile`)
+                break;    
             case WITHDRAW:
                 setDisplayTitle(ENG_WITHDRAW_TITLE);
                 setDisplayMessage(ENG_WITHDRAW_MESSAGE);
@@ -70,6 +81,8 @@ export const ConfirmationPage = () => {
             case START_AUCTION:
                 setDisplayTitle(ENG_START_AUCTION_TITLE);
                 setDisplayMessage(ENG_START_AUCTION_MESSAGE);
+                setStartDate(Number(getQuerystringValue("start_date")) || 0);
+                setEndDate(Number(getQuerystringValue("end_date")) || 0);
                 break;
             case END_AUCTION:
                 setDisplayTitle(ENG_END_AUCTION_TITLE);
@@ -79,7 +92,7 @@ export const ConfirmationPage = () => {
                 setDisplayTitle(ENG_DEFAULT_CONFIRMATION_TITLE);
                 setDisplayMessage(ENG_DEFAULT_CONFIRMATION_MESSAGE);
         }
-        
+
         const token = getToken();
        
     }, []);
@@ -102,6 +115,10 @@ export const ConfirmationPage = () => {
         }
 
     }, [isDataSet, isTokenLoaded, isTransactionLoaded]);
+
+
+    
+    
 
     const getToken = async () => {
 
@@ -129,11 +146,10 @@ export const ConfirmationPage = () => {
                         //need to load some page values so it displayys, then set db values
                         const jsonResponse = JSON.parse(data);
                         //console.log(jsonResponse)
-                        setImageLink(jsonResponse.url);
+                        if(action.toUpperCase() != MINT){
+                            setImageLink(jsonResponse.url);
+                        }
                         setTokenName(jsonResponse.name);
-                        setStartDate(Number(getQuerystringValue("start_date")) || 0);
-                        setEndDate(Number(getQuerystringValue("end_date")) || 0);
-                        setPriceNominal(getQuerystringValue("price") || "");
                         setGlobalToken(jsonResponse);
                         setIsTokenLoaded(true);
 
@@ -150,53 +166,9 @@ export const ConfirmationPage = () => {
     };
 
     const getTransaction = async () => {
-
-
-        /*
         
-        It Seems that every function will have a unique result set and we have to account for that.
-
-        List =   2 child transactions, 1 containing the putNftForSale@price command and the follow up @ok message.
-
-        */
-        
-        
-        const qsTxHash = getQuerystringValue("txHash") || "";
         const httpRequest = new XMLHttpRequest();
-        const url = GetTransactionRequestHttpURL(qsTxHash); 
-
-        let resultCount = 0;
-        let fuctionName = "";
-        
-        switch (action.toUpperCase()) {
-            case BUY:
-                resultCount = 5;
-                fuctionName = BUY_SC_CONTRACT_FUNCTION_NAME;
-                break;
-            case LIST:
-                resultCount = 2;
-                fuctionName = LIST_SC_CONTRACT_FUNCTION_NAME;
-                break;
-            case WITHDRAW:
-                resultCount = 2;
-                fuctionName = WITHDRAW_SC_CONTRACT_FUNCTION_NAME;
-                break;
-            case ACCEPT_OFFER:
- 
-                break;
-            case CANCEL_OFFER:
-
-                break;                
-            case START_AUCTION:
-    
-                break;
-            case END_AUCTION:
-
-                break;                
-            default:
-
-                break;
-        }
+        const url = GetTransactionRequestHttpURL(transactionHash); 
 
         httpRequest.open("GET", url);
         httpRequest.send();
@@ -212,23 +184,13 @@ export const ConfirmationPage = () => {
                     try {
 
                         const jsonResponse = JSON.parse(data);
-
-                        for (let i = 0; i < jsonResponse.results.length; i++) {
-
-                            const resultFunction = atob(jsonResponse.results[i].data);
-                            const resultOK = hexToAscii(atob(jsonResponse.results[i].data).replace("@",""));
-
-                            if(resultFunction.includes("fuctionName")){
-                                
-                                //TO DO SORT OUT PRICE FROM CHAIN FOR DIFFERENT TXS
-                                //setPriceNominal(result.substring(result.indexOf('@') + 1));
-                            }    
-                            if (resultOK.includes("ok")){
-                                setIsTransactionSuccessful(true);
-                            }
-                        }  
-
-                        setTxStatus(txStatus)
+  
+                        if (!jsonResponse.pendingResults && jsonResponse.status == "success") {
+                            setIsTransactionSuccessful(true);
+                        }
+                        if(jsonResponse.status == "fail"){
+                            setTxFailed(true);
+                        }
                         setIsTransactionLoaded(true);
 
                     } catch(e) 
@@ -245,8 +207,6 @@ export const ConfirmationPage = () => {
     
     const setDatabaseRecord = async () => {
 
-        const qsTxHash = getQuerystringValue("txHash") || "";
-
         //this value needs to be hexidecimal. add 0 to the first position if the len = 1
         let hexNonce = parseInt(tokenNonce,10).toString(16);
         if(tokenNonce?.length == 1){
@@ -257,46 +217,13 @@ export const ConfirmationPage = () => {
         if(globalToken.uris.length > 1){
             metadataLink = atob(globalToken.uris[1]);
         }
-
         const onSale = (action.toUpperCase() == LIST);
-
-        //formats a price string to 18 places
-        // let stringPrice = "";
-        // if(priceNominal){
-        //     //fix the string price to correct format
-            
-        //     let stringPriceRaw = priceNominal.replace("0.", "").replace(".", "");
-
-        //     let arraySaleStringPrice = stringPriceRaw.split("");
-
-        //     let leadingZeroCount = 0;
-        //     let digitCount = 0;
-
-        //     //account for the start pos if the leading zeros
-        //     //account for the number of digits
-        //     for (let i = 0; i < arraySaleStringPrice.length; i++) {
-        //         if (arraySaleStringPrice[i] === "0") {
-        //             leadingZeroCount++;
-        //         }
-        //         if (arraySaleStringPrice[i] != "0") {
-        //             digitCount++;
-        //         }
-        //     }
-
-        //     let numberOfTrailingZeros = leadingZeroCount + digitCount;
-
-        //     stringPrice = arraySaleStringPrice.join("").replace("0", "");
-
-        //     for (let i = 0; i < 18 - numberOfTrailingZeros; i++) {
-        //         stringPrice += "0";
-        //     }
-        // }
 
         const formattedData = {
             TokenId: collectionId,
             Nonce: parseInt(tokenNonce,10),
             NonceStr: hexNonce,
-            TxHash: qsTxHash,
+            TxHash: transactionHash,
             OwnerAddress: userWalletAddress,
             BuyerAddress: userWalletAddress,
             TokenName: tokenName,
@@ -385,14 +312,14 @@ export const ConfirmationPage = () => {
                                     <Link to={`/collection/${collectionId}`}>{collectionId}</Link>
                                 </p>
 
-                                <h2 style={{textAlign: 'center'}} className="u-text-bold u-margin-top-spacing-5 u-padding-top-spacing-5 center-xs">{displayMessage.toString().replace("{{tokenName}}", tokenName).toString().replace("{{priceNominal}}", priceNominal)}<br/><br/></h2>
+                                <h2 style={{textAlign: 'center'}} className="u-text-bold u-margin-top-spacing-5 u-padding-top-spacing-5 center-xs">{displayMessage.toString().replace("{{tokenName}}", tokenName).toString().replace("{{priceNominal}}", priceNominal).replace("{{collectionName}}", collectionId).replace("{{numMint}}", String(numberMinted))}<br/><br/></h2>
                                 
                                 <div className="p-token-page_asset-container">
                                     <img
                                     className={`p-token-page_img ${
                                         isAssetLoaded ? `` : `u-visually-hidden`
                                     }`}
-                                    src={formatImgLink(imageLink)}
+                                    src={imageLink}
                                     alt=""
                                     onLoad={() => {
                                         setIsAssetLoaded(true);
@@ -403,19 +330,36 @@ export const ConfirmationPage = () => {
                                         isAssetLoaded ? `u-visually-hidden` : ``
                                     }`}
                                     >
-                                    loading asset...
+                                    {ENG_LOADING_ASSET}
                                     </p>
                                 </div>
-                           
-                                <p style={{textAlign: 'center'}} className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">{ENG_TX_PROCESSING_MESSAGE}</p>    
-
+                                
+                                 
+                                <p style={{textAlign: 'center'}} className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">     
+                                {isTransactionSuccessful ? (  
+                                    <span className="justify-center">
+                                        {ENG_TX_COMPETED_MESSAGE}    
+                                    </span>
+                                ) : (
+                                    <span className="justify-center">
+                                        {txFailed ? ENG_TX_FAILED_MESSAGE.replace("{{txHash}}", transactionHash) : ENG_TX_PROCESSING_MESSAGE }    
+                                    </span>   
+                                )}
+                                </p>
                                 <p style={{textAlign: 'center'}} className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
+                                {isTransactionSuccessful ? (  
                                 <Link to={`/collection/${collectionId}`} className="c-button c-button--primary" >                           
                                     <span className="justify-center">
-                                            See Collection
+                                            {ENG_COLLECTION_BUTTON}
                                     </span>
-                                </Link>
+                                </Link> ) : (
+                                    <div className="image-container" style={{ ...imageBoxStyle }}>
+                                        {txFailed ? "" : <img style={{animation: `spin 3s linear infinite`}} src={"/img/logos/logo_youbei.svg"} alt="Verifying Transaction Status" width="100" height="75"/>}
+                                    </div>
+                                )}
                                 </p>
+
+
                         </div> 
 
                     </div>

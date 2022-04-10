@@ -21,10 +21,11 @@ import {
   useGetCollectionTokensMutation,
 } from "services/collections";
 import { shorterAddress } from "utils";
-
+import { getQuerystringValue } from "utils/transactions";
 import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens";
 
 import { Footer } from 'components/index';
+import { MINT } from "constants/actions";
 
 export const CollectionPage: (props: any) => any = ({}) => {
   
@@ -488,7 +489,8 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: pathname,
+      //callbackRoute: pathname,
+      callbackRoute: `/confirmation/${MINT}/${collectionId}/${tokens.nonce}?number_minted=${requestedNumberOfTokens}&txHash=${getQuerystringValue("txHash")}`,
     });
   };
 
