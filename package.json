@@ -4,8 +4,8 @@
     "private": true,
     "dependencies": {
         "@craco/craco": "^6.3.0",
-        "@elrondnetwork/dapp": "^0.0.57",
-        "@elrondnetwork/erdjs": "^8.0.1-alpha.19",
+        "@elrondnetwork/dapp": "^0.0.79",
+        "@elrondnetwork/erdjs": "^9.2.4",
         "@fortawesome/fontawesome-svg-core": "^1.2.36",
         "@fortawesome/free-brands-svg-icons": "^5.15.4",
         "@fortawesome/free-regular-svg-icons": "^5.15.4",

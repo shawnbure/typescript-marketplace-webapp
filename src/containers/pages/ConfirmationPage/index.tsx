@@ -271,7 +271,7 @@ export const ConfirmationPage = () => {
     }
 
     let metadataLink = "";
-    if (globalToken.uris.length > 1) {
+    if (globalToken.uris?.length > 1) {
       metadataLink = atob(globalToken.uris[1]);
     }
     const onSale = action.toUpperCase() == LIST;
