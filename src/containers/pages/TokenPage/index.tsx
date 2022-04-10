@@ -809,7 +809,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}}`,
+      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}`,
     });
 
   };
