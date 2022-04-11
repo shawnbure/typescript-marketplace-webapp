@@ -440,9 +440,9 @@ export const ConfirmationPage = () => {
                     <p style={{textAlign: 'center', margin: '0 0 12px 0', fontWeight: 'bold'}}>Share With Others</p>
                     <div style={{ textAlign: "center" }} className="justify-center">
                       <WhatsappShareButton style={{margin: '0 8px'}} url={nftLink} children={<WhatsappIcon size={48} round />} />
-                      <FacebookShareButton style={{margin: '0 8px'}} url="http://google.com" children={<FacebookIcon size={48} round />} />
+                      <FacebookShareButton style={{margin: '0 8px'}} url={nftLink} children={<FacebookIcon size={48} round />} />
                       <TelegramShareButton style={{margin: '0 8px'}} url={nftLink} children={<TelegramIcon size={48} round />} />
-                      <TwitterShareButton style={{margin: '0 8px'}} url="http://google.com" children={<TwitterIcon size={48} round />} />
+                      <TwitterShareButton style={{margin: '0 8px'}} url={nftLink} children={<TwitterIcon size={48} round />} />
                     </div>
                   </div>
                   ) : null
