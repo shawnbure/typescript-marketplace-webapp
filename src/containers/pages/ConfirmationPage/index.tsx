@@ -72,6 +72,8 @@ import {
   ENG_TX_UNKNOWN_TITLE,
 } from "constants/messages";
 
+import {FacebookIcon, FacebookMessengerIcon, FacebookMessengerShareButton, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton} from 'react-share'
+
 export const ConfirmationPage = () => {
   const { address: userWalletAddress } = Dapp.useContext();
   const { action, collectionId, tokenNonce, info } = useParams<UrlParameters>();
@@ -94,6 +96,7 @@ export const ConfirmationPage = () => {
   const [displayMessage, setDisplayMessage] = useState("");
   const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
   const [imageLink, setImageLink] = useState("");
+  const [nftLink, setNftLink] = useState("");
   const [tokenName, setTokenName] = useState("");
   const [priceNominal, setPriceNominal] = useState("");
   const [startDate, setStartDate] = useState<number>(0);
@@ -218,7 +221,9 @@ export const ConfirmationPage = () => {
           try {
             //need to load some page values so it displayys, then set db values
             const jsonResponse = JSON.parse(data);
-            //console.log(jsonResponse)
+
+            setNftLink(`${window.location.origin}/token/${jsonResponse.collection}/${jsonResponse.nonce}`)
+
             if (action.toUpperCase() != MINT) {
               setImageLink(jsonResponse.url);
             }
@@ -427,6 +432,23 @@ export const ConfirmationPage = () => {
                     </span>
                   )}
                 </p>
+
+                {
+                  isTransactionSuccessful ?
+                  (
+                  <div className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
+                    <p style={{textAlign: 'center', margin: '0 0 12px 0', fontWeight: 'bold'}}>Share With Others</p>
+                    <div style={{ textAlign: "center" }} className="justify-center">
+                      <WhatsappShareButton style={{margin: '0 8px'}} url={nftLink} children={<WhatsappIcon size={48} round />} />
+                      <FacebookShareButton style={{margin: '0 8px'}} url="http://google.com" children={<FacebookIcon size={48} round />} />
+                      <TelegramShareButton style={{margin: '0 8px'}} url={nftLink} children={<TelegramIcon size={48} round />} />
+                      <TwitterShareButton style={{margin: '0 8px'}} url="http://google.com" children={<TwitterIcon size={48} round />} />
+                    </div>
+                  </div>
+                  ) : null
+                }
+                
+
                 <p
                   style={{ textAlign: "center" }}
                   className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center"
