@@ -443,7 +443,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
       return      
     }
 
-
+    /*
     if (buyCount >= buyLimit && buyLimit != -1){
 
       toast.error(`${`You have reached your mint limit, Or you are not whitelisted`}`, {
@@ -456,7 +456,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
       });
       return
     }
-
+    */
 
 
     const getBuyNFTResponse: any = await getMintTokensTemplateTrigger({
