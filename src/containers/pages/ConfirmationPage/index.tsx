@@ -67,6 +67,9 @@ import {
   ENG_MINT_TITLE_FAIL,
   ENG_MINT_MESSAGE,
   ENG_TX_FAILED_MESSAGE,
+  ENG_BUY_TITLE_FAIL,
+  ENG_TX_UNKNOWN_MESSAGE,
+  ENG_TX_UNKNOWN_TITLE,
 } from "constants/messages";
 
 export const ConfirmationPage = () => {
@@ -86,6 +89,7 @@ export const ConfirmationPage = () => {
   );
   const [isDataSet, setIsDataSet] = useState<boolean>(false);
   const [txFailed, setTxFailed] = useState<boolean>(false);
+  const [txUnknown, setTxUnknown] = useState<boolean>(false);
   const [displayTitle, setDisplayTitle] = useState("");
   const [displayMessage, setDisplayMessage] = useState("");
   const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
@@ -117,7 +121,9 @@ export const ConfirmationPage = () => {
     }
     switch (action.toUpperCase()) {
       case BUY:
-        setDisplayTitle(ENG_BUY_TITLE);
+        txFailed == false
+          ? setDisplayTitle(ENG_BUY_TITLE)
+          : setDisplayTitle(ENG_BUY_TITLE_FAIL);
         setDisplayMessage(ENG_BUY_MESSAGE);
         break;
       case LIST:
@@ -252,6 +258,9 @@ export const ConfirmationPage = () => {
             if (jsonResponse.status == "fail") {
               setTxFailed(true);
             }
+            if (jsonResponse.status == undefined) {
+              setTxUnknown(true);
+            }
             setIsTransactionLoaded(true);
           } catch (e) {
             //there's a parse error - handle it here
@@ -354,7 +363,7 @@ export const ConfirmationPage = () => {
                   className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white justify-center"
                 >
                   <br />
-                  {displayTitle}
+                  {txUnknown ? ENG_TX_UNKNOWN_TITLE : displayTitle}
                 </h2>
 
                 <p
@@ -414,7 +423,7 @@ export const ConfirmationPage = () => {
                             "{{txHash}}",
                             transactionHash
                           )
-                        : ENG_TX_PROCESSING_MESSAGE}
+                        : txUnknown ? ENG_TX_UNKNOWN_MESSAGE : ENG_TX_PROCESSING_MESSAGE}
                     </span>
                   )}
                 </p>
@@ -436,7 +445,7 @@ export const ConfirmationPage = () => {
                       className="image-container"
                       style={{ ...imageBoxStyle }}
                     >
-                      {txFailed ? (
+                      {txFailed || txUnknown ? (
                         ""
                       ) : (
                         <img

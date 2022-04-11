@@ -2,6 +2,7 @@
 
 export const ENG_BUY_TITLE: string = "Congratulations!";
 export const ENG_BUY_MESSAGE: string = "You have purchased {{tokenName}}!";
+export const ENG_BUY_TITLE_FAIL: string = "Failed!";
 export const ENG_LIST_TITLE: string = "Success!";
 export const ENG_LIST_TITLE_FAIL: string = "Failed!";
 export const ENG_LIST_MESSAGE: string = "You have listed {{tokenName}} for {{priceNominal}} eGLD on the Youbei Marketplace.";
@@ -29,6 +30,8 @@ export const ENG_DEFAULT_CONFIRMATION_MESSAGE: string = "default";
 export const ENG_TX_PROCESSING_MESSAGE: string = "Your transaction has been recorded on the Youbei Marketplace and sent to the Elrond network. Currently, we are verifying the status and some features will be available after your transaction is complete.";
 export const ENG_TX_SUCCESS_MESSAGE: string = "The network has successfully finished your transaction for {{tokenName}}."
 export const ENG_TX_COMPETED_MESSAGE: string = "Your transaction has completed.";
+export const ENG_TX_UNKNOWN_TITLE: string = "Unknown!";
+export const ENG_TX_UNKNOWN_MESSAGE: string = "Your transaction is unknown. Please check and try transaction again if necessary";
 export const ENG_TX_FAILED_MESSAGE: string = "Your transaction has failed. Please try the transaction again. Transaction Hash: {{txHash}}";
 export const ENG_COLLECTION_BUTTON = "See Collection";
 export const ENG_LOADING_ASSET = "loading asset...";
