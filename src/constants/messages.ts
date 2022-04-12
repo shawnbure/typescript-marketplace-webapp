@@ -37,5 +37,5 @@ export const ENG_COLLECTION_BUTTON = "See Collection";
 export const ENG_LOADING_ASSET = "loading asset...";
 export const ENG_COPY_TO_CLIPBOARD_TITLE = "Copy to clipboard";
 export const ENG_COPY_TO_CLIPBOARD_MESSAGE = "Copied to clipboard!";
-
+export const ENG_TX_LINK = "See Transaction";
 //#############################################################Confirmation Page#############################################################//
