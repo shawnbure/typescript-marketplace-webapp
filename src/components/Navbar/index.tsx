@@ -91,6 +91,14 @@ export const Navbar = () => {
                             </li>
 
                             {loggedIn && (
+                                        <li className="c-navbar_list-item">
+                                            <Link to='/collection/1852-568e49/' className="c-navbar_list-link">
+                                                <span style={{textShadow: '0px 5px 40px #ffffff'}}>Create NFT</span>
+                                            </Link>
+                                        </li>
+                                    )}
+
+                            {loggedIn && (
                                         <li className="c-navbar_list-item" onClick={handleToggleSidebar}>
                                             <span className="c-navbar_list-link">
                                                 <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />

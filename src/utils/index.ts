@@ -22,6 +22,9 @@ export const createVerifiedPayload = (
   });
 
   const verfiedMessage = signedMessage.serializeForSigning().toString("hex");
+  
+  // Pendo Initializer
+  window.pendo.initialize({ visitor: { id: address } })
 
   return {
     address,

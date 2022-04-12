@@ -69,9 +69,7 @@ export const App: () => JSX.Element = () => {
         const { data: jtwData } = accessResult;
 
         dispatch(setJWT(jtwData.data));
-
         localStorage.setItem("_e_", JSON.stringify(jtwData.data));
-
     };
 
 
@@ -83,7 +81,15 @@ export const App: () => JSX.Element = () => {
 
     }, [location]);
 
-
+    useEffect(() => {
+        let address: any = localStorage.getItem('address')
+    
+        if(address && address.length > 0) {
+            address = JSON.parse(address)
+            address && address.data ? window.pendo.initialize({ visitor: { id: address.data } }) : null
+        }
+        
+    }, [])
 
     return (
 
