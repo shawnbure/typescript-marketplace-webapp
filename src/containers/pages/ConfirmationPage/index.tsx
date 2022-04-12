@@ -65,8 +65,7 @@ import {
   ENG_TX_PROCESSING_MESSAGE,
   ENG_TX_SUCCESS_MESSAGE,
   ENG_COLLECTION_BUTTON,
-  ENG_TX_COMPETED_MESSAGE,
-  ENG_LOADING_ASSET,
+  ENG_TX_COMPLETED_MESSAGE,
   ENG_MINT_TITLE,
   ENG_MINT_TITLE_FAIL,
   ENG_MINT_MESSAGE,
@@ -75,7 +74,10 @@ import {
   ENG_TX_UNKNOWN_MESSAGE,
   ENG_TX_UNKNOWN_TITLE,
   ENG_COPY_TO_CLIPBOARD_MESSAGE,
-  ENG_TX_LINK
+  ENG_TX_LINK,
+  ENG_COPY_TO_CLIPBOARD_TITLE,
+  ENG_SHARE_TO, 
+  ENG_TX_NAV_TO_HASH
 } from "constants/messages";
 import { faDiscord, faFacebook, faFacebookSquare, faInstagram, faInstagramSquare, faTelegram, faTwitter, faTwitterSquare, faWhatsapp, faWhatsappSquare } from "@fortawesome/free-brands-svg-icons";
 
@@ -420,14 +422,14 @@ export const ConfirmationPage = () => {
                     }}
                   />
                 </div>
-
+                    <br/>
                 <p
                   style={{ textAlign: "center" }}
                   className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center"
                 >
                   {isTransactionSuccessful ? (
                     <span className="justify-center">
-                      {ENG_TX_COMPETED_MESSAGE}
+                      {ENG_TX_COMPLETED_MESSAGE}
                     </span>
                   ) : (
                     <span className="justify-center">
@@ -476,29 +478,26 @@ export const ConfirmationPage = () => {
                   (
                   <div className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
                     <div style={{ textAlign: "center" }} className="justify-center">
-                  {/*
-                      <FontAwesomeIcon style={{ marginRight: 5, marginLeft: 5 }} className="c-navbar_icon-link" icon={faDiscord} color="#5865F2" />
-                  */}
                       <a href={`https://twitter.com/intent/tweet?text=${nftLink}`} target="_new">
-                        <FontAwesomeIcon style={{ marginRight: 5, marginLeft: 5 }} className="c-navbar_icon-link" icon={faTwitterSquare} color="#1DA1F2" />
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faTwitterSquare} color="#1DA1F2" title={`${ENG_SHARE_TO} Twitter`} />
                       </a>
                       <a href={`https://api.whatsapp.com/send?text=${nftLink}`} target="_new">
-                        <FontAwesomeIcon style={{ marginRight: 5, marginLeft: 5 }} className="c-navbar_icon-link" icon={faWhatsappSquare} color="#25D366" />
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faWhatsappSquare} color="#25D366" title={`${ENG_SHARE_TO} WhatsApp`} />
                       </a>
                       <a href={`https://www.facebook.com/sharer/sharer.php?u=#${nftLink}`} target="_new">
-                        <FontAwesomeIcon style={{ marginRight: 5, marginLeft: 5 }} className="c-navbar_icon-link" icon={faFacebookSquare} color="#4267B2" />
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faFacebookSquare} color="#4267B2" title={`${ENG_SHARE_TO} Facebook`} />
                       </a>
                       <a href={`https://t.me/share/url?url=${nftLink}`} target="_new">
-                        <FontAwesomeIcon style={{ marginRight: 5, marginLeft: 5 }} className="c-navbar_icon-link" icon={faTelegram} color="#229ED9" />
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faTelegram} color="#229ED9" title={`${ENG_SHARE_TO} Telegram`} />
                       </a>
-                      <FontAwesomeIcon onClick={() => {copyToClipboard(nftLink)}} style={{ marginRight: 5, marginLeft: 5 }} className="c-navbar_icon-link" icon={faIcons.faCopy} color="#FFFFFF" />
+                      <FontAwesomeIcon onClick={() => {copyToClipboard(nftLink)}} style={{ marginRight: 10, marginLeft: 10, cursor: "pointer" }} size="3x" icon={faIcons.faCopy} color="F0F0F0" title={`${ENG_COPY_TO_CLIPBOARD_TITLE}`}/>
                     </div>
                   </div>
                   ) : null
                 }
                     <p> 
-                        <a href={network.explorerAddress+"transactions/"+transactionHash} target="_new">
-                        <FontAwesomeIcon style={{ marginRight: 5, marginLeft: 5 }} className="c-navbar_icon-link u-text-theme-blue-anchor " icon={faIcons.faExternalLinkAlt}/>
+                        <a href={network.explorerAddress+"transactions/"+transactionHash} target="_new" title={`${ENG_TX_NAV_TO_HASH}`}>
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10, }} className="c-navbar_icon-link u-text-theme-blue-anchor " icon={faIcons.faExternalLinkAlt}/>
                         {ENG_TX_LINK}
                         </a>
                     </p>

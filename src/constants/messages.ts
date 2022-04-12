@@ -29,7 +29,7 @@ export const ENG_DEFAULT_CONFIRMATION_TITLE_FAIL: string = "Default Failed";
 export const ENG_DEFAULT_CONFIRMATION_MESSAGE: string = "default";
 export const ENG_TX_PROCESSING_MESSAGE: string = "Your transaction has been recorded on the Youbei Marketplace and sent to the Elrond network. Currently, we are verifying the status and some features will be available after your transaction is complete.";
 export const ENG_TX_SUCCESS_MESSAGE: string = "The network has successfully finished your transaction for {{tokenName}}."
-export const ENG_TX_COMPETED_MESSAGE: string = "Your transaction has completed.";
+export const ENG_TX_COMPLETED_MESSAGE: string = "Your transaction has completed.";
 export const ENG_TX_UNKNOWN_TITLE: string = "Unknown!";
 export const ENG_TX_UNKNOWN_MESSAGE: string = "Your transaction is unknown. Please check and try transaction again if necessary";
 export const ENG_TX_FAILED_MESSAGE: string = "Your transaction has failed. Please try the transaction again.";
@@ -38,4 +38,6 @@ export const ENG_LOADING_ASSET = "loading asset...";
 export const ENG_COPY_TO_CLIPBOARD_TITLE = "Copy to clipboard";
 export const ENG_COPY_TO_CLIPBOARD_MESSAGE = "Copied to clipboard!";
 export const ENG_TX_LINK = "See Transaction";
+export const ENG_SHARE_TO = "Share to";
+export const ENG_TX_NAV_TO_HASH = "See your transaction on Elrond.";
 //#############################################################Confirmation Page#############################################################//
