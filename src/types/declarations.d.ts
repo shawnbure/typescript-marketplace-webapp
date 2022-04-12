@@ -1,1 +1,3 @@
-declare interface Window {}
+declare interface Window {
+    pendo: any
+}

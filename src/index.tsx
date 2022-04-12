@@ -6,6 +6,9 @@ import { BrowserRouter } from "react-router-dom";
 import store from 'redux/store/index';
 import { App } from "containers/index";
 
+// Pendo Library
+import './utils/pendo'
+
 import "./assets/sass/_imports.scss";
 
 ReactDOM.render(
