@@ -1,14 +1,16 @@
 /* eslint-disable */
 
 import * as Dapp from "@elrondnetwork/dapp";
+import {network} from "configs/dappConfig";
 import { Link, useParams } from "react-router-dom";
 import { UrlParameters } from "./interfaces";
 import { Footer } from "components/index";
-import { formatImgLink } from "utils";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getQuerystringValue } from "utils/transactions";
-import { BASE_URL_API } from "constants/api";
+import {FacebookIcon, FacebookMessengerIcon, FacebookMessengerShareButton, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton} from 'react-share'
+
+
 import {
   useWithdrawTokenMutation,
   useListTokenFromClientMutation,
@@ -70,9 +72,9 @@ import {
   ENG_BUY_TITLE_FAIL,
   ENG_TX_UNKNOWN_MESSAGE,
   ENG_TX_UNKNOWN_TITLE,
+  ENG_COPY_TO_CLIPBOARD_MESSAGE,
+  ENG_COPY_TO_CLIPBOARD_TITLE,
 } from "constants/messages";
-
-import {FacebookIcon, FacebookMessengerIcon, FacebookMessengerShareButton, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton} from 'react-share'
 
 export const ConfirmationPage = () => {
   const { address: userWalletAddress } = Dapp.useContext();
@@ -114,6 +116,29 @@ export const ConfirmationPage = () => {
     height: "100%",
   };
 
+  function copyToClipboard(newClip : string) {
+
+    navigator.clipboard.writeText(newClip).then(function() {
+        
+      
+        toast.success(
+            ENG_COPY_TO_CLIPBOARD_MESSAGE,
+            {
+              autoClose: 5000,
+              draggable: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              hideProgressBar: false,
+              position: "bottom-right",
+            }
+        );
+
+    }, function() {
+      /* clipboard write failed */
+    });
+  }
+  
+
   useEffect(() => {
     let infoStr = info as string;
     let infoParts = infoStr.split("|");
@@ -142,7 +167,8 @@ export const ConfirmationPage = () => {
           : setDisplayTitle(ENG_MINT_TITLE_FAIL);
         setDisplayMessage(ENG_MINT_MESSAGE);
         setNumberMinted(Number(infoMap.get("number_minted")) || 0);
-        setImageLink(`${BASE_URL_API}/image/${collectionId}.profile`);
+        setImageLink("/img/collections/GreenCheck.png");
+        setNftLink(window.location.origin + "/collection/" + collectionId);
         break;
       case WITHDRAW:
         txFailed == false
@@ -224,9 +250,6 @@ export const ConfirmationPage = () => {
 
             setNftLink(`${window.location.origin}/token/${jsonResponse.collection}/${jsonResponse.nonce}`)
 
-            if (action.toUpperCase() != MINT) {
-              setImageLink(jsonResponse.url);
-            }
             setTokenName(jsonResponse.name);
             setGlobalToken(jsonResponse);
             setIsTokenLoaded(true);
@@ -393,24 +416,15 @@ export const ConfirmationPage = () => {
                   <br />
                 </h2>
 
-                <div className="p-token-page_asset-container">
+                <div className={isAssetLoaded ? "" : "p-token-page_asset-container"}>
                   <img
-                    className={`p-token-page_img ${
-                      isAssetLoaded ? `` : `u-visually-hidden`
-                    }`}
-                    src={imageLink}
+                    className={`p-token-page_img`}
+                    src={isAssetLoaded ? imageLink : "/img/collections/CollectionProfileImageEmpty.jpg"}
                     alt=""
                     onLoad={() => {
                       setIsAssetLoaded(true);
                     }}
                   />
-                  <p
-                    className={`p-token-page_img ${
-                      isAssetLoaded ? `u-visually-hidden` : ``
-                    }`}
-                  >
-                    {ENG_LOADING_ASSET}
-                  </p>
                 </div>
 
                 <p
@@ -424,10 +438,8 @@ export const ConfirmationPage = () => {
                   ) : (
                     <span className="justify-center">
                       {txFailed
-                        ? ENG_TX_FAILED_MESSAGE.replace(
-                            "{{txHash}}",
-                            transactionHash
-                          )
+                        ? 
+                        ENG_TX_FAILED_MESSAGE 
                         : txUnknown ? ENG_TX_UNKNOWN_MESSAGE : ENG_TX_PROCESSING_MESSAGE}
                     </span>
                   )}
@@ -437,13 +449,14 @@ export const ConfirmationPage = () => {
                   isTransactionSuccessful ?
                   (
                   <div className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
-                    <p style={{textAlign: 'center', margin: '0 0 12px 0', fontWeight: 'bold'}}>Share With Others</p>
+                    <p style={{textAlign: 'center', margin: '0 0 12px 0', fontWeight: 'bold'}}>Share With Others </p>
                     <div style={{ textAlign: "center" }} className="justify-center">
                       <WhatsappShareButton style={{margin: '0 8px'}} url={nftLink} children={<WhatsappIcon size={48} round />} />
                       <FacebookShareButton style={{margin: '0 8px'}} url={nftLink} children={<FacebookIcon size={48} round />} />
                       <TelegramShareButton style={{margin: '0 8px'}} url={nftLink} children={<TelegramIcon size={48} round />} />
                       <TwitterShareButton style={{margin: '0 8px'}} url={nftLink} children={<TwitterIcon size={48} round />} />
                     </div>
+                    <button onClick={() => {copyToClipboard(nftLink)}}>{ENG_COPY_TO_CLIPBOARD_TITLE}</button>
                   </div>
                   ) : null
                 }
@@ -480,6 +493,11 @@ export const ConfirmationPage = () => {
                       )}
                     </div>
                   )}
+                  <div className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
+                    <p>
+                        <a style={{fontSize:"10px", textAlign:"center"}} href={network.explorerAddress+"transactions/"+transactionHash} target="_new">{transactionHash}</a>
+                    </p>
+                  </div>
                 </p>
               </div>
             </div>

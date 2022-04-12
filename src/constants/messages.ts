@@ -32,8 +32,10 @@ export const ENG_TX_SUCCESS_MESSAGE: string = "The network has successfully fini
 export const ENG_TX_COMPETED_MESSAGE: string = "Your transaction has completed.";
 export const ENG_TX_UNKNOWN_TITLE: string = "Unknown!";
 export const ENG_TX_UNKNOWN_MESSAGE: string = "Your transaction is unknown. Please check and try transaction again if necessary";
-export const ENG_TX_FAILED_MESSAGE: string = "Your transaction has failed. Please try the transaction again. Transaction Hash: {{txHash}}";
+export const ENG_TX_FAILED_MESSAGE: string = "Your transaction has failed. Please try the transaction again.";
 export const ENG_COLLECTION_BUTTON = "See Collection";
 export const ENG_LOADING_ASSET = "loading asset...";
+export const ENG_COPY_TO_CLIPBOARD_TITLE = "Copy to clipboard";
+export const ENG_COPY_TO_CLIPBOARD_MESSAGE = "Copied to clipboard!";
 
 //#############################################################Confirmation Page#############################################################//
