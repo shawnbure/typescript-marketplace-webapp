@@ -139,6 +139,17 @@ export function GetTransactionErdContractAddress(jsonParse: any) {
   return jsonParse["logs"]["events"][0]["address"];
 }
 
+export function getCookie(name: string) {
+  const value = `; ${document.cookie}`;
+  const parts:any = value.split(`; ${name}=`);
+  if (parts.length === 2)
+  return parts.pop().split(';').shift()
+}
+
+export function setCookie(name: string, value: any, expires: string) {
+  document.cookie = `${name}=${value}; expires=${expires}`
+}
+
 export default {
   hexToAscii,
   asciiToHex,
