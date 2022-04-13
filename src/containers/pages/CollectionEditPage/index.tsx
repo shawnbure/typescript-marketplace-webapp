@@ -11,74 +11,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { handleCopyToClipboard, shorterAddress } from "utils";
-import { useSaveCollectionCoverImageMutation, useSaveCollectionProfileImageMutation, useUpdateCollectionMutation, useUpdateCollectionMintStartDateMutation, useGetCollectionByIdMutation } from "services/collections";
+import { useSaveCollectionCoverImageMutation, useSaveCollectionProfileImageMutation, useUpdateCollectionMutation, useGetCollectionByIdMutation } from "services/collections";
 import { toast } from "react-toastify";
 
 import { UrlParameters } from './interfaces';
 
 import { Footer } from 'components/index';
-
-import { prepareTransaction } from "utils/transactions";
-
-import {
-    useUpdateSaleStartTemplateMutation,
-  } from "services/tx-template";
+import { inputCSS } from "react-select/dist/declarations/src/components/Input";
+import { valueTernary } from "react-select/dist/declarations/src/utils";
 
 export const CollectionEditPage: (props: any) => any = ({ }) => {
 
-    const [
-        updateSaleStartTemplate,
-        { data: UpdateSaleStartData },
-      ] = useUpdateSaleStartTemplateMutation();
-
-    const { pathname } = useLocation();
-    const sendTransaction = Dapp.useSendTransaction();
-
-    const signTemplateTransaction = async (settings: any) => {
-        const {
-          getTemplateTrigger,
-          getTemplateData,
-          succesCallbackRoute,
-        } = settings;
-    
-        const response: any = await getTemplateTrigger({ ...getTemplateData });
-    
-        if (response.error) {
-          const {
-            status,
-            data: { error },
-          } = response.error;
-    
-          toast.error(`${status} | ${error}`, {
-            autoClose: 5000,
-            draggable: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            hideProgressBar: false,
-            position: "bottom-right",
-          });
-    
-          return;
-        }
-    
-        const { data: txData } = response.data;
-    
-        const unconsumedTransaction = prepareTransaction(txData);
-    
-        sendTransaction({
-          transaction: unconsumedTransaction,
-          callbackRoute: succesCallbackRoute,
-        });
-      };
-      
-      
     const { collectionId } = useParams<UrlParameters>();
 
-    const [updateCollectionMutationTrigger] = useUpdateCollectionMutation();
-
-    const [updateCollectionMintStartDateTrigger] = useUpdateCollectionMintStartDateMutation();
-
-    
+    const [updateCollectionMutationTrigger,] = useUpdateCollectionMutation();
 
     const [saveCollectionProfileImageTrigger] = useSaveCollectionProfileImageMutation();
     const [saveCollectionCoverImageTrigger] = useSaveCollectionCoverImageMutation();
@@ -92,12 +38,6 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     const [coverName, setCoverName] = useState<string>('');
     const [profileName, setProfileName] = useState<string>('');
-
-    const [contractAddress, setContractAddress] = useState<string>('');
-
-    const [isFinishLoading, setIsFinishLoading] = useState(false)
-
-
 
     const {
         address: userWalletAddress,
@@ -236,38 +176,6 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     };
 
-    const schemaMintingStartDate= yup.object({
-
-        mintStartDate: yup.string(),
-
-    }).required();
-
-
-    const { register: registerMintingStartDate, handleSubmit: handleSubmitMintingStartDate, setValue: setValueMintingStartDate, control: controlMintingStartDate, setError: setErrorMintingStartDate, clearErrors: clearErrorsMintingStartDate, formState: { errors: errorsMintingStartDate } } = useForm({
-        resolver: yupResolver(schemaMintingStartDate),
-    });
-
-
-    function confirmMintingStartDate()
-    {
-        var element = document.getElementById("mintStartDate") as HTMLInputElement;
-
-        if( element != null )
-        {
-            if( element.value != "" )
-            {
-                // eslint-disable-next-line no-restricted-globals
-                if( ! confirm("Minting Start Date will only allow Minting to start on the set date at 12:00 AM (UTC). Would you like confirm it?") )
-                { 
-                    element.value = "";  
-                           
-                }
-            }
-        }
-    }
-
-
-
     const schemaEdit = yup.object({
 
         collectionName: yup.string().min(3, "Min of 3 and Max of 20 Characters").max(20,"Min of 3 and Max of 20 Characters").required("Required Field"),
@@ -277,7 +185,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
         telegramLink: yup.string(),
         twitterLink: yup.string(),
         website: yup.string(),
-
+        mintStartDate: yup.string(),
 
     }).required();
 
@@ -286,79 +194,38 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     });
 
 
-    
-    const onSubmitMintingStartDate = async (data: any) => {
+    const onSubmitFilters = (data: any) => {
 
 
+        console.log({
 
-        if(data.mintStartDate == "" )
-        {
-            //empty
-            data.mintStartDate = 0
-        }
-        else
-        {            
-            //got date
-
-            var dateInput = new Date(data.mintStartDate);
- 
-            data.mintStartDate = dateInput.getTime()
-        }
-
-
-        //sessionStorage save
-        sessionStorage.setItem("Edit_Collection_Mint_Start_Date",  data.mintStartDate)
-
-        const saleStart =  data.mintStartDate  / 1000;
-
-        signTemplateTransaction({
-            getTemplateData: { userWalletAddress, contractAddress, saleStart },
-            succesCallbackRoute: pathname,
-            getTemplateTrigger: updateSaleStartTemplate,
-          });
-
-
-        
-
-          /*
-        const response: any = await updateCollectionMintStartDateTrigger({ collectionId, payload: data });
-
-        if (response?.error) {
-
-
-            toast.error(`Error update collection`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-            });
-
-            return;
-
-        };
-
-        toast.success(`Succesful update collection`, {
-            autoClose: 5000,
-            draggable: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            hideProgressBar: false,
-            position: "bottom-right",
         });
-       */
+
+
     };
 
+    function confirmMintingStartDate()
+    {
+        var element = document.getElementById("mintStartDate") as HTMLInputElement;
 
-
-
-
+        if( element != null )
+        {
+            if( element.value != "" )
+            {
+                if( ! confirm("Minting Start Date will only allow Minting to start on the set date at 12:00 AM (UTC). Would you like confirm it?") )
+                { 
+                    element.value = "";  
+                           
+                }
+            }
+        }
+    }
 
     const onSubmit = async (data: any) => {
 
+        //const { name, ticker, mintStartDate } = data;
+        
 
-        /*
         if(data.mintStartDate == "" )
         {
             //empty
@@ -372,9 +239,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
  
             data.mintStartDate = dateInput.getTime()
         }
-        */
 
-      
         
         const response: any = await updateCollectionMutationTrigger({ collectionId, payload: data });
 
@@ -405,15 +270,14 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     };
 
-
-
     const setValuesCollection = async () => {
+
+        //collectionID useParam
 
         const collectionData: any = await getCollectionByIdTrigger({ collectionId: collectionId });
         
         if (collectionData?.data) 
         {
-            setContractAddress(collectionData?.data?.data?.collection.contractAddress)
             setValueEdit("collectionName", collectionData?.data?.data?.collection.name);
             setValueEdit("description", collectionData?.data?.data?.collection.description);
             setValueEdit("website", collectionData?.data?.data?.collection.website);
@@ -423,31 +287,12 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
             setValueEdit("telegramLink", collectionData?.data?.data?.collection.telegramLink);
 
 
-            const txHashCurrent = getTxHash();
-            let sessionMintStartDate = sessionStorage.getItem("Edit_Collection_Mint_Start_Date");
+            const mintStartDate = collectionData?.data?.data?.collection.mintStartDate
 
-            //if there is transaction hash and MintStartDate in sessiokn 
-            if( txHashCurrent != null && sessionMintStartDate != null )
+            if( mintStartDate > 0 )
             {
-                let sessionMintStartDateInt = parseInt(sessionMintStartDate, 10);
-
-                if( sessionMintStartDateInt > 0 )
-                {
-                    setValueMintingStartDate("mintStartDate", new Date(sessionMintStartDateInt).toISOString().split('T')[0])
-                }                
+                setValueEdit("mintStartDate", new Date(mintStartDate).toISOString().split('T')[0])
             }
-            else  
-            {
-                //populated it from DB
-                const mintStartDate = collectionData?.data?.data?.collection.mintStartDate
-
-                if( mintStartDate > 0 )
-                {
-                    setValueMintingStartDate("mintStartDate", new Date(mintStartDate).toISOString().split('T')[0])
-                }
-            }
-
-
             
         }
     };
@@ -455,117 +300,10 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {
 
-        setIsFinishLoading(true);
 
-        //loads once and set the values
         setValuesCollection();
 
     }, []);
-
-
-    function getTxHash()
-    {
-        const queryString = window.location.search;
-
-        const params = new URLSearchParams(window.location.search)
-
-        //get the query param 'txHash'
-        return params.get("txHash")
-    }
-
-    function getQueryStatus()
-    {
-        const queryString = window.location.search;
-
-        const params = new URLSearchParams(window.location.search)
-
-        //get the query param 'txHash'
-        return params.get("status")
-    }
-
-    const SaveToMintStartDateToDB = async () => {
-
-        let sessionMintStartDate = sessionStorage.getItem("Edit_Collection_Mint_Start_Date");
-                    
-        if( sessionMintStartDate != null )
-        {
-            let sessionMintStartDateInt = parseInt(sessionMintStartDate, 10);
-
-
-            const formattedData = {
-                mintStartDate: sessionMintStartDateInt
-            }
-
-            const response: any = await updateCollectionMintStartDateTrigger({ collectionId, payload: formattedData });
-
-            if (response?.error) {
-    
-                toast.error(`Error update collection`, {
-                    autoClose: 5000,
-                    draggable: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    hideProgressBar: false,
-                    position: "bottom-right",
-                });
-    
-                return;
-    
-            };
-    
-            toast.success(`Succesful update collection`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-            });                             
-        }   
-
-    }
-
-    {
-        if( isFinishLoading )  //this is so that the JWT Authorization token is available
-        {
-            const queryStatus = getQueryStatus()  //check the status
-
-            if( queryStatus != null && queryStatus == "fail")
-            {
-                toast.error(`Blockchain Update Failed`, {
-                    autoClose: 5000,
-                    draggable: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    hideProgressBar: false,
-                    position: "bottom-right",
-                });
-            }
-            else
-            {
-                const txHashCurrent = getTxHash();
-    
-                if( txHashCurrent != null )  
-                {
-                    let txHashSession = sessionStorage.getItem("Edit_Collection_TxHash");
-                    
-                    if( txHashCurrent != txHashSession ) //txHash is different
-                    { 
-                        //update session txHash
-                        sessionStorage.setItem("Edit_Collection_TxHash", txHashCurrent)
-    
-                        SaveToMintStartDateToDB();             
-                    }
-                    else
-                    {
-                        //txHash is same is do nothing
-                    }
-                }
-            }
-        }
-
-
-    }
 
 
     return (
@@ -617,7 +355,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                     </div>
                                     <button onClick={handleSaveProfileImage} className="c-button c-button--primary">upload</button>
                                 </div>
-                                
+
                             </div>
 
                             <br/>
@@ -677,7 +415,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
                                 <p className="text-xl u-text-bold mb-2">
                                     Description: &nbsp;
-                                    <a href="javascript:alert('The desription for the collection to be inform users of the details.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                    <a href="javascript:alert('The desription for the collection is to inform users of the details.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                     
                                 </p>
 
@@ -690,7 +428,19 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                 </div>
 
 
+                                <p className="text-xl u-text-bold mb-2">
+                                    Minting Start Date (UTC): &nbsp;
+                                    <a href="javascript:alert('Minting Start Date is optional and only applicable for Collections Created on Youbei Marketplace - it will only allow Minting to start on the set date at 12:00 AM (UTC) .')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
 
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerEdit('mintStartDate')} id="mintStartDate" onChange={(e) => confirmMintingStartDate()}  autoComplete="off" type="date" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
+                                    </div>
+                                </div>
+                                
+
+                                <br/>
 
                                 <p className="text-xl u-text-bold mb-2">
                                     Links: &nbsp;
@@ -725,40 +475,9 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                 <br/>
 
 
-                                <button className="c-button c-button--primary" type="submit">Save</button>
+                                <button className="c-button c-button--primary" type="submit">Submit Changes</button>
 
                                 <br/><br/>
-
-                            </form>
-
-                            <br/>
-
-                            <hr className="text-white my-10" />
-
-                            <br/>
-
-                            <form onSubmit={handleSubmitMintingStartDate(onSubmitMintingStartDate)}>
-
-                                 <p className="text-xl u-text-bold mb-2">
-                                    Minting Start Date (UTC): &nbsp;
-                                    <a href="javascript:alert('Minting start date is optional and ony applies to collections that are created on the Youbei Marketplace. It will allow minting to start on the set date at 12:00am UTC and can be applied retroactively. There is a gas fee associated with this feature since it is stored on the blockchain.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
-                                </p>
-
-                                <div className="grid grid-cols-9 mb-4">
-                                    <div className="col-span-12">
-                                        <input {...registerMintingStartDate('mintStartDate')} id="mintStartDate" onChange={(e) => confirmMintingStartDate()}  autoComplete="off" type="date" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
-                                    </div>
-                                </div>
-
-
-                                <br/>
-
-
-                                <button className="c-button c-button--primary" type="submit">Sign</button>
-
-                                <br/><br/>
-
-
 
                             </form>
 
