@@ -8,6 +8,8 @@ import { Footer } from "components/index";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getQuerystringValue } from "utils/transactions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import {FacebookIcon, FacebookMessengerIcon, FacebookMessengerShareButton, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton} from 'react-share'
 
 
@@ -63,8 +65,7 @@ import {
   ENG_TX_PROCESSING_MESSAGE,
   ENG_TX_SUCCESS_MESSAGE,
   ENG_COLLECTION_BUTTON,
-  ENG_TX_COMPETED_MESSAGE,
-  ENG_LOADING_ASSET,
+  ENG_TX_COMPLETED_MESSAGE,
   ENG_MINT_TITLE,
   ENG_MINT_TITLE_FAIL,
   ENG_MINT_MESSAGE,
@@ -73,8 +74,12 @@ import {
   ENG_TX_UNKNOWN_MESSAGE,
   ENG_TX_UNKNOWN_TITLE,
   ENG_COPY_TO_CLIPBOARD_MESSAGE,
+  ENG_TX_LINK,
   ENG_COPY_TO_CLIPBOARD_TITLE,
+  ENG_SHARE_TO, 
+  ENG_TX_NAV_TO_HASH
 } from "constants/messages";
+import { faDiscord, faFacebook, faFacebookSquare, faInstagram, faInstagramSquare, faTelegram, faTwitter, faTwitterSquare, faWhatsapp, faWhatsappSquare } from "@fortawesome/free-brands-svg-icons";
 
 export const ConfirmationPage = () => {
   const { address: userWalletAddress } = Dapp.useContext();
@@ -247,9 +252,8 @@ export const ConfirmationPage = () => {
           try {
             //need to load some page values so it displayys, then set db values
             const jsonResponse = JSON.parse(data);
-
+            setImageLink(jsonResponse.url);
             setNftLink(`${window.location.origin}/token/${jsonResponse.collection}/${jsonResponse.nonce}`)
-
             setTokenName(jsonResponse.name);
             setGlobalToken(jsonResponse);
             setIsTokenLoaded(true);
@@ -382,7 +386,7 @@ export const ConfirmationPage = () => {
   return (
     <div className="p-homepage">
       <div className="row center-xs u-relative">
-        <div className="p-homepage_lead-container col-xs-11 col-md-10">
+        <div className="p-homepage_lead-container ">
           <div className="row">
             <div className="row center-xs">
               <div className="col-span-12 md:col-span-6 p-token-page_visual-holder u-margin-bottom-spacing-4 justify-center px-6">
@@ -393,14 +397,6 @@ export const ConfirmationPage = () => {
                   <br />
                   {txUnknown ? ENG_TX_UNKNOWN_TITLE : displayTitle}
                 </h2>
-
-                <p
-                  style={{ textAlign: "center" }}
-                  className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center"
-                >
-                  <Link to={`/collection/${collectionId}`}>{collectionId}</Link>
-                </p>
-
                 <h2
                   style={{ textAlign: "center" }}
                   className="u-text-bold u-margin-top-spacing-5 u-padding-top-spacing-5 center-xs"
@@ -426,14 +422,14 @@ export const ConfirmationPage = () => {
                     }}
                   />
                 </div>
-
+                    <br/>
                 <p
                   style={{ textAlign: "center" }}
                   className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center"
                 >
                   {isTransactionSuccessful ? (
                     <span className="justify-center">
-                      {ENG_TX_COMPETED_MESSAGE}
+                      {ENG_TX_COMPLETED_MESSAGE}
                     </span>
                   ) : (
                     <span className="justify-center">
@@ -444,24 +440,6 @@ export const ConfirmationPage = () => {
                     </span>
                   )}
                 </p>
-
-                {
-                  isTransactionSuccessful ?
-                  (
-                  <div className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
-                    <p style={{textAlign: 'center', margin: '0 0 12px 0', fontWeight: 'bold'}}>Share With Others </p>
-                    <div style={{ textAlign: "center" }} className="justify-center">
-                      <WhatsappShareButton style={{margin: '0 8px'}} url={nftLink} children={<WhatsappIcon size={48} round />} />
-                      <FacebookShareButton style={{margin: '0 8px'}} url={nftLink} children={<FacebookIcon size={48} round />} />
-                      <TelegramShareButton style={{margin: '0 8px'}} url={nftLink} children={<TelegramIcon size={48} round />} />
-                      <TwitterShareButton style={{margin: '0 8px'}} url={nftLink} children={<TwitterIcon size={48} round />} />
-                    </div>
-                    <button onClick={() => {copyToClipboard(nftLink)}}>{ENG_COPY_TO_CLIPBOARD_TITLE}</button>
-                  </div>
-                  ) : null
-                }
-                
-
                 <p
                   style={{ textAlign: "center" }}
                   className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center"
@@ -493,11 +471,38 @@ export const ConfirmationPage = () => {
                       )}
                     </div>
                   )}
+                  <hr className="text-white my-10" />
                   <div className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
-                    <p>
-                        <a style={{fontSize:"10px", textAlign:"center"}} href={network.explorerAddress+"transactions/"+transactionHash} target="_new">{transactionHash}</a>
+                  {
+                  isTransactionSuccessful ?
+                  (
+                  <div className="u-margin-top-spacing-3 u-margin-bottom-spacing-5 u-text-small justify-center">
+                    <div style={{ textAlign: "center" }} className="justify-center">
+                      <a href={`https://twitter.com/intent/tweet?text=${nftLink}`} target="_new">
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faTwitterSquare} color="#1DA1F2" title={`${ENG_SHARE_TO} Twitter`} />
+                      </a>
+                      <a href={`https://api.whatsapp.com/send?text=${nftLink}`} target="_new">
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faWhatsappSquare} color="#25D366" title={`${ENG_SHARE_TO} WhatsApp`} />
+                      </a>
+                      <a href={`https://www.facebook.com/sharer/sharer.php?u=#${nftLink}`} target="_new">
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faFacebookSquare} color="#4267B2" title={`${ENG_SHARE_TO} Facebook`} />
+                      </a>
+                      <a href={`https://t.me/share/url?url=${nftLink}`} target="_new">
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faTelegram} color="#229ED9" title={`${ENG_SHARE_TO} Telegram`} />
+                      </a>
+                      <FontAwesomeIcon onClick={() => {copyToClipboard(nftLink)}} style={{ marginRight: 10, marginLeft: 10, cursor: "pointer" }} size="3x" icon={faIcons.faCopy} color="F0F0F0" title={`${ENG_COPY_TO_CLIPBOARD_TITLE}`}/>
+                    </div>
+                  </div>
+                  ) : null
+                }
+                    <p> 
+                        <a href={network.explorerAddress+"transactions/"+transactionHash} target="_new" title={`${ENG_TX_NAV_TO_HASH}`}>
+                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10, }} className="c-navbar_icon-link u-text-theme-blue-anchor " icon={faIcons.faExternalLinkAlt}/>
+                        {ENG_TX_LINK}
+                        </a>
                     </p>
                   </div>
+                
                 </p>
               </div>
             </div>
