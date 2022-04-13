@@ -100,12 +100,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [getAcceptOfferTemplateTrigger] = useGetAcceptOfferTemplateMutation();
     const [getCancelOfferTemplateTrigger] = useGetCancelOfferTemplateMutation();
     const [refreshMetadataTrigger] = useRefreshTokenMetadataMutation();
-    const [withdrawTokenTrigger] = useWithdrawTokenMutation();
-
-    const [initialStore, setInitialStore] = useState(false)
-    const [storeDataExist, setStoreDataExist] = useState(false)
-    const [shouldRedirect, setShouldRedirect] = useState(false);
-    const [pageAction, setPageAction] = useState("");
 
     const {
 
@@ -187,99 +181,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     setTransactions(response.data.data);
   };
-/*
-    //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
-    //this is for clientside token withdrawl
-    useEffect(() => 
-    {
-        if( ! initialStore )
-        {     
-    
-            if( store.getState().user.accessToken != "" )
-            {
-                setInitialStore(true)
-                setStoreDataExist(true)
-            }
-        }
 
-    });
-
-    //execute when the authtoken is ready - save the token record to the DB - only if the tx is successful
-    useEffect(() => 
-    {
-
-        if( !initialStore ) {
-            return
-        }
-
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const txtHash = urlParams.get("txHash")
-        const status = String(urlParams.get("status"))
-        
-        if(txtHash != null ) {
-
-            const tokenAction = String(urlParams.get("action"))
-
-            if(status == "success"){
-
-                 //this value needs to be hexidecimal. add 0 to the first position if the len = 1
-                 let hexNonce = tokenNonce;
-                 if(tokenNonce?.length == 1){
-                     hexNonce = "0" + tokenNonce;
-                 }
-
-                const formattedData = {
-                    tokenName: collectionId,
-                    tokenNonce: hexNonce,
-                }   
-
-                const response: any = withdrawTokenTrigger({ payload: formattedData });
-
-                if (response.error) {
-
-                    const { status, data: { error } } = response.error;
-        
-                    toast.error(`${status} | ${error}`, {
-                        autoClose: 5000,
-                        draggable: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        hideProgressBar: false,
-                        position: "bottom-right",
-                    });
-        
-                    return;
-       
-                }
-                setPageAction(WITHDRAW);
-                setShouldRedirect(true);
-                
-            }else{
-
-                toast.error(`The blockchain transaction failed, please try again.`, {
-                    autoClose: 5000,
-                    draggable: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    hideProgressBar: false,
-                    position: "bottom-right",
-                });
-
-                return;
-            }    
-        }   
-
-    }, [storeDataExist]);
-
-    if (shouldRedirect) {
-      return (
-        <Redirect
-          to={routePaths.confirmation.replace(":action", pageAction).replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
-        />
-      );
-    }
-*/
     useEffect(() => {
 
       getTokenOffersTrigger({
@@ -627,7 +529,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     (transaction: any) =>
       transaction.type === "List" || transaction.type === "Auction"
   );
-
+ 
   const mapListingTableData = tokenListings?.map(
     (transaction: any, index: number) => {
       const { priceNominal, timestamp, hash, type } = transaction;
@@ -809,7 +711,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}/0`,
+      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}`,
     });
 
   };
@@ -846,7 +748,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${SELL}/${collectionId}/${tokenNonce}/0`,
+      callbackRoute: `/confirmation/${SELL}/${collectionId}/${tokenNonce}`,
     });
 
   };
@@ -880,8 +782,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${WITHDRAW}/${collectionId}/${tokenNonce}/0`,
-      //callbackRoute: `/token/${collectionId}/${tokenNonce}`,
+      callbackRoute: `/confirmation/${WITHDRAW}/${collectionId}/${tokenNonce}`,
     });
   };
 
@@ -936,8 +837,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     setOfferAmount(0);
 
     signTemplateTransaction({
-      //succesCallbackRoute: pathname,
-      successCallbackRoute: `/confirmation/${MAKE_OFFER}/${collectionId}/${tokenNonce}/0`,
+      successCallbackRoute: `/confirmation/${MAKE_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getMakeOfferTemplateTrigger,
     });
@@ -957,8 +857,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
     signTemplateTransaction({
-      //succesCallbackRoute: pathname,
-      successCallbackRoute: `/confirmation/${MAKE_BID}/${collectionId}/${tokenNonce}/0`,
+      successCallbackRoute: `/confirmation/${MAKE_BID}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getMakeBidTemplateTrigger,
     });
@@ -980,8 +879,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     };
 
     signTemplateTransaction({
-      succesCallbackRoute: `/confirmation/${ACCEPT_OFFER}/${collectionId}/${tokenNonce}/0`,
-      callbackRoute: `/confirmation/${ACCEPT_OFFER}/${collectionId}/${tokenNonce}/0`,
+      succesCallbackRoute: `/confirmation/${ACCEPT_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getAcceptOfferTemplateTrigger,
     });
@@ -996,7 +894,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     signTemplateTransaction({
       succesCallbackRoute:`/confirmation/${END_AUCTION}/${collectionId}/${tokenNonce}`,
-      callbackRoute: `/confirmation/${END_AUCTION}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getEndAuctionTemplateTrigger,
     });
@@ -1011,8 +908,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     };
 
     signTemplateTransaction({
-      succesCallbackRoute:`/confirmation/${CANCEL_OFFER}/${collectionId}/${tokenNonce}/0`,
-      callbackRoute: `/confirmation/${CANCEL_OFFER}/${collectionId}/${tokenNonce}/0`,
+      succesCallbackRoute:`/confirmation/${CANCEL_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getCancelOfferTemplateTrigger,
     });
@@ -1513,18 +1409,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
                           </Link>
                         </div>
                       )
-
-                      // !isOnSale &&
-                      // <div>
-                      //      <div className="c-button c-button--primary u-margin-right-spacing-2"  onClick={alphaToastMessage}>
-                      //         <span className="u-padding-right-spacing-2">
-                      //             <FontAwesomeIcon width={'20px'} className="c-navbar_icon-link" icon={faIcons.faWallet} />
-                      //         </span>
-                      //         <span>
-                      //             Sell
-                      //         </span>
-                      //     </div>
-                      // </div>
                       }
 
                       {isOnSale &&

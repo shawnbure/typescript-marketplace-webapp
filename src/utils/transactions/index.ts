@@ -39,8 +39,7 @@ export default {
   prepareTransaction,
 };
 
-export function getQuerystringValue(key: string) {
-    const queryString = window.location.search;
-    const params = new URLSearchParams(window.location.search)
+export function getQuerystringValue(queryString: string, key: string) {
+    const params = new URLSearchParams(queryString)
     return params.get(key)
 };

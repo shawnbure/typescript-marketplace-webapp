@@ -10,8 +10,8 @@ import { toast } from "react-toastify";
 import { getQuerystringValue } from "utils/transactions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
-import {FacebookIcon, FacebookMessengerIcon, FacebookMessengerShareButton, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton} from 'react-share'
-
+import { handleCopyToClipboard } from "utils";
+import { faFacebookSquare, faTelegram, faTwitterSquare, faWhatsappSquare } from "@fortawesome/free-brands-svg-icons";
 
 import {
   useWithdrawTokenMutation,
@@ -22,7 +22,6 @@ import {
 import {
   GetTransactionRequestHttpURL,
   GetTokenRequestHttpURL,
-  hexToAscii,
 } from "utils";
 import {
   ACCEPT_OFFER,
@@ -73,29 +72,22 @@ import {
   ENG_BUY_TITLE_FAIL,
   ENG_TX_UNKNOWN_MESSAGE,
   ENG_TX_UNKNOWN_TITLE,
-  ENG_COPY_TO_CLIPBOARD_MESSAGE,
   ENG_TX_LINK,
   ENG_COPY_TO_CLIPBOARD_TITLE,
   ENG_SHARE_TO, 
   ENG_TX_NAV_TO_HASH
 } from "constants/messages";
-import { faDiscord, faFacebook, faFacebookSquare, faInstagram, faInstagramSquare, faTelegram, faTwitter, faTwitterSquare, faWhatsapp, faWhatsappSquare } from "@fortawesome/free-brands-svg-icons";
+
 
 export const ConfirmationPage = () => {
   const { address: userWalletAddress } = Dapp.useContext();
   const { action, collectionId, tokenNonce, info } = useParams<UrlParameters>();
   const [globalToken, setGlobalToken] = useState<any>({});
-  const [transactionHash, setTransactionHash] = useState(
-    getQuerystringValue("txHash") || ""
-  );
-  const [txStatus, setTxStatus] = useState(getQuerystringValue("status") || "");
+  const queryString = window.location.search;
+  const [transactionHash, setTransactionHash] = useState(getQuerystringValue(queryString, "txHash") || "");
   const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
-  const [isTransactionSuccessful, setIsTransactionSuccessful] = useState<
-    boolean
-  >(false);
-  const [isTransactionLoaded, setIsTransactionLoaded] = useState<boolean>(
-    false
-  );
+  const [isTransactionSuccessful, setIsTransactionSuccessful] = useState<boolean>(false);
+  const [isTransactionLoaded, setIsTransactionLoaded] = useState<boolean>(false);
   const [isDataSet, setIsDataSet] = useState<boolean>(false);
   const [txFailed, setTxFailed] = useState<boolean>(false);
   const [txUnknown, setTxUnknown] = useState<boolean>(false);
@@ -112,6 +104,7 @@ export const ConfirmationPage = () => {
   const [listTokenFromClientTrigger] = useListTokenFromClientMutation();
   const [buyTokenFromClientTrigger] = useBuyTokenFromClientMutation();
   const [withdrawTokenTrigger] = useWithdrawTokenMutation();
+  
 
   const imageBoxStyle = {
     display: "flex",
@@ -121,37 +114,9 @@ export const ConfirmationPage = () => {
     height: "100%",
   };
 
-  function copyToClipboard(newClip : string) {
-
-    navigator.clipboard.writeText(newClip).then(function() {
-        
-      
-        toast.success(
-            ENG_COPY_TO_CLIPBOARD_MESSAGE,
-            {
-              autoClose: 5000,
-              draggable: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              hideProgressBar: false,
-              position: "bottom-right",
-            }
-        );
-
-    }, function() {
-      /* clipboard write failed */
-    });
-  }
-  
 
   useEffect(() => {
-    let infoStr = info as string;
-    let infoParts = infoStr.split("|");
-    let infoMap = new Map<string, any>();
-    for (let i = 0; i < infoParts.length; i++) {
-      let qPart = infoParts[i].split("=");
-      infoMap.set(qPart[0], qPart[1]);
-    }
+   
     switch (action.toUpperCase()) {
       case BUY:
         txFailed == false
@@ -164,14 +129,16 @@ export const ConfirmationPage = () => {
           ? setDisplayTitle(ENG_LIST_TITLE)
           : setDisplayTitle(ENG_LIST_TITLE_FAIL);
         setDisplayMessage(ENG_LIST_MESSAGE);
-        setPriceNominal(infoMap.get("price") || "");
+        setPriceNominal(getQuerystringValue(queryString, "price") || "");
+        
         break;
       case MINT:
         txFailed == false
           ? setDisplayTitle(ENG_MINT_TITLE)
           : setDisplayTitle(ENG_MINT_TITLE_FAIL);
         setDisplayMessage(ENG_MINT_MESSAGE);
-        setNumberMinted(Number(infoMap.get("number_minted")) || 0);
+        console.log(getQuerystringValue(queryString, "number_minted"))
+        setNumberMinted(Number(getQuerystringValue(queryString, "number_minted")) || 0);
         setImageLink("/img/collections/GreenCheck.png");
         setNftLink(window.location.origin + "/collection/" + collectionId);
         break;
@@ -198,8 +165,8 @@ export const ConfirmationPage = () => {
           ? setDisplayTitle(ENG_START_AUCTION_TITLE)
           : setDisplayTitle(ENG_START_AUCTION_TITLE_FAIL);
         setDisplayMessage(ENG_START_AUCTION_MESSAGE);
-        setStartDate(Number(infoMap.get("start_date")) || 0);
-        setEndDate(Number(infoMap.get("end_date")) || 0);
+        setStartDate(Number(getQuerystringValue(queryString, "start_date")) || 0);
+        setEndDate(Number(getQuerystringValue(queryString, "end_date")) || 0);
         break;
       case END_AUCTION:
         txFailed == false
@@ -397,6 +364,7 @@ export const ConfirmationPage = () => {
                   <br />
                   {txUnknown ? ENG_TX_UNKNOWN_TITLE : displayTitle}
                 </h2>
+                <hr className="text-white" />
                 <h2
                   style={{ textAlign: "center" }}
                   className="u-text-bold u-margin-top-spacing-5 u-padding-top-spacing-5 center-xs"
@@ -490,7 +458,7 @@ export const ConfirmationPage = () => {
                       <a href={`https://t.me/share/url?url=${nftLink}`} target="_new">
                         <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faTelegram} color="#229ED9" title={`${ENG_SHARE_TO} Telegram`} />
                       </a>
-                      <FontAwesomeIcon onClick={() => {copyToClipboard(nftLink)}} style={{ marginRight: 10, marginLeft: 10, cursor: "pointer" }} size="3x" icon={faIcons.faCopy} color="F0F0F0" title={`${ENG_COPY_TO_CLIPBOARD_TITLE}`}/>
+                      <FontAwesomeIcon onClick={() => {handleCopyToClipboard(nftLink)}} className="text-gray-400 cursor-pointer" style={{ marginRight: 10, marginLeft: 10 }} size="3x" icon={faIcons.faCopy} title={`${ENG_COPY_TO_CLIPBOARD_TITLE}`}/>
                     </div>
                   </div>
                   ) : null
