@@ -41,7 +41,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {
         return history.listen((location) => { 
-           console.log(`$$$$$$$$$$$$ You changed the page to: ${location.pathname}`) 
+           //console.log(`$$$$$$$$$$$$ You changed the page to: ${location.pathname}`) 
         }) 
      },[history]) 
      
@@ -49,8 +49,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [isOpenLoading, setIsOpenLoading] = useState(true)
 
     
-    //for inital load of the page / useEffect onChange
-    const [intialLoad, setIntialLoad] = useState(false)
 
     //check for to save StepTracker or not
     const [doSaveStepTracker, setDoSaveStepTracker] = useState(false)
@@ -71,111 +69,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
     
-    {
-        console.log("********* inside { GENERAL } *********  ");
 
 
-        //
-        const txHashCurrent = getTxHash();
-
-        if( txHashCurrent == null )  //initial load 
-        {
-            //console.log("-- txHash is NULL ")
-
-            //set empty 
-            sessionStorage.setItem("Create_Collection_TxHash", "")
-            
-            if( isFinishLoading )
-            {
-                console.log(" ------------- GENERAL {} inside isFinishLoading  ");
-    
-                setIsFinishLoading(false);
-                //setIntialLoad(true);
-            }            
-        }
-        else
-        {
-            
-            //console.log("------ txHash NOT null ")
-
-            //current txHash from session
-            let txHashSession = sessionStorage.getItem("Create_Collection_TxHash");
-            
-            //compare current txHast to one from session
-            if( txHashCurrent != txHashSession ) //different
-            {   
-                console.log("-- DIFFERENT : set new txtHash to session ")
-
-                //set CURRENT as new txtHash to session 
-                sessionStorage.setItem("Create_Collection_TxHash", txHashCurrent)
-
-                //now process txtURL handler
-            }
-            else
-            {
-                console.log("-- SAME : Current txHash is same is Session txHash ")
-
-                //don't do much here
-                
-            }
-        }
 
 
-    }
-
-
-    
 
     useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
 
-
-        /*
-        const url = 'https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM';
-
-        const response = fetch(url);
-        const fileType = fileTypeFromStream(response.body);
         
-        console.log(fileType);
-        */
+        setIsFinishLoading(true)  //need to be set in the handle txFormatter
 
-        
-
-
-        /*
-        fetch('https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM')
-        .then(response => {
-
-            console.log(response)
-
-            response.blob().then(blob => {
-
-                console.log(blob.type);
-
-
-            });
-        });
-        */
-        
-
-        /*
-        fetch("https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM")
-        .then((response) => {
-            return { contentType: response.headers, };})
-        .then((data) => {
-            console.log("inside then data");
-            console.log(data);
-            console.log(data.contentType);
-        });
-        */
-
-
-        
-        
-        console.log("======== inside useEffect [] ");
-
-        setIsFinishLoading(true)
-
-        setIntialLoad(true);
 
       },[]);  //only called once since it's the empty [] parameters
 
@@ -184,19 +87,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-
-
-
-    useEffect(() => { 
-        
-        console.log("initialLoad started")
-
-        if( intialLoad )
-        {
-            initSessionStateJSONFromDB();            
-        }
-
-    },[intialLoad]);
 
     
 
@@ -207,6 +97,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         if( urlTxHashHandler )  //reason to check this is onload, it's false - once we set the value, set to to true to get it
         {
             
+
             //get the query param 'txHash'
             const txtHash = getTxHash();
 
@@ -258,7 +149,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 {
                                     //there's a parse error - handle it here 
 
-                                    //HENRY UNCOMMENT OUT
+                                    //set empty to we can rehandle it.
+                                    sessionStorage.setItem("Create_Collection_TxHash", "")
+
                                     window.location.reload()
                                     
                                 }
@@ -372,7 +265,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const initSessionStateJSONFromDB = async () => {
 
-        console.log("initSessionStateJSONFromDB");
 
         //set the request data to pass to triggers
         const formattedData = {
@@ -386,6 +278,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //check data and initialize it to variable
         if (sessionStateData?.data) 
         {
+
             //set the DB Json string to sessionStateJSONData object
             const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
 
@@ -411,7 +304,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     setUrlTxHashHandler(true);  //delay for a sec
                 }, 500);
                 */
-                console.log("setUrlTxHashHandler")
+
                 setUrlTxHashHandler(true);
             }
             else
@@ -425,6 +318,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
+
     //This initialize the varSessionStateJSON (async & await)
     const setSessionStateFromQueryData = (resultData: string, actionName: string) => {
 
@@ -432,8 +326,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
-        console.log("********* sessionStateJSONData: " )
-        console.log(sessionStateJSONData)
 
         if( resultData != "" &&  actionName != "")
         {
@@ -585,8 +477,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         HideElement("divStep3");
         HideElement("divStep4");                
         HideElement("divStep5");
-
-        console.log("STEP: " + step)
 
         switch(step) 
         {
@@ -752,6 +642,69 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     
 
+    // ================================== PROCESS LOADING ==================================
+
+    {
+
+        const txHashCurrent = getTxHash();
+
+        if( txHashCurrent == null )  //initial load 
+        {
+
+            if( isFinishLoading )
+            {
+                //set empty 
+                sessionStorage.setItem("Create_Collection_TxHash", "")
+                
+                setIsFinishLoading(false); 
+
+                initSessionStateJSONFromDB(); 
+            }               
+        }
+        else
+        {
+
+            //current txHash from session
+            let txHashSession = sessionStorage.getItem("Create_Collection_TxHash");
+            
+            //compare current txHast to one from session
+            if( txHashCurrent != txHashSession ) //different
+            {   
+
+                //set CURRENT as new txtHash to session 
+                sessionStorage.setItem("Create_Collection_TxHash", txHashCurrent)
+
+                setIsFinishLoading(false); 
+
+
+                initSessionStateJSONFromDB(); 
+
+            }
+            else
+            {
+
+                if( isFinishLoading ) 
+                {
+                    //accounts for reloads / refresh of page
+                    setIsFinishLoading(false); 
+
+                    //don't do much here
+                    initSessionStateJSONFromDB(); 
+                }
+
+                
+            }
+        }
+
+
+    }
+
+
+
+
+
+
+
 
 
     const [getIssueNftTemplateTrigger] = useGetIssueNftTemplateMutation();
@@ -792,10 +745,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const unconsumedTransaction = prepareTransaction(txData);
 
+        //Henry: reset so that Maiar wallet is accounted for
+        setIsFinishLoading(true);
+
+
         sendTransaction({
             transaction: unconsumedTransaction,
             callbackRoute: succesCallbackRoute
-        });
+        })
 
 
     };
@@ -1059,7 +1016,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             data.MaxSupply = sessionStateJSONData.maxSupply
             data.mintStartDate = sessionStateJSONData.saleStart
 
-            console.log("data.mintStartDate: " + data.mintStartDate)
 
             const formattedData = {
                 ...data,
