@@ -22,5 +22,5 @@ export const routePaths = {
     unlistedToken: "/token/:walletAddress/:collectionId/:tokenNonce",
     dao: "/dao",
     rewards: "/rewards",
-    confirmation: "/confirmation/:action/:collectionId/:tokenNonce/:info",
+    confirmation: "/confirmation/:action/:collectionId/:tokenNonce",
 };

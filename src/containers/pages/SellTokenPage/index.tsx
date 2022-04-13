@@ -31,6 +31,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
     tokenNonce,
     walletAddress: walletAddressParam,
   } = useParams<UrlParameters>();
+  const queryString = window.location.search;
   const [isFixedSale, setIsFixedSale] = useState<boolean>(true);
 
   const [requestedAmount, setRequestedAmount] = useState(0);
@@ -39,8 +40,6 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   const [shouldRenderPage, setShouldRenderPage] = useState(false);
   const [pageAction, setPageAction] = useState("");
   const { loggedIn, address: userWalletAddress } = Dapp.useContext();
-
-  const [listTokenTrigger] = useListTokenFromClientMutation();
 
   const sendTransaction = Dapp.useSendTransaction();
 
@@ -84,8 +83,6 @@ export const SellTokenPage: (props: any) => any = ({}) => {
     },
   ] = useGetCollectionByIdMutation();
 
-  const [shouldRedirect, setShouldRedirect] = useState(false);
-
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -102,133 +99,13 @@ export const SellTokenPage: (props: any) => any = ({}) => {
       setShouldRenderPage(true && (txtHash == null || txtHash?.length == 0));
     });
 
-    const shouldRedirect: boolean =
-      isErrorGatewayTokenDataQuery ||
-      (!Boolean(gatewayTokenData?.data?.tokenData?.creator) &&
-        isSuccessGatewayTokenDataQuery);
-
-    //this is for clientside token insert
-    setShouldRedirect(false);
   }, []);
 
-  //this is for the save token. Need to optimize - get the user store state, then the auth token is ready
-  //this is for clientside token insert
-
-  useEffect(() => {
-    if (!initialStore) {
-      if (store.getState().user.accessToken != "") {
-        setInitialStore(true);
-        setStoreDataExist(true);
-      }
-    }
-  });
-
-  const [initialStore, setInitialStore] = useState(false);
-  const [storeDataExist, setStoreDataExist] = useState(false);
-
-  //execute when the authtoken is ready - save the token record to the DB - only if the tx is successful
-  useEffect(() => {
-    if (!initialStore) {
-      return;
-    }
-
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const txtHash = urlParams.get("txHash");
-    const status = String(urlParams.get("status"));
-
-    if (txtHash != null) {
-      const saleStatus = String(urlParams.get("saleStatus"));
-      const saleNominalPrice = parseFloat(String(urlParams.get("salePrice")));
-      const saleStartDate = parseInt(String(urlParams.get("saleStartDate")));
-      const saleEndDate = parseInt(String(urlParams.get("saleEndDate")));
-
-      if (status == "success") {
-        //this value needs to be hexidecimal. add 0 to the first position if the len = 1
-        let hexNonce = tokenNonce;
-        if (tokenNonce?.length % 2 != 0) {
-          hexNonce = "0" + tokenNonce;
-        }
-
-        //fix the string price to correct format
-        let saleStringPriceRaw = String(urlParams.get("salePrice"))
-          .replace("0.", "")
-          .replace(".", "");
-
-        let arraySaleStringPrice = saleStringPriceRaw.split("");
-
-        let leadingZeroCount = 0;
-        let digitCount = 0;
-
-        //account for the start pos if the leading zeros
-        //account for the number of digits
-        for (let i = 0; i < arraySaleStringPrice.length; i++) {
-          if (arraySaleStringPrice[i] === "0") {
-            leadingZeroCount++;
-          }
-          if (arraySaleStringPrice[i] != "0") {
-            digitCount++;
-          }
-        }
-
-        let numberOfTrailingZeros = leadingZeroCount + digitCount;
-
-        let saleStringPrice = arraySaleStringPrice.join("").replace("0", "");
-
-        for (let i = 0; i < 18 - numberOfTrailingZeros; i++) {
-          saleStringPrice += "0";
-        }
-
-        const formattedData = {
-          txHash: txtHash,
-          walletAddress: userWalletAddress,
-          tokenName: collectionId,
-          tokenNonce: hexNonce,
-          saleStatus: saleStatus,
-          saleStringPrice: saleStringPrice,
-          saleNominalPrice: saleNominalPrice,
-          saleStartDate: saleStartDate,
-          saleEndDate: saleEndDate,
-          saleOnSale: true,
-        };
-        setShouldRenderPage(false);
-        const res: any = listTokenTrigger({ payload: formattedData })
-          .then((res: any) => {
-            if (res?.error) {
-              setShouldRenderPage(true);
-              toast.error(`failed tx | ${res?.error.data.error}`, {
-                autoClose: 5000,
-                draggable: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                hideProgressBar: false,
-                position: "bottom-right",
-              });
-            } else {
-              setPageAction(LIST);
-              setShouldRenderPage(true);
-              setShouldRedirect(true);
-            }
-          })
-          .catch((err) => {});
-        
-          return;
-      }
-    }
-  }, [storeDataExist]);
 
   // gatewayTokenData?.data?.tokenData?.creator
 
   if (isErrorGatewayTokenDataQuery || Boolean(gatewayTokenData?.error)) {
     history.replace(`/`);
-  }
-
-  if (shouldRedirect) {
-    return (
-      <Redirect
-        to={routePaths.confirmation.replace(":action", pageAction).replace(":collectionId", collectionId).replace(":tokenNonce", tokenNonce)}
-      />
-    );
   }
 
   if (!shouldRenderPage) {
@@ -294,27 +171,10 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   };
 
   const handleListFixedPrice = () => {
-    //database nonce is bigint - this value needs to be hexidecimal. basically adding 0 to the first position is the len = 1
-    let hexNonce = tokenNonce;
-    if (tokenNonce.length == 1) {
-      hexNonce = "0" + tokenNonce;
-    }
-
+    
     signTemplateTransaction({
-      // succesCallbackRoute: '/token/' + collectionId +'/' + tokenNonce + "/insert",
-      succesCallbackRoute: `/confirmation/${LIST}/${collectionId}/${tokenNonce}/price=${requestedAmount}|txHash=${getQuerystringValue("txHash")}`,
-/*
-      succesCallbackRoute:
-        "/token/" +
-        walletAddressParam +
-        "/" +
-        collectionId +
-        "/" +
-        tokenNonce +
-        "/sell?saleStatus=List&salePrice=" +
-        requestedAmount +
-        "&saleStartDate=0&saleEndDate=0",
-        */
+      succesCallbackRoute: `/confirmation/${LIST}/${collectionId}/${tokenNonce}?price=${requestedAmount}`,
+
       getTemplateData: {
         userWalletAddress,
         collectionId,
@@ -368,33 +228,10 @@ export const SellTokenPage: (props: any) => any = ({}) => {
 
       return;
     }
-
-    //database nonce is bigint - this value needs to be hexidecimal. basically adding 0 to the first position is the len = 1
-    let hexNonce = tokenNonce;
-    if (tokenNonce.length == 1) {
-      hexNonce = "0" + tokenNonce;
-    }
-
     signTemplateTransaction({
-      //succesCallbackRoute: '/account',
-      //below is the client based token add to database
 
-      succesCallbackRoute: `/confirmation/${AUCTION}/${collectionId}/${tokenNonce}/price=${requestedAmount}|start_date=${unixStartDate}|end_date=${unixEndDate}`,
-/*
-      succesCallbackRoute:
-        "/token/" +
-        walletAddressParam +
-        "/" +
-        collectionId +
-        "/" +
-        tokenNonce +
-        "/sell?saleStatus=Auction&salePrice=" +
-        requestedAmount +
-        "&saleStartDate=" +
-        unixStartDate +
-        "&saleEndDate=" +
-        unixEndDate,
-        */
+      succesCallbackRoute: `/confirmation/${AUCTION}/${collectionId}/${tokenNonce}?price=${requestedAmount}&start_date=${unixStartDate}&end_date=${unixEndDate}`,
+      
       getTemplateData: {
         userWalletAddress,
         collectionId,

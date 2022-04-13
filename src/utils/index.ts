@@ -4,8 +4,8 @@ import transactionsUtils from "./transactions";
 // import { Address, UserPublicKey, UserVerifier } from '@elrondnetwork/erdjs/out';
 import { SignableMessage } from "@elrondnetwork/erdjs/out/signableMessage";
 import { Signature } from "@elrondnetwork/erdjs/out/signature";
-import { string } from "yup";
-
+import { ENG_COPY_TO_CLIPBOARD_MESSAGE } from "constants/messages";
+import { toast } from "react-toastify";
 import { ELROND_API } from "constants/api";
 
 export const createVerifiedPayload = (
@@ -35,6 +35,19 @@ export const createVerifiedPayload = (
 
 export const handleCopyToClipboard = (value: string) => {
   navigator.clipboard.writeText(value);
+
+  toast.success(
+    ENG_COPY_TO_CLIPBOARD_MESSAGE,
+    {
+      autoClose: 5000,
+      draggable: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      hideProgressBar: false,
+      position: "bottom-right",
+    }
+);
+
 };
 
 export const shorterAddress: (

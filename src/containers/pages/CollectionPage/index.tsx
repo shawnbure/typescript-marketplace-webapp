@@ -33,7 +33,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const { collectionId } = useParams<UrlParameters>();
   const [buyLimit,setBuyLimit] = useState<number>(0);
   const [buyCount,setBuyCount] = useState<number>(0);
-
+  const queryString = window.location.search;
   const { pathname } = useLocation();
   
   const sendTransaction = Dapp.useSendTransaction();
@@ -489,8 +489,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      //callbackRoute: pathname,
-      callbackRoute: `/confirmation/${MINT}/${collectionId}/${tokens.nonce}/number_minted=${requestedNumberOfTokens}|txHash=${getQuerystringValue("txHash")}`,
+      callbackRoute: `/confirmation/${MINT}/${collectionId}/0?number_minted=${requestedNumberOfTokens}`,
     });
   };
 
