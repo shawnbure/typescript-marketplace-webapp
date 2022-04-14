@@ -41,7 +41,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {
         return history.listen((location) => { 
-           //console.log(`$$$$$$$$$$$$ You changed the page to: ${location.pathname}`) 
+           //console.log(
         }) 
      },[history]) 
      
