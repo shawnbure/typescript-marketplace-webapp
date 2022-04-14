@@ -224,11 +224,12 @@ export const Navbar = () => {
                             </li>
 
                             {loggedIn &&
-                                (onSaleNfts.length < 1 ||
-                                    unlistedNfts.length < 1) && (
+                                onSaleNfts.length < 1 &&
+                                unlistedNfts.length < 1 &&
+                                process.env.NODE_ENV == "development" && (
                                     <li className="c-navbar_list-item">
                                         <Link
-                                            to="/collection/1852-568e49/"
+                                            to={routePaths.freeMintCollection}
                                             className="c-navbar_list-link"
                                         >
                                             <span
