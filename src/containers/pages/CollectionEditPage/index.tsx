@@ -677,7 +677,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
                                 <p className="text-xl u-text-bold mb-2">
                                     Description: &nbsp;
-                                    <a href="javascript:alert('The desription for the collection to be inform users of the details.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                    <a href="javascript:alert('The description for the collection to inform users of the details.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                     
                                 </p>
 
