@@ -730,7 +730,10 @@ export const CollectionPage: (props: any) => any = ({}) => {
             <>
               <div className="grid grid-cols-10 mb-4">
                 <div className="col-span-12 md:col-start-5 md:col-span-2  p-10 md:p-0 ">
-                  <p className="text-sm mb-4">Number of tokens to mint: </p>
+                  <p className="text-lg mt-2">Tokens to Mint  <a href="javascript:alert('Enter the number of NFTs you would like to mint. Number must be between 1 and 10.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a> 
+                  <br/> (Max 10 per Transaction)
+                  
+                  </p>
                   <input
                     min={1} max={7}
                     onChange={(e: any) => {
