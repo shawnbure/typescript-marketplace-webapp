@@ -182,6 +182,52 @@ export const TokenPage: (props: any) => any = ({ }) => {
     setTransactions(response.data.data);
   };
 
+
+
+  const [loadingImageLinkType, setLoadingImageLinkType] = useState(false);
+
+  useEffect(() => { 
+    
+    if( loadingImageLinkType )
+    {
+      //fetch(imageLink)
+      //fetch("https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM")
+      
+      fetch(imageLink)
+      .then(response => {
+  
+          response.blob().then(blob => {
+
+            if( blob.type.includes("image") )
+            {
+              setImageMediaType(1);
+            }
+            else if( blob.type.includes("video") )
+            {
+              setImageMediaType(2);
+            }
+
+            //console.log("blob.type:" + blob.type );
+  
+  
+          });
+      });  
+    }
+    
+  
+  },[loadingImageLinkType]);
+
+
+
+
+  //0: none, 1: image, 2: video
+  const [imageMediaType, setImageMediaType] = useState<number>(0);
+
+
+
+
+
+
     useEffect(() => {
 
       getTokenOffersTrigger({
@@ -202,15 +248,24 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     getCollectionByIdTrigger({ collectionId: collectionId });
 
+
+
     if (walletAddressParam) {
       getAccountTokenTrigger({
         userWalletAddress: walletAddressParam,
         identifier: collectionId,
         nonce: tokenNonce,
+      }).then(r=>{
+        setLoadingImageLinkType(true);
       })
       return;
     }
-    getTokenDataTrigger({ collectionId, tokenNonce });
+
+    getTokenDataTrigger({ collectionId, tokenNonce }).then(r=>{
+        setLoadingImageLinkType(true);
+      });
+
+
 
   }, []);
 
@@ -279,6 +334,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
           auctionStartTime: 0,
         };
 
+        
+        
         return { ...baseData, ...ourExtraData };
     };
 
@@ -992,6 +1049,17 @@ export const TokenPage: (props: any) => any = ({ }) => {
     </>
   );
 
+
+
+
+
+
+
+
+
+
+
+
   return (
     <div className="p-token-page">
       <div className="grid grid-cols-12 my-10">
@@ -1001,23 +1069,25 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
             <div className="col-span-12 md:col-span-6 p-token-page_visual-holder u-margin-bottom-spacing-4 justify-center px-6">
               <div className="p-token-page_asset-container">
+
+                {(imageMediaType == 1) && (
                 <img
-                  className={`p-token-page_img ${
-                    isAssetLoaded ? `` : `u-visually-hidden`
-                  }`}
-                  src={formatImgLink(imageLink)}
-                  alt=""
-                  onLoad={() => {
-                    setIsAssetLoaded(true);
-                  }}
-                />
-                <p
-                  className={`p-token-page_img ${
-                    isAssetLoaded ? `u-visually-hidden` : ``
-                  }`}
-                >
-                  loading asset...
-                </p>
+                className={`p-token-page_img`}
+                src={formatImgLink(imageLink)}
+                alt=""
+              />
+                )};
+
+                {(imageMediaType == 2) && (
+                  <video width="100%" height="100%" controls>
+                  <source src={formatImgLink(imageLink)} type="video/mp4" />
+                  <source src="movie.ogg" type="video/ogg" />
+                  Your browser does not support the video tag.
+                </video>   
+                )};
+
+
+
               </div>
 
               <div className="p-token-page_token-data u-border-radius-2 u-overflow-hidden">
@@ -1071,10 +1141,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
                       }
                     )}
 
-                    <div className="c-property_rarity_message">Rarity Trait % Calculated Only for Items Listed on Youbei</div>
-
+               
                     
                   </div>
+                  <div className="accordion_content c-property_rarity_message">Rarity Trait % Calculated Only for Items Listed on Youbei</div>
                 </Collapsible>
 
                 <Collapsible
