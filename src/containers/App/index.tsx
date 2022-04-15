@@ -16,13 +16,16 @@ import { DARK, LIGHT } from 'constants/ui';
 import 'reactjs-popup/dist/index.css';
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import AuthProtected from 'containers/AuthProtected';
-import { useEffect, useLayoutEffect } from 'react';
-import { createVerifiedPayload } from 'utils';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { createVerifiedPayload, getCookie, setCookie } from 'utils';
 import { useGetAccessTokenMutation } from 'services/auth';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setJWT } from 'redux/slices/user';
 import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
 import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as faIcons from "@fortawesome/free-regular-svg-icons";
+
 
 
 
@@ -33,7 +36,7 @@ import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
 
 export const App: () => JSX.Element = () => {
 
-
+    let [showSuggestionMessage, setShowSuggestionMessage] = useState(true)
     const dispatch = useDispatch();
     const theme = useAppSelector(selectTheme);
     const isLightThemeSelected: boolean = theme === LIGHT;
@@ -91,9 +94,35 @@ export const App: () => JSX.Element = () => {
         
     }, [])
 
+    let suggestionBanner = () => {
+        if(getCookie('useDesktopVersionSuggested') != 'true') {
+            return (
+                <div style={showSuggestionMessage ? {display: 'flex'} : {display: 'none'}} className='suggestionMessage'>
+                    <span>Welcome to Youbei!</span>
+                    <span>To make the most of our services, we recommend using the <b>Desktop</b> version</span>
+                    <div>
+                        <button
+                          onClick={() => {
+                              setCookie('useDesktopVersionSuggested', 'true', 'Thu, 19 Jan 2100 12:00:00 UTC')
+                              setShowSuggestionMessage(false)
+                            }}
+                          className="c-button c-button--primary"
+                        >
+                          Okay
+                        </button>
+                    </div>
+                </div>
+            )
+        }
+    }
+
     return (
 
         <div className={generatedClasses}>
+
+            {
+                ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ?  suggestionBanner() : null
+            }
 
             <Dapp.Context config={config}>
 
