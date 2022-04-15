@@ -1001,7 +1001,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
                   <div className="col-span-12 my-3 mx-2">
                     {" "}
                     <p className="my-10 text-2xl text-center">
-                      Loading...
+                      Currently, there are no results.
                     </p>{" "}
                   </div>
                 )}
