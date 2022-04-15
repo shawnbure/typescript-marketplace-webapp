@@ -99,7 +99,7 @@ export const App: () => JSX.Element = () => {
             return (
                 <div style={showSuggestionMessage ? {display: 'flex'} : {display: 'none'}} className='suggestionMessage'>
                     <span>Welcome to Youbei!</span>
-                    <span>To make the most of our services, we recommend using the <b>Desktop</b> version</span>
+                    <span>To get the best experience, we recommend using the <b>Desktop</b> version</span>
                     <div>
                         <button
                           onClick={() => {
