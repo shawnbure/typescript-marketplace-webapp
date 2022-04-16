@@ -5,15 +5,12 @@ import * as DappCore from "@elrondnetwork/dapp-core";
 import { useAppDispatch } from "redux/store";
 import { setJWT, setUserTokenData } from "redux/slices/user";
 import { useGetEgldPriceQuery } from "services/oracle";
-
+import * as consts from 'constants/api'
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import * as faBrandIcons from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { createVerifiedPayload, generateId, shorterAddress } from "utils";
-import {
-  useGetAddDepositEgldTemplateMutation,
-  useGetWithdrawDepositTemplateMutation,
-} from "services/tx-template";
+import { useGetAddDepositEgldTemplateMutation, useGetWithdrawDepositTemplateMutation, } from "services/tx-template";
 import { prepareTransaction } from "utils/transactions";
 import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
@@ -33,35 +30,26 @@ export const WalletSidebar: (Props: {
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
   //const dappLogout = Dapp.useLogout(); 
-  
 
-  const [
-    getDepositTemplateTrigger,
-    { data: userDepositData },
-  ] = useGetDepositTemplateMutation();
-  const [
-    getAddDepositEgldTemplateTrigger,
-  ] = useGetAddDepositEgldTemplateMutation();
-  const [
-    getWithdrawDepositTemplateTrigger,
-  ] = useGetWithdrawDepositTemplateMutation();
+  const [ getDepositTemplateTrigger, { data: userDepositData }, ] = useGetDepositTemplateMutation();
+  const [ getAddDepositEgldTemplateTrigger, ] = useGetAddDepositEgldTemplateMutation();
+  const [ getWithdrawDepositTemplateTrigger,  ] = useGetWithdrawDepositTemplateMutation();
 
   const [randomToken] = useState(generateId(32));
 
   const [getAccessTokenRequestTrigger] = useGetAccessTokenMutation();
 
-  const [addDepositAmount, setAddDepositAmount] = useState<
-    number | undefined
-  >();
-  const [shouldDisplayMaiarLogin, setShouldDisplayMaiarLogin] = useState<
-    boolean
-  >(false);
-  const [withdrawDepositAmount, setWithdrawDepositAmount] = useState<
-    number | undefined
-  >();
+  const [addDepositAmount, setAddDepositAmount] = useState<number | undefined>();
+  const [shouldDisplayMaiarLogin, setShouldDisplayMaiarLogin] = useState<boolean>(false);
+  const [withdrawDepositAmount, setWithdrawDepositAmount] = useState<number | undefined>();
 
   //const sendTransaction = Dapp.useSendTransaction();
   const sendTransactions = DappCore.sendTransactions;
+
+  const [balance, setBalance] = useState<string>('');
+  const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+  const [loginToken, setLoginToken] = useState<string>('');
+  const [signature, setSignature] = useState<string>('');
 
   /*
   const {
@@ -72,26 +60,21 @@ export const WalletSidebar: (Props: {
   } = Dapp.useContext();
 */
 
-  
- 
-  const [balance, setBalance] = useState<string>('');
-  DappCore.getAccountBalance().then(balance => setBalance(balance));
-
-  const [userWalletAddress, setUserWalletAddress] = useState<string>('');
-  DappCore.getAddress().then(address => setUserWalletAddress(address));
-  
   const isUserLoggedIn = DappCore.getIsLoggedIn();
+ 
+  useEffect(() => {
 
-  const loginToken = DappCore.getAccountProvider().loginToken;
-  const signature = DappCore.getAccountProvider().signature;
+    if (isUserLoggedIn) {
 
-  //const all = Dapp.useContext();
+      
+      DappCore.getAccountBalance().then(balance => setBalance(balance));
+      DappCore.getAddress().then(address => setUserWalletAddress(address));
+      setLoginToken(DappCore.getAccountProvider().loginToken);
+      setSignature(DappCore.getAccountProvider().signature);
 
-  /*    
-    console.log({
-        all
-    });
-    */
+    }
+
+  }, [isUserLoggedIn]);
 
   localStorage.setItem("token", randomToken); //temp hack TODO
   /*
@@ -100,13 +83,11 @@ export const WalletSidebar: (Props: {
     token: randomToken,
   });
 */
-const webWalletLogin = async () => {
-  DappCore.loginServices.useWalletConnectLogin({
+const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
     callbackRoute: pathname,
     logoutRoute: pathname,
     token: randomToken,
   });
-}
 
 
   const {
@@ -221,7 +202,7 @@ const webWalletLogin = async () => {
       >
         Cancel
       </button>
-      <DappCore.DappUI.WalletConnectLoginContainer 
+      <DappCore.DappUI.WalletConnectLoginButton 
         callbackRoute={pathname}
         logoutRoute={pathname}
         title="Maiar Login"
@@ -362,7 +343,7 @@ const webWalletLogin = async () => {
 
           <span className="text-gray-400 text-sm">
             <a
-              href={`https://explorer.elrond.com/accounts/${userWalletAddress}`}
+              href={`${consts.ELROND_EXPLORER}/accounts/${userWalletAddress}`}
               target="_blank"
             >
               {shortWalletAddress}
@@ -410,23 +391,6 @@ const webWalletLogin = async () => {
         </div>
 
         <div className="mb-5">
-          {/**************Remove after alpha ****************************************
-          <div
-            onClick={alphaToastMessage}
-            className="c-button c-button--secondary u-margin-top-spacing-2"
-          >
-            <span className="u-padding-right-spacing-2">
-              <FontAwesomeIcon
-                width={"20px"}
-                className="c-navbar_icon-link mr-4"
-                icon={faIcons.faPiggyBank}
-              />
-            </span>
-            <span>Deposit</span>
-          </div>
-          **************Remove after alpha below pop up is the production code****************************************/}
-          
-
                     <Popup 
                         modal
                         className="c-modal_container"

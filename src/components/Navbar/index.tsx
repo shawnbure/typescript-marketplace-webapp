@@ -29,7 +29,17 @@ export const Navbar = () => {
     const loggedIn = DappCore.getIsLoggedIn();
 
     const [userWalletAddress, setUserWalletAddress] = useState<string>('');
-    DappCore.getAddress().then(address => setUserWalletAddress(address));
+    
+
+    useEffect(() => {
+
+        if (loggedIn) {
+
+          DappCore.getAddress().then(address => setUserWalletAddress(address));
+    
+        }
+    
+      }, [loggedIn]);
 
     const dispatch = useAppDispatch();
     const shouldDisplayWalletSidebar = useAppSelector(
