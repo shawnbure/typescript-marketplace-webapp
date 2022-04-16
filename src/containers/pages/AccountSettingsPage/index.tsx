@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,12 +16,15 @@ import { toast } from 'react-toastify';
 import { Footer } from 'components/index';
 
 export const AccountSettingsPage: (props: any) => any = ({ }) => {
-
+/*
     const {
         loggedIn,
         address: userWalletAddress,
     } = Dapp.useContext();
+*/
 
+    const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+    DappCore.getAddress().then(address => setUserWalletAddress(address));
 
     const [coverImageB64, setCoverImageB64] = useState<string>('');
     const [profileImageB64, setProfileImageB64] = useState<string>('');
@@ -31,7 +34,6 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
     const [setSaveCoverImageMutationTrigger] = useSetCoverImageMutation();
     const [setSaveProfileImageMutationTrigger] = useSetProfileImageMutation();
-
 
 
     const [getAccountRequestTrigger, {

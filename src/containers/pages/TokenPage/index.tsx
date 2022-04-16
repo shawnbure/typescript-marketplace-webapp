@@ -2,7 +2,7 @@
 import Popup from "reactjs-popup";
 import Table from "rc-table";
 import { useEffect, useState } from "react";
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 
 import Collapsible from 'react-collapsible';
 import { Redirect, useLocation, Link, useParams } from "react-router-dom";
@@ -47,9 +47,16 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
     const [expireOffer, setExpireOffer] = useState<any>();
     const [transactions, setTransactions] = useState<any>([]);
-    const { loggedIn, address: userWalletAddress, } = Dapp.useContext();
+    //const { loggedIn, address: userWalletAddress, } = Dapp.useContext();
 
-    const sendTransaction = Dapp.useSendTransaction();
+    const loggedIn = DappCore.getIsLoggedIn();
+
+    const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+    DappCore.getAddress().then(address => setUserWalletAddress(address));
+
+    //const sendTransaction = Dapp.useSendTransaction();
+
+    const sendTransactions = DappCore.sendTransactions;
 
     const [getAccountTokenTrigger, {
         data: gatewayTokenData,
@@ -708,12 +715,17 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const { data: txData } = getBuyNFTResponse.data;
 
     const unconsumedTransaction = prepareTransaction(txData);
-
+/*
     sendTransaction({
       transaction: unconsumedTransaction,
       callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}`,
     });
+*/
 
+    sendTransactions({
+      transactions: unconsumedTransaction,
+      callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}`,
+    });
   };
 
   const handleSellAction = async () => {
@@ -745,11 +757,16 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const { data: txData } = getBuyNFTResponse.data;
 
     const unconsumedTransaction = prepareTransaction(txData);
-
+/*
     sendTransaction({
       transaction: unconsumedTransaction,
       callbackRoute: `/confirmation/${SELL}/${collectionId}/${tokenNonce}`,
     });
+*/
+  sendTransactions({
+    transactions: unconsumedTransaction,
+    callbackRoute: `/confirmation/${SELL}/${collectionId}/${tokenNonce}`,
+  });
 
   };
 
@@ -779,11 +796,18 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const { data: txData } = getWithdrawNFTResponse.data;
 
     const unconsumedTransaction = prepareTransaction(txData);
-
+/*
     sendTransaction({
       transaction: unconsumedTransaction,
       callbackRoute: `/confirmation/${WITHDRAW}/${collectionId}/${tokenNonce}`,
     });
+*/
+
+    sendTransactions({
+      transactions: unconsumedTransaction,
+      callbackRoute: `/confirmation/${WITHDRAW}/${collectionId}/${tokenNonce}`,
+    });
+
   };
 
   const signTemplateTransaction = async (settings: any) => {
@@ -816,11 +840,18 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const { data: txData } = response.data;
 
     const unconsumedTransaction = prepareTransaction(txData);
-
+    /*
     sendTransaction({
       transaction: unconsumedTransaction,
       callbackRoute: succesCallbackRoute,
     });
+    */
+
+    sendTransactions({
+      transactions: unconsumedTransaction,
+      callbackRoute: succesCallbackRoute,
+    });
+
   };
 
   const handleMakeOffer = () => {

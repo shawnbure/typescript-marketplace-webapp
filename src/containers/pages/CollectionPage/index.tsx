@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useLocation, Link, useParams } from "react-router-dom";
 import { UrlParameters } from "./interfaces";
 
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import * as faBrands from "@fortawesome/free-brands-svg-icons";
 
@@ -29,14 +29,22 @@ import { MINT } from "constants/actions";
 
 export const CollectionPage: (props: any) => any = ({}) => {
   
-  const { loggedIn, address: userWalletAddress } = Dapp.useContext();
+  //const { loggedIn, address: userWalletAddress } = Dapp.useContext();
+  //const sendTransaction = Dapp.useSendTransaction();
+
+  const sendTransactions = DappCore.sendTransactions;
+  const loggedIn = DappCore.getIsLoggedIn();
+
+  const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+  DappCore.getAddress().then(address => setUserWalletAddress(address));
+
   const { collectionId } = useParams<UrlParameters>();
   const [buyLimit,setBuyLimit] = useState<number>(0);
   const [buyCount,setBuyCount] = useState<number>(0);
   const queryString = window.location.search;
   const { pathname } = useLocation();
   
-  const sendTransaction = Dapp.useSendTransaction();
+
 
   const [
     getMintTokensTemplateTrigger, 
@@ -486,9 +494,14 @@ export const CollectionPage: (props: any) => any = ({}) => {
     const { data: txData } = getBuyNFTResponse.data;
 
     const unconsumedTransaction = prepareTransaction(txData);
-
+/*
     sendTransaction({
       transaction: unconsumedTransaction,
+      callbackRoute: `/confirmation/${MINT}/${collectionId}/0?number_minted=${requestedNumberOfTokens}`,
+    });
+*/
+    sendTransactions({
+      transactions: unconsumedTransaction,
       callbackRoute: `/confirmation/${MINT}/${collectionId}/0?number_minted=${requestedNumberOfTokens}`,
     });
   };

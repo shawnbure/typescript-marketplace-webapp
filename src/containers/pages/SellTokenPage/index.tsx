@@ -2,7 +2,7 @@
  
 import Popup from "reactjs-popup";
 import { useEffect, useState } from "react";
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 import { Redirect, Link, useParams, useHistory } from "react-router-dom";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
@@ -39,9 +39,13 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   const [endDate, setEndDate] = useState(0);
   const [shouldRenderPage, setShouldRenderPage] = useState(false);
   const [pageAction, setPageAction] = useState("");
-  const { loggedIn, address: userWalletAddress } = Dapp.useContext();
+  //const { loggedIn, address: userWalletAddress } = Dapp.useContext();
 
-  const sendTransaction = Dapp.useSendTransaction();
+  const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+  DappCore.getAddress().then(address => setUserWalletAddress(address));
+
+  //const sendTransaction = Dapp.useSendTransaction();
+  const sendTransactions = DappCore.sendTransactions;
 
   const handleChangeRequestedAmount = (e: any) => {
     setRequestedAmount(e.target.value);
@@ -163,9 +167,14 @@ export const SellTokenPage: (props: any) => any = ({}) => {
     const unconsumedTransaction = prepareTransaction(
       txData
     );
-
+/*
     sendTransaction({
       transaction: unconsumedTransaction,
+      callbackRoute: succesCallbackRoute,
+    });
+*/
+    sendTransactions({
+      transactions: unconsumedTransaction,
       callbackRoute: succesCallbackRoute,
     });
   };

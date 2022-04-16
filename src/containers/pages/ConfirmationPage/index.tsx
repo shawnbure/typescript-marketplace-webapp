@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 import {network} from "configs/dappConfig";
 import { Link, useParams } from "react-router-dom";
 import { UrlParameters } from "./interfaces";
@@ -80,7 +80,9 @@ import {
 
 
 export const ConfirmationPage = () => {
-  const { address: userWalletAddress } = Dapp.useContext();
+  const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+  DappCore.getAddress().then(address => setUserWalletAddress(address));
+  //const { address: userWalletAddress } = Dapp.useContext();
   const { action, collectionId, tokenNonce, info } = useParams<UrlParameters>();
   const [globalToken, setGlobalToken] = useState<any>({});
   const queryString = window.location.search;

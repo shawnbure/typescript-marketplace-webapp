@@ -1,7 +1,6 @@
 /* eslint-disable */ 
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from "react";
-import * as Dapp from "@elrondnetwork/dapp";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { ErrorMessage } from '@hookform/error-message';

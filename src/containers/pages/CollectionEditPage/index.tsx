@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 
 
 import { useForm, useFieldArray, Controller } from "react-hook-form";
@@ -32,7 +32,8 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
       ] = useUpdateSaleStartTemplateMutation();
 
     const { pathname } = useLocation();
-    const sendTransaction = Dapp.useSendTransaction();
+    //const sendTransaction = Dapp.useSendTransaction();
+    const sendTransactions = DappCore.sendTransactions;
 
     const signTemplateTransaction = async (settings: any) => {
         const {
@@ -65,10 +66,17 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     
         const unconsumedTransaction = prepareTransaction(txData);
     
+        /*
         sendTransaction({
           transaction: unconsumedTransaction,
           callbackRoute: succesCallbackRoute,
         });
+        */
+        sendTransactions({
+            transactions: unconsumedTransaction,
+            callbackRoute: succesCallbackRoute,
+          });
+
       };
       
       
@@ -98,10 +106,13 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     const [isFinishLoading, setIsFinishLoading] = useState(false)
 
 
-
+/*
     const {
         address: userWalletAddress,
     } = Dapp.useContext();
+*/
+    const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+    DappCore.getAddress().then(address => setUserWalletAddress(address));
 
     const handleUploadProfileImage = (event: any) => {
 

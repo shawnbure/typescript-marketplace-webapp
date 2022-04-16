@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
+import { AuthenticatedRoutesWrapper} from "@elrondnetwork/dapp-core";
+import { routePaths } from 'constants/router';
+
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -15,11 +18,10 @@ export const AuthWrapper: (Props: { children: any }) => any = ({ children }) => 
 
     const dispatch = useAppDispatch();
 
-    const dappLogout = Dapp.useLogout();
-    const { loggedIn } = Dapp.useContext();
-    const refreshAccount = Dapp.useRefreshAccount();
-
-
+    //const dappLogout = Dapp.useLogout(); 
+    //const { loggedIn } = Dapp.useContext();
+    const loggedIn = DappCore.getIsLoggedIn();
+    //const refreshAccount = Dapp.useRefreshAccount();
 
     useEffect(() => {
 
@@ -48,7 +50,8 @@ export const AuthWrapper: (Props: { children: any }) => any = ({ children }) => 
             return;
         };
 
-        refreshAccount();
+        //refreshAccount();
+        DappCore.refreshAccount();
 
     }, [loggedIn]);
 
@@ -67,11 +70,16 @@ export const AuthWrapper: (Props: { children: any }) => any = ({ children }) => 
     return (
         <>
     
-
+        {/* 
             <Dapp.Authenticate routes={[]} unlockRoute="/login">
                 <Navbar />
                 {children}
             </Dapp.Authenticate>
+        */}
+            <AuthenticatedRoutesWrapper routes={[]} unlockRoute={routePaths.login}>
+                <Navbar />
+                {children}
+            </AuthenticatedRoutesWrapper>
 
             <ToastContainer
                 theme={'dark'}

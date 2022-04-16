@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from "react";
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 import { useGetCollectionsRankingsMutation } from 'services/collections';
 import Table from 'rc-table';
 import { Footer } from 'components/index';
@@ -9,10 +9,14 @@ import { Footer } from 'components/index';
 
 export const RankingsPage: (props: any) => any = ({ }) => {
 
+    /*
     const {
         address: userWalletAddress,
     } = Dapp.useContext();
+    */
 
+    const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+    DappCore.getAddress().then(address => setUserWalletAddress(address));
 
     const [getCollectionsRankingsTrigger, {
         data: collectionRankingsData,

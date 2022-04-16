@@ -1,8 +1,8 @@
 /* eslint-disable */
 
 import { Link, useLocation } from "react-router-dom";
-import * as Dapp from "@elrondnetwork/dapp";
-
+import * as DappCore from "@elrondnetwork/dapp-core";
+import { useState} from "react";
 import { prepareTransaction } from "utils/transactions";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -22,7 +22,10 @@ import {
 import { Footer } from 'components/index';
 
 export const RoyaltiesPage: (props: any) => any = ({}) => {
-  const { address: userWalletAddress } = Dapp.useContext();
+  //const { address: userWalletAddress } = Dapp.useContext();
+
+  const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+  DappCore.getAddress().then(address => setUserWalletAddress(address));
 
   const [
     getRoyaltiesRemainingTemplateTrigger,
@@ -50,7 +53,8 @@ export const RoyaltiesPage: (props: any) => any = ({}) => {
   ] = useGetWithdrawCreatorRoyaltiesTemplateMutation();
 
   const { pathname } = useLocation();
-  const sendTransaction = Dapp.useSendTransaction();
+  //const sendTransaction = Dapp.useSendTransaction();
+  const sendTransactions = DappCore.sendTransactions;
 
   const signTemplateTransaction = async (settings: any) => {
     const {
@@ -82,11 +86,17 @@ export const RoyaltiesPage: (props: any) => any = ({}) => {
     const { data: txData } = response.data;
 
     const unconsumedTransaction = prepareTransaction(txData);
-
+/*
     sendTransaction({
       transaction: unconsumedTransaction,
       callbackRoute: succesCallbackRoute,
     });
+*/
+  sendTransactions({
+    transactions: unconsumedTransaction,
+    callbackRoute: succesCallbackRoute,
+  });
+
   };
 
   const schemaStep1 = yup

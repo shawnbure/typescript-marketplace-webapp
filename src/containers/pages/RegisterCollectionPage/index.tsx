@@ -1,7 +1,7 @@
 
 import Select from 'react-select'
 import { useState } from "react";
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
@@ -19,11 +19,14 @@ import { Footer } from 'components/index';
 
 export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
-
+    /*
     const {
         address: userWalletAddress,
     } = Dapp.useContext();
+    */
 
+    const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+    DappCore.getAddress().then(address => setUserWalletAddress(address));
 
     const [flagSelect, setFlagSelect] = useState<any>({ value: 'art', label: 'Art' });
 

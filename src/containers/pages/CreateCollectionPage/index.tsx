@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import { Redirect, Link, Router, useLocation, useHistory } from 'react-router-dom';
 import Select from 'react-select'
 import { useEffect, useState } from "react";
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 import { prepareTransaction } from "utils/transactions";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,11 +32,15 @@ import { Footer } from 'components/index';
 import { formatImgLink, shorterAddress } from "utils";
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
-
+/*
     const {
         address: userWalletAddress,
     } = Dapp.useContext();
-    
+*/
+
+    const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+    DappCore.getAddress().then(address => setUserWalletAddress(address));
+
     const history = useHistory() 
 
     useEffect(() => {
@@ -715,7 +719,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
     const { pathname } = useLocation();
-    const sendTransaction = Dapp.useSendTransaction();
+    //const sendTransaction = Dapp.useSendTransaction();
+    const sendTransactions = DappCore.sendTransactions;
     
 
     const signTemplateTransaction = async (settings: any) => {
@@ -748,8 +753,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //Henry: reset so that Maiar wallet is accounted for
         setIsFinishLoading(true);
 
-
+        /*
         sendTransaction({
+            transaction: unconsumedTransaction,
+            callbackRoute: succesCallbackRoute
+        })        
+        */
+        sendTransactions({
             transaction: unconsumedTransaction,
             callbackRoute: succesCallbackRoute
         })

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import * as Dapp from "@elrondnetwork/dapp";
+import * as DappCore from "@elrondnetwork/dapp-core";
 import Collapsible from "react-collapsible";
 import { Link, useParams, useLocation, Redirect } from "react-router-dom";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
@@ -29,7 +29,12 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
   const { pathname } = useLocation();
 
-  const { loggedIn, address: userAddress } = Dapp.useContext();
+  //const { loggedIn, address: userAddress } = Dapp.useContext();
+
+  const loggedIn = DappCore.getIsLoggedIn();
+
+  const [userAddress, setUserAddress] = useState<string>('');
+  DappCore.getAddress().then(address => setUserAddress(address));
 
   // const shortUserWalletAddress: string = shorterAddress(userWalletAddress, 7, 4);
 

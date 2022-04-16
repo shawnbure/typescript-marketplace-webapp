@@ -19,7 +19,7 @@ import 'swiper/swiper.min.css';
 
 
  import { useGetCollectionVerifiedMutation, useGetCollectionNoteworthyMutation, useGetCollectionTrendingMutation } from 'services/collections';
- import * as Dapp from "@elrondnetwork/dapp";
+ import * as DappCore from "@elrondnetwork/dapp-core";
 import { url } from 'inspector';
 
 
@@ -30,8 +30,8 @@ SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 export const HomePage = () => {
 
-    const { loggedIn, address: userAddress } = Dapp.useContext();
-
+    //const { loggedIn, address: userAddress } = Dapp.useContext();
+    const loggedIn = DappCore.getIsLoggedIn();
 
      const [collectionVerifiedList, setCollectionVerifiedList] = useState<Array<any>>([]);
      const [collectionNoteworthyList, setCollectionNoteworthyList] = useState<Array<any>>([]);

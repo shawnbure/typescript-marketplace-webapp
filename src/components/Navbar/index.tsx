@@ -4,7 +4,7 @@ import { Link, useHistory } from "react-router-dom";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import * as faBrandIcons from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import * as DappCore from "@elrondnetwork/dapp-core";
 import { routePaths } from "constants/router";
 import { WalletSidebar } from "components/index";
 import { selectShouldDisplayWalletSidebar } from "redux/selectors/ui";
@@ -13,7 +13,6 @@ import { toggleShouldDisplayWalletSidebar } from "redux/slices/ui";
 
 import { SearchBar } from "components/SearchBar";
 
-import * as Dapp from "@elrondnetwork/dapp";
 import {
     useGetAccountGatewayTokensMutation,
     useGetOnSaleAccountTokensMutation,
@@ -21,11 +20,16 @@ import {
 import { getCookie, setCookie } from "utils";
 
 export const Navbar = () => {
-    const dappLogout = Dapp.useLogout();
+    //const dappLogout = Dapp.useLogout();
+    const dappLogout = DappCore.logout();
 
     const history = useHistory();
 
-    const { loggedIn, address: userWalletAddress } = Dapp.useContext();
+    //const { loggedIn, address: userWalletAddress } = Dapp.useContext();
+    const loggedIn = DappCore.getIsLoggedIn();
+
+    const [userWalletAddress, setUserWalletAddress] = useState<string>('');
+    DappCore.getAddress().then(address => setUserWalletAddress(address));
 
     const dispatch = useAppDispatch();
     const shouldDisplayWalletSidebar = useAppSelector(
