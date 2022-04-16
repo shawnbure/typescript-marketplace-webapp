@@ -189,7 +189,7 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
     <div className="p-maiar-login">
       {
         <button
-          onClick={webWalletLogin}
+     
           className="c-button c-button--secondary "
         >
           Web Wallet
@@ -217,8 +217,29 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
         lead="Scan the QR code using Maiar"
         token={randomToken}
       />
-    */}
+    
+    
+    <DappCore.DappUI.LedgerLoginContainer
+      callbackRoute={pathname}
+      logoutRoute={pathname}
+      title="Ledger Login"
+      lead="Use the Ledger"
+      token={randomToken}
+  />
+*/}
+    {
+      <DappCore.DappUI.WebWalletLoginButton
+      callbackRoute={pathname}
+      buttonClassName="extension-login"
+      loginButtonText="New Web Wallet login"
+      title="New Web Wallet Login"
+      token={randomToken}
+    />
+    }
+    
     </div>
+
+    
   );
 
   const resove = async () => {
