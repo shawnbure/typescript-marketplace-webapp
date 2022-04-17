@@ -163,6 +163,10 @@ export function setCookie(name: string, value: any, expires: string) {
   document.cookie = `${name}=${value}; expires=${expires}`
 }
 
+export function isMobile() {
+  return ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) )
+}
+
 export default {
   hexToAscii,
   asciiToHex,

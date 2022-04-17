@@ -17,7 +17,7 @@ import 'reactjs-popup/dist/index.css';
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import AuthProtected from 'containers/AuthProtected';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { createVerifiedPayload, getCookie, setCookie } from 'utils';
+import { createVerifiedPayload, getCookie, isMobile, setCookie } from 'utils';
 import { useGetAccessTokenMutation } from 'services/auth';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setJWT } from 'redux/slices/user';
@@ -121,7 +121,7 @@ export const App: () => JSX.Element = () => {
         <div className={generatedClasses}>
 
             {
-                ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ?  suggestionBanner() : null
+                isMobile() ?  suggestionBanner() : null
             }
 
             <Dapp.Context config={config}>
