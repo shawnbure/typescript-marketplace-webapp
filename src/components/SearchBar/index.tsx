@@ -6,6 +6,7 @@ import { useSearchByStringMutation } from 'services/search';
 import Async, { useAsync } from 'react-select/async';
 
 import AsyncSelect from 'react-select/async';
+import { isMobile } from 'utils';
 
 export const SearchBar = ({
     wrapperClassNames,
@@ -119,7 +120,7 @@ export const SearchBar = ({
     return (
 
         <div className={`c-searchbar ${wrapperClassNames}`}>
-            <AsyncSelect noOptionsMessage={() => null} placeholder="Search Collections 📖 &amp; Accounts 👤" onChange={handleSearchChange} isClearable isSearchable cacheOptions defaultOptions loadOptions={promiseOptions} className={"text-white w-full"} styles={customStyles} />
+            <AsyncSelect noOptionsMessage={() => isMobile() ? null : 'Item not found'} placeholder="Search Collections 📖 &amp; Accounts 👤" onChange={handleSearchChange} isClearable isSearchable cacheOptions defaultOptions loadOptions={promiseOptions} className={"text-white w-full"} styles={customStyles} />
         </div>
     );
 };
