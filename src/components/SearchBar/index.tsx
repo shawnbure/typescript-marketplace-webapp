@@ -119,7 +119,7 @@ export const SearchBar = ({
     return (
 
         <div className={`c-searchbar ${wrapperClassNames}`}>
-            <AsyncSelect placeholder="Search Collections 📖 &amp; Accounts 👤" onChange={handleSearchChange} isClearable isSearchable cacheOptions defaultOptions loadOptions={promiseOptions} className={"text-white w-full"} styles={customStyles} />
+            <AsyncSelect noOptionsMessage={() => null} placeholder="Search Collections 📖 &amp; Accounts 👤" onChange={handleSearchChange} isClearable isSearchable cacheOptions defaultOptions loadOptions={promiseOptions} className={"text-white w-full"} styles={customStyles} />
         </div>
     );
 };
