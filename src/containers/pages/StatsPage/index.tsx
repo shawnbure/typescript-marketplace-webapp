@@ -13,8 +13,11 @@ import collectionAvatar1 from "./../../../assets/img/mock/collection-avatar-1.pn
 import collectionAvatar2 from "./../../../assets/img/mock/collection-avatar-2.png";
 import collectionAvatar3 from "./../../../assets/img/mock/collection-avatar-3.png";
 import collectionAvatar4 from "./../../../assets/img/mock/collection-avatar-4.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DARK } from "constants/ui";
+
+//API Gateways
+import { useGetLastWeekVolumeMutation, useGetTokensCountMutation, useGetTotalVolumeMutation, useGetTradesCountMutation, useGetTransactionsListMutation } from "services/stats";
 
 export const StatsPage = () => {
     let series = [
@@ -27,6 +30,105 @@ export const StatsPage = () => {
     let [volumeDataHover, setVolumeDataHover] = useState(
         series[0].data[0] || 0
     );
+
+    const [totalTokensCount, setTotalTokensCount] = useState<any>(0);
+    const [transactionsList, setTransactionsList] = useState<any>({});
+    const [tradesCount, setTradesCount] = useState<any>({});
+    const [totalVolume, setTotalVolume] = useState<any>({});
+    const [lastWeekVolume, setLastWeekVolume] = useState<any>({});
+    
+
+    const [
+        getTokensCountRequestTrigger,
+        {
+            data: TokensCount,
+            isLoading: isLoadingGetTokensCountRequest,
+            isUninitialized: isUninitializedGetTokensCountRequest,
+        },
+    ] = useGetTokensCountMutation();
+
+    const [
+        getTransactionsListRequestTrigger,
+        {
+            data: TransactionsList,
+            isLoading: isLoadingGetTransactionsListRequest,
+            isUninitialized: isUninitializedGetTransactionsListRequest,
+        },
+    ] = useGetTransactionsListMutation();
+
+    const [
+        getTradesCountRequestTrigger,
+        {
+            data: TradesCount,
+            isLoading: isLoadingGetTradesCountRequest,
+            isUninitialized: isUninitializedGetTradesCountRequest,
+        },
+    ] = useGetTradesCountMutation();
+
+    const [
+        getTotalVolumeRequestTrigger,
+        {
+            data: TotalVolume,
+            isLoading: isLoadingGetTotalVolumeRequest,
+            isUninitialized: isUninitializedGetTotalVolumeRequest,
+        },
+    ] = useGetTotalVolumeMutation();
+
+    const [
+        getLastWeekVolumeRequestTrigger,
+        {
+            data: LastWeekVolume,
+            isLoading: isLoadingGetLastWeekVolumeRequest,
+            isUninitialized: isUninitializedGetLastWeekVolumeRequest,
+        },
+    ] = useGetLastWeekVolumeMutation();
+
+    let dataProcessor = async (
+        functionTrigger: any,
+        stateGetter: any,
+        stateSetter: any,
+        responeHolder: any,
+        requestCase: string
+    ) => {
+        switch (requestCase) {
+
+            case 'TokensCount':
+                responeHolder = await functionTrigger({})
+                stateSetter(responeHolder.data.data.sum)
+                break;
+
+            case 'TransactionsList':
+                responeHolder = await functionTrigger([])
+                stateSetter(responeHolder.data.data.transactions)
+                break;
+            
+            case 'TradesCount':
+                responeHolder = await functionTrigger([])
+                stateSetter(responeHolder.data.data.Total)
+                break;
+
+            case 'TotalVolume':
+                responeHolder = await functionTrigger([])
+                stateSetter(responeHolder.data.data.sum)
+                break;
+
+            case 'LastWeekVolume':
+                responeHolder = await functionTrigger([])
+                stateSetter(responeHolder.data.data)
+                break;
+
+            default:
+                break;
+        }
+    };
+
+    useEffect(() => {
+        dataProcessor(getTokensCountRequestTrigger, totalTokensCount, setTotalTokensCount, {}, 'TokensCount');
+        dataProcessor(getTransactionsListRequestTrigger, transactionsList, setTransactionsList, {}, 'TransactionsList');
+        dataProcessor(getTradesCountRequestTrigger, tradesCount, setTradesCount, {}, 'TradesCount');
+        dataProcessor(getTotalVolumeRequestTrigger, totalVolume, setTotalVolume, {}, 'TotalVolume');
+        dataProcessor(getLastWeekVolumeRequestTrigger, lastWeekVolume, setLastWeekVolume, {}, 'LastWeekVolume');
+    }, []);
 
     return (
         <div className="stats-conatiner">
@@ -214,7 +316,7 @@ export const StatsPage = () => {
             <div className="stats-activitiesBox">
                 <div className="stats-activitiesBox__nftsValue">
                     <div className="stats-activitiesBox__nftsValue--bannerBox">
-                        <span>403971</span>
+                        <span>{totalTokensCount}</span>
                         <span>NFT's On Sale</span>
                     </div>
                     <FontAwesomeIcon
