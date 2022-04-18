@@ -454,7 +454,7 @@ export const StatsPage = () => {
                                               className="stats-topCollections__collection"
                                               style={{
                                                   backgroundSize: "contain",
-                                                  background: `url(${item.profileImageLink})`,
+                                                  backgroundImage: `url(${item.profileImageLink})`,
                                               }}
                                           >
                                               <div className="stats-topCollections__collection--collectionBox">
@@ -474,6 +474,74 @@ export const StatsPage = () => {
                             : null
                         // ------- End TopCollection Rendering -------
                     }
+
+                    {process.env.REACT_APP_NODE_ENV != "production" ? (
+                        <>
+                            <Link to="/collection/ENFT-e7b4b7">
+                                <div
+                                    className="stats-topCollections__collection"
+                                    style={{
+                                        backgroundSize: "contain",
+                                        backgroundImage: `url('https://storage.googleapis.com/youbei.io/images/ENFT-e7b4b7.profile')`,
+                                    }}
+                                >
+                                    <div className="stats-topCollections__collection--collectionBox">
+                                        <span>
+                                            {"Regal Eagles".substring(0, 7)}..
+                                        </span>
+                                    </div>
+                                </div>
+                            </Link>
+
+                            <Link to="/collection/EAPES-8f3c1f">
+                                <div
+                                    className="stats-topCollections__collection"
+                                    style={{
+                                        backgroundSize: "contain",
+                                        backgroundImage: `url('https://ipfs.io/ipfs/bafybeifzsevzibsmooayzhewrxruc2xahsxmwg7izunvd3zyg4obt5xyhe/EAPES-8f3c1f.profile')`,
+                                    }}
+                                >
+                                    <div className="stats-topCollections__collection--collectionBox">
+                                        <span>
+                                            {"ELRONDAPESCLUB".substring(0, 7)}..
+                                        </span>
+                                    </div>
+                                </div>
+                            </Link>
+
+                            <Link to="/collection/GNOGONS-73222b/">
+                                <div
+                                    className="stats-topCollections__collection"
+                                    style={{
+                                        backgroundSize: "contain",
+                                        backgroundImage: `url('https://ipfs.io/ipfs/bafybeifzsevzibsmooayzhewrxruc2xahsxmwg7izunvd3zyg4obt5xyhe/GNOGONS-73222b.profile')`,
+                                    }}
+                                >
+                                    <div className="stats-topCollections__collection--collectionBox">
+                                        <span>
+                                            {"GNOGONS".substring(0, 7)}..
+                                        </span>
+                                    </div>
+                                </div>
+                            </Link>
+
+                            <Link to="/collection/DRIFTERS-efd96c/">
+                                <div
+                                    className="stats-topCollections__collection"
+                                    style={{
+                                        backgroundSize: "contain",
+                                        backgroundImage: `url('https://ipfs.io/ipfs/bafybeifa4exebupo44bj7dgkgptzgihbwxqsd3mi2jpkw3xopok3tuojhi/DRIFTERS-efd96c.profile')`,
+                                    }}
+                                >
+                                    <div className="stats-topCollections__collection--collectionBox">
+                                        <span>
+                                            {"Drifters".substring(0, 7)}..
+                                        </span>
+                                    </div>
+                                </div>
+                            </Link>
+                        </>
+                    ) : null}
                 </div>
             </div>
             <div className="stats-activitiesBox">
@@ -518,12 +586,18 @@ export const StatsPage = () => {
                                                       )}{" "}
                                                       EGLD
                                                   </span>
-                                                  <span
-                                                      className="stats-label"
-                                                      style={{
-                                                          background: "#2081E2",
-                                                      }}
-                                                  >
+                                                  <span className="stats-label">
+                                                      <FontAwesomeIcon
+                                                          style={{
+                                                              margin:
+                                                                  "0 8px 2px 0",
+                                                              fontSize: "8px",
+                                                              color: "#2081e2",
+                                                          }}
+                                                          icon={
+                                                              faIcons.faDotCircle
+                                                          }
+                                                      />
                                                       {item.txType}
                                                   </span>
                                               </div>
