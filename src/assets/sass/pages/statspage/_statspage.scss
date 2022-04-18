@@ -6,6 +6,8 @@
         justify-content: space-between;
         align-items: flex-start;
 
+        user-select: none;
+
         margin: 64px 160px 0 160px;
         color: #fff;
 
@@ -112,7 +114,8 @@
             }
 
             span:nth-child(2) {
-                width: 48px;
+                min-width: 48px;
+                max-width: 120px;
                 height: 32px;
                 background: #2081e2;
 
@@ -124,6 +127,7 @@
                 align-items: center;
 
                 margin: 0 0 0 16px;
+                padding: 0 8px;
 
                 @include respond-to(mobile) {
                     width: 40px;
@@ -160,11 +164,17 @@
 
                 div {
                     width: 24px;
+                    min-height: 4px;
                     background: #fff;
+                    transition: 0.5s;
 
                     border-radius: 8px;
 
                     margin: 0 0 16px 0;
+
+                    &:hover {
+                        background: #2081e2;
+                    }
                 }
 
                 span {
@@ -231,9 +241,10 @@
 
         position: absolute;
         bottom: 60px;
+        margin-left: 90px;
 
         display: flex;
-        justify-content: flex-end;
+        justify-content: flex-start;
         align-items: flex-end;
 
         @include respond-to(desktop-high-large) {
@@ -249,13 +260,19 @@
             height: 160px;
 
             border-radius: 8px;
+            box-shadow: 0 33px 66px 0px #00000080;
 
             margin: 0 0 0 32px;
 
             &--collectionBox {
                 width: 100%;
                 height: 100%;
-                background-image: linear-gradient(to bottom, #0000006d, #000000);
+                background-image: linear-gradient(
+                    to bottom,
+                    #0000006d,
+                    #000000
+                );
+                cursor: pointer;
 
                 display: flex;
                 justify-content: flex-start;
@@ -265,16 +282,23 @@
 
                 padding: 24px;
 
+                &:hover {
+                    background-image: linear-gradient(
+                        to bottom,
+                        #0000009b,
+                        #000000
+                    );
+                }
+
                 span {
                     width: 110px;
 
                     font-weight: bold;
-                    font-size: 24px;
+                    font-size: 21px;
                     text-align: left;
                     line-height: 1;
                 }
             }
-
         }
 
         &__showMoreCollection {
@@ -421,9 +445,14 @@
                     align-items: center;
 
                     border-radius: 8px;
+                    cursor: pointer;
 
                     padding: 0 24px;
                     margin: 0 0 16px 0;
+
+                    &:hover {
+                        background: #292b30;
+                    }
 
                     img {
                         width: 48px;
@@ -498,5 +527,10 @@
         @include respond-to(mobile) {
             font-size: 13px;
         }
+    }
+
+    &-tooltip {
+        font-size: 16px !important;
+        font-weight: bold !important;
     }
 }

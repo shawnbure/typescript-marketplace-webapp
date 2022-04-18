@@ -1,42 +1,51 @@
-import * as faIcons from "@fortawesome/free-regular-svg-icons";
+import { useEffect, useState } from "react";
+import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chart from "react-apexcharts";
-
-// Mock NFT Avatars
-import nftAvatar1 from "./../../../assets/img/mock/nft-avatar-1.png";
-import nftAvatar2 from "./../../../assets/img/mock/nft-avatar-2.png";
-import nftAvatar3 from "./../../../assets/img/mock/nft-avatar-3.png";
-import nftAvatar4 from "./../../../assets/img/mock/nft-avatar-4.png";
-
-// Mock Collection Avatars
-import collectionAvatar1 from "./../../../assets/img/mock/collection-avatar-1.png";
-import collectionAvatar2 from "./../../../assets/img/mock/collection-avatar-2.png";
-import collectionAvatar3 from "./../../../assets/img/mock/collection-avatar-3.png";
-import collectionAvatar4 from "./../../../assets/img/mock/collection-avatar-4.png";
-import { useEffect, useState } from "react";
-import { DARK } from "constants/ui";
+import ReactTooltip from "react-tooltip";
+import { Link } from "react-router-dom";
 
 //API Gateways
-import { useGetLastWeekVolumeMutation, useGetTokensCountMutation, useGetTotalVolumeMutation, useGetTradesCountMutation, useGetTransactionsListMutation } from "services/stats";
+import {
+    useGetDailyTradesCountMutation,
+    useGetLastWeekVolumeMutation,
+    useGetTokensCountMutation,
+    useGetTotalVolumeMutation,
+    useGetTradesCountMutation,
+    useGetTransactionsListMutation,
+} from "services/stats";
+import { useGetCollectionNoteworthyMutation } from "services/collections";
 
 export const StatsPage = () => {
+    const [totalTokensCount, setTotalTokensCount] = useState<any>(0);
+    const [transactionsList, setTransactionsList] = useState<any>([]);
+    const [tradesCount, setTradesCount] = useState<any>(0);
+    const [todayTradesCount, setTodayTradesCount] = useState<any>(0);
+    const [yesterdayTradesCount, setYesterdayTradesCount] = useState<any>(0);
+    const [totalVolume, setTotalVolume] = useState<any>(0);
+    const [lastWeekVolume, setLastWeekVolume] = useState<any>([]);
+    const [collectionNorthway, setCollectionNorthway] = useState<any>([]);
+
     let series = [
         {
             name: "series-1",
-            data: [200, 600, 450, 200, 490, 600],
+            data:
+                lastWeekVolume.length > 0
+                    ? [
+                          lastWeekVolume[5].sum,
+                          lastWeekVolume[4].sum,
+                          lastWeekVolume[3].sum,
+                          lastWeekVolume[2].sum,
+                          lastWeekVolume[1].sum,
+                          lastWeekVolume[0].sum,
+                      ]
+                    : [0, 0, 0, 0, 0],
         },
     ];
 
     let [volumeDataHover, setVolumeDataHover] = useState(
-        series[0].data[0] || 0
+        series[0].data[5] || 0
     );
-
-    const [totalTokensCount, setTotalTokensCount] = useState<any>(0);
-    const [transactionsList, setTransactionsList] = useState<any>({});
-    const [tradesCount, setTradesCount] = useState<any>({});
-    const [totalVolume, setTotalVolume] = useState<any>({});
-    const [lastWeekVolume, setLastWeekVolume] = useState<any>({});
-    
 
     const [
         getTokensCountRequestTrigger,
@@ -66,6 +75,15 @@ export const StatsPage = () => {
     ] = useGetTradesCountMutation();
 
     const [
+        getDailyTradesCountRequestTrigger,
+        {
+            data: DailyTradesCount,
+            isLoading: isLoadingGetDailyTradesCountRequest,
+            isUninitialized: isUninitializedGetDailyTradesCountRequest,
+        },
+    ] = useGetDailyTradesCountMutation();
+
+    const [
         getTotalVolumeRequestTrigger,
         {
             data: TotalVolume,
@@ -83,38 +101,57 @@ export const StatsPage = () => {
         },
     ] = useGetLastWeekVolumeMutation();
 
+    const [
+        getCollectionNoteworthyRequestTrigger,
+        {
+            data: CollectionNoteworthy,
+            isLoading: isLoadingGetCollectionNoteworthyRequest,
+            isUninitialized: isUninitializedGetCollectionNoteworthyRequest,
+        },
+    ] = useGetCollectionNoteworthyMutation();
+
     let dataProcessor = async (
         functionTrigger: any,
+        triggerInputObject: any,
         stateGetter: any,
         stateSetter: any,
         responeHolder: any,
         requestCase: string
     ) => {
         switch (requestCase) {
-
-            case 'TokensCount':
-                responeHolder = await functionTrigger({})
-                stateSetter(responeHolder.data.data.sum)
+            case "TokensCount":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter(responeHolder.data.data.sum);
                 break;
 
-            case 'TransactionsList':
-                responeHolder = await functionTrigger([])
-                stateSetter(responeHolder.data.data.transactions)
-                break;
-            
-            case 'TradesCount':
-                responeHolder = await functionTrigger([])
-                stateSetter(responeHolder.data.data.Total)
+            case "TransactionsList":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter(responeHolder.data.data.transactions);
                 break;
 
-            case 'TotalVolume':
-                responeHolder = await functionTrigger([])
-                stateSetter(responeHolder.data.data.sum)
+            case "TradesCount":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter(responeHolder.data.data.Total);
                 break;
 
-            case 'LastWeekVolume':
-                responeHolder = await functionTrigger([])
-                stateSetter(responeHolder.data.data)
+            case "TotalVolume":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter(responeHolder.data.data.sum);
+                break;
+
+            case "LastWeekVolume":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter(responeHolder.data.data);
+                break;
+
+            case "DailyTradesCount":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter(responeHolder.data.data.Total);
+                break;
+
+            case "CollectionNoteworthy":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter(responeHolder.data.data);
                 break;
 
             default:
@@ -123,46 +160,173 @@ export const StatsPage = () => {
     };
 
     useEffect(() => {
-        dataProcessor(getTokensCountRequestTrigger, totalTokensCount, setTotalTokensCount, {}, 'TokensCount');
-        dataProcessor(getTransactionsListRequestTrigger, transactionsList, setTransactionsList, {}, 'TransactionsList');
-        dataProcessor(getTradesCountRequestTrigger, tradesCount, setTradesCount, {}, 'TradesCount');
-        dataProcessor(getTotalVolumeRequestTrigger, totalVolume, setTotalVolume, {}, 'TotalVolume');
-        dataProcessor(getLastWeekVolumeRequestTrigger, lastWeekVolume, setLastWeekVolume, {}, 'LastWeekVolume');
+        dataProcessor(
+            getTokensCountRequestTrigger,
+            {},
+            totalTokensCount,
+            setTotalTokensCount,
+            {},
+            "TokensCount"
+        );
+        dataProcessor(
+            getTransactionsListRequestTrigger,
+            {},
+            transactionsList,
+            setTransactionsList,
+            {},
+            "TransactionsList"
+        );
+        dataProcessor(
+            getTradesCountRequestTrigger,
+            {},
+            tradesCount,
+            setTradesCount,
+            {},
+            "TradesCount"
+        );
+        dataProcessor(
+            getTotalVolumeRequestTrigger,
+            {},
+            totalVolume,
+            setTotalVolume,
+            {},
+            "TotalVolume"
+        );
+        dataProcessor(
+            getLastWeekVolumeRequestTrigger,
+            {},
+            lastWeekVolume,
+            setLastWeekVolume,
+            {},
+            "LastWeekVolume"
+        );
+        dataProcessor(
+            getCollectionNoteworthyRequestTrigger,
+            { limit: 4 },
+            collectionNorthway,
+            setCollectionNorthway,
+            {},
+            "CollectionNoteworthy"
+        );
+
+        let today = new Date();
+        let yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        dataProcessor(
+            getDailyTradesCountRequestTrigger,
+            { date: today.toISOString().split("T")[0] },
+            todayTradesCount,
+            setTodayTradesCount,
+            {},
+            "DailyTradesCount"
+        );
+        dataProcessor(
+            getDailyTradesCountRequestTrigger,
+            { date: yesterday.toISOString().split("T")[0] },
+            yesterdayTradesCount,
+            setYesterdayTradesCount,
+            {},
+            "DailyTradesCount"
+        );
     }, []);
 
     return (
         <div className="stats-conatiner">
+            <ReactTooltip
+                backgroundColor="#ffffff"
+                textColor="#000000"
+                className="stats-tooltip"
+            />
             <div className="stats-reportBox">
                 <div className="stats-numericResults">
                     <div className="stats-numericResults__dailyVolume">
                         <div className="stats-numericResults__volumeValue">
-                            <span>62.3</span>
+                            <span>
+                                {lastWeekVolume.length > 0
+                                    ? lastWeekVolume[0].sum
+                                    : 0}
+                            </span>
                             <span>EGLD</span>
                         </div>
                         <div className="stats-numericResults__volumeTitle">
                             <span>Today Volume</span>
-                            <span>16%</span>
+                            <span>
+                                {lastWeekVolume.length > 0
+                                    ? lastWeekVolume[1].sum > 0
+                                        ? (
+                                              ((lastWeekVolume[0].sum -
+                                                  lastWeekVolume[1].sum) /
+                                                  (lastWeekVolume[1].sum *
+                                                      100)) *
+                                              10000
+                                          ).toFixed(1)
+                                        : 0
+                                    : null}
+                                %
+                            </span>
                         </div>
                     </div>
                     <div className="stats-numericResults__reports">
                         <div className="stats-numericResults__numericCharts">
                             <div className="stats-numericResults__numericCharts--chart">
-                                <div style={{ height: "120px" }}></div>
-                                <span>Growth Rate</span>
+                                <div
+                                    data-tip={yesterdayTradesCount}
+                                    style={{
+                                        height: `${
+                                            (yesterdayTradesCount * 100) / 220 <
+                                            200
+                                                ? (yesterdayTradesCount * 100) /
+                                                      220 +
+                                                  4
+                                                : 204
+                                        }px`,
+                                    }}
+                                ></div>
+                                <span>Yester Trades</span>
                             </div>
 
                             <div className="stats-numericResults__numericCharts--chart">
-                                <div style={{ height: "70px" }}></div>
-                                <span>Daily Trades</span>
+                                <div
+                                    data-tip={todayTradesCount}
+                                    style={{
+                                        height: `${
+                                            (todayTradesCount * 100) / 220 < 200
+                                                ? (todayTradesCount * 100) /
+                                                      220 +
+                                                  4
+                                                : 204
+                                        }px`,
+                                    }}
+                                ></div>
+                                <span>Today Trades</span>
                             </div>
 
                             <div className="stats-numericResults__numericCharts--chart">
-                                <div style={{ height: "160px" }}></div>
+                                <div
+                                    data-tip={tradesCount}
+                                    style={{
+                                        height: `${
+                                            (tradesCount * 100) / 220 < 200
+                                                ? (tradesCount * 100) / 220 + 4
+                                                : 204
+                                        }px`,
+                                    }}
+                                ></div>
                                 <span>Total Trades</span>
                             </div>
 
                             <div className="stats-numericResults__numericCharts--chart">
-                                <div style={{ height: "120px" }}></div>
+                                <div
+                                    data-tip={totalVolume}
+                                    style={{
+                                        height: `${
+                                            (totalVolume * 100) / 220 < 200
+                                                ? (totalVolume * 100) / 220 + 4
+                                                : 204
+                                        }px`,
+                                    }}
+                                ></div>
                                 <span>Total Volume</span>
                             </div>
                         </div>
@@ -174,7 +338,7 @@ export const StatsPage = () => {
                         {volumeDataHover} <span>EGLD</span>
                     </span>
                     <select>
-                        <option>Weekly</option>
+                        <option>Last Week</option>
                     </select>
                     <div className="stats-volumeChart--chart">
                         <Chart
@@ -235,14 +399,17 @@ export const StatsPage = () => {
                                     show: false,
                                 },
                                 xaxis: {
-                                    categories: [
-                                        `02/04`,
-                                        `03/01`,
-                                        `03/02`,
-                                        `03/03`,
-                                        `03/04`,
-                                        `04/01`,
-                                    ],
+                                    categories:
+                                        lastWeekVolume.length > 0
+                                            ? [
+                                                  lastWeekVolume[5].date,
+                                                  lastWeekVolume[4].date,
+                                                  lastWeekVolume[3].date,
+                                                  lastWeekVolume[2].date,
+                                                  lastWeekVolume[1].date,
+                                                  lastWeekVolume[0].date,
+                                              ]
+                                            : ["", "", "", "", "", ""],
                                     labels: {
                                         show: false,
                                         style: {
@@ -271,46 +438,42 @@ export const StatsPage = () => {
                             <span>Collections</span>
                         </div>
                         <FontAwesomeIcon
-                            style={{ margin: "0 16px 0 0", fontSize: "24px" }}
-                            icon={faIcons.faArrowAltCircleLeft}
+                            style={{ margin: "0 16px 4px 0", fontSize: "24px" }}
+                            icon={faIcons.faFire}
                         />
                     </div>
 
-                    <div
-                        className="stats-topCollections__collection"
-                        style={{ background: `url(${collectionAvatar1})` }}
-                    >
-                        <div className="stats-topCollections__collection--collectionBox">
-                            <span>Lil Heros</span>
-                        </div>
-                    </div>
-
-                    <div
-                        className="stats-topCollections__collection"
-                        style={{ background: `url(${collectionAvatar2})` }}
-                    >
-                        <div className="stats-topCollections__collection--collectionBox">
-                            <span>Doodle</span>
-                        </div>
-                    </div>
-
-                    <div
-                        className="stats-topCollections__collection"
-                        style={{ background: `url(${collectionAvatar3})` }}
-                    >
-                        <div className="stats-topCollections__collection--collectionBox">
-                            <span>Regal Eagles</span>
-                        </div>
-                    </div>
-
-                    <div
-                        className="stats-topCollections__collection"
-                        style={{ background: `url(${collectionAvatar4})` }}
-                    >
-                        <div className="stats-topCollections__collection--collectionBox">
-                            <span>Apes Club</span>
-                        </div>
-                    </div>
+                    {
+                        // ------- Start TopCollection Rendering -------
+                        collectionNorthway.length > 0
+                            ? collectionNorthway.map(
+                                  (item: any, index: any) => (
+                                      <Link to={`/collection/${item.tokenId}`}>
+                                          <div
+                                              key={item.id}
+                                              className="stats-topCollections__collection"
+                                              style={{
+                                                  backgroundSize: "contain",
+                                                  background: `url(${item.profileImageLink})`,
+                                              }}
+                                          >
+                                              <div className="stats-topCollections__collection--collectionBox">
+                                                  <span>
+                                                      {item.name.length > 7
+                                                          ? `${item.name.substring(
+                                                                0,
+                                                                7
+                                                            )}..`
+                                                          : item.name}
+                                                  </span>
+                                              </div>
+                                          </div>
+                                      </Link>
+                                  )
+                              )
+                            : null
+                        // ------- End TopCollection Rendering -------
+                    }
                 </div>
             </div>
             <div className="stats-activitiesBox">
@@ -321,60 +484,55 @@ export const StatsPage = () => {
                     </div>
                     <FontAwesomeIcon
                         style={{ margin: "32px 40px", fontSize: "24px" }}
-                        icon={faIcons.faArrowAltCircleRight}
+                        icon={faIcons.faCloud}
                     />
                 </div>
                 <div className="stats-activitiesBox__activitiesLog">
                     <div className="stats-activitiesBox__activitiesLog--title">
-                        <span>Activities</span>
+                        <span>Last Activities</span>
                         <select>
-                            <option>Weekly</option>
+                            <option>All Time</option>
                         </select>
                     </div>
                     <div className="stats-activitiesBox__activitiesLog--content">
-                        <div style={{ height: "64px", opacity: 1 }}>
-                            <img src={nftAvatar1} />
-                            <span>ElrondApes #2887</span>
-                            <span>3m</span>
-                            <span
-                                className="stats-label"
-                                style={{ background: "#E2204E" }}
-                            >
-                                List
-                            </span>
-                        </div>
-
-                        <div style={{ height: "80px", opacity: 1 }}>
-                            <img src={nftAvatar2} />
-                            <span>ElrondApes #2887</span>
-                            <span>
-                                5.67 <span>EGLD</span>
-                            </span>
-                            <span>8m</span>
-                        </div>
-
-                        <div style={{ height: "64px", opacity: 0.4 }}>
-                            <img src={nftAvatar3} />
-                            <span>ElrondApes #2887</span>
-                            <span>56m</span>
-                            <span
-                                className="stats-label"
-                                style={{ background: "#2081E2" }}
-                            >
-                                Offer
-                            </span>
-                        </div>
-
-                        <div style={{ height: "80px", opacity: 0.1 }}>
-                            <img src={nftAvatar4} />
-                            <span>ElrondApes #2887</span>
-                            <span>
-                                5.67 <span>EGLD</span>
-                            </span>
-                            <span>1h 46m</span>
-                        </div>
+                        {
+                            // ------- Start Activities Rendering -------
+                            transactionsList.length > 0
+                                ? transactionsList.map(
+                                      (item: any, index: any) =>
+                                          index < 4 ? (
+                                              <div
+                                                  key={item.txId.toString()}
+                                                  style={{
+                                                      height: "72px",
+                                                      opacity: "1",
+                                                  }}
+                                              >
+                                                  <img
+                                                      src={item.tokenImageLink}
+                                                  />
+                                                  <span>{item.tokenName}</span>
+                                                  <span>
+                                                      {item.txPriceNominal.toFixed(
+                                                          3
+                                                      )}{" "}
+                                                      EGLD
+                                                  </span>
+                                                  <span
+                                                      className="stats-label"
+                                                      style={{
+                                                          background: "#2081E2",
+                                                      }}
+                                                  >
+                                                      {item.txType}
+                                                  </span>
+                                              </div>
+                                          ) : null
+                                  )
+                                : null
+                            // ------- End Activities Rendering -------
+                        }
                     </div>
-                    <button>Load More</button>
                 </div>
             </div>
         </div>
