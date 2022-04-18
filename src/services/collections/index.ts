@@ -64,6 +64,33 @@ export const collectionsApi = createApi({
 
         }),
 
+        
+        UpdateCollectionMintStartDate: builder.mutation<any, any>({
+
+           
+
+            query: ({ collectionId, payload }): FetchArgs => {
+
+                console.log("INSIDE UpdateCollectionMintStartDate")
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                    url: `/${mainPath}/${collectionId}/mintStartDate`
+
+                }
+
+                return customRequestArg;
+            },
+
+        }),
+
         saveCollectionProfileImage: builder.mutation<any, any>({
 
             query: ({ collectionId, imageB64 }): FetchArgs => {
@@ -263,6 +290,7 @@ export const {
     useSaveCollectionCoverImageMutation,
     useSaveCollectionProfileImageMutation,
     useUpdateCollectionMutation,
+    useUpdateCollectionMintStartDateMutation,
     useGetCollectionTokensMutation,
     useRegisterCollectionMutation,
     useCreateCollectionMutation,

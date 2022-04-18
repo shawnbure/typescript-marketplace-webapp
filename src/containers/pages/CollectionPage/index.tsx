@@ -21,10 +21,11 @@ import {
   useGetCollectionTokensMutation,
 } from "services/collections";
 import { shorterAddress } from "utils";
-
+import { getQuerystringValue } from "utils/transactions";
 import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens";
 
 import { Footer } from 'components/index';
+import { MINT } from "constants/actions";
 
 export const CollectionPage: (props: any) => any = ({}) => {
   
@@ -32,7 +33,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const { collectionId } = useParams<UrlParameters>();
   const [buyLimit,setBuyLimit] = useState<number>(0);
   const [buyCount,setBuyCount] = useState<number>(0);
-
+  const queryString = window.location.search;
   const { pathname } = useLocation();
   
   const sendTransaction = Dapp.useSendTransaction();
@@ -442,7 +443,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
       return      
     }
 
-
+    /*
     if (buyCount >= buyLimit && buyLimit != -1){
 
       toast.error(`${`You have reached your mint limit, Or you are not whitelisted`}`, {
@@ -455,7 +456,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
       });
       return
     }
-
+    */
 
 
     const getBuyNFTResponse: any = await getMintTokensTemplateTrigger({
@@ -488,7 +489,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: pathname,
+      callbackRoute: `/confirmation/${MINT}/${collectionId}/0?number_minted=${requestedNumberOfTokens}`,
     });
   };
 
@@ -556,6 +557,15 @@ export const CollectionPage: (props: any) => any = ({}) => {
     setShouldDisplayMobileFilters(!shouldDisplayMobileFilters);
   };
 
+
+  const ShowDate = (dateTime: any) => 
+  {
+    const cDateTime = new Date(collectionData?.data?.collection?.mintStartDate)
+    const year = cDateTime.getFullYear();
+    const month = cDateTime.getMonth() + 1;
+    const day = cDateTime.getDate();
+    return month + '/' + day + '/' + year;
+  }
   const [collectionDataLoaded, setCollectionDataLoaded] = useState(false);
 
   useEffect(() => {
@@ -569,11 +579,17 @@ export const CollectionPage: (props: any) => any = ({}) => {
     });
     getInitialTokens();
 
+
+
   }, []);
 
   useEffect(() => {
 
     if( collectionDataLoaded ) {
+
+      console.log("collectionData?.data?.collection?.mintStartDate")
+      console.log(collectionData?.data?.collection?.mintStartDate)
+
 
       if( userWalletAddress != null )
       {
@@ -693,7 +709,24 @@ export const CollectionPage: (props: any) => any = ({}) => {
             </li>
           </ul>
 
-          {Boolean(collectionData?.data?.collection?.contractAddress) && Boolean(collectionData?.data?.collection?.maxSupply > 0) && (
+          { Boolean((collectionData?.data?.collection?.mintStartDate != 0 && collectionData?.data?.collection?.mintStartDate > new Date().getTime())) &&  (
+              <>
+              <div className="grid grid-cols-10 mb-4">
+                <div className="col-span-12 md:col-start-5 md:col-span-2  p-10 md:p-0 ">
+                <p className="my-10 text-2xl text-center"> 
+                  Minting for this Collection is Coming Soon.
+                  {
+                    /*ShowDate(collectionData?.data?.collection?.mintStartDate) */                 
+                  }
+                </p>
+                </div>
+              </div>  
+              </>    
+          )}
+
+          { Boolean(collectionData?.data?.collection?.contractAddress) && 
+            Boolean(collectionData?.data?.collection?.maxSupply > 0) &&
+            Boolean((collectionData?.data?.collection?.mintStartDate == 0 || collectionData?.data?.collection?.mintStartDate < new Date().getTime())) &&  (
             <>
               <div className="grid grid-cols-10 mb-4">
                 <div className="col-span-12 md:col-start-5 md:col-span-2  p-10 md:p-0 ">

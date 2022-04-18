@@ -81,6 +81,30 @@ export const RewardsPage = () => {
                                         </span>
                                     </div>
                                 </Link>
+                            
+                                &nbsp; &nbsp;
+
+                                <Link to={'/collection/ENFT-c26061'} className="c-button c-button--primary" >                        
+                                    <div className="inline-flex">
+                                        <span>
+                                             Buy OCW
+                                        </span>
+                                    </div>
+                                </Link>
+
+                                <br/><br/>
+
+                                <Link to={'/collection/ENFT-e7b4b7'} className="c-button c-button--primary" >                        
+                                    <div className="inline-flex">
+                                        <span>
+                                             Buy Regal Eagles
+                                        </span>
+                                    </div>
+                                </Link>
+
+
+                                
+
 
                                 <br/><br/>
                                 <a href={'https://discord.gg/xBh7dEEeBc'} className="c-button c-button--secondary u-margin-bottom-spacing-4 u-margin-right-spacing-4" target="_blank">Get latest</a>

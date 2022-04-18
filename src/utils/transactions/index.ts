@@ -38,3 +38,8 @@ export const prepareTransaction: (
 export default {
   prepareTransaction,
 };
+
+export function getQuerystringValue(queryString: string, key: string) {
+    const params = new URLSearchParams(queryString)
+    return params.get(key)
+};

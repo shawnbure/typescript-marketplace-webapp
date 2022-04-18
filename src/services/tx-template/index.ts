@@ -267,6 +267,27 @@ export const txTemplateApi = createApi({
 
         }),
 
+        updateSaleStartTemplate: builder.mutation<any, any>({
+
+            
+            query: ({ userWalletAddress, contractAddress, saleStart }): FetchArgs => {
+
+                
+                
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/update-sale-start/${userWalletAddress}/${contractAddress}/${saleStart}`
+                };
+
+                console.log("customRequestArg.ur: ");
+                console.log(customRequestArg.url);
+
+                return customRequestArg;
+            },
+
+        }),
+
+
         getWithdrawCreatorRoyaltiesTemplate: builder.mutation<any, any>({
 
             query: ({ userWalletAddress }): FetchArgs => {
@@ -349,5 +370,6 @@ export const {
     useGetListNftTemplateMutation,
     useGetAddDepositEgldTemplateMutation,
     useGetMintTokensTemplateMutation,
-    useGetWithdrawNftTemplateMutation,
-    useGetWithdrawDepositTemplateMutation, } = txTemplateApi;
+    useGetWithdrawNftTemplateMutation, 
+    useGetWithdrawDepositTemplateMutation,
+    useUpdateSaleStartTemplateMutation, } = txTemplateApi;

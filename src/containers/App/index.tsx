@@ -9,21 +9,23 @@ import { useAppSelector } from 'redux/store';
 import { routePaths } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
 import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, RewardsPage, CongratsPage } from 'containers/pages';
+import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, RewardsPage, ConfirmationPage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
 
 
 import 'reactjs-popup/dist/index.css';
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import AuthProtected from 'containers/AuthProtected';
-import { useEffect, useLayoutEffect } from 'react';
-import { createVerifiedPayload } from 'utils';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { createVerifiedPayload, getCookie, isMobile, setCookie } from 'utils';
 import { useGetAccessTokenMutation } from 'services/auth';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setJWT } from 'redux/slices/user';
 import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
 import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
 import StatsPage from 'containers/pages/StatsPage';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as faIcons from "@fortawesome/free-regular-svg-icons";
 
 
 
@@ -34,7 +36,7 @@ import StatsPage from 'containers/pages/StatsPage';
 
 export const App: () => JSX.Element = () => {
 
-
+    let [showSuggestionMessage, setShowSuggestionMessage] = useState(true)
     const dispatch = useDispatch();
     const theme = useAppSelector(selectTheme);
     const isLightThemeSelected: boolean = theme === LIGHT;
@@ -70,9 +72,7 @@ export const App: () => JSX.Element = () => {
         const { data: jtwData } = accessResult;
 
         dispatch(setJWT(jtwData.data));
-
         localStorage.setItem("_e_", JSON.stringify(jtwData.data));
-
     };
 
 
@@ -84,11 +84,45 @@ export const App: () => JSX.Element = () => {
 
     }, [location]);
 
+    useEffect(() => {
+        let address: any = localStorage.getItem('address')
+    
+        if(address && address.length > 0) {
+            address = JSON.parse(address)
+            address && address.data ? window.pendo.initialize({ visitor: { id: address.data } }) : null
+        }
+        
+    }, [])
 
+    let suggestionBanner = () => {
+        if(getCookie('useDesktopVersionSuggested') != 'true') {
+            return (
+                <div style={showSuggestionMessage ? {display: 'flex'} : {display: 'none'}} className='suggestionMessage'>
+                    <span>Welcome to Youbei!</span>
+                    <span>To get the best experience, we recommend using the <b>Desktop</b> version</span>
+                    <div>
+                        <button
+                          onClick={() => {
+                              setCookie('useDesktopVersionSuggested', 'true', 'Thu, 19 Jan 2100 12:00:00 UTC')
+                              setShowSuggestionMessage(false)
+                            }}
+                          className="c-button c-button--primary"
+                        >
+                          Okay
+                        </button>
+                    </div>
+                </div>
+            )
+        }
+    }
 
     return (
 
         <div className={generatedClasses}>
+
+            {
+                isMobile() ?  suggestionBanner() : null
+            }
 
             <Dapp.Context config={config}>
 
@@ -131,9 +165,9 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
-                        <Route path={routePaths.congrats} exact={true} >
+                        <Route path={routePaths.confirmation} exact={true} >
                             <AuthProtected>
-                                <CongratsPage />
+                                <ConfirmationPage />
                             </AuthProtected>
                         </Route>
         

@@ -1,6 +1,7 @@
 
 import ReactDOM from "react-dom";
 
+
 import { Redirect, Link, Router, useLocation, useHistory } from 'react-router-dom';
 import Select from 'react-select'
 import { useEffect, useState } from "react";
@@ -28,7 +29,7 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import { Footer } from 'components/index';
 
-
+import { formatImgLink, shorterAddress } from "utils";
 
 export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
@@ -40,7 +41,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     useEffect(() => {
         return history.listen((location) => { 
-           console.log(`$$$$$$$$$$$$ You changed the page to: ${location.pathname}`) 
+           //console.log(
         }) 
      },[history]) 
      
@@ -48,15 +49,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [isOpenLoading, setIsOpenLoading] = useState(true)
 
     
-    //for inital load of the page / useEffect onChange
-    const [intialLoad, setIntialLoad] = useState(false)
 
     //check for to save StepTracker or not
     const [doSaveStepTracker, setDoSaveStepTracker] = useState(false)
     
 
     //json of the step (use for SessionData) / useEffect onChange
-    const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0, "tokenBaseURI": "Empty", "metaDataBaseURI": "Empty", "maxSupply": 0}');  
+    const [stepTracker, setStepTracker] = useState('{ "step": 1, "tokenID": "TokenIDEmpty", "scAddress": "SCAddressEmpty", "price": 0, "tokenBaseURI": "Empty", "metaDataBaseURI": "Empty", "maxSupply": 0, "saleStart": 0}');  
 
 
     // check if TxHash in URL / useEffect onChange
@@ -68,123 +67,18 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const [isFinishLoading, setIsFinishLoading] = useState(false)
 
-    {
-        console.log("********* inside { GENERAL } *********  ");
-
-
-        const txHashCurrent = getTxHash();
-
-        if( txHashCurrent == null )  //initial load 
-        {
-            //console.log("-- txHash is NULL ")
-
-            //set empty
-            sessionStorage.setItem("Create_Collection_TxHash", "")
-            
-            if( isFinishLoading )
-            {
-                console.log(" ------------- GENERAL {} inside isFinishLoading  ");
+    const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
     
-                setIsFinishLoading(false);
-                //setIntialLoad(true);
-            }            
-        }
-        else
-        {
-            
-            //console.log("------ txHash NOT null ")
-
-            //current txHash from session
-            let txHashSession = sessionStorage.getItem("Create_Collection_TxHash");
-            
-            //compare current txHast to one from session
-            if( txHashCurrent != txHashSession ) //different
-            {   
-                console.log("-- DIFFERENT : set new txtHash to session ")
-
-                //set CURRENT as new txtHash to session 
-                sessionStorage.setItem("Create_Collection_TxHash", txHashCurrent)
-
-                //now process txtURL handler
-            }
-            else
-            {
-                console.log("-- SAME : Current txHash is same is Session txHash ")
-
-                //don't do much here
-
-            }
-        }
-
-
-        /*
-        const txHash = getTxHash();
-
-        if( txHash != null ) 
-        {
-            console.log("-- txHash NOT null ")
-
-            //current txHash from session
-            let txHashSession = sessionStorage.getItem("Create_Collection_TxHash");
-
-            if( txHashSession != txHash ) //different
-            {
-                console.log("-- set new txtHash to session ")
-
-                //set new txtHash to session 
-                sessionStorage.setItem("Create_Collection_TxHash", txHash)
-
-                //setIsFinishLoading(false);
-                //setIntialLoad(true);
-
-                initSessionStateJSONFromDB();  
-
-                console.log("-- DONE set new txtHash to session ")
-            }
-            else
-            {
-                console.log("-- same session txHash ")
-            }
-        }
-        else
-        {
-            console.log("-- txHash is NULL ")
-            
-            //set empty
-            sessionStorage.setItem("Create_Collection_TxHash", "")
 
 
 
-            
-            //is coming in the first time - DB state will set the appropriate steps
 
-            if( isFinishLoading )
-            {
-                console.log(" GENERAL {} inside isFinishLoading  ");
-    
-                setIsFinishLoading(false);
-                setIntialLoad(true);
-            }
-    
-        }        
-        */
-
-
-
-     
-
-    }
-
-
-    
 
     useEffect(() => {  //Called Once when page is load (note: web wallet redirect back calls this again)
 
-        console.log("======== inside useEffect [] ");
+        
+        setIsFinishLoading(true)  //need to be set in the handle txFormatter
 
-        setIsFinishLoading(true)
-
-        setIntialLoad(true);
 
       },[]);  //only called once since it's the empty [] parameters
 
@@ -193,18 +87,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
-
-
-
-    useEffect(() => { 
-        
-        console.log("initialLoad started")
-        if( intialLoad )
-        {
-            initSessionStateJSONFromDB();            
-        }
-
-    },[intialLoad]);
 
     
 
@@ -215,6 +97,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         if( urlTxHashHandler )  //reason to check this is onload, it's false - once we set the value, set to to true to get it
         {
             
+
             //get the query param 'txHash'
             const txtHash = getTxHash();
 
@@ -266,6 +149,9 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 {
                                     //there's a parse error - handle it here 
 
+                                    //set empty to we can rehandle it.
+                                    sessionStorage.setItem("Create_Collection_TxHash", "")
+
                                     window.location.reload()
                                     
                                 }
@@ -298,7 +184,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                                          sessionStateJSONData.price,
                                                          sessionStateJSONData.tokenBaseURI,
                                                          sessionStateJSONData.metaDataBaseURI,
-                                                         sessionStateJSONData.maxSupply);  
+                                                         sessionStateJSONData.maxSupply,
+                                                         sessionStateJSONData.saleStart);  
         }
     
       },[stepTracker]);  //this use effect gets called everytime 'stepTracker' is modified
@@ -317,6 +204,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         tokenBaseURI: string;
         metaDataBaseURI: string;
         maxSupply: number;
+        saleStart: number;
     }
 
 
@@ -327,7 +215,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                                  priceParam: number,
                                                  tokenBaseURIParam: string,
                                                  metaDataBaseURIParam: string,
-                                                 maxSupplyParam: number) : string
+                                                 maxSupplyParam: number,
+                                                 saleStartParam: number) : string
     {
         let jsonObj = { step: stepParam, 
                         tokenID: tokenIDParam, 
@@ -335,7 +224,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                         price: priceParam,
                         tokenBaseURI: tokenBaseURIParam,
                         metaDataBaseURI: metaDataBaseURIParam,
-                        maxSupply: maxSupplyParam
+                        maxSupply: maxSupplyParam,
+                        saleStart: saleStartParam
                         }; 
 
         return JSON.stringify(jsonObj);
@@ -346,6 +236,24 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         return JSON.parse(jstrJSON);
     }
 
+    function confirmMintingStartDate()
+    {
+        var element = document.getElementById("mintStartDate") as HTMLInputElement;
+
+        if( element != null )
+        {
+
+            if( element.value != "" )
+            {
+                // eslint-disable-next-line no-restricted-globals
+                if( ! confirm("Minting Start Date will only allow Minting to start on the set date at 12:00 AM (UTC). Would you like confirm it?") )
+                { 
+                    element.value = "";  
+                           
+                }
+            }
+        }
+    }
 
 
     //used in the initialize SessionState func
@@ -357,7 +265,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const initSessionStateJSONFromDB = async () => {
 
-        console.log("initSessionStateJSONFromDB");
 
         //set the request data to pass to triggers
         const formattedData = {
@@ -371,6 +278,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         //check data and initialize it to variable
         if (sessionStateData?.data) 
         {
+
             //set the DB Json string to sessionStateJSONData object
             const sessionStateJSONData = GetSessionStateJSONDataFromString(sessionStateData?.data?.data?.jsonData)
 
@@ -382,7 +290,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             '"price": ' + sessionStateJSONData.price + ', ' +
                             '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
                             '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
-                            '"maxSupply":' + sessionStateJSONData.maxSupply + '}')   
+                            '"maxSupply":' + sessionStateJSONData.maxSupply + ', ' +
+                            '"saleStart":' + sessionStateJSONData.saleStart + '}')   
          
             const txtHash = getTxHash();
 
@@ -395,7 +304,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                     setUrlTxHashHandler(true);  //delay for a sec
                 }, 500);
                 */
-                console.log("setUrlTxHashHandler")
+
                 setUrlTxHashHandler(true);
             }
             else
@@ -409,12 +318,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
 
 
+
     //This initialize the varSessionStateJSON (async & await)
     const setSessionStateFromQueryData = (resultData: string, actionName: string) => {
 
         //setSessionStateJSON(resultData, actionName);
 
         const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
+
 
         if( resultData != "" &&  actionName != "")
         {
@@ -464,7 +375,8 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                 '"price": ' + sessionStateJSONData.price + ', ' +
                                 '"tokenBaseURI": "' + sessionStateJSONData.tokenBaseURI + '", ' +
                                 '"metaDataBaseURI": "' + sessionStateJSONData.metaDataBaseURI + '", ' +
-                                '"maxSupply":' + sessionStateJSONData.maxSupply + '}')     
+                                '"maxSupply":' + sessionStateJSONData.maxSupply + ', ' + 
+                                '"saleStart":' + sessionStateJSONData.saleStart + '}')     
 
             //display page state
             HandlePageStateBySessionState(sessionStateJSONData.step, sessionStateJSONData.tokenID, sessionStateJSONData.scAddress, sessionStateJSONData.price);                                 
@@ -511,12 +423,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
     const [refreshCreateOrUpdateSessionStatesTrigger] = useRefreshCreateOrUpdateSessionStatesMutation();
 
     // this refresh OR create the sessionState in DB
-    const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any, price: any, tokenBaseURI: any, metaDataBaseURI: any, maxSupply: any) => {
+    const refreshCreateOrUpdateSessionStateTransaction = async (step: any, tokenId: any, scAddress: any, price: any, tokenBaseURI: any, metaDataBaseURI: any, maxSupply: any, saleStart: any) => {
         
         const formattedData = {
             address: userWalletAddress,
             stateType: 1,
-            jsonData: CreateJSONDataStringForSessionState(step, tokenId, scAddress, price, tokenBaseURI, metaDataBaseURI, maxSupply),
+            jsonData: CreateJSONDataStringForSessionState(step, tokenId, scAddress, price, tokenBaseURI, metaDataBaseURI, maxSupply, saleStart),
         }
 
         const response: any = await refreshCreateOrUpdateSessionStatesTrigger({ payload: formattedData });
@@ -566,8 +478,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         HideElement("divStep4");                
         HideElement("divStep5");
 
-        console.log("STEP: " + step)
-
         switch(step) 
         {
             case 1:  
@@ -575,10 +485,20 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                  
 
                 var inputTokenName = document.getElementById("token_name") as HTMLInputElement;
-                inputTokenName.value = "";
+
+                if( inputTokenName != null )
+                {
+                    inputTokenName.value = "";
+                }                
+                
 
                 var inputTokenTicker = document.getElementById("token_ticker") as HTMLInputElement;
-                inputTokenTicker.value = "";
+
+                if( inputTokenTicker != null )
+                {
+                    inputTokenTicker.value = "";
+                }
+                
 
                 ShowElement("divStep1");
 
@@ -588,7 +508,13 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             {
 
                 var spanTokenId = document.getElementById("spanTokenId") as HTMLInputElement;
-                spanTokenId.innerHTML = tokenID;
+
+                if( spanTokenId != null )
+                {
+                    spanTokenId.innerHTML = tokenID;
+                }
+
+                
 
                 ShowElement("divStep2");
 
@@ -597,7 +523,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case 3:
             {
                 var spanStep3SCAddress = document.getElementById("step3SCAddress") as HTMLInputElement;
-                spanStep3SCAddress.innerHTML = scAddress;
+
+                if( spanStep3SCAddress != null )
+                {
+                    spanStep3SCAddress.innerHTML = scAddress;
+                }                
+                
                 
                 ShowElement("divStep3");
 
@@ -606,10 +537,19 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case 4:
             {
                 var spanSetRoleAddress = document.getElementById("SetRole_Address") as HTMLInputElement;
-                spanSetRoleAddress.innerHTML = scAddress;
+
+                if( spanSetRoleAddress != null )
+                {                
+                    spanSetRoleAddress.innerHTML = scAddress;
+                }
 
                 var spanSetRoleTokenId = document.getElementById("SetRole_TokenId") as HTMLInputElement;
-                spanSetRoleTokenId.innerHTML = tokenID;
+
+                if( spanSetRoleTokenId != null )
+                {
+                    spanSetRoleTokenId.innerHTML = tokenID;
+                }                
+                
 
                 ShowElement("divStep4");
 
@@ -618,7 +558,12 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             case 5:
             {
                 var spanCollectionTokenId = document.getElementById("collectionTokenId") as HTMLInputElement;
-                spanCollectionTokenId.innerHTML = tokenID;
+
+                if( spanCollectionTokenId != null )
+                {
+                    spanCollectionTokenId.innerHTML = tokenID;
+                }                
+                
                 
                 ShowElement("divStep5");
 
@@ -638,47 +583,127 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                             showMore: boolean)
     {
         var lnkShowMorelinkName = document.getElementById(showMorelinkName) as HTMLInputElement;
-        lnkShowMorelinkName.hidden = !showMore;
+        if( lnkShowMorelinkName != null )
+        {
+            lnkShowMorelinkName.hidden = !showMore;
+        }
+        
 
         var lnkShowLesslinkName = document.getElementById(showLesslinkName) as HTMLInputElement;
-        lnkShowLesslinkName.hidden = showMore;    
+        if( lnkShowLesslinkName != null )
+        {
+            lnkShowLesslinkName.hidden = showMore; 
+        }        
+           
         
         var divShowDivName = document.getElementById(showDivName) as HTMLElement;
-        divShowDivName.hidden = showMore;    
+        if( divShowDivName != null )
+        {
+            divShowDivName.hidden = showMore;  
+        }        
+          
     }
 
     function DisableButton(buttonName: string, buttonText:string)
     {
         var btn = document.getElementById(buttonName) as HTMLInputElement;
 
-        btn.innerHTML = buttonText;
-        btn.className = "c-button c-button--secondary mb-5";
-        btn.disabled = true;
-        btn.hidden = false;
+        if( btn != null )
+        {
+            btn.innerHTML = buttonText;
+            btn.className = "c-button c-button--secondary mb-5";
+            btn.disabled = true;
+            btn.hidden = false;
+        }
     }
 
     function HideElement(elementID: string)
     {
         var element = document.getElementById(elementID) as HTMLInputElement;
-        element.hidden = true;
+
+        if( element != null )
+        {
+            element.hidden = true;
+        }        
+        
     }
     
     function ShowElement(elementID: string)
     {
         var element = document.getElementById(elementID) as HTMLInputElement;
-        element.hidden = false;
+
+        if( element != null )
+        {
+            element.hidden = false;
+        }        
+        
     }
 
 
+    
 
-    function OnFocusElement(elementID: string)
+    // ================================== PROCESS LOADING ==================================
+
     {
-        var element = document.getElementById(elementID) as HTMLInputElement;
-        element.focus();
+
+        const txHashCurrent = getTxHash();
+
+        if( txHashCurrent == null )  //initial load 
+        {
+
+            if( isFinishLoading )
+            {
+                //set empty 
+                sessionStorage.setItem("Create_Collection_TxHash", "")
+                
+                setIsFinishLoading(false); 
+
+                initSessionStateJSONFromDB(); 
+            }               
+        }
+        else
+        {
+
+            //current txHash from session
+            let txHashSession = sessionStorage.getItem("Create_Collection_TxHash");
+            
+            //compare current txHast to one from session
+            if( txHashCurrent != txHashSession ) //different
+            {   
+
+                //set CURRENT as new txtHash to session 
+                sessionStorage.setItem("Create_Collection_TxHash", txHashCurrent)
+
+                setIsFinishLoading(false); 
+
+
+                initSessionStateJSONFromDB(); 
+
+            }
+            else
+            {
+
+                if( isFinishLoading ) 
+                {
+                    //accounts for reloads / refresh of page
+                    setIsFinishLoading(false); 
+
+                    //don't do much here
+                    initSessionStateJSONFromDB(); 
+                }
+
+                
+            }
+        }
+
 
     }
-    
-    
+
+
+
+
+
+
 
 
 
@@ -720,10 +745,14 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
         const unconsumedTransaction = prepareTransaction(txData);
 
+        //Henry: reset so that Maiar wallet is accounted for
+        setIsFinishLoading(true);
+
+
         sendTransaction({
             transaction: unconsumedTransaction,
             callbackRoute: succesCallbackRoute
-        });
+        })
 
 
     };
@@ -785,6 +814,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         price: yup.string().matches(/^(0|[1-9]\d*)(\.\d+)?$/, "Only positive numbers with decimals - must include a leading number (0.1)").required(),
         maxSupply: yup.string().matches(/^([1-9][0-9]{0,3}|10000)$/, "Numbers must be between 1-10000").required(),
         metadataBase: yup.string().required("Required Field"),
+        mintStartDate: yup.string(),
     }).required();
 
     const { register: registerStep2, handleSubmit: handleSubmitStep2, control: controlStep2, setError: setErrorStep2, clearErrors: clearErrorsStep2, formState: { errors: errorsStep2 } } = useForm({
@@ -802,28 +832,48 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         {
             setIsButtonClicked(true)
 
+            /*
             //sale start date is now current date with time of 12am 
             var d = new Date();     //current date
             d.setHours(0,0,0,0);    //set to 12am
 
             //set to to saleStart
             data.saleStart = d.getTime() / 1000;
+            */
 
+            var mintStartDateForDB = 0
+
+            if(data.mintStartDate == "" )
+            {
+                //empty
+                data.saleStart = 0
+            }
+            else
+            {            
+                //got date    
+                var dateInput = new Date(data.mintStartDate);
+     
+                mintStartDateForDB = dateInput.getTime()
+
+                data.saleStart = dateInput.getTime() / 1000
+            }
+                        
 
             const sessionStateJSONData = GetSessionStateJSONDataFromString(stepTracker)
 
             setDoSaveStepTracker(true);
     
-    
+            
             setStepTracker('{ "step": ' + sessionStateJSONData.step + ', ' + 
                             '"tokenID": "' + sessionStateJSONData.tokenID + '", ' +
                             '"scAddress": "' + sessionStateJSONData.scAddress + '", ' +
                             '"price":' + data.price + ', ' +
                             '"tokenBaseURI": "' + data.imageBase + '", ' +
                             '"metaDataBaseURI": "' + data.metadataBase + '", ' +
-                            '"maxSupply":' + data.maxSupply + '}')  
+                            '"maxSupply":' + data.maxSupply + ', ' + 
+                            '"saleStart":' + mintStartDateForDB + '}')  
             
-
+            
 
             data.imageExt = mediaTypeSelect.value
 
@@ -935,7 +985,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         telegramLink: yup.string(),
         twitterLink: yup.string(),
         website: yup.string(),
-
+       
     }).required();
 
 
@@ -964,7 +1014,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
             data.tokenBaseURI = sessionStateJSONData.tokenBaseURI
             data.MetaDataBaseURI = sessionStateJSONData.metaDataBaseURI
             data.MaxSupply = sessionStateJSONData.maxSupply
-    
+            data.mintStartDate = sessionStateJSONData.saleStart
 
 
             const formattedData = {
@@ -1182,6 +1232,10 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
+
+
+
+                                
                                 <br/>
                                 <button type="submit" id="submit_step1" className="c-button c-button--primary mb-5"  >
                                     Sign
@@ -1321,6 +1375,16 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                     </div>
                                 </div>
 
+                                <p className="text-xl u-text-bold mb-2">
+                                    Minting Start Date (UTC): &nbsp;
+                                    <a href="javascript:alert('Minting Start Date is optional - it will only allow Minting to start on the set date at 12:00 AM (UTC) .')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+                                        <input {...registerStep2('mintStartDate')} id="mintStartDate" onChange={(e) => confirmMintingStartDate()}  autoComplete="off" type="date" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
+                                    </div>
+                                </div>
 
                                 <br/>
                                 <button type="submit" id="submit_step2" className="c-button c-button--primary mb-5" >
@@ -1504,6 +1568,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                                         <textarea {...registerStep5('description')} autoComplete="off"   placeholder="Tell us about your collection!" className="bg-opacity-10 bg-white border-1 border-gray-500 p-2 placeholder-opacity-10 rounded-2 text-white w-full mb-10" />
                                     </div>
                                 </div>
+
 
 
 
