@@ -1,5 +1,6 @@
 .stats {
     &-conatiner {
+        width: 1600px;
         height: 705px;
 
         display: flex;
@@ -8,7 +9,7 @@
 
         user-select: none;
 
-        margin: 64px 160px 0 160px;
+        margin: 64px auto;
         color: #fff;
 
         @include respond-to(desktop-high-large) {
@@ -520,7 +521,7 @@
 
     &-label {
         color: #fff;
-        border-radius: 8px;
+        border-radius: 0px;
 
         padding: 5px 16px;
 
