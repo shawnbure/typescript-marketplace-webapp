@@ -7,6 +7,7 @@ $break-point-mobile-max: 767px;
 $break-point-tablet: 768px;
 $break-point-desktop: 1024px;
 $break-point-large-desktop: 1280px;
+$break-point-high-large-desktop: 1880px;
 
 :export {
     mobileLarge: strip-unit($break-point-large-mobile);
@@ -14,4 +15,5 @@ $break-point-large-desktop: 1280px;
     tablet: strip-unit($break-point-tablet);
     desktop: strip-unit($break-point-desktop);
     desktopLarge: strip-unit($break-point-large-desktop);
+    desktopHighLarge: strip-unit($break-point-high-large-desktop);
 }

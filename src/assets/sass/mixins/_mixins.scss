@@ -189,5 +189,11 @@
         }
     }
 
+    @if $media == desktop-high-large {
+        @media screen and (max-width: $break-point-high-large-desktop) {
+            @content;
+        }
+    }
+
     
 }

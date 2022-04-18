@@ -23,9 +23,9 @@ import { useDispatch } from 'react-redux';
 import { setAccessToken, setJWT } from 'redux/slices/user';
 import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
 import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
+import StatsPage from 'containers/pages/StatsPage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as faIcons from "@fortawesome/free-regular-svg-icons";
-
 
 
 
@@ -226,6 +226,12 @@ export const App: () => JSX.Element = () => {
                             <AuthProtected>
                                 <CollectionEditPage />
                             </AuthProtected>
+
+                        </Route>
+
+                        <Route path={routePaths.stats} exact={true} >
+
+                            <StatsPage />
 
                         </Route>
 
