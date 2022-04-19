@@ -60,13 +60,18 @@ export const WalletSidebar: (Props: {
   } = Dapp.useContext();
 */
 
+const {
+  WebWalletLoginButton,
+  LedgerLoginButton,
+  WalletConnectLoginButton
+} = DappCore.DappUI;
+
   const isUserLoggedIn = DappCore.getIsLoggedIn();
  
   useEffect(() => {
 
     if (isUserLoggedIn) {
 
-      
       DappCore.getAccountBalance().then(balance => setBalance(balance));
       DappCore.getAddress().then(address => setUserWalletAddress(address));
       setLoginToken(DappCore.getAccountProvider().loginToken);
@@ -202,14 +207,15 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
       >
         Cancel
       </button>
+         {/*
       <DappCore.DappUI.WalletConnectLoginButton 
         callbackRoute={pathname}
         logoutRoute={pathname}
-        title="Maiar Login"
+        title="Maiar"
         lead="Scan the QR code using Maiar"
         token={randomToken}
       />
-      {/*
+   
       <Dapp.Pages.WalletConnect
         callbackRoute={pathname}
         logoutRoute={pathname}
@@ -227,15 +233,19 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
       token={randomToken}
   />
 */}
-    {
-      <DappCore.DappUI.WebWalletLoginButton
-      callbackRoute={pathname}
-      buttonClassName="extension-login"
-      loginButtonText="New Web Wallet login"
-      title="New Web Wallet Login"
-      token={randomToken}
-    />
-    }
+      <WebWalletLoginButton
+        callbackRoute={pathname}
+        loginButtonText={'Web wallet'}
+      />
+      <LedgerLoginButton
+        loginButtonText={'Ledger'}
+        callbackRoute={pathname}
+        className={'test-class_name'}
+      />
+      <WalletConnectLoginButton
+        callbackRoute={pathname}
+        loginButtonText={'Maiar'}
+      />
     
     </div>
 
