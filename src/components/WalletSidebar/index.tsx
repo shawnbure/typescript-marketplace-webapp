@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { routePaths } from "constants/router";
 import { Link, useHistory, useLocation, Redirect } from "react-router-dom";
-import * as DappCore from "@elrondnetwork/dapp-core";
+import {DappUI, sendTransactions, getIsLoggedIn, getAccountBalance, getAddress, getAccountProvider,
+  loginServices, logout, } from "@elrondnetwork/dapp-core";
 import { useAppDispatch } from "redux/store";
 import { setJWT, setUserTokenData } from "redux/slices/user";
 import { useGetEgldPriceQuery } from "services/oracle";
@@ -21,6 +22,7 @@ import { useGetAccessTokenMutation } from "services/auth";
 import { alphaToastMessage } from "components/AlphaToastError";
 import LedgerLogin from "components/Login/Ledger";
 import { decodeBase64 } from "@elrondnetwork/dapp-core";
+
 export const WalletSidebar: (Props: {
   overlayClickCallback?: Function;
 }) => any = ({ overlayClickCallback }) => {
@@ -44,7 +46,7 @@ export const WalletSidebar: (Props: {
   const [withdrawDepositAmount, setWithdrawDepositAmount] = useState<number | undefined>();
 
   //const sendTransaction = Dapp.useSendTransaction();
-  const sendTransactions = DappCore.sendTransactions;
+  //const sendTransactions = sendTransactions;
 
   const [balance, setBalance] = useState<string>('');
   const [userWalletAddress, setUserWalletAddress] = useState<string>('');
@@ -64,22 +66,23 @@ const {
   WebWalletLoginButton,
   LedgerLoginButton,
   WalletConnectLoginButton
-} = DappCore.DappUI;
+} = DappUI;
 
-  const isUserLoggedIn = DappCore.getIsLoggedIn();
- 
-  useEffect(() => {
+const isUserLoggedIn = getIsLoggedIn(); 
+console.log("isUserLoggedIn", isUserLoggedIn);
 
-    if (isUserLoggedIn) {
+useEffect(() => {
 
-      DappCore.getAccountBalance().then(balance => setBalance(balance));
-      DappCore.getAddress().then(address => setUserWalletAddress(address));
-      setLoginToken(DappCore.getAccountProvider().loginToken);
-      setSignature(DappCore.getAccountProvider().signature);
+  if (isUserLoggedIn) {
 
-    }
+    getAccountBalance().then(balance => setBalance(balance));
+    getAddress().then(address => setUserWalletAddress(address));
+    setLoginToken(getAccountProvider().loginToken);
+    setSignature(getAccountProvider().signature);
 
-  }, [isUserLoggedIn]);
+  }
+
+}, [isUserLoggedIn]);
 
   localStorage.setItem("token", randomToken); //temp hack TODO
   /*
@@ -88,7 +91,7 @@ const {
     token: randomToken,
   });
 */
-const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
+const webWalletLogin = loginServices.useWalletConnectLogin({
     callbackRoute: pathname,
     logoutRoute: pathname,
     token: randomToken,
@@ -117,7 +120,7 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
 
     //dappLogout({ callbackUrl: `${window.location.origin}/` });
 
-    DappCore.logout();
+    logout();
 
     history.push(pathname);
   };
@@ -162,6 +165,7 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
       transactions: unconsumedTransaction,
       callbackRoute: succesCallbackRoute,
     });  
+
   };
 
   const handleAddDeposit = async () => {
@@ -192,65 +196,27 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
 
   const MaiarWrapper = (
     <div className="p-maiar-login">
-      {
-        <button
      
-          className="c-button c-button--secondary "
-        >
-          Web Wallet
-        </button>
-      }
-      {/* <LedgerLogin /> */}
-      <button
-        onClick={toggleShouldDisplayMaiarLogin}
-        className="c-button c-button--secondary "
-      >
-        Cancel
-      </button>
-         {/*
-      <DappCore.DappUI.WalletConnectLoginButton 
-        callbackRoute={pathname}
-        logoutRoute={pathname}
-        title="Maiar"
-        lead="Scan the QR code using Maiar"
-        token={randomToken}
-      />
-   
-      <Dapp.Pages.WalletConnect
-        callbackRoute={pathname}
-        logoutRoute={pathname}
-        title="Maiar Login"
-        lead="Scan the QR code using Maiar"
-        token={randomToken}
-      />
-    
-    
-    <DappCore.DappUI.LedgerLoginContainer
-      callbackRoute={pathname}
-      logoutRoute={pathname}
-      title="Ledger Login"
-      lead="Use the Ledger"
-      token={randomToken}
-  />
-*/}
       <WebWalletLoginButton
         callbackRoute={pathname}
         loginButtonText={'Web wallet'}
+        className="c-button "
       />
+
       <LedgerLoginButton
         loginButtonText={'Ledger'}
         callbackRoute={pathname}
-        className={'test-class_name'}
+        className="c-button--primary"
       />
       <WalletConnectLoginButton
         callbackRoute={pathname}
         loginButtonText={'Maiar'}
+        className="c-button c-button--primary"
       />
     
     </div>
-
-    
   );
+
 
   const resove = async () => {
     const verifiedPayload: any = createVerifiedPayload(
@@ -260,7 +226,9 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
       loginToken,
       signature,
       {}
-    );
+      );
+
+
     const accessResult: any = await getAccessTokenRequestTrigger(
       verifiedPayload
     );
@@ -274,7 +242,12 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
     dispatch(setJWT(jtwData.data));
 
     localStorage.setItem("_e_", JSON.stringify(jtwData.data));
+
+    //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<HERE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    //console.log(JSON.stringify(jtwData.data))
+
   };
+
 
   useEffect(() => {
     //if (Boolean(tokenLogin?.loginToken) && Boolean(tokenLogin?.signature)) {
@@ -282,6 +255,7 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
       resove();
     }
   }, [loginToken]);
+
 
   useEffect(() => {
     if (!isUserLoggedIn) {
@@ -316,14 +290,8 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
 
         <div className="c-wallet-sidebar_container w-full md:w-12/12 lg:w-4/12">
           <SearchBar wrapperClassNames={"px-6 block lg:hidden"} />
-          <div className="mt-10">
-            <button
-              onClick={toggleShouldDisplayMaiarLogin}
-              className="c-button c-button--primary "
-            >
-              Login
-            </button>
-          </div>
+
+          {MaiarWrapper}
 
           <div
             style={{ border: "1px solid #151b22" }}

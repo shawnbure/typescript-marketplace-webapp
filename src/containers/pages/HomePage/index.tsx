@@ -16,7 +16,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/swiper-bundle.min.css';
 import 'swiper/swiper.min.css';
-
+import { toast } from 'react-toastify';
 
  import { useGetCollectionVerifiedMutation, useGetCollectionNoteworthyMutation, useGetCollectionTrendingMutation } from 'services/collections';
  import * as DappCore from "@elrondnetwork/dapp-core";
@@ -91,6 +91,19 @@ export const HomePage = () => {
 
        
     }      
+
+    const loginMessage = () =>  {  
+
+        toast.error(`Please login to List an NFT`, {
+            autoClose: 5000,
+            draggable: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            hideProgressBar: false,
+            position: "bottom-right",
+        });
+
+    }
 
     const initializeCollections = async () => {
 
@@ -223,8 +236,8 @@ export const HomePage = () => {
                                                 </Link>
                                             )}
                                             { ! loggedIn && (
-                                                <a href="javascript:alert('Please login to List an NFT');" className="c-button c-button--primary">List an NFT for Free</a>
-
+                                                <a href="#" onClick={loginMessage}
+                                                    className="c-button c-button--primary">List an NFT for Free</a>
                                             )}   
 
                                 </p>
