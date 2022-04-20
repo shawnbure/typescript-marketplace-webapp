@@ -287,6 +287,32 @@ export const txTemplateApi = createApi({
 
         }),
 
+        
+        //updateBuyerWhiteListCheckFormatEndpoint    = "/update-buyer-whitelist-check/:userAddress/:contractAddress/:whiteListCheck"
+        //getBuyerWhiteListCheckFormatEndpoint       = "/get-buyer-whitelist-check/:userAddress/:contractAddress"
+
+        updateBuyerWhiteListCheckTemplate: builder.mutation<any, any>({
+
+            
+            query: ({ userWalletAddress, contractAddress, whiteListCheck }): FetchArgs => {
+
+                
+                
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/update-buyer-whitelist-check/${userWalletAddress}/${contractAddress}/${whiteListCheck}`
+                };
+
+                console.log("customRequestArg.ur: ");
+                console.log(customRequestArg.url);
+
+                return customRequestArg;
+            },
+
+        }),
+
+        
+
 
         getWithdrawCreatorRoyaltiesTemplate: builder.mutation<any, any>({
 
@@ -372,4 +398,6 @@ export const {
     useGetMintTokensTemplateMutation,
     useGetWithdrawNftTemplateMutation, 
     useGetWithdrawDepositTemplateMutation,
-    useUpdateSaleStartTemplateMutation, } = txTemplateApi;
+    useUpdateSaleStartTemplateMutation,
+    useUpdateBuyerWhiteListCheckTemplateMutation } = txTemplateApi;
+
