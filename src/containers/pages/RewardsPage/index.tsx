@@ -206,8 +206,7 @@ export const RewardsPage = () => {
                     </div>                
 
                     <br/>
-
-                    <Footer />                                
+                           
                 </div>
             </div>
 

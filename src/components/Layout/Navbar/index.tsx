@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Popup from "reactjs-popup";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import * as faBrandIcons from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,8 +22,6 @@ import { getCookie, setCookie } from "utils";
 export const Navbar = () => {
     //const dappLogout = Dapp.useLogout();
     const dappLogout = DappCore.logout();
-
-    const history = useHistory();
 
     //const { loggedIn, address: userWalletAddress } = Dapp.useContext();
     const loggedIn = DappCore.getIsLoggedIn();

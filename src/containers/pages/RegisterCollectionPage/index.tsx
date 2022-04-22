@@ -359,8 +359,7 @@ export const RegisterCollectionPage: (props: any) => any = ({ }) => {
 
                     <br/>
 
-                    <Footer /> 
-
+           
                 </div>
 
 

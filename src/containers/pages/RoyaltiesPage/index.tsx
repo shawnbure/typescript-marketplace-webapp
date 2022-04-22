@@ -341,7 +341,6 @@ export const RoyaltiesPage: (props: any) => any = ({}) => {
           </div>
           <br/>
 
-        <Footer /> 
                   
         </div>
       </div>

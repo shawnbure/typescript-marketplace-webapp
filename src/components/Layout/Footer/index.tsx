@@ -7,7 +7,7 @@ export const Footer = () => {
     <footer className="c-footer">
       <div>
           <p className="u-text-small u-tac">
-            Copyright © 2022 Youbei 
+            Copyright © {new Date().getFullYear()} Youbei 
             
             &nbsp; &nbsp; 
             |

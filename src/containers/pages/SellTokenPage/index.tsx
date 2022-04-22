@@ -3,7 +3,7 @@
 import Popup from "reactjs-popup";
 import { useEffect, useState } from "react";
 import * as DappCore from "@elrondnetwork/dapp-core";
-import { Redirect, Link, useParams, useHistory } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 
@@ -25,20 +25,18 @@ import { alphaToastMessage } from "components/AlphaToastError";
 import { Footer } from 'components/index';
 
 export const SellTokenPage: (props: any) => any = ({}) => {
-  const history = useHistory();
-  const {
-    collectionId,
-    tokenNonce,
-    walletAddress: walletAddressParam,
-  } = useParams<UrlParameters>();
+  const navigate = useNavigate();
+  //const { collectionId, tokenNonce, walletAddress: walletAddressParam, } = useParams<UrlParameters>();
   const queryString = window.location.search;
+  const collectionId = getQuerystringValue(queryString, 'collectionId') || '';
+  const walletAddressParam = getQuerystringValue(queryString, 'walletAddress') || '';
+  const tokenNonce = getQuerystringValue(queryString, 'tokenNonce') || '';
   const [isFixedSale, setIsFixedSale] = useState<boolean>(true);
-
   const [requestedAmount, setRequestedAmount] = useState(0);
   const [startDate, setStartDate] = useState(0);
   const [endDate, setEndDate] = useState(0);
   const [shouldRenderPage, setShouldRenderPage] = useState(false);
-  const [pageAction, setPageAction] = useState("");
+ 
   //const { loggedIn, address: userWalletAddress } = Dapp.useContext();
 
   const [userWalletAddress, setUserWalletAddress] = useState<string>('');
@@ -109,7 +107,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   // gatewayTokenData?.data?.tokenData?.creator
 
   if (isErrorGatewayTokenDataQuery || Boolean(gatewayTokenData?.error)) {
-    history.replace(`/`);
+    navigate('/', { replace: true })
   }
 
   if (!shouldRenderPage) {
@@ -132,7 +130,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
   const isCurrentTokenOwner: boolean = walletAddressParam === userWalletAddress;
 
   if (!isCurrentTokenOwner) {
-    history.replace(`/`);
+    navigate('/', { replace: true })
   }
 
   const signTemplateTransaction = async (settings: any) => {
@@ -257,11 +255,9 @@ export const SellTokenPage: (props: any) => any = ({}) => {
     e.preventDefault();
 
     if (isFixedSale) {
-      setPageAction(LIST);
       handleListFixedPrice();
       return;
     }
-    setPageAction(AUCTION);
     handleListAuction();
   };
 
@@ -465,7 +461,6 @@ export const SellTokenPage: (props: any) => any = ({}) => {
 
           <br/>
 
-        <Footer /> 
                   
         </div>
       </div>

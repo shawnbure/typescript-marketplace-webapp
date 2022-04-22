@@ -38,10 +38,12 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const [userWalletAddress, setUserWalletAddress] = useState<string>('');
   DappCore.getAddress().then(address => setUserWalletAddress(address));
 
-  const { collectionId } = useParams<UrlParameters>();
+  //const { collectionId } = useParams<UrlParameters>();
+  const queryString = window.location.search;
+  const collectionId = getQuerystringValue(queryString, 'collectionId') || '';
   const [buyLimit,setBuyLimit] = useState<number>(0);
   const [buyCount,setBuyCount] = useState<number>(0);
-  const queryString = window.location.search;
+
   const { pathname } = useLocation();
   
 
@@ -1095,7 +1097,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
           <br/>
 
-        <Footer /> 
+    
 
         </div>
  

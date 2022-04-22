@@ -83,9 +83,12 @@ export const ConfirmationPage = () => {
   const [userWalletAddress, setUserWalletAddress] = useState<string>('');
   DappCore.getAddress().then(address => setUserWalletAddress(address));
   //const { address: userWalletAddress } = Dapp.useContext();
-  const { action, collectionId, tokenNonce, info } = useParams<UrlParameters>();
-  const [globalToken, setGlobalToken] = useState<any>({});
+  //const { action, collectionId, tokenNonce } = useParams<UrlParameters>();
   const queryString = window.location.search;
+  const action = getQuerystringValue(queryString, 'action') || '';
+  const collectionId = getQuerystringValue(queryString, 'collectionId') || '';
+  const tokenNonce = getQuerystringValue(queryString, 'tokenNonce') || '';
+  const [globalToken, setGlobalToken] = useState<any>({});
   const [transactionHash, setTransactionHash] = useState(getQuerystringValue(queryString, "txHash") || "");
   const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
   const [isTransactionSuccessful, setIsTransactionSuccessful] = useState<boolean>(false);
@@ -478,7 +481,7 @@ export const ConfirmationPage = () => {
             </div>
           </div>
           <br />
-          <Footer />
+  
         </div>
       </div>
     </div>

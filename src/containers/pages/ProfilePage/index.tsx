@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import * as DappCore from "@elrondnetwork/dapp-core";
 import Collapsible from "react-collapsible";
-import { Link, useParams, useLocation, Redirect } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
-
+import { getQuerystringValue } from "utils/transactions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { formatHexMetaImage, formatImgLink, shorterAddress } from "utils";
@@ -25,7 +25,10 @@ import { alphaToastMessage } from 'components/AlphaToastError';
 import { Footer } from 'components/index';
 
 export const ProfilePage: (props: any) => any = ({}) => {
-  const { walletAddress: walletAddressParam } = useParams<UrlParameters>();
+  //const { walletAddress: walletAddressParam } = useParams<UrlParameters>();
+
+  const queryString = window.location.search;
+  const walletAddressParam = getQuerystringValue(queryString, 'walletAddress') || '';
 
   const { pathname } = useLocation();
 
@@ -965,7 +968,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
           <br/>
 
-        <Footer /> 
+   
                   
         </div>
       </div>

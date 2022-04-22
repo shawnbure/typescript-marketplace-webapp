@@ -1,4 +1,4 @@
-import { Route, Redirect } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import * as DappCore from "@elrondnetwork/dapp-core";
 import { routePaths } from "constants/router";
 
@@ -13,7 +13,7 @@ export const AuthProtected: (Props: any) => any = ({ children }) => {
 
     if (!loggedIn) {
         return (
-            <Redirect to={routePaths.home} />
+                <Navigate replace to={routePaths.home} />
         );
     }
 

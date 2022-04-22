@@ -468,8 +468,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
                     </div>
 
                     <br/>
-                    
-                    <Footer />   
+  
 
                 </div>
 

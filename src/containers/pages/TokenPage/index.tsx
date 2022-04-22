@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import * as DappCore from "@elrondnetwork/dapp-core";
 
 import Collapsible from 'react-collapsible';
-import { Redirect, useLocation, Link, useParams } from "react-router-dom";
+import { useLocation, Link, useParams } from "react-router-dom";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import * as faBrands from '@fortawesome/free-brands-svg-icons';
 import { toast } from 'react-toastify';
@@ -41,7 +41,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
     //const { pathname } = useLocation();
 
     //this walletAddressParam below actuall gets the contract address for the URL?
-    const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
+    //const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
+    const queryString = window.location.search;
+    const walletAddressParam = getQuerystringValue(queryString, 'walletAddress') || '';
+    const collectionId = getQuerystringValue(queryString, 'collectionId') || '';
+    const tokenNonce = getQuerystringValue(queryString, 'tokenNonce') || '';
+
     const [hasLoadMoreActivity, setHasLoadMoreActivity] = useState(true);
     const [offerAmount, setOfferAmount] = useState<number>(0);
     const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
@@ -1932,7 +1937,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
           <br/>
 
-        <Footer /> 
                   
         </div>
       </div>

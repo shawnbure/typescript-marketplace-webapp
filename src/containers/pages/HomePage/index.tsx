@@ -1,5 +1,5 @@
 
-import { Link,Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { routePaths } from 'constants/router';
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
@@ -445,7 +445,7 @@ export const HomePage = () => {
 
                     <br/>
 
-                    <Footer />
+          
 
 
 

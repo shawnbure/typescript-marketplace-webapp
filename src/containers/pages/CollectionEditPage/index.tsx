@@ -9,7 +9,7 @@ import * as yup from "yup";
 import { useLocation, Link, useParams, } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
-
+import { getQuerystringValue } from "utils/transactions";
 import { handleCopyToClipboard, shorterAddress } from "utils";
 import { useSaveCollectionCoverImageMutation, useSaveCollectionProfileImageMutation, useUpdateCollectionMutation, useUpdateCollectionMintStartDateMutation, useGetCollectionByIdMutation } from "services/collections";
 import { toast } from "react-toastify";
@@ -79,8 +79,10 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
       };
       
-      
-    const { collectionId } = useParams<UrlParameters>();
+    //const { collectionId } = useParams<UrlParameters>();  
+    const queryString = window.location.search;
+    const collectionId = getQuerystringValue(queryString, 'collectionId') || '';
+
 
     const [updateCollectionMutationTrigger] = useUpdateCollectionMutation();
 
@@ -779,7 +781,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
                     <br/>
 
-                    <Footer />  
+          
                     
 
                 </div>

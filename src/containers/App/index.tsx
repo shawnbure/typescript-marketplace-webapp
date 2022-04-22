@@ -1,35 +1,26 @@
 /* eslint-disable */
 import classNames from 'classnames';
 import * as DappCore from "@elrondnetwork/dapp-core";
-import { Route, Switch, useLocation, Redirect } from "react-router-dom";
+import * as DappCoreCom from "@elrondnetwork/core-components";
 
+import { Route, Routes, useLocation, BrowserRouter as Router } from "react-router-dom";
 
 import * as config from "configs/dappConfig";
 import { useAppSelector } from 'redux/store';
-import { routePaths } from "constants/router";
+import { routePaths, routes } from "constants/router";
 import { selectTheme } from 'redux/selectors/user';
-import { AuthWrapper, ErdReqContainer } from "containers/index";
-import { TokenPage, HomePage, CreatePage, SellTokenPage, ProfilePage, AccountSettingsPage, CollectionEditPage, CollectionPage, RoyaltiesPage, RankingsPage, RewardsPage, ConfirmationPage } from 'containers/pages';
+import { HomePage } from 'containers/pages';
 import { DARK, LIGHT } from 'constants/ui';
-
 
 import 'reactjs-popup/dist/index.css';
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import AuthProtected from 'containers/AuthProtected';
-import { useEffect, useLayoutEffect } from 'react';
-import { createVerifiedPayload } from 'utils';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { createVerifiedPayload, generateId } from 'utils';
 import { useGetAccessTokenMutation } from 'services/auth';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setJWT } from 'redux/slices/user';
-import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
-import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
-
-
-
-// import ReactGA from 'react-ga';
-// ReactGA.initialize('G-298PT9611Z');
-// ReactGA.pageview(window.location.pathname + window.location.search);
-
+import Layout from 'components/Layout';
 
 export const App: () => JSX.Element = () => {
 
@@ -38,21 +29,35 @@ export const App: () => JSX.Element = () => {
     const theme = useAppSelector(selectTheme);
     const isLightThemeSelected: boolean = theme === LIGHT;
 
+    //NEW FOR DAPPCORE
+    const [loginToken, setLoginToken] = useState<string>(generateId(32));
+    const [signature, setSignature] = useState<string>('');
+    const [address, setAddress] = useState<string>('');
 
     const generatedClasses: any = classNames('c-app', {
         'light-theme': isLightThemeSelected
     });
 
-    const location = useLocation();
-    const { pathname } = location;
+    const {
+        TransactionsToastList,
+        SignTransactionsModals,
+        NotificationModal,
+        //DappCorePages: { UnlockPage }
+      } = DappCore.DappUI;
 
     const [getAccessTokenRequestTrigger,] = useGetAccessTokenMutation();
 
     const getJWT = async () => {
 
-        const address = new URLSearchParams(location.search).get('address');
-        const signature = new URLSearchParams(location.search).get('signature');
-        const loginToken = localStorage.getItem("token")//TODO //new URLSearchParams(location.search).get('loginToken');
+        //const address = new URLSearchParams(location.search).get('address');
+        //const signature = new URLSearchParams(location.search).get('signature');
+        //const loginToken = localStorage.getItem("token") //TODO //new URLSearchParams(location.search).get('loginToken');
+
+        const objStorage = JSON.parse(localStorage.getItem("persist:dapp-core-store") || '{}');
+        const objAccount = JSON.parse(objStorage.account || '{}')
+        const walletAddress = objAccount.address;
+        setAddress(walletAddress);
+         
         const data = {};
         if (!address || !signature ) {
             return;
@@ -61,6 +66,8 @@ export const App: () => JSX.Element = () => {
         const verifiedPayload: any = createVerifiedPayload(address, loginToken, signature, data);
         localStorage.removeItem("token") //TODO
         const accessResult: any = await getAccessTokenRequestTrigger(verifiedPayload);
+
+        console.log(accessResult + " accessResult");
 
         if (!accessResult.data) {
             return;
@@ -90,138 +97,35 @@ export const App: () => JSX.Element = () => {
         }
         
     }, [])
-            /* <Dapp.Context config={config}> */
+
     return (
 
         <div className={generatedClasses}>
 
-            <DappCore.DappProvider customNetworkConfig={networkConfig} environment={config.network.id}>
+            <DappCore.DappProvider customNetworkConfig={networkConfig} environment={config.network.id} completedTransactionsDelay={200}>
+            
+                <Layout>
+                    <TransactionsToastList />
+                    <NotificationModal />
+                    <SignTransactionsModals />
+                    <Routes>
 
-                <AuthWrapper>
+                        <Route
+                        path={routePaths.login}
+                        element={<HomePage />}
+                        />
+                        {routes.map((route: any, index: number) => (
+                        <Route
+                            path={route.path}
+                            key={'route-key-' + index}
+                            element={<route.component />}
+                        />
+                        ))}
+                        <Route path='*' element={<HomePage />} />
 
-                    <Switch>
+                    </Routes>
 
-                        <Route path={routePaths.home} exact={true} >
-
-                            <HomePage />
-
-                        </Route>
-
-                        <Route path={routePaths.rankings} exact={true} >
-
-                            <RankingsPage />
-
-                        </Route>
-
-
-                        <Route path={routePaths.rewards} exact={true} >
-
-                            <RewardsPage />
-
-                        </Route>
-
-                        
-                        {/* <Route path={'/maiar-login'} exact={true} >
-
-                            <div className="p-maiar-login">
-                               
-                            </div>
-                        </Route> */}
-
-                        <Route path={routePaths.sellToken} exact={true} >
-
-                            <AuthProtected>
-                                <SellTokenPage />
-                            </AuthProtected>
-
-                        </Route>
-
-                        <Route path={routePaths.confirmation} exact={true} >
-                            <AuthProtected>
-                                <ConfirmationPage />
-                            </AuthProtected>
-                        </Route>
-        
-
-                        <Route path={[routePaths.token, routePaths.unlistedToken]} exact={true} >
-
-                            <TokenPage />
-
-                        </Route>
-
-                        <Route path={routePaths.collectionRegister} exact={true} >
-
-                            <AuthProtected>
-                                <RegisterCollectionPage />
-                            </AuthProtected>
-
-                        </Route>
-
-
-                        <Route path={routePaths.create} exact={true} >
-
-                            <CreatePage />
-
-                        </Route>
-
-                        <Route path={routePaths.collectionCreate} exact={true} >
-
-                            <AuthProtected>
-                                <CreateCollectionPage />
-                            </AuthProtected>
-
-                        </Route>
-
-                        <Route path={routePaths.collection} exact={true} >
-
-                            <CollectionPage />
-
-                        </Route>
-
-                        <Route path={[routePaths.account, routePaths.profile]} exact={true} >
-                            
-                            <ProfilePage />
-
-                        </Route>
-
-                        <Route path={routePaths.accountSettings} exact={true} >
-
-                            <AuthProtected>
-                                <AccountSettingsPage />
-                            </AuthProtected>
-
-                        </Route>
-
-                        <Route path={routePaths.collectionEdit} exact={true} >
-
-                            <AuthProtected>
-                                <CollectionEditPage />
-                            </AuthProtected>
-
-                        </Route>
-
-                        <Route path={routePaths.royalties} exact={true} >
-
-                            <AuthProtected>
-                                <RoyaltiesPage />
-                            </AuthProtected>
-
-                        </Route>
-
-
-                        <Route path={"/pigselated"} exact={true} >
-
-                            <Redirect to={"/collection/HELIOS2022-1ea0f2"} />
-
-                        </Route>
-
-                        <Route path="*">
-                            <HomePage />
-                        </Route>
-
-                    </Switch>
-
-                </AuthWrapper>
+                </Layout>
 
             </DappCore.DappProvider> 
 

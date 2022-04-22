@@ -124,7 +124,6 @@ export const RankingsPage: (props: any) => any = ({ }) => {
 
                     <br/>
 
-                    <Footer /> 
 
                 </div>
 

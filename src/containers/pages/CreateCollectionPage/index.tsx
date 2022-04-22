@@ -2,7 +2,7 @@
 import ReactDOM from "react-dom";
 
 
-import { Redirect, Link, Router, useLocation, useHistory } from 'react-router-dom';
+import {Link, Router, useLocation, useNavigate } from 'react-router-dom';
 import Select from 'react-select'
 import { useEffect, useState } from "react";
 import * as DappCore from "@elrondnetwork/dapp-core";
@@ -40,14 +40,6 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
     const [userWalletAddress, setUserWalletAddress] = useState<string>('');
     DappCore.getAddress().then(address => setUserWalletAddress(address));
-
-    const history = useHistory() 
-
-    useEffect(() => {
-        return history.listen((location) => { 
-           //console.log(
-        }) 
-     },[history]) 
      
      
     const [isOpenLoading, setIsOpenLoading] = useState(true)
@@ -1662,7 +1654,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
 
                     <br/>
 
-                    <Footer /> 
+      
 
                 </div>
 
