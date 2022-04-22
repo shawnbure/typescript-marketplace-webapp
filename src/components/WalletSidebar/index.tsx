@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { routePaths } from "constants/router";
-import { Link, useHistory, useLocation, Redirect } from "react-router-dom";
-import {DappUI, sendTransactions, getIsLoggedIn, getAccountBalance, getAddress, getAccountProvider,
-  loginServices, logout, } from "@elrondnetwork/dapp-core";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import * as DappCore from "@elrondnetwork/dapp-core";
 import { useAppDispatch } from "redux/store";
 import { setJWT, setUserTokenData } from "redux/slices/user";
 import { useGetEgldPriceQuery } from "services/oracle";
@@ -28,9 +27,11 @@ export const WalletSidebar: (Props: {
 }) => any = ({ overlayClickCallback }) => {
   // const randomToken = generateId(32);
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
+  //const pathname = window.location.origin;
+
   //const dappLogout = Dapp.useLogout(); 
 
   const [ getDepositTemplateTrigger, { data: userDepositData }, ] = useGetDepositTemplateMutation();
@@ -46,12 +47,12 @@ export const WalletSidebar: (Props: {
   const [withdrawDepositAmount, setWithdrawDepositAmount] = useState<number | undefined>();
 
   //const sendTransaction = Dapp.useSendTransaction();
-  //const sendTransactions = sendTransactions;
+  const sendTransactions = DappCore.sendTransactions;
 
   const [balance, setBalance] = useState<string>('');
   const [userWalletAddress, setUserWalletAddress] = useState<string>('');
-  const [loginToken, setLoginToken] = useState<string>('');
-  const [signature, setSignature] = useState<string>('');
+  const [loginToken, setLoginToken] = useState<any>();
+  const [signature, setSignature] = useState<any>();
 
   /*
   const {
@@ -66,37 +67,51 @@ const {
   WebWalletLoginButton,
   LedgerLoginButton,
   WalletConnectLoginButton
-} = DappUI;
+} = DappCore.DappUI;
 
-const isUserLoggedIn = getIsLoggedIn(); 
-console.log("isUserLoggedIn", isUserLoggedIn);
+const isUserLoggedIn = DappCore.getIsLoggedIn();
 
 useEffect(() => {
 
   if (isUserLoggedIn) {
 
-    getAccountBalance().then(balance => setBalance(balance));
-    getAddress().then(address => setUserWalletAddress(address));
-    setLoginToken(getAccountProvider().loginToken);
-    setSignature(getAccountProvider().signature);
+    console.log("<<<<<<<<<<<<<<<<<<<<<<logged In>>>>>>>>>>>>>>>>>>>>>>")
 
+    DappCore.getAccountBalance().then(balance => setBalance(balance));
+    DappCore.getAddress().then(address => setUserWalletAddress(address));
   }
 
 }, [isUserLoggedIn]);
 
-  localStorage.setItem("token", randomToken); //temp hack TODO
+useEffect(() => {
+
+  if (isUserLoggedIn) {
+
+    console.log(userWalletAddress, "<<<<<<<<<<<<<<<<<<<<<<address In>>>>>>>>>>>>>>>>>>>>>>")
+
+    DappCore.getAccountProvider().then((loginToken: any) => setLoginToken(loginToken));
+    DappCore.getAccountProvider().then((signature: any) => setSignature(signature));
+  }
+
+}, [userWalletAddress]);
+
+
+  //don't know if this is necessary anymore
+  //localStorage.setItem("token", randomToken); //temp hack TODO
+
   /*
+  //old version - using custom button
   const webWalletLogin = Dapp.useWebWalletLogin({
     callbackRoute: pathname,
     token: randomToken,
   });
-*/
-const webWalletLogin = loginServices.useWalletConnectLogin({
+//new version - using custom button
+const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
     callbackRoute: pathname,
     logoutRoute: pathname,
     token: randomToken,
   });
-
+*/
 
   const {
     data: egldPriceData,
@@ -120,9 +135,9 @@ const webWalletLogin = loginServices.useWalletConnectLogin({
 
     //dappLogout({ callbackUrl: `${window.location.origin}/` });
 
-    logout();
+    DappCore.logout();
 
-    history.push(pathname);
+    navigate(pathname);
   };
 
   const signTemplateTransaction = async (settings: any) => {
@@ -242,9 +257,6 @@ const webWalletLogin = loginServices.useWalletConnectLogin({
     dispatch(setJWT(jtwData.data));
 
     localStorage.setItem("_e_", JSON.stringify(jtwData.data));
-
-    //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<HERE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    //console.log(JSON.stringify(jtwData.data))
 
   };
 
