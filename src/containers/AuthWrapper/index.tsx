@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as DappCore from "@elrondnetwork/dapp-core";
 import { AuthenticatedRoutesWrapper} from "@elrondnetwork/dapp-core";
-import { routePaths } from 'constants/router';
+import { routePaths, routes } from 'constants/router';
 
 import { ToastContainer } from 'react-toastify';
 
@@ -62,6 +62,7 @@ export const AuthWrapper: (Props: { children: any }) => any = ({ children }) => 
         return () => {
 
             // dappLogout({ callbackUrl: `` });
+            DappCore.logout('');
 
         };
 
@@ -76,7 +77,7 @@ export const AuthWrapper: (Props: { children: any }) => any = ({ children }) => 
                 {children}
             </Dapp.Authenticate>
         */}
-            <AuthenticatedRoutesWrapper routes={[]} unlockRoute={routePaths.login}>
+            <AuthenticatedRoutesWrapper routes={routes} unlockRoute={routePaths.login}>
                 <Navbar />
                 {children}
             </AuthenticatedRoutesWrapper>

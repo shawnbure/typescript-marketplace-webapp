@@ -67,7 +67,7 @@ export const App: () => JSX.Element = () => {
         localStorage.removeItem("token") //TODO
         const accessResult: any = await getAccessTokenRequestTrigger(verifiedPayload);
 
-        console.log(accessResult + " accessResult");
+    
 
         if (!accessResult.data) {
             return;
@@ -82,7 +82,8 @@ export const App: () => JSX.Element = () => {
 
     useEffect(() => {
         if (location) {
-            getJWT();
+
+            //getJWT();
 
         }
 
@@ -90,7 +91,7 @@ export const App: () => JSX.Element = () => {
 
     useEffect(() => {
         let address: any = localStorage.getItem('address')
-    
+        
         if(address && address.length > 0) {
             address = JSON.parse(address)
             address && address.data ? window.pendo.initialize({ visitor: { id: address.data } }) : null
@@ -105,25 +106,30 @@ export const App: () => JSX.Element = () => {
             <DappCore.DappProvider customNetworkConfig={networkConfig} environment={config.network.id} completedTransactionsDelay={200}>
             
                 <Layout>
+
                     <TransactionsToastList />
+
                     <NotificationModal />
+                    
                     <SignTransactionsModals />
-                    <Routes>
 
-                        <Route
-                        path={routePaths.login}
-                        element={<HomePage />}
-                        />
-                        {routes.map((route: any, index: number) => (
-                        <Route
-                            path={route.path}
-                            key={'route-key-' + index}
-                            element={<route.component />}
-                        />
-                        ))}
-                        <Route path='*' element={<HomePage />} />
+                    <DappCore.AuthenticatedRoutesWrapper routes={routes} unlockRoute={routePaths.login}>
 
-                    </Routes>
+                        <Routes>
+
+                            <Route path={routePaths.login} element={<HomePage />} />
+                            
+                            {routes.map((route: any, index: number) => (
+                                
+                                <Route path={route.path} key={'route-key-' + index} element={<route.component />} />
+                                
+                            ))}
+
+                            <Route path='*' element={<HomePage />} />
+
+                        </Routes>
+
+                    </DappCore.AuthenticatedRoutesWrapper>
 
                 </Layout>
 

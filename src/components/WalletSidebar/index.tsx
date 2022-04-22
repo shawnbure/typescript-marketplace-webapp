@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { routePaths } from "constants/router";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import * as DappCore from "@elrondnetwork/dapp-core";
+import * as DappCoreCom from "@elrondnetwork/core-components";
 import { useAppDispatch } from "redux/store";
 import { setJWT, setUserTokenData } from "redux/slices/user";
 import { useGetEgldPriceQuery } from "services/oracle";
@@ -22,6 +23,7 @@ import { alphaToastMessage } from "components/AlphaToastError";
 import LedgerLogin from "components/Login/Ledger";
 import { decodeBase64 } from "@elrondnetwork/dapp-core";
 
+
 export const WalletSidebar: (Props: {
   overlayClickCallback?: Function;
 }) => any = ({ overlayClickCallback }) => {
@@ -31,7 +33,6 @@ export const WalletSidebar: (Props: {
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
   //const pathname = window.location.origin;
-
   //const dappLogout = Dapp.useLogout(); 
 
   const [ getDepositTemplateTrigger, { data: userDepositData }, ] = useGetDepositTemplateMutation();
@@ -39,7 +40,6 @@ export const WalletSidebar: (Props: {
   const [ getWithdrawDepositTemplateTrigger,  ] = useGetWithdrawDepositTemplateMutation();
 
   const [randomToken] = useState(generateId(32));
-
   const [getAccessTokenRequestTrigger] = useGetAccessTokenMutation();
 
   const [addDepositAmount, setAddDepositAmount] = useState<number | undefined>();
@@ -75,8 +75,6 @@ useEffect(() => {
 
   if (isUserLoggedIn) {
 
-    console.log("<<<<<<<<<<<<<<<<<<<<<<logged In>>>>>>>>>>>>>>>>>>>>>>")
-
     DappCore.getAccountBalance().then(balance => setBalance(balance));
     DappCore.getAddress().then(address => setUserWalletAddress(address));
   }
@@ -86,8 +84,6 @@ useEffect(() => {
 useEffect(() => {
 
   if (isUserLoggedIn) {
-
-    console.log(userWalletAddress, "<<<<<<<<<<<<<<<<<<<<<<address In>>>>>>>>>>>>>>>>>>>>>>")
 
     DappCore.getAccountProvider().then((loginToken: any) => setLoginToken(loginToken));
     DappCore.getAccountProvider().then((signature: any) => setSignature(signature));
@@ -105,13 +101,15 @@ useEffect(() => {
     callbackRoute: pathname,
     token: randomToken,
   });
-//new version - using custom button
-const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
-    callbackRoute: pathname,
-    logoutRoute: pathname,
-    token: randomToken,
-  });
+  //new version - using custom button
+  const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
+      callbackRoute: pathname,
+      logoutRoute: pathname,
+      token: randomToken,
+    });
 */
+
+
 
   const {
     data: egldPriceData,
@@ -134,7 +132,6 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
     overlayClickCallback?.();
 
     //dappLogout({ callbackUrl: `${window.location.origin}/` });
-
     DappCore.logout();
 
     navigate(pathname);
@@ -234,6 +231,9 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
 
 
   const resove = async () => {
+    
+    console.log(isUserLoggedIn, "<<<<<<<<<<<<<<<<<<<<<< STEP RESOLVE >>>>>>>>>>>>>>>>>>>>>>")
+    
     const verifiedPayload: any = createVerifiedPayload(
       userWalletAddress,
       //tokenLogin?.loginToken,
@@ -242,7 +242,6 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
       signature,
       {}
       );
-
 
     const accessResult: any = await getAccessTokenRequestTrigger(
       verifiedPayload
@@ -263,7 +262,9 @@ const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
 
   useEffect(() => {
     //if (Boolean(tokenLogin?.loginToken) && Boolean(tokenLogin?.signature)) {
+
     if (Boolean(loginToken) && Boolean(signature)) {
+
       resove();
     }
   }, [loginToken]);
