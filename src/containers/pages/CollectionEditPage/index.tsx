@@ -12,6 +12,10 @@ import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { handleCopyToClipboard, shorterAddress } from "utils";
 import { useSaveCollectionCoverImageMutation, useSaveCollectionProfileImageMutation, useUpdateCollectionMutation, useUpdateCollectionMintStartDateMutation, useGetCollectionByIdMutation } from "services/collections";
+
+import { useGetBuyerWhiteListCheckTemplateMutation } from "services/tokens";
+
+
 import { toast } from "react-toastify";
 
 import { UrlParameters } from './interfaces';
@@ -22,7 +26,9 @@ import { prepareTransaction } from "utils/transactions";
 
 import {
     useUpdateSaleStartTemplateMutation,
+    useUpdateBuyerWhiteListCheckTemplateMutation
   } from "services/tx-template";
+import { off } from "gulp";
 
 export const CollectionEditPage: (props: any) => any = ({ }) => {
 
@@ -30,6 +36,17 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
         updateSaleStartTemplate,
         { data: UpdateSaleStartData },
       ] = useUpdateSaleStartTemplateMutation();
+
+
+      const [
+        updateBuyerWhiteListCheckTemplate,
+        { data: updateBuyerWhiteListCheck },
+      ] = useUpdateBuyerWhiteListCheckTemplateMutation();
+
+
+
+
+
 
     const { pathname } = useLocation();
     const sendTransaction = Dapp.useSendTransaction();
@@ -78,7 +95,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     const [updateCollectionMintStartDateTrigger] = useUpdateCollectionMintStartDateMutation();
 
-    
+
 
     const [saveCollectionProfileImageTrigger] = useSaveCollectionProfileImageMutation();
     const [saveCollectionCoverImageTrigger] = useSaveCollectionCoverImageMutation();
@@ -98,10 +115,22 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     const [isFinishLoading, setIsFinishLoading] = useState(false)
 
 
+    useEffect(() => {
+        if( contractAddress != '' )
+        {
+            handleGetBuyerWhiteListCheck()
+        }
 
+    }, [contractAddress]);
+    
+    
     const {
         address: userWalletAddress,
     } = Dapp.useContext();
+
+
+
+    // =============================== PROFILE IMAGE ==========================
 
     const handleUploadProfileImage = (event: any) => {
 
@@ -171,6 +200,8 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     };
 
 
+    // =============================== COVER IMAGE ==========================
+
     const handleUploadSaveCoverImage = (event: any) => {
 
         const hasImage: boolean = event.target.files && event.target.files[0];
@@ -236,6 +267,83 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     };
 
+    // =============================== BUYER WHITELIST CHECK ==========================
+
+    const [getBuyerWhitelistCheckTemplateTrigger] = useGetBuyerWhiteListCheckTemplateMutation();
+
+    const [buyerWhiteListCheckFlag, setBuyerWhiteListCheckFlag] = useState('OFF');
+
+
+    const handleBuyWhiteListCheckONChange = () => {
+        setBuyerWhiteListCheckFlag('ON');
+      };
+    
+      const handleBuyWhiteListCheckOFFChange = () => {
+        setBuyerWhiteListCheckFlag('OFF');
+      };
+
+
+              
+      const handleGetBuyerWhiteListCheck = async () => {
+
+        const formattedData = {
+          contractAddress: contractAddress
+        }
+      
+        const response: any = await getBuyerWhitelistCheckTemplateTrigger({ payload: formattedData });
+    
+          if (response.error) {
+            //handle any error here
+            return;
+        }
+    
+        const { data: txData } = response.data;
+    
+        console.log("txData: " + txData)  //ON | OFF
+        
+        setBuyerWhiteListCheckFlag(txData)
+    };
+    
+    
+    
+
+    const schemaBuyerWhiteListCheck= yup.object({
+        
+    }).required();
+    
+
+    const { register: registerBuyerWhiteListCheck, handleSubmit: handleSubmitBuyerWhiteListCheck, setValue: setValueBuyerWhiteListCheck, control: controlBuyerWhiteListCheck, setError: setErrorBuyerWhiteListCheck, clearErrors: clearErrorsBuyerWhiteListCheck, formState: { errors: errorsBuyerWhiteListCheck } } = useForm({
+        resolver: yupResolver(schemaBuyerWhiteListCheck),
+    });
+
+
+
+    const onSubmitBuyWhiteListCheck = async (data: any) => {
+
+        //Set this to determine the TX Type
+        sessionStorage.setItem("EDIT_COLLECTION_SIGN_TYPE", "IS_WHITELISTED")
+
+        const whiteListCheck =  (buyerWhiteListCheckFlag == 'ON' ) ? 1 : 0
+
+        //sessionStorage save
+        sessionStorage.setItem("Edit_Collection_Is_WhiteListed_Flag",  buyerWhiteListCheckFlag)
+
+
+        signTemplateTransaction({
+            getTemplateData: { userWalletAddress, contractAddress, whiteListCheck },
+            succesCallbackRoute: pathname,
+            getTemplateTrigger: updateBuyerWhiteListCheckTemplate,
+          });
+ 
+    };
+
+
+
+
+
+    
+    // =============================== MINTING START DATE ==========================
+
     const schemaMintingStartDate= yup.object({
 
         mintStartDate: yup.string(),
@@ -246,6 +354,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     const { register: registerMintingStartDate, handleSubmit: handleSubmitMintingStartDate, setValue: setValueMintingStartDate, control: controlMintingStartDate, setError: setErrorMintingStartDate, clearErrors: clearErrorsMintingStartDate, formState: { errors: errorsMintingStartDate } } = useForm({
         resolver: yupResolver(schemaMintingStartDate),
     });
+
 
 
     function confirmMintingStartDate()
@@ -268,28 +377,14 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
 
 
-    const schemaEdit = yup.object({
-
-        collectionName: yup.string().min(3, "Min of 3 and Max of 20 Characters").max(20,"Min of 3 and Max of 20 Characters").required("Required Field"),
-        description: yup.string().max(1000, "Max of 1000 Characters"),
-        discordLink: yup.string(),
-        instagramLink: yup.string(),
-        telegramLink: yup.string(),
-        twitterLink: yup.string(),
-        website: yup.string(),
-
-
-    }).required();
-
-    const { register: registerEdit, handleSubmit: handleSubmitEdit, setValue: setValueEdit, control: controlEdit, setError: setErrorEdit, clearErrors: clearErrorsEdit, formState: { errors: errorsEdit } } = useForm({
-        resolver: yupResolver(schemaEdit),
-    });
 
 
     
     const onSubmitMintingStartDate = async (data: any) => {
 
-
+        
+        //Set this to determine the TX Type
+        sessionStorage.setItem("EDIT_COLLECTION_SIGN_TYPE", "SALE_START_DATE")
 
         if(data.mintStartDate == "" )
         {
@@ -299,7 +394,6 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
         else
         {            
             //got date
-
             var dateInput = new Date(data.mintStartDate);
  
             data.mintStartDate = dateInput.getTime()
@@ -352,9 +446,27 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
 
 
+    // =============================== COLLECTION GENERAL EDIT ==========================
 
 
+    const schemaEdit = yup.object({
 
+        collectionName: yup.string().min(3, "Min of 3 and Max of 20 Characters").max(20,"Min of 3 and Max of 20 Characters").required("Required Field"),
+        description: yup.string().max(1000, "Max of 1000 Characters"),
+        discordLink: yup.string(),
+        instagramLink: yup.string(),
+        telegramLink: yup.string(),
+        twitterLink: yup.string(),
+        website: yup.string(),
+
+
+    }).required();
+
+    const { register: registerEdit, handleSubmit: handleSubmitEdit, setValue: setValueEdit, control: controlEdit, setError: setErrorEdit, clearErrors: clearErrorsEdit, formState: { errors: errorsEdit } } = useForm({
+        resolver: yupResolver(schemaEdit),
+    });
+
+    
     const onSubmit = async (data: any) => {
 
 
@@ -423,11 +535,60 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
             setValueEdit("telegramLink", collectionData?.data?.data?.collection.telegramLink);
 
 
+        //let editCollectionSignType = sessionStorage.getItem("EDIT_COLLECTION_SIGN_TYPE");
+        //sessionStorage.setItem("EDIT_COLLECTION_SIGN_TYPE", "SALE_START_DATE")
+        //sessionStorage.setItem("EDIT_COLLECTION_SIGN_TYPE", "IS_WHITELISTED")
+        
+        
+            let editCollectionSignType = sessionStorage.getItem("EDIT_COLLECTION_SIGN_TYPE");
+
+
             const txHashCurrent = getTxHash();
+
+
+
+            //Mint Start Date 
+            let sessionIsWhiteListedFlag = sessionStorage.getItem("Edit_Collection_Is_WhiteListed_Flag");
+
+            //if there is transaction hash and MintStartDate in sessiokn 
+            if( txHashCurrent != null && sessionIsWhiteListedFlag != null && editCollectionSignType == "IS_WHITELISTED")
+            {
+                //henry
+
+
+                if( sessionIsWhiteListedFlag == 'ON' )
+                {
+                    handleBuyWhiteListCheckONChange()
+
+
+
+            //var elRdBtnBuyerWhiteListOn = document.getElementsByName("rdBtnBuyerWhiteList_ON");
+
+            //elRdBtnBuyerWhiteListOn.checked                     
+                }
+                else
+                {
+                    handleBuyWhiteListCheckOFFChange()
+                }           
+            }
+            else  
+            {
+                //populated it from DB
+                const mintStartDate = collectionData?.data?.data?.collection.mintStartDate
+
+                if( mintStartDate > 0 )
+                {
+                    setValueMintingStartDate("mintStartDate", new Date(mintStartDate).toISOString().split('T')[0])
+                }
+            }
+
+
+
+
             let sessionMintStartDate = sessionStorage.getItem("Edit_Collection_Mint_Start_Date");
 
             //if there is transaction hash and MintStartDate in sessiokn 
-            if( txHashCurrent != null && sessionMintStartDate != null )
+            if( txHashCurrent != null && sessionMintStartDate != null && editCollectionSignType == "SALE_START_DATE")
             {
                 let sessionMintStartDateInt = parseInt(sessionMintStartDate, 10);
 
@@ -448,9 +609,46 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
             }
 
 
+
+
+
+
+
+
+
+
+            //handleBuyWhiteListCheckONChange()
+
+            //handleGetBuyerWhiteListCheck()
+
+            //var radios = document.getElementsByName(vRadioObj.name);
+            //var elRdBtnBuyerWhiteListOn = document.getElementsByName("rdBtnBuyerWhiteList_ON");
+
+            //elRdBtnBuyerWhiteListOn.checked 
+
+
+
+            /*
+            setValuesCollection
+            function displayRadioValue() {
+                var elRdBtnBuyerWhite = document.getElementsByName('rdBtnBuyerWhiteList');
+                  
+                for(i = 0; i < ele.length; i++) {
+                    if(ele[i].checked)
+                    document.getElementById("result").innerHTML
+                            = "Gender: "+ele[i].value;
+                }
+            }
+            */
             
+
+
         }
     };
+
+
+
+    
 
 
     useEffect(() => {
@@ -525,6 +723,13 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     }
 
+
+
+    
+    
+
+
+
     {
         if( isFinishLoading )  //this is so that the JWT Authorization token is available
         {
@@ -554,7 +759,16 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                         //update session txHash
                         sessionStorage.setItem("Edit_Collection_TxHash", txHashCurrent)
     
-                        SaveToMintStartDateToDB();             
+                        let editCollectionSignType = sessionStorage.getItem("EDIT_COLLECTION_SIGN_TYPE");
+
+                        if( editCollectionSignType == "SALE_START_DATE" )
+                        {
+                            SaveToMintStartDateToDB(); 
+                        }
+                        else if( editCollectionSignType == "IS_WHITELISTED" )
+                        {
+                            //SaveIsWhiteListedToDB(); 
+                        }                                    
                     }
                     else
                     {
@@ -564,7 +778,9 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
             }
         }
 
-
+        //let editCollectionSignType = sessionStorage.getItem("EDIT_COLLECTION_SIGN_TYPE");
+        //sessionStorage.setItem("EDIT_COLLECTION_SIGN_TYPE", "SALE_START_DATE")
+        //sessionStorage.setItem("EDIT_COLLECTION_SIGN_TYPE", "IS_WHITELISTED")
     }
 
 
@@ -648,7 +864,6 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                 </div>
                             </div>
 
-                            <br/>
 
                             <hr className="text-white my-10" />
 
@@ -731,7 +946,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
                             </form>
 
-                            <br/>
+              
 
                             <hr className="text-white my-10" />
 
@@ -747,6 +962,71 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                 <div className="grid grid-cols-9 mb-4">
                                     <div className="col-span-12">
                                         <input {...registerMintingStartDate('mintStartDate')} id="mintStartDate" onChange={(e) => confirmMintingStartDate()}  autoComplete="off" type="date" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white w-full p-create-collection_token-ticker" />
+                                    </div>
+                                </div>
+
+
+                                <br/>
+
+
+                                <button className="c-button c-button--primary" type="submit">Sign</button>
+
+                                <br/><br/>
+
+
+
+                            </form>
+
+                    
+
+                            <hr className="text-white my-10" />
+
+                            <br/>
+
+                            <form onSubmit={handleSubmitBuyerWhiteListCheck(onSubmitBuyWhiteListCheck)}>
+
+                                 <p className="text-xl u-text-bold mb-2">
+                                    Buyer's WhiteList Check: &nbsp;
+                                    <a href="javascript:alert('Buyer WhiteList Check only applies to collections that are created on the Youbei Marketplace. It toggles the whitelist check. There is a gas fee associated with this feature since it is stored on the blockchain.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+    
+                                    &nbsp; 
+
+                                    <input
+                                        title="ON"
+                                        type="radio"
+                                        checked={buyerWhiteListCheckFlag === 'ON'}
+
+                                        onChange={handleBuyWhiteListCheckONChange}
+                                    />
+      
+                                &nbsp;
+
+
+                                <span className="u-text-theme-gray-light">
+                                    ON
+                                </span>                        
+
+                                &nbsp; &nbsp; &nbsp; &nbsp; 
+
+                                <input
+                                        title="OFF"
+                                        type="radio"
+                                        checked={buyerWhiteListCheckFlag === 'OFF'}
+
+                                        onChange={handleBuyWhiteListCheckOFFChange}
+                                    />
+
+                                &nbsp;
+                                
+                                <span className="u-text-theme-gray-light">
+                                    OFF
+                                </span> 
+
+
                                     </div>
                                 </div>
 

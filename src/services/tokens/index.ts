@@ -222,7 +222,31 @@ export const tokensApi = createApi({
         return customRequestArg;
       },
     }),
+
+
+    getBuyerWhiteListCheckTemplate: builder.mutation<any, any>({
+      query: ({ payload }): FetchArgs => {
+        //const accessToken: string = selectAccessToken(store.getState());
+
+        const customRequestArg: FetchArgs = {
+          method: POST,
+          /*
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    */
+          body: JSON.stringify(payload),
+          url: `/${mainPath}/buyer-whitelist-check`,
+        };
+
+        return customRequestArg;
+      },
+    }),
+
+
+
   }),
+
 });
 
 export const {
@@ -237,4 +261,5 @@ export const {
     useGetTokenDataMutation,
     useGetTokenCollectionAvailablityMutation,
     useGetTokensCollectionsAvailablityMutation,
-    useGetWhitelistBuyCountLimitTemplateMutation } = tokensApi;
+    useGetWhitelistBuyCountLimitTemplateMutation,
+    useGetBuyerWhiteListCheckTemplateMutation } = tokensApi;

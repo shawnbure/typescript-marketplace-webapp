@@ -71,7 +71,6 @@ export const collectionsApi = createApi({
 
             query: ({ collectionId, payload }): FetchArgs => {
 
-                console.log("INSIDE UpdateCollectionMintStartDate")
 
                 const accessToken: string = selectAccessToken(store.getState());
 
@@ -90,6 +89,12 @@ export const collectionsApi = createApi({
             },
 
         }),
+
+
+ 
+
+
+
 
         saveCollectionProfileImage: builder.mutation<any, any>({
 

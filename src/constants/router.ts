@@ -10,6 +10,7 @@ export const routePaths = {
     royalties: "/royalties",
     marketplace: '/marketplace',
     walletconnect: "/walletconnect",
+    stats: '/admin/stats',
     profile: '/profile/:walletAddress',
     accountSettings: '/account/settings',
     collectionCreate: "/collection/create",
