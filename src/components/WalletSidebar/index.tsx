@@ -70,7 +70,6 @@ const {
 } = DappCore.DappUI;
 
 const isUserLoggedIn = DappCore.getIsLoggedIn();
-
 useEffect(() => {
 
   if (isUserLoggedIn) {
@@ -81,15 +80,15 @@ useEffect(() => {
 
 }, [isUserLoggedIn]);
 
-useEffect(() => {
+// useEffect(() => {
 
-  if (isUserLoggedIn) {
+//   if (isUserLoggedIn) {
 
-    DappCore.getAccountProvider().then((loginToken: any) => setLoginToken(loginToken));
-    DappCore.getAccountProvider().then((signature: any) => setSignature(signature));
-  }
+//     DappCore.getAccountProvider().then((loginToken: any) => setLoginToken(loginToken));
+//     DappCore.getAccountProvider().then((signature: any) => setSignature(signature));
+//   }
 
-}, [userWalletAddress]);
+// }, [userWalletAddress]);
 
 
   //don't know if this is necessary anymore

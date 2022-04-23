@@ -107,4 +107,10 @@ export const routes: Array<any> = [
         component: Pages.RoyaltiesPage,
         authenticatedRoute: true,
     },
+    {
+        path: routePaths.account,
+        title: "Account",
+        component: Pages.ProfilePage,
+        authenticatedRoute: true,
+    },
 ];
