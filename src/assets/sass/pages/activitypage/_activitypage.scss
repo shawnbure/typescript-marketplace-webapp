@@ -1,0 +1,59 @@
+.activity {
+    &-conatiner {
+        width: 1600px;
+        height: 705px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        user-select: none;
+
+        margin: 64px auto;
+        color: #fff;
+
+        @include respond-to(desktop-high-large) {
+            flex-wrap: wrap;
+            height: 100%;
+            width: 1080px;
+            margin: 64px auto 0 auto;
+        }
+
+        @include respond-to(max-large-desktop) {
+            width: 680px;
+        }
+
+        @include respond-to(mobile) {
+            width: 340px;
+        }
+    }
+    
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    &-label {
+        color: #fff;
+        border-radius: 0px;
+
+        padding: 5px 16px;
+
+        @include respond-to(mobile) {
+            font-size: 13px;
+        }
+    }
+
+    &-tooltip {
+        font-size: 16px !important;
+        font-weight: bold !important;
+    }
+}

@@ -24,6 +24,7 @@ import { setAccessToken, setJWT } from 'redux/slices/user';
 import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
 import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
 import StatsPage from 'containers/pages/StatsPage';
+import ActivityPage from 'containers/pages/ActivityPage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as faIcons from "@fortawesome/free-regular-svg-icons";
 
@@ -232,6 +233,12 @@ export const App: () => JSX.Element = () => {
                         <Route path={routePaths.stats} exact={true} >
 
                             <StatsPage />
+
+                        </Route>
+
+                        <Route path={routePaths.activity} exact={true} >
+
+                            <ActivityPage />
 
                         </Route>
 
