@@ -3,6 +3,7 @@ import Popup from "reactjs-popup";
 import Table from "rc-table";
 import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
+import { Helmet } from "react-helmet";
 
 import Collapsible from 'react-collapsible';
 import { Redirect, useLocation, Link, useParams } from "react-router-dom";
@@ -994,6 +995,18 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
   return (
     <div className="p-token-page">
+
+    <Helmet>
+      <title>{tokenName}</title>
+      <meta property="og:title" content={`${tokenName} - Youbei`} />
+      <meta name="description" content="Youbei is a profit-sharing community distributing UBI. We are a digital cooperative that builds Web3 infrastructure and mindful community." />
+      <meta property="og:image" content={formatImgLink(imageLink)} />
+      <meta name="theme-color" content="#303339" />
+      <meta name="twitter:title" content={`${tokenName} - Youbei`} />
+      <meta name="twitter:image" content={formatImgLink(imageLink)} />
+      <meta property="og:image:secure_url" content={formatImgLink(imageLink)} />
+    </Helmet>
+
       <div className="grid grid-cols-12 my-10">
         <div className="col-span-12">
           <div className="grid grid-cols-12  container-max">
