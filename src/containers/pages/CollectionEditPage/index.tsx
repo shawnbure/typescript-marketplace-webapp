@@ -11,7 +11,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { handleCopyToClipboard, shorterAddress } from "utils";
-import { useSaveCollectionCoverImageMutation, useSaveCollectionProfileImageMutation, useUpdateCollectionMutation, useUpdateCollectionMintStartDateMutation, useGetCollectionByIdMutation } from "services/collections";
+import { useSaveCollectionCoverImageMutation, useSaveCollectionProfileImageMutation, useUpdateCollectionMutation, useUpdateCollectionMintStartDateMutation, useUpdateCollectionAdminSectionMutation, useGetCollectionByIdMutation } from "services/collections";
+
+import { useGetAccountMutation} from "services/accounts";
 
 import { useGetBuyerWhiteListCheckTemplateMutation } from "services/tokens";
 
@@ -95,12 +97,17 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     const [updateCollectionMintStartDateTrigger] = useUpdateCollectionMintStartDateMutation();
 
+    const [updateCollectioAdminSectionTrigger] = useUpdateCollectionAdminSectionMutation();
+
+    
 
 
     const [saveCollectionProfileImageTrigger] = useSaveCollectionProfileImageMutation();
     const [saveCollectionCoverImageTrigger] = useSaveCollectionCoverImageMutation();
 
     const [getCollectionByIdTrigger] = useGetCollectionByIdMutation();
+
+    const [getAccountRequestTrigger] = useGetAccountMutation();
 
 
 
@@ -113,6 +120,8 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     const [contractAddress, setContractAddress] = useState<string>('');
 
     const [isFinishLoading, setIsFinishLoading] = useState(false)
+
+    
 
 
     useEffect(() => {
@@ -266,6 +275,82 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
 
     };
+
+
+    // =============================== ADMIN SECTION ==========================
+    // IsVerified & Noteworthy
+
+    const [isVerifiedFlag, setIsVerifiedFlag] = useState('NO');
+    const [isNoteworthyFlag, setIsNoteworthyFlag] = useState('NO');
+
+
+    const handleIsVerifiedFlagYesChange = () => {
+        setIsVerifiedFlag('YES');
+      };
+    
+    const handleIsVerifiedFlagNoChange = () => {
+    setIsVerifiedFlag('NO');
+    };
+
+
+    const handleIsNoteworthyFlagYesChange = () => {
+        setIsNoteworthyFlag('YES');
+      };
+    
+    const handleIsNoteworthyFlagNoChange = () => {
+        setIsNoteworthyFlag('NO');
+    };
+
+
+    const schemaAdmin= yup.object({
+        
+    }).required();
+
+    const { register: registerAdmin, handleSubmit: handleSubmitAdmin, setValue: setValueAdmin, control: controlAdmin, setError: setErrorAdmin, clearErrors: clearErrorsAdmin, formState: { errors: errorsAdmin } } = useForm({
+        resolver: yupResolver(schemaAdmin),
+    });
+
+
+    const onSubmitAdmin = async (data: any) => {
+
+        const formattedData = {
+            isVerified: (isVerifiedFlag == 'YES'),
+            isNoteworthy: (isNoteworthyFlag == 'YES')
+        }
+
+
+
+        //save isVerified and noteworthy
+        const response: any = await updateCollectioAdminSectionTrigger({ collectionId, payload: formattedData });
+
+        
+        if (response?.error) {
+
+
+            toast.error(`Error update collection`, {
+                autoClose: 5000,
+                draggable: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                hideProgressBar: false,
+                position: "bottom-right",
+            });
+
+            return;
+
+        };
+
+        toast.success(`Succesful update collection`, {
+            autoClose: 5000,
+            draggable: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            hideProgressBar: false,
+            position: "bottom-right",
+        });
+
+    };
+
 
     // =============================== BUYER WHITELIST CHECK ==========================
 
@@ -535,11 +620,14 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
             setValueEdit("telegramLink", collectionData?.data?.data?.collection.telegramLink);
 
 
-        //let editCollectionSignType = sessionStorage.getItem("EDIT_COLLECTION_SIGN_TYPE");
-        //sessionStorage.setItem("EDIT_COLLECTION_SIGN_TYPE", "SALE_START_DATE")
-        //sessionStorage.setItem("EDIT_COLLECTION_SIGN_TYPE", "IS_WHITELISTED")
-        
-        
+            //set the admin
+            const dataIsVerified = collectionData?.data?.data?.collection.isVerified;
+            const dataType = collectionData?.data?.data?.collection.type;
+            
+            setIsVerifiedFlag(dataIsVerified ? 'YES' : 'NO')
+            setIsNoteworthyFlag(dataType == 2 ? 'YES' : 'NO')
+
+
             let editCollectionSignType = sessionStorage.getItem("EDIT_COLLECTION_SIGN_TYPE");
 
 
@@ -553,18 +641,10 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
             //if there is transaction hash and MintStartDate in sessiokn 
             if( txHashCurrent != null && sessionIsWhiteListedFlag != null && editCollectionSignType == "IS_WHITELISTED")
             {
-                //henry
-
 
                 if( sessionIsWhiteListedFlag == 'ON' )
                 {
-                    handleBuyWhiteListCheckONChange()
-
-
-
-            //var elRdBtnBuyerWhiteListOn = document.getElementsByName("rdBtnBuyerWhiteList_ON");
-
-            //elRdBtnBuyerWhiteListOn.checked                     
+                    handleBuyWhiteListCheckONChange()                  
                 }
                 else
                 {
@@ -647,8 +727,31 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     };
 
 
-
     
+    const [showAdminSection, setShowAdminSection] = useState(false)
+
+    const setValuesAccount = async () => {
+
+        const accountData: any = await getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
+            
+        if (accountData?.data) {
+    
+          console.log("accountData?.data?.data?.role22")
+          console.log(accountData?.data?.data?.role);
+    
+          console.log(accountData)
+
+          console.log("accountData?.data?.data?.role2345")
+
+          if( accountData?.data?.data?.role == 'RoleAdmin' )
+          {
+            console.log("setShowAdminSection(true)")
+            
+            setShowAdminSection(true)
+          }
+        }
+    }
+
 
 
     useEffect(() => {
@@ -657,6 +760,8 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
         //loads once and set the values
         setValuesCollection();
+
+        setValuesAccount();
 
     }, []);
 
@@ -947,10 +1052,141 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                             </form>
 
               
+                            {showAdminSection  && (
+
+                                <div id="divAdminSettings">
+
+                                <hr className="text-white my-10" />
+                                <br/>
+
+                                <form onSubmit={handleSubmitAdmin(onSubmitAdmin)}>
+
+
+
+
+                                <h2 className="text-2xl md:text-5xl u-text-bold mb-8">
+                                    Admin Settings
+                                </h2>
+
+
+                                <p className="text-xl u-text-bold mb-2">
+                                    Is Verified: &nbsp;
+                                    <a href="javascript:alert('Admin: Make the collection Verified.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+
+                                        &nbsp; 
+
+                                        <input
+                                            title="YES"
+                                            type="radio"
+                                            checked={isVerifiedFlag === 'YES'}
+
+                                            onChange={handleIsVerifiedFlagYesChange}
+                                        />
+
+                                        &nbsp;
+
+
+                                        <span className="u-text-theme-gray-light">
+                                            YES
+                                        </span>                        
+
+                                        &nbsp; &nbsp; &nbsp; &nbsp; 
+
+                                        <input
+                                                title="NO"
+                                                type="radio"
+                                                checked={isVerifiedFlag === 'NO'}
+
+                                                onChange={handleIsVerifiedFlagNoChange}
+                                            />
+
+                                        &nbsp;
+                                        
+                                        <span className="u-text-theme-gray-light">
+                                            NO
+                                    </span> 
+
+
+                                    </div>
+                                </div>
+
+                                <br/>
+
+                                <p className="text-xl u-text-bold mb-2">
+                                    Is Noteworthy: &nbsp;
+                                    <a href="javascript:alert('Admin: Make the collection Noteworthy.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+
+                                        &nbsp; 
+
+                                        <input
+                                            title="YES"
+                                            type="radio"
+                                            checked={isNoteworthyFlag === 'YES'}
+
+                                            onChange={handleIsNoteworthyFlagYesChange}
+                                        />
+
+                                        &nbsp;
+
+
+                                        <span className="u-text-theme-gray-light">
+                                            YES
+                                        </span>                        
+
+                                        &nbsp; &nbsp; &nbsp; &nbsp; 
+
+                                        <input
+                                                title="NO"
+                                                type="radio"
+                                                checked={isNoteworthyFlag === 'NO'}
+
+                                                onChange={handleIsNoteworthyFlagNoChange}
+                                            />
+
+                                        &nbsp;
+                                        
+                                        <span className="u-text-theme-gray-light">
+                                            NO
+                                    </span> 
+
+
+                                    </div>
+                                </div>
+
+                                <br/>
+
+                                <button className="c-button c-button--primary" type="submit">Save</button>
+
+                                <br/><br/>
+
+                                </form>
+
+                                </div>
+
+                              )}
+          
+
+
+
+
+
+
+
+              
 
                             <hr className="text-white my-10" />
 
                             <br/>
+
 
                             <form onSubmit={handleSubmitMintingStartDate(onSubmitMintingStartDate)}>
 

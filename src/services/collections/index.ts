@@ -91,7 +91,30 @@ export const collectionsApi = createApi({
         }),
 
 
- 
+
+        UpdateCollectionAdminSection: builder.mutation<any, any>({
+
+        
+            query: ({ collectionId, payload }): FetchArgs => {
+
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const customRequestArg: FetchArgs = {
+
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                    url: `/${mainPath}/${collectionId}/adminSection`
+
+                }
+
+                return customRequestArg;
+            },
+
+        }),
 
 
 
@@ -296,6 +319,7 @@ export const {
     useSaveCollectionProfileImageMutation,
     useUpdateCollectionMutation,
     useUpdateCollectionMintStartDateMutation,
+    useUpdateCollectionAdminSectionMutation,
     useGetCollectionTokensMutation,
     useRegisterCollectionMutation,
     useCreateCollectionMutation,
@@ -303,4 +327,4 @@ export const {
     useGetAllCollectionMutation,
     useGetCollectionVerifiedMutation,
     useGetCollectionNoteworthyMutation,
-    useGetCollectionTrendingMutation, } = collectionsApi;
+    useGetCollectionTrendingMutation, } = collectionsApi; 
