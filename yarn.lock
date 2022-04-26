@@ -1184,6 +1184,29 @@
     react-bootstrap "2.0.3"
     swr "1.1.2"
 
+"@elrondnetwork/erdjs-hw-provider@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@elrondnetwork/erdjs-hw-provider/-/erdjs-hw-provider-1.0.0.tgz#405827377e7a7487212332797ef734b876d9cdf4"
+  integrity sha512-zj1jzhO0GeBho75wQFHScV3m2WDpXvK7AiyuwX9OMEbWwTxhA6glzYNgO0rsI0CW3msIPtHFD8IupNsc2PFSFA==
+  dependencies:
+    "@elrondnetwork/hw-app-elrond" "0.3.2"
+    "@ledgerhq/hw-transport-u2f" "5.36.0-deprecated"
+    "@ledgerhq/hw-transport-webhid" "6.11.2"
+    "@ledgerhq/hw-transport-webusb" "6.11.2"
+    buffer "6.0.3"
+    platform "1.3.6"
+
+"@elrondnetwork/erdjs-network-providers@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@elrondnetwork/erdjs-network-providers/-/erdjs-network-providers-0.1.5.tgz#dbee664c0c17120c0e53bd33f540588dc59e2351"
+  integrity sha512-7NGoU2rBZk1NkxaO2hIs/4eN8ZYEOWYOkDCpTc35diEOoHjkk13Ov+6qtNjkyKbWn5bnEjdtwMKddc6ilwwR9Q==
+  dependencies:
+    axios "0.24.0"
+    bech32 "1.1.4"
+    bignumber.js "9.0.1"
+    buffer "6.0.3"
+    json-bigint "1.0.0"
+
 "@elrondnetwork/erdjs@9.1.0":
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/@elrondnetwork/erdjs/-/erdjs-9.1.0.tgz#142a828d59e0ea20d1790e7d54ae5077c0a2dfab"
@@ -1214,35 +1237,19 @@
     tweetnacl "1.0.3"
     uuid "8.3.2"
 
-"@elrondnetwork/erdjs@^9.2.4":
-  version "9.2.4"
-  resolved "https://registry.yarnpkg.com/@elrondnetwork/erdjs/-/erdjs-9.2.4.tgz#67e67249de5f52f5d5fa3731133928216cef0976"
-  integrity sha512-xHjtXhwi/x4iMyKG+T+XfgmVarJ1xi6pmzSVal/d7DTtFy1AdRHCB6h14ZtijabaomPnugRWRmd14FiiK6MTsg==
+"@elrondnetwork/erdjs@^10.1.2":
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/@elrondnetwork/erdjs/-/erdjs-10.1.2.tgz#6407bf513ba1d73bbb308c8dea2f633a977c9499"
+  integrity sha512-E4g2ztE7g9pYTKhnBaAym0QAknx251OWGnjUilqwezDaCUsJZ3X6Y84tg9IJwmP72DPpr365f4y6PgmG2mChZQ==
   dependencies:
-    "@babel/runtime" "7.11.2"
-    "@elrondnetwork/bls-wasm" "0.3.3"
-    "@elrondnetwork/hw-app-elrond" "0.3.2"
-    "@ledgerhq/hw-transport-u2f" "^5.36.0-deprecated"
-    "@ledgerhq/hw-transport-webhid" "^6.11.2"
-    "@ledgerhq/hw-transport-webusb" "6.11.2"
-    "@walletconnect/client" "1.6.5"
-    abort-controller "3.0.0"
-    axios "0.24.0"
+    "@elrondnetwork/transaction-decoder" "0.1.0"
     bech32 "1.1.4"
     bignumber.js "9.0.1"
-    bip39 "3.0.2"
     blake2b "2.1.3"
     buffer "6.0.3"
-    ed25519-hd-key "1.1.2"
-    json-bigint "1.0.0"
     json-duplicate-key-handle "1.0.0"
-    keccak "^3.0.1"
-    platform "1.3.6"
+    keccak "3.0.1"
     protobufjs "6.10.2"
-    qs "6.10.1"
-    scryptsy "2.1.0"
-    tweetnacl "1.0.3"
-    uuid "8.3.2"
 
 "@elrondnetwork/hw-app-elrond@0.3.2":
   version "0.3.2"
@@ -1254,6 +1261,13 @@
     bip32-path "^0.4.2"
     flow-copy-source "^2.0.9"
     flow-typed "^3.2.1"
+
+"@elrondnetwork/transaction-decoder@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@elrondnetwork/transaction-decoder/-/transaction-decoder-0.1.0.tgz#a2502a4dc50885242c1b167cc9a6394062ec7423"
+  integrity sha512-R9YSiJCAgdlSzTKBy7/KjohFghmUhZIGDqWt6NGXrf33EN24QB15Q0LgHEW7lXsqsDSF5GpRYetsS7V3jYZQOg==
+  dependencies:
+    bech32 "^2.0.0"
 
 "@emotion/cache@^11.4.0", "@emotion/cache@^11.7.1":
   version "11.7.1"
@@ -1704,7 +1718,7 @@
     node-hid "2.1.1"
     usb "^1.7.0"
 
-"@ledgerhq/hw-transport-u2f@^5.36.0-deprecated":
+"@ledgerhq/hw-transport-u2f@5.36.0-deprecated", "@ledgerhq/hw-transport-u2f@^5.36.0-deprecated":
   version "5.36.0-deprecated"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-u2f/-/hw-transport-u2f-5.36.0-deprecated.tgz#66e3ed399a117a1c0110871a055dd54f5fe707fd"
   integrity sha512-T/+mGHIiUK/ZQATad6DMDmobCMZ1mVST952009jKzhaE1Et2Uy2secU+QhRkx3BfEAkvwa0zSRSYCL9d20Iqjg==
@@ -1713,6 +1727,16 @@
     "@ledgerhq/hw-transport" "^5.34.0"
     "@ledgerhq/logs" "^5.30.0"
     u2f-api "0.2.7"
+
+"@ledgerhq/hw-transport-webhid@6.11.2":
+  version "6.11.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webhid/-/hw-transport-webhid-6.11.2.tgz#db2e513f139ae4f3e9a1d79e4671726c650d5751"
+  integrity sha512-y/Cv2oRDXy0wsGQsSrNi6e8DziGRNbgTiW7dgXcenI/1RfsCN+2hPfNMr8a9s2zPJ8Tfv2Sm5VubbspWDhPUCQ==
+  dependencies:
+    "@ledgerhq/devices" "^6.11.2"
+    "@ledgerhq/errors" "^6.10.0"
+    "@ledgerhq/hw-transport" "^6.11.2"
+    "@ledgerhq/logs" "^6.10.0"
 
 "@ledgerhq/hw-transport-webhid@^6.11.2":
   version "6.24.1"
@@ -4115,6 +4139,11 @@ bech32@1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/bech32/-/bech32-1.1.4.tgz#e38c9f37bf179b8eb16ae3a772b40c356d4832e9"
   integrity sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==
+
+bech32@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/bech32/-/bech32-2.0.0.tgz#078d3686535075c8c79709f054b1b226a133b355"
+  integrity sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==
 
 before-after-hook@^2.2.0:
   version "2.2.2"
@@ -9367,6 +9396,14 @@ just-debounce@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/just-debounce/-/just-debounce-1.1.0.tgz#2f81a3ad4121a76bc7cb45dbf704c0d76a8e5ddf"
   integrity sha512-qpcRocdkUmf+UTNBYx5w6dexX5J31AKK1OmPwH630a83DdVVUIngk55RSAiIGpQyoH0dlr872VHfPjnQnK1qDQ==
+
+keccak@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/keccak/-/keccak-3.0.1.tgz#ae30a0e94dbe43414f741375cff6d64c8bea0bff"
+  integrity sha512-epq90L9jlFWCW7+pQa6JOnKn2Xgl2mtI664seYR6MHskvI9agt7AnDqmAlp9TqU4/caMYbA08Hi5DMZAl5zdkA==
+  dependencies:
+    node-addon-api "^2.0.0"
+    node-gyp-build "^4.2.0"
 
 keccak@^3.0.1:
   version "3.0.2"

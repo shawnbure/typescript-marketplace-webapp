@@ -1,13 +1,14 @@
 import React from "react";
-import {HWProvider, ProxyProvider} from "@elrondnetwork/erdjs"
+import { ProxyNetworkProvider } from "@elrondnetwork/erdjs-network-providers";
+import { HWProvider } from "@elrondnetwork/erdjs-hw-provider";
 import { useDispatch } from 'react-redux';
 
 const LedgerLogin = () => {
   const dispatch = useDispatch();
 
   const handleOnClick = () => {
-    const httpProvider = new ProxyProvider("");
-    const hwWalletP = new HWProvider(httpProvider);
+    const httpProvider = new ProxyNetworkProvider("");
+    const hwWalletP = new HWProvider();
 
     dispatch({type: "loading", loading: true});
     hwWalletP.init()

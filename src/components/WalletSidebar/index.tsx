@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { routePaths } from "constants/router";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import * as DappCore from "@elrondnetwork/dapp-core";
+import * as DappCore from "@elrondnetwork/dapp-core"; 
+import * as store from "redux/store";
 import { useAppDispatch } from "redux/store";
 import { setJWT, setUserTokenData } from "redux/slices/user";
 import { useGetEgldPriceQuery } from "services/oracle";
@@ -46,7 +47,8 @@ export const WalletSidebar: (Props: {
 
   //TODO REVISIT DEFINITIONS
   const [signature, setSignature] = useState<string>('');
-  const [loginToken, setLoginToken] = useState<string>('');
+  const [loginToken, setLoginToken] = useState<string>(DappCore.useGetLoginInfo().tokenLogin?.loginToken || '');
+
 
 const {
   WebWalletLoginButton,
@@ -71,6 +73,7 @@ useEffect(() => {
   if (userWalletAddress !== '') {
 
     DappCore.getAccountBalance(userWalletAddress).then(balance => setBalance(balance));
+    
     getJWT();
   }
 
@@ -81,9 +84,9 @@ const getJWT = async () => {
 
   localStorage.setItem("token", randomToken); 
 
-
-
-  console.log(randomToken, " random token");
+  
+  console.log(loginToken, "  loginToken");
+ 
 
   const data = {};
   if (!userWalletAddress || !signature) {
@@ -133,7 +136,6 @@ const getJWT = async () => {
 
     overlayClickCallback?.();
 
-    //dappLogout({ callbackUrl: `${window.location.origin}/` });
     DappCore.logout();
 
     navigate(pathname);

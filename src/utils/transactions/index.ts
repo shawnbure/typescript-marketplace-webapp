@@ -2,13 +2,10 @@
 
 import {
   Transaction,
-  GasPrice,
   Address,
   TransactionPayload,
-  Balance,
-  ChainID,
   TransactionVersion,
-  GasLimit,
+  TokenPayment,
 } from "@elrondnetwork/erdjs";
 
 import { RawTransactionInterface } from "./interfaces";
@@ -25,11 +22,11 @@ export const prepareTransaction: (
   gasPrice
 }) => {
   return new Transaction({
-    value: Balance.egld(value),
-    chainID: new ChainID(chainID),
+    value: TokenPayment.egldFromAmount(value),
+    chainID: chainID,
     receiver: new Address(receiver),
-    gasLimit: new GasLimit(gasLimit),
-    gasPrice: new GasPrice(gasPrice),
+    gasLimit: gasLimit,
+    gasPrice: gasPrice,
     data: new TransactionPayload(data),
     version: new TransactionVersion(version),
   });
