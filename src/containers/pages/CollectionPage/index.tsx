@@ -20,6 +20,10 @@ import {
   useGetCollectionInfoMutation,
   useGetCollectionTokensMutation,
 } from "services/collections";
+
+import { useGetAccountMutation} from "services/accounts";
+
+
 import { shorterAddress } from "utils";
 import { getQuerystringValue } from "utils/transactions";
 import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens";
@@ -64,6 +68,9 @@ export const CollectionPage: (props: any) => any = ({}) => {
     { data: getCollectionInfoData },
   ] = useGetCollectionInfoMutation();
 
+  const [getAccountRequestTrigger] = useGetAccountMutation();
+    
+    
   // this refresh OR create the sessionState in DB
   const getWhitelistCountLimitTemplateTransaction = async () => {
 
@@ -239,6 +246,10 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const contractAddress = collectionData?.data?.collection?.contractAddress;
 
   const isCollectionOwner = userWalletAddress === creatorWalletAddress;
+
+
+
+
 
   const mapFilters = () => {
     const mappedAttributes: any = {};
@@ -568,12 +579,40 @@ export const CollectionPage: (props: any) => any = ({}) => {
   }
   const [collectionDataLoaded, setCollectionDataLoaded] = useState(false);
 
+
+  const [showEdit, setShowEdit] = useState(false);
+
+
+
+
+  const setValuesAccount = async () => {
+
+    const accountData: any = await getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
+        
+    if (accountData?.data) {
+
+      if( accountData?.data?.data?.role == "RoleAdmin" )
+      {
+        setShowEdit(true)
+      }
+    }
+
+
+  }
+
   useEffect(() => {
+
+    
+
+
+
 
     getCollectionInfoTrigger({ collectionId: collectionId });
 
     getCollectionByIdTrigger({ collectionId: collectionId }).then(r=>{
+      
       setCollectionDataLoaded(true)
+      setValuesAccount();
     }).catch(err=>{
       console.error(err)
     });
@@ -587,8 +626,10 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
     if( collectionDataLoaded ) {
 
-      console.log("collectionData?.data?.collection?.mintStartDate")
-      console.log(collectionData?.data?.collection?.mintStartDate)
+      if( collectionData?.data?.creatorWalletAddress == userWalletAddress )
+      {
+        setShowEdit(true)
+      }
 
 
       if( userWalletAddress != null )
@@ -639,7 +680,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
 
                                   
-          {isCollectionOwner && (
+          {showEdit  && (
             <div className="c-icon-band mb-6">
               <div className="c-icon-band_item">
                 <Link

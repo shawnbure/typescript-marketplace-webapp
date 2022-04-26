@@ -26,6 +26,7 @@ import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
 import StatsPage from 'containers/pages/StatsPage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as faIcons from "@fortawesome/free-regular-svg-icons";
+import { Helmet } from 'react-helmet';
 
 
 
@@ -123,6 +124,11 @@ export const App: () => JSX.Element = () => {
             {
                 isMobile() ?  suggestionBanner() : null
             }
+
+            <Helmet>
+                <title>Youbei</title>
+                <meta property="og:title" content='Youbei' />
+            </Helmet>
 
             <Dapp.Context config={config}>
 

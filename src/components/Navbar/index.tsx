@@ -199,7 +199,7 @@ export const Navbar = () => {
                             </Link>
                             &nbsp;
                             <span className="c-navbar_brand-name-sub">
-                                ALPHA
+                                {process.env.REACT_APP_NODE_ENV == "production" ? 'ALPHA' : 'DEV'}
                             </span>
                         </div>
                     </div>
