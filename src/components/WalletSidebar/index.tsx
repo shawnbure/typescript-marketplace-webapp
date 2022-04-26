@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { routePaths } from "constants/router";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import * as DappCore from "@elrondnetwork/dapp-core";
-import * as DappCoreCom from "@elrondnetwork/core-components";
 import { useAppDispatch } from "redux/store";
 import { setJWT, setUserTokenData } from "redux/slices/user";
 import { useGetEgldPriceQuery } from "services/oracle";
@@ -19,21 +18,15 @@ import { useGetDepositTemplateMutation } from "services/deposit";
 import Collapsible from "react-collapsible";
 import { SearchBar } from "components";
 import { useGetAccessTokenMutation } from "services/auth";
-import { alphaToastMessage } from "components/AlphaToastError";
-import LedgerLogin from "components/Login/Ledger";
-import { decodeBase64 } from "@elrondnetwork/dapp-core";
 
 
 export const WalletSidebar: (Props: {
   overlayClickCallback?: Function;
 }) => any = ({ overlayClickCallback }) => {
-  // const randomToken = generateId(32);
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
-  //const pathname = window.location.origin;
-  //const dappLogout = Dapp.useLogout(); 
 
   const [ getDepositTemplateTrigger, { data: userDepositData }, ] = useGetDepositTemplateMutation();
   const [ getAddDepositEgldTemplateTrigger, ] = useGetAddDepositEgldTemplateMutation();
@@ -46,22 +39,14 @@ export const WalletSidebar: (Props: {
   const [shouldDisplayMaiarLogin, setShouldDisplayMaiarLogin] = useState<boolean>(false);
   const [withdrawDepositAmount, setWithdrawDepositAmount] = useState<number | undefined>();
 
-  //const sendTransaction = Dapp.useSendTransaction();
   const sendTransactions = DappCore.sendTransactions;
 
   const [balance, setBalance] = useState<string>('');
   const [userWalletAddress, setUserWalletAddress] = useState<string>('');
-  const [loginToken, setLoginToken] = useState<any>();
-  const [signature, setSignature] = useState<any>();
 
-  /*
-  const {
-    tokenLogin,
-    account,
-    address: userWalletAddress,
-    loggedIn: isUserLoggedIn,
-  } = Dapp.useContext();
-*/
+  //TODO REVISIT DEFINITIONS
+  const [signature, setSignature] = useState<string>('');
+  const [loginToken, setLoginToken] = useState<string>('');
 
 const {
   WebWalletLoginButton,
@@ -70,45 +55,63 @@ const {
 } = DappCore.DappUI;
 
 const isUserLoggedIn = DappCore.getIsLoggedIn();
+
 useEffect(() => {
 
   if (isUserLoggedIn) {
 
-    DappCore.getAccountBalance().then(balance => setBalance(balance));
     DappCore.getAddress().then(address => setUserWalletAddress(address));
+
   }
 
 }, [isUserLoggedIn]);
 
-// useEffect(() => {
+useEffect(() => {
 
-//   if (isUserLoggedIn) {
+  if (userWalletAddress !== '') {
 
-//     DappCore.getAccountProvider().then((loginToken: any) => setLoginToken(loginToken));
-//     DappCore.getAccountProvider().then((signature: any) => setSignature(signature));
-//   }
+    DappCore.getAccountBalance(userWalletAddress).then(balance => setBalance(balance));
+    getJWT();
+  }
 
-// }, [userWalletAddress]);
-
-
-  //don't know if this is necessary anymore
-  //localStorage.setItem("token", randomToken); //temp hack TODO
-
-  /*
-  //old version - using custom button
-  const webWalletLogin = Dapp.useWebWalletLogin({
-    callbackRoute: pathname,
-    token: randomToken,
-  });
-  //new version - using custom button
-  const webWalletLogin = DappCore.loginServices.useWalletConnectLogin({
-      callbackRoute: pathname,
-      logoutRoute: pathname,
-      token: randomToken,
-    });
-*/
+}, [userWalletAddress, isUserLoggedIn]);
 
 
+const getJWT = async () => {
+
+  localStorage.setItem("token", randomToken); 
+
+
+
+  console.log(randomToken, " random token");
+
+  const data = {};
+  if (!userWalletAddress || !signature) {
+    return;
+  }
+
+  const verifiedPayload: any = createVerifiedPayload(
+    userWalletAddress,
+    randomToken,
+    signature,
+    data
+  );
+
+  localStorage.removeItem("token");
+  
+  const accessResult: any = await getAccessTokenRequestTrigger(
+    verifiedPayload
+  );
+
+  if (!accessResult.data) {
+    return;
+  }
+
+  const { data: jtwData } = accessResult;
+
+  dispatch(setJWT(jtwData.data));
+  localStorage.setItem("_e_", JSON.stringify(jtwData.data));
+};
 
   const {
     data: egldPriceData,
@@ -166,12 +169,7 @@ useEffect(() => {
     const { data: txData } = response.data;
 
     const unconsumedTransaction = prepareTransaction(txData);
-/*
-    sendTransaction({
-      transaction: unconsumedTransaction,
-      callbackRoute: succesCallbackRoute,
-    });
-*/
+
     sendTransactions({
       transactions: unconsumedTransaction,
       callbackRoute: succesCallbackRoute,
@@ -231,12 +229,8 @@ useEffect(() => {
 
   const resove = async () => {
     
-    console.log(isUserLoggedIn, "<<<<<<<<<<<<<<<<<<<<<< STEP RESOLVE >>>>>>>>>>>>>>>>>>>>>>")
-    
     const verifiedPayload: any = createVerifiedPayload(
       userWalletAddress,
-      //tokenLogin?.loginToken,
-      //tokenLogin?.signature,
       loginToken,
       signature,
       {}

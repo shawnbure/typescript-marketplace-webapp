@@ -1157,7 +1157,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 <div className="col-span-12 m-4 md:m-20">
 
                     <div className="mb-10">
-                        <Link to={`/account`}> &lt; Back to account </Link> 
+                        <Link to={routePaths.account}> &lt; Back to account </Link> 
                         &nbsp; <span className=" mb-2">|</span> &nbsp;
                         <Link to={pathname} onClick={ async () => {if (window.confirm('This will RESET the Create Collection process, and you will lose all your progress / fees spent and start over.  Would you like to continue?')) { handleStartOver(); } }}>Reset &amp; Start Over</Link>
 

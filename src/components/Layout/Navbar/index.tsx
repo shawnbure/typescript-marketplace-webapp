@@ -31,7 +31,7 @@ export const Navbar = () => {
   const dispatch = useAppDispatch();
   const shouldDisplayWalletSidebar = useAppSelector(
     selectShouldDisplayWalletSidebar
-  );
+  );  
 
   const handleToggleSidebar = () => {
     dispatch(toggleShouldDisplayWalletSidebar());

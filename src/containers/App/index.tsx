@@ -34,9 +34,11 @@ export const App: () => JSX.Element = () => {
   const isLightThemeSelected: boolean = theme === LIGHT;
 
   //NEW FOR DAPPCORE
+  const [address, setAddress] = useState<string>("");
+  const [provider, setProvider] = useState<string>(DappCore.getAccountProvider());
   const [loginToken, setLoginToken] = useState<string>(generateId(32));
   const [signature, setSignature] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
+
 
   const generatedClasses: any = classNames("c-app", {
     "light-theme": isLightThemeSelected,
@@ -49,19 +51,39 @@ export const App: () => JSX.Element = () => {
     //DappCorePages: { UnlockPage }
   } = DappCore.DappUI;
 
+
+  /*
   const [getAccessTokenRequestTrigger] = useGetAccessTokenMutation();
 
+  const isUserLoggedIn = DappCore.getIsLoggedIn();
+
+  useEffect(() => {
+    console.log('isUserLoggedIn App', isUserLoggedIn);
+    if (isUserLoggedIn) {
+
+      DappCore.getAddress().then(address => setAddress(address));
+
+    }
+  
+  }, []);
+
+  useEffect(() => {
+
+console.log("useEffect call JWT");
+
+    if (address !== "") {
+      getJWT();
+    }
+  }, [address]);
+
+
   const getJWT = async () => {
-    //const address = new URLSearchParams(location.search).get('address');
+
     //const signature = new URLSearchParams(location.search).get('signature');
     //const loginToken = localStorage.getItem("token") //TODO //new URLSearchParams(location.search).get('loginToken');
 
-    const objStorage = JSON.parse(
-      localStorage.getItem("persist:dapp-core-store") || "{}"
-    );
-    const objAccount = JSON.parse(objStorage.account || "{}");
-    const walletAddress = objAccount.address;
-    setAddress(walletAddress);
+    console.log(address, "  address");
+    
 
     const data = {};
     if (!address || !signature) {
@@ -89,11 +111,7 @@ export const App: () => JSX.Element = () => {
     localStorage.setItem("_e_", JSON.stringify(jtwData.data));
   };
 
-  useEffect(() => {
-    if (location) {
-      //getJWT();
-    }
-  }, [location]);
+*/
 
   useEffect(() => {
     let address: any = localStorage.getItem("address");

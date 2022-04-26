@@ -79,7 +79,7 @@ export const routes: Array<any> = [
     },
     {
         path: routePaths.create,
-        title: "CReate",
+        title: "Create",
         component: Pages.CreatePage,
         authenticatedRoute: false,
     },

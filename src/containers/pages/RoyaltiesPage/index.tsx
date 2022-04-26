@@ -20,6 +20,7 @@ import {
 } from "services/royalties";
 
 import { Footer } from 'components/index';
+import { routePaths } from "constants/router";
 
 export const RoyaltiesPage: (props: any) => any = ({}) => {
   //const { address: userWalletAddress } = Dapp.useContext();
@@ -183,7 +184,7 @@ export const RoyaltiesPage: (props: any) => any = ({}) => {
       <div className="grid grid-cols-12">
         <div className="col-span-12 m-4 md:m-20">
           <div className="mb-10">
-            <Link to={`/account`}> {`< Back to account`}</Link>
+            <Link to={routePaths.account}> {`< Back to account`}</Link>
           </div>
 
           <h2 className="text-2xl md:text-5xl u-text-bold mb-20">Royalties</h2>

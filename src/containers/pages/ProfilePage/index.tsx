@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { getQuerystringValue } from "utils/transactions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import { routePaths } from "constants/router";
 import { formatImgLink, shorterAddress } from "utils";
 import {
   useGetAccountCollectionsMutation,
@@ -548,7 +548,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
           {isOwnProfile && (
             <div className="c-icon-band mb-6">
               <div className="c-icon-band_item">
-                <Link className="inline-block" to={`./account/settings`}>
+                <Link className="inline-block" to={routePaths.accountSettings}>
                   <FontAwesomeIcon
                     className="text-white"
                     style={{ width: 25, height: 25, margin: "10px 15px" }}

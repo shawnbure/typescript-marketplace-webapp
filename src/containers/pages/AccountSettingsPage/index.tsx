@@ -12,8 +12,7 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { toast } from 'react-toastify';
-
-import { Footer } from 'components/index';
+import { routePaths } from "constants/router";
 
 export const AccountSettingsPage: (props: any) => any = ({ }) => {
 /*
@@ -305,7 +304,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
                 <div className="col-span-12 m-4 md:m-20">
 
                     <div className="mb-10">
-                        <Link to={`/account`}> {`< Back to account`}</Link>
+                        <Link to={routePaths.account}> {`< Back to account`}</Link>
                     </div>
 
                     <h2 className="text-2xl md:text-5xl u-text-bold mb-8">
