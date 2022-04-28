@@ -90,9 +90,15 @@ export const routes: Array<any> = [
         authenticatedRoute: true,
     },
     {
-        path: routePaths.accountSettings,
-        title: "Account Settings",
-        component: Pages.AccountSettingsPage,
+        path: routePaths.collectionCreate,
+        title: "Create Collection",
+        component: Pages.CreateCollectionPage,
+        authenticatedRoute: true,
+    },
+    {
+        path: routePaths.collection,
+        title: "Collection",
+        component: Pages.CollectionPage,
         authenticatedRoute: true,
     },
     {

@@ -111,9 +111,7 @@ export const SearchBar = ({
 
             resolve(allResults);
 
-
         })
-
     );
 
     return (

@@ -47,7 +47,7 @@ export const WalletSidebar: (Props: {
 
   //TODO REVISIT DEFINITIONS
   const [signature, setSignature] = useState<string>('');
-  const [loginToken, setLoginToken] = useState<string>(DappCore.useGetLoginInfo().tokenLogin?.loginToken || '');
+  const [loginToken, setLoginToken] = useState<string>('');
 
 
 const {
@@ -80,12 +80,22 @@ useEffect(() => {
 }, [userWalletAddress, isUserLoggedIn]);
 
 
+
+/* ************************************************************************************ 
+SMB - DEV PROGRESS
+
+The thought here is to get the signature and login token from the DAPP - it seems 
+possible and I just upgraded erdjs and associated libraries. One may have this info.
+
+I think I need to get the appropriate login method and then retrieve
+************************************************************************************ */
+
+
 const getJWT = async () => {
 
   localStorage.setItem("token", randomToken); 
-
   
-  console.log(loginToken, "  loginToken");
+
  
 
   const data = {};

@@ -22,7 +22,7 @@ import { useGetAccountInfo } from "@elrondnetwork/dapp-core";
 
 export const ProfilePage: (props: any) => any = ({}) => {
   //const { walletAddress: walletAddressParam } = useParams<UrlParameters>();
-  console.log("profile");
+
   const queryString = window.location.search;
   const walletAddressParam =
     getQuerystringValue(queryString, "walletAddress") || "";
@@ -126,7 +126,6 @@ export const ProfilePage: (props: any) => any = ({}) => {
     var arrayNFTs = new Array();
 
     do {
-      console.log("enter do loop : offset : " + offset);
       const dataResponse = await getFunctionTrigger({
         userWalletAddress,
         limit,
@@ -143,10 +142,8 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
       const newNFTs = [...nfts];
 
-      console.log(newNFTs);
-
       if (newNFTs.length == 0) {
-        console.log("length of 0 - DONE");
+
         gotAllRecords = true;
 
         break;
@@ -163,7 +160,6 @@ export const ProfilePage: (props: any) => any = ({}) => {
       HideElement("pLoadingUnlistedNFTs");
     }
 
-    console.log(arrayNFTs);
     setUnlistedNftsNoLimits(arrayNFTs);
 
     //inital so set it to the "filtered"
