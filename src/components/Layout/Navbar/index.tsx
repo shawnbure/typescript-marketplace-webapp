@@ -21,10 +21,7 @@ import {
 import { getCookie, setCookie } from "utils";
 
 export const Navbar = () => {
-  //const dappLogout = Dapp.useLogout();
-  // const dappLogout = DappCore.logout();
 
-  //const { loggedIn, address: userWalletAddress } = Dapp.useContext();
   const loggedIn = DappCore.getIsLoggedIn();
   const { address: userWalletAddress, account } = useGetAccountInfo();
 
@@ -134,6 +131,7 @@ export const Navbar = () => {
       if (userWalletAddress == "") {
         return;
       }
+
       const dataResponse = await getFunctionTrigger({
         userWalletAddress,
         limit,
@@ -169,7 +167,9 @@ export const Navbar = () => {
   useEffect(() => {
     if (loggedIn && userWalletAddress != "") {
       getMoreOnSaleTokens();
-      InitialLoadOfUnlistedData(getAccountGatewayRequestTrigger);
+
+      //SMB TODO THE FUNCTION THROWS ERROR
+      //InitialLoadOfUnlistedData(getAccountGatewayRequestTrigger);
 
       if (getCookie(userWalletAddress.toString()) != "false") {
         window.onbeforeunload = () =>

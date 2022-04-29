@@ -27,25 +27,16 @@ import { useDispatch } from "react-redux";
 import { setAccessToken, setJWT } from "redux/slices/user";
 import Layout from "components/Layout";
 
-import { persistStore } from 'redux-persist';
-import { Provider as ReduxProvider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
 import store  from "redux/store";
-const persistor = persistStore(store);
 
+
+console.log(store.getState());
 
 export const App: () => JSX.Element = () => {
   const networkConfig: any = config.network;
   const dispatch = useDispatch();
   const theme = useAppSelector(selectTheme);
   const isLightThemeSelected: boolean = theme === LIGHT;
-
-  //NEW FOR DAPPCORE
-  const [address, setAddress] = useState<string>("");
-  const [provider, setProvider] = useState<string>(DappCore.getAccountProvider());
-  const [loginToken, setLoginToken] = useState<string>(generateId(32));
-  const [signature, setSignature] = useState<string>("");
-
 
   const generatedClasses: any = classNames("c-app", {
     "light-theme": isLightThemeSelected,
@@ -132,41 +123,26 @@ console.log("useEffect call JWT");
   }, []);
   return (
     <div className={generatedClasses}>
-      <ReduxProvider store={store}>
-        <DappCore.DappProvider
-          customNetworkConfig={networkConfig}
-          environment={config.network.id}
-          completedTransactionsDelay={200}
-        >
-          <Layout>
+        <DappCore.DappProvider customNetworkConfig={networkConfig} environment={config.network.id} completedTransactionsDelay={200} >
+        <Layout>
             <TransactionsToastList />
             <NotificationModal />
             <SignTransactionsModals />
-
-              <PersistGate loading={null} persistor={persistor}>
-                <DappCore.AuthenticatedRoutesWrapper
-                  routes={routes}
-                  unlockRoute={routePaths.login}
-                >
-                  <Routes>
-                    <Route path={routePaths.login} element={<HomePage />} />
-
-                    {routes.map((route: any, index: number) => (
-                      <Route
-                        path={route.path}
-                        key={"route-key-" + index}
-                        element={<route.component />}
-                      />
-                    ))}
-                    <Route path="*" element={<HomePage />} />
-                  </Routes>
-                </DappCore.AuthenticatedRoutesWrapper>
-              </PersistGate>
-
-          </Layout>
+            <DappCore.AuthenticatedRoutesWrapper routes={routes} unlockRoute={routePaths.login} >
+                    <Routes>
+                      <Route path={routePaths.login} element={<HomePage />} />
+                      {routes.map((route: any, index: number) => (
+                        <Route
+                          path={route.path}
+                          key={"route-key-" + index}
+                          element={<route.component />}
+                        />
+                      ))}
+                      <Route path="*" element={<HomePage />} />
+                    </Routes>
+            </DappCore.AuthenticatedRoutesWrapper>     
+          </Layout> 
         </DappCore.DappProvider>
-      </ReduxProvider>
-      
     </div>
   );
 };
