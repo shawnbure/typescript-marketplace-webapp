@@ -119,4 +119,10 @@ export const routes: Array<any> = [
         component: Pages.ProfilePage,
         authenticatedRoute: true,
     },
+    {
+        path: routePaths.accountSettings,
+        title: "Account Settings",
+        component: Pages.AccountSettingsPage,
+        authenticatedRoute: true,
+    },
 ];

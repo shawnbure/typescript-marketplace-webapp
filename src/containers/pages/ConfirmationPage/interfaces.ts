@@ -1,4 +1,4 @@
-export interface UrlParameters {
+export type UrlParameters = {
     tokenNonce: string;
     collectionId: string;
     action:string;

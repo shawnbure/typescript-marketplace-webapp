@@ -1,7 +1,6 @@
 /* eslint-disable */
 import classNames from "classnames";
 import * as DappCore from "@elrondnetwork/dapp-core";
-import * as DappCoreCom from "@elrondnetwork/core-components";
 
 import {
   Route,
@@ -12,6 +11,7 @@ import {
 
 import * as config from "configs/dappConfig";
 import { useAppSelector } from "redux/store";
+
 import { routePaths, routes } from "constants/router";
 import { selectTheme } from "redux/selectors/user";
 import { HomePage } from "containers/pages";
@@ -26,6 +26,13 @@ import { useGetAccessTokenMutation } from "services/auth";
 import { useDispatch } from "react-redux";
 import { setAccessToken, setJWT } from "redux/slices/user";
 import Layout from "components/Layout";
+
+import { persistStore } from 'redux-persist';
+import { Provider as ReduxProvider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import store  from "redux/store";
+const persistor = persistStore(store);
+
 
 export const App: () => JSX.Element = () => {
   const networkConfig: any = config.network;
@@ -125,38 +132,41 @@ console.log("useEffect call JWT");
   }, []);
   return (
     <div className={generatedClasses}>
-      <DappCore.DappProvider
-        customNetworkConfig={networkConfig}
-        environment={config.network.id}
-        completedTransactionsDelay={200}
-      >
-        <Layout>
-          <TransactionsToastList />
+      <ReduxProvider store={store}>
+        <DappCore.DappProvider
+          customNetworkConfig={networkConfig}
+          environment={config.network.id}
+          completedTransactionsDelay={200}
+        >
+          <Layout>
+            <TransactionsToastList />
+            <NotificationModal />
+            <SignTransactionsModals />
 
-          <NotificationModal />
+              <PersistGate loading={null} persistor={persistor}>
+                <DappCore.AuthenticatedRoutesWrapper
+                  routes={routes}
+                  unlockRoute={routePaths.login}
+                >
+                  <Routes>
+                    <Route path={routePaths.login} element={<HomePage />} />
 
-          <SignTransactionsModals />
+                    {routes.map((route: any, index: number) => (
+                      <Route
+                        path={route.path}
+                        key={"route-key-" + index}
+                        element={<route.component />}
+                      />
+                    ))}
+                    <Route path="*" element={<HomePage />} />
+                  </Routes>
+                </DappCore.AuthenticatedRoutesWrapper>
+              </PersistGate>
 
-          <DappCore.AuthenticatedRoutesWrapper
-            routes={routes}
-            unlockRoute={routePaths.login}
-          >
-            <Routes>
-              <Route path={routePaths.login} element={<HomePage />} />
-
-              {routes.map((route: any, index: number) => (
-                <Route
-                  path={route.path}
-                  key={"route-key-" + index}
-                  element={<route.component />}
-                />
-              ))}
-
-              <Route path="*" element={<HomePage />} />
-            </Routes>
-          </DappCore.AuthenticatedRoutesWrapper>
-        </Layout>
-      </DappCore.DappProvider>
+          </Layout>
+        </DappCore.DappProvider>
+      </ReduxProvider>
+      
     </div>
   );
 };

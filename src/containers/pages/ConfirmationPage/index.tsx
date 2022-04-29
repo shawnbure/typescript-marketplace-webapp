@@ -5,6 +5,7 @@ import {network} from "configs/dappConfig";
 import { Link, useParams } from "react-router-dom";
 import { UrlParameters } from "./interfaces";
 import { Footer } from "components/index";
+
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getQuerystringValue } from "utils/transactions";
@@ -82,14 +83,13 @@ import {
 export const ConfirmationPage = () => {
   const [userWalletAddress, setUserWalletAddress] = useState<string>('');
   DappCore.getAddress().then(address => setUserWalletAddress(address));
-  //const { address: userWalletAddress } = Dapp.useContext();
-  //const { action, collectionId, tokenNonce } = useParams<UrlParameters>();
+  const { action, collectionId, tokenNonce } = useParams<UrlParameters>();
+  const pageAction = action ? action : "";
+  const nonce = tokenNonce ? tokenNonce : ""
+  const collId = collectionId ? collectionId : ""
   const queryString = window.location.search;
-  const action = getQuerystringValue(queryString, 'action') || '';
-  const collectionId = getQuerystringValue(queryString, 'collectionId') || '';
-  const tokenNonce = getQuerystringValue(queryString, 'tokenNonce') || '';
   const [globalToken, setGlobalToken] = useState<any>({});
-  const [transactionHash, setTransactionHash] = useState(getQuerystringValue(queryString, "txHash") || "");
+  const [transactionHash] = useState(getQuerystringValue(queryString, "txHash") || "");
   const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
   const [isTransactionSuccessful, setIsTransactionSuccessful] = useState<boolean>(false);
   const [isTransactionLoaded, setIsTransactionLoaded] = useState<boolean>(false);
@@ -110,6 +110,12 @@ export const ConfirmationPage = () => {
   const [buyTokenFromClientTrigger] = useBuyTokenFromClientMutation();
   const [withdrawTokenTrigger] = useWithdrawTokenMutation();
   
+  const {
+    TransactionsToastList,
+    SignTransactionsModals,
+    NotificationModal,
+    DappCorePages: { UnlockPage }
+  } = DappCore.DappUI;
 
   const imageBoxStyle = {
     display: "flex",
@@ -119,10 +125,9 @@ export const ConfirmationPage = () => {
     height: "100%",
   };
 
-
   useEffect(() => {
-   
-    switch (action.toUpperCase()) {
+
+    switch (pageAction.toUpperCase()) {
       case BUY:
         txFailed == false
           ? setDisplayTitle(ENG_BUY_TITLE)
@@ -135,17 +140,15 @@ export const ConfirmationPage = () => {
           : setDisplayTitle(ENG_LIST_TITLE_FAIL);
         setDisplayMessage(ENG_LIST_MESSAGE);
         setPriceNominal(getQuerystringValue(queryString, "price") || "");
-        
         break;
       case MINT:
         txFailed == false
           ? setDisplayTitle(ENG_MINT_TITLE)
           : setDisplayTitle(ENG_MINT_TITLE_FAIL);
         setDisplayMessage(ENG_MINT_MESSAGE);
-        console.log(getQuerystringValue(queryString, "number_minted"))
         setNumberMinted(Number(getQuerystringValue(queryString, "number_minted")) || 0);
         setImageLink("/img/collections/GreenCheck.png");
-        setNftLink(window.location.origin + "/collection/" + collectionId);
+        setNftLink(window.location.origin + "/collection/" + collId);
         break;
       case WITHDRAW:
         txFailed == false
@@ -206,12 +209,12 @@ export const ConfirmationPage = () => {
   }, [isDataSet, isTokenLoaded, isTransactionLoaded]);
 
   const getToken = async () => {
-    let hexNonce = parseInt(tokenNonce, 10).toString(16);
+    let hexNonce = parseInt((nonce), 10).toString(16);
     if (hexNonce?.length % 2 != 0) {
       hexNonce = "0" + hexNonce;
     }
     const httpRequest = new XMLHttpRequest();
-    const url = GetTokenRequestHttpURL(collectionId + "-" + hexNonce);
+    const url = GetTokenRequestHttpURL(collId + "-" + hexNonce);
     httpRequest.open("GET", url);
     httpRequest.send();
 
@@ -277,20 +280,20 @@ export const ConfirmationPage = () => {
 
   const setDatabaseRecord = async () => {
     //this value needs to be hexidecimal. add 0 to the first position if the len = 1
-    let hexNonce = parseInt(tokenNonce, 10).toString(16);
-    if (tokenNonce?.length == 1) {
-      hexNonce = "0" + tokenNonce;
+    let hexNonce = parseInt(nonce, 10).toString(16);
+    if (nonce?.length == 1) {
+      hexNonce = "0" + nonce;
     }
 
     let metadataLink = "";
     if (globalToken.uris?.length > 1) {
       metadataLink = atob(globalToken.uris[1]);
     }
-    const onSale = action.toUpperCase() == LIST;
+    const onSale = pageAction.toUpperCase() == LIST;
 
     const formattedData = {
-      TokenId: collectionId,
-      Nonce: parseInt(tokenNonce, 10),
+      TokenId: collId,
+      Nonce: parseInt(nonce, 10),
       NonceStr: hexNonce,
       TxHash: transactionHash,
       OwnerAddress: userWalletAddress,
@@ -308,7 +311,7 @@ export const ConfirmationPage = () => {
     };
 
     var response = null;
-    switch (action.toUpperCase()) {
+    switch (pageAction.toUpperCase()) {
       case BUY:
         response = buyTokenFromClientTrigger({ payload: formattedData });
         break;
@@ -345,12 +348,20 @@ export const ConfirmationPage = () => {
         }
       );
     }
+
+    const args = {
+      toastId: transactionHash,
+
+    };
+
+    TransactionsToastList({transactionHash})
+
   };
 
   if (!userWalletAddress) {
     return (
       <p className="my-10 text-2xl text-center">
-        Token ({collectionId} {tokenNonce}) not found
+        Token ({collId} {nonce}) not found
       </p>
     );
   }
@@ -379,7 +390,7 @@ export const ConfirmationPage = () => {
                     .replace("{{tokenName}}", tokenName)
                     .toString()
                     .replace("{{priceNominal}}", priceNominal)
-                    .replace("{{collectionName}}", collectionId)
+                    .replace("{{collectionName}}", collId)
                     .replace("{{numMint}}", String(numberMinted))}
                   <br />
                   <br />
@@ -388,7 +399,7 @@ export const ConfirmationPage = () => {
                 <div className={isAssetLoaded ? "" : "p-token-page_asset-container"}>
                   <img
                     className={`p-token-page_img`}
-                    src={isAssetLoaded ? imageLink : "/img/collections/CollectionProfileImageEmpty.jpg"}
+                    src={isAssetLoaded ? imageLink : "/img/placeholder.png"}
                     alt=""
                     onLoad={() => {
                       setIsAssetLoaded(true);
@@ -419,7 +430,7 @@ export const ConfirmationPage = () => {
                 >
                   {isTransactionSuccessful ? (
                     <Link
-                      to={`/collection/${collectionId}`}
+                      to={`/collection/${collId}`}
                       className="c-button c-button--primary"
                     >
                       <span className="justify-center">
@@ -481,7 +492,6 @@ export const ConfirmationPage = () => {
             </div>
           </div>
           <br />
-  
         </div>
       </div>
     </div>
