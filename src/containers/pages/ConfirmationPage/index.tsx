@@ -478,13 +478,13 @@ export const ConfirmationPage = () => {
                     </div>
                   </div>
                   ) : null
-                }
-                    <p> 
-                        <a href={network.explorerAddress+"transactions/"+transactionHash} target="_new" title={`${ENG_TX_NAV_TO_HASH}`}>
-                        <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10, }} className="c-navbar_icon-link u-text-theme-blue-anchor " icon={faIcons.faExternalLinkAlt}/>
-                        {ENG_TX_LINK}
-                        </a>
-                    </p>
+                  }
+                      <p> 
+                          <a href={network.explorerAddress+"transactions/"+transactionHash} target="_new" title={`${ENG_TX_NAV_TO_HASH}`}>
+                          <FontAwesomeIcon style={{ marginRight: 10, marginLeft: 10, }} className="c-navbar_icon-link u-text-theme-blue-anchor " icon={faIcons.faExternalLinkAlt}/>
+                          {ENG_TX_LINK}
+                          </a>
+                      </p>
                   </div>
                 
                 </p>
