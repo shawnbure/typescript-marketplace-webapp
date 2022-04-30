@@ -15,7 +15,7 @@ import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation } from 'services/tx-template';
+import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation, useGetStakeNFTTemplateMutation } from 'services/tx-template';
 import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, useRefreshTokenMetadataMutation, useWithdrawTokenMutation, } from "services/tokens";
 
 import { prepareTransaction, getQuerystringValue } from "utils/transactions";
@@ -23,7 +23,7 @@ import { prepareTransaction, getQuerystringValue } from "utils/transactions";
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
 import { formatImgLink, shorterAddress } from "utils";
-import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION } from "constants/actions";
+import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION, STAKE } from "constants/actions";
 import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
 
@@ -117,7 +117,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
 
     //const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
-
+    
+    const [getStakeNftTemplateQueryTrigger] = useGetStakeNFTTemplateMutation();
     const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
     const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
     
@@ -236,7 +237,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
     : tokenResponseData;
 
   const isOurs = !Boolean(tokenResponseData == undefined);
-  //console.log(gatewayTokenData)
 
   if (isOurs === true) {
     tokenData = tokenResponseData.data;
@@ -327,6 +327,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isListed: boolean = tokenState === 'List';
     const isAuction: boolean = tokenState === 'Auction';
     const isOnSale: boolean = ( isListed || isAuction);
+   // const isOnStake: boolean = tokenState === 'Stake';
+    const isOnStake: boolean = true;
+
     const onSaleText = isListed ? "Current price" : "Min bid"
    
     const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
@@ -754,6 +757,42 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
   };
 
+  const handleStakeAction = async () => {
+    const getStakeNFTResponse: any = await getStakeNftTemplateQueryTrigger({
+      userWalletAddress,
+      collectionId,
+      tokenNonce
+    });
+
+    if (getStakeNFTResponse.error) {
+      const {
+        status,
+        data: { error },
+      } = getStakeNFTResponse.error;
+
+      toast.error(`${status} | ${error}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+
+      return;
+    }
+
+    const { data: txData } = getStakeNFTResponse.data;
+
+    const unconsumedTransaction = prepareTransaction(txData);
+
+    sendTransaction({
+      transaction: unconsumedTransaction,
+      callbackRoute: `/confirmation/${STAKE}/${collectionId}/${tokenNonce}`,
+    });
+
+  };
+
   const handleWithdrawAction = async () => {
     const getWithdrawNFTResponse: any = await getWithdrawNftTemplateQueryTrigger(
       { userWalletAddress, collectionId, tokenNonce }
@@ -929,6 +968,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
   const actionsHandlers: { [key: string]: any } = {
     [BUY]: actionHandlerWrapper(handleBuyAction),
     [SELL]: actionHandlerWrapper(handleSellAction),
+    [STAKE]: actionHandlerWrapper(handleStakeAction),
     [WITHDRAW]: actionHandlerWrapper(handleWithdrawAction),
     [MAKE_BID]: actionHandlerWrapper(handleMakeBid),
     [MAKE_OFFER]: actionHandlerWrapper(handleMakeOffer),
@@ -1405,25 +1445,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         </>
                       )}
                       
-                      {!isOnSale && isCurrentTokenOwner && (
-                        <div>
-                          <Link
-                            to={`/token/${ownerWalletAddress}/${collectionId}/${tokenNonce}/sell`}
-                            className="c-button c-button--primary u-margin-right-spacing-2"
-                          >
-                            <span className="u-padding-right-spacing-2">
-                              <FontAwesomeIcon
-                                width={"20px"}
-                                className="c-navbar_icon-link"
-                                icon={faIcons.faWallet}
-                              />
-                            </span>
-                            <span>Sell</span>
-                          </Link>
-                        </div>
-                      )
-                      }
-
                       {isOnSale &&
                         isCurrentTokenOwner &&
                         !(!isAuctionOngoing && hasBidderWinner) && (
@@ -1441,6 +1462,47 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             <span>Withdraw</span>
                           </button>
                         )}
+
+                      {!isOnSale && isCurrentTokenOwner && (
+                        <div  style={{display: "inline-block"}}>
+                          <Link
+                            to={`/token/${ownerWalletAddress}/${collectionId}/${tokenNonce}/sell`}
+                            className="c-button c-button--primary u-margin-right-spacing-2"
+                          >
+                            <span className="u-padding-right-spacing-2">
+                              <FontAwesomeIcon
+                                width={"20px"}
+                                className="c-navbar_icon-link"
+                                icon={faIcons.faWallet}
+                              />
+                            </span>
+                            <span style={{display: "inline-block"}}>Sell</span>
+                          </Link>
+                        </div>
+                      )
+                      }
+  
+                      {!isOnSale && isOnStake &&
+                        isCurrentTokenOwner &&
+                        !(!isAuctionOngoing && hasBidderWinner) && (
+                          <div style={{display: "inline-block"}}>
+    
+                          <button
+                          onClick={actionsHandlers[STAKE]}
+                          className="c-button c-button--primary u-margin-right-spacing-2"
+                        >
+                          <span className="u-padding-right-spacing-2">
+                            <FontAwesomeIcon
+                              width={"20px"}
+                              className="c-navbar_icon-link"
+                              icon={faIcons.faCoins}
+                            />
+                          </span>
+                          <span>Stake</span>
+                        </button>
+
+                        </div>
+                      )}        
 
                       {shouldDisplayEndAuctionButton && (
                         <button

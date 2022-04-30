@@ -12,11 +12,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import { handleCopyToClipboard } from "utils";
 import { faFacebookSquare, faTelegram, faTwitterSquare, faWhatsappSquare } from "@fortawesome/free-brands-svg-icons";
-
+import { routePaths } from 'constants/router';
 import {
   useWithdrawTokenMutation,
   useListTokenFromClientMutation,
   useBuyTokenFromClientMutation,
+  useStakeTokenFromClientMutation,
 } from "services/tokens";
 
 import {
@@ -36,6 +37,7 @@ import {
   MINT,
   WITHDRAW,
   AUCTION,
+  STAKE,
 } from "constants/actions";
 import {
   ENG_BUY_TITLE,
@@ -43,6 +45,9 @@ import {
   ENG_LIST_TITLE,
   ENG_LIST_TITLE_FAIL,
   ENG_LIST_MESSAGE,
+  ENG_STAKE_TITLE,
+  ENG_STAKE_TITLE_FAIL,
+  ENG_STAKE_MESSAGE,
   ENG_WITHDRAW_TITLE,
   ENG_WITHDRAW_TITLE_FAIL,
   ENG_WITHDRAW_MESSAGE,
@@ -101,6 +106,7 @@ export const ConfirmationPage = () => {
   const [startDate, setStartDate] = useState<number>(0);
   const [numberMinted, setNumberMinted] = useState<number>(0);
   const [endDate, setEndDate] = useState<number>(0);
+  const [stakeTokenFromClientTrigger] = useStakeTokenFromClientMutation();
   const [listTokenFromClientTrigger] = useListTokenFromClientMutation();
   const [buyTokenFromClientTrigger] = useBuyTokenFromClientMutation();
   const [withdrawTokenTrigger] = useWithdrawTokenMutation();
@@ -130,17 +136,21 @@ export const ConfirmationPage = () => {
           : setDisplayTitle(ENG_LIST_TITLE_FAIL);
         setDisplayMessage(ENG_LIST_MESSAGE);
         setPriceNominal(getQuerystringValue(queryString, "price") || "");
-        
         break;
+      case STAKE:
+          txFailed == false
+            ? setDisplayTitle(ENG_STAKE_TITLE)
+            : setDisplayTitle(ENG_STAKE_TITLE_FAIL);
+          setDisplayMessage(ENG_STAKE_MESSAGE);
+          break;
       case MINT:
         txFailed == false
           ? setDisplayTitle(ENG_MINT_TITLE)
           : setDisplayTitle(ENG_MINT_TITLE_FAIL);
         setDisplayMessage(ENG_MINT_MESSAGE);
-        console.log(getQuerystringValue(queryString, "number_minted"))
         setNumberMinted(Number(getQuerystringValue(queryString, "number_minted")) || 0);
         setImageLink("/img/collections/GreenCheck.png");
-        setNftLink(window.location.origin + "/collection/" + collectionId);
+        setNftLink(window.location.origin + routePaths.collection.replace(":collectionId", collectionId));
         break;
       case WITHDRAW:
         txFailed == false
@@ -310,6 +320,9 @@ export const ConfirmationPage = () => {
       case LIST:
         response = listTokenFromClientTrigger({ payload: formattedData });
         break;
+      case LIST:
+        response = stakeTokenFromClientTrigger({ payload: formattedData });
+        break;  
       case WITHDRAW:
         response = withdrawTokenTrigger({ payload: formattedData });
         break;

@@ -3,6 +3,7 @@ export const MINT: string = "MINT";
 export const LIST: string = "LIST";
 export const SELL: string = "SELL";
 export const LOGIN: string = "LOGIN";
+export const STAKE: string = "STAKE";
 export const AUCTION: string = "AUCTION";
 export const MAKE_BID: string = "MAKE_BID";
 export const WITHDRAW: string = "WITHDRAW";

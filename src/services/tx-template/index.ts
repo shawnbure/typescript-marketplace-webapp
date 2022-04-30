@@ -115,6 +115,19 @@ export const txTemplateApi = createApi({
             },
         }),
 
+        getStakeNFTTemplate: builder.mutation<any, any>({
+
+            query: ({  userWalletAddress, collectionId, tokenNonce  }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/stake/${userWalletAddress}/${collectionId}/${tokenNonce}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
 
         getIssueNftTemplate: builder.mutation<any, any>({
 
@@ -399,5 +412,7 @@ export const {
     useGetWithdrawNftTemplateMutation, 
     useGetWithdrawDepositTemplateMutation,
     useUpdateSaleStartTemplateMutation,
-    useUpdateBuyerWhiteListCheckTemplateMutation } = txTemplateApi;
+    useUpdateBuyerWhiteListCheckTemplateMutation,
+    useGetStakeNFTTemplateMutation,
+} = txTemplateApi;
 
