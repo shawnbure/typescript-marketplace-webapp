@@ -223,31 +223,14 @@ export const Navbar = () => {
                                 </Link>
                             </li>
 
-                            {loggedIn &&
-                                (onSaleNfts.length < 1 ||
-                                    unlistedNfts.length < 1) && (
-                                    <li className="c-navbar_list-item">
-                                        <Link
-                                            to="/collection/1852-568e49/"
-                                            className="c-navbar_list-link"
-                                        >
-                                            <span
-                                                style={
-                                                    getCookie(
-                                                        userWalletAddress.toString()
-                                                    ) != "false"
-                                                        ? {
-                                                              textShadow:
-                                                                  "0px 5px 40px #ffffff",
-                                                          }
-                                                        : {}
-                                                }
-                                            >
-                                                My First NFT
-                                            </span>
-                                        </Link>
-                                    </li>
-                                )}
+                            <li className="c-navbar_list-item">
+                                <Link
+                                    to={routePaths.activity}
+                                    className="c-navbar_list-link"
+                                >
+                                    Activities
+                                </Link>
+                            </li>
 
                             {loggedIn && (
                                 <li
