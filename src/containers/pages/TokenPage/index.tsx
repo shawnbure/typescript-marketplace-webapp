@@ -23,7 +23,7 @@ import { prepareTransaction, getQuerystringValue } from "utils/transactions";
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
 import { formatImgLink, shorterAddress } from "utils";
-import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION, STAKE } from "constants/actions";
+import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION, STAKE, UNSTAKE } from "constants/actions";
 import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
 
@@ -210,7 +210,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
         identifier: collectionId,
         nonce: tokenNonce,
       })
-      return;
+      //return; - this was commented out because I seem to believe the logic is backwards but at least I can get the data - SMB
     }
     getTokenDataTrigger({ collectionId, tokenNonce });
 
@@ -243,6 +243,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
   }
 
   const getBaseTokenData = (tokenData: any) => {
+
     const token = isOurs ? tokenData.token : tokenData.tokenData;
     const nonce = token.nonce;
     const name = isOurs ? token.tokenName : token.name;
@@ -250,6 +251,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const imageLink: string = isOurs ? token.imageLink : atob(token?.uris?.[0] || "");
     let metadataLink: string = isOurs ? token.metadataLink : atob(token?.uris?.[1] || "");
     const royaltiesPercent = isOurs ? token.royaltiesPercent : parseFloat(token.royalties) / 100;
+
     if (metadataLink.indexOf(".json") == -1) {
       metadataLink = metadataLink + ".json"; //TODO REMOVE , shoudl be added to contract ?
     }
@@ -327,11 +329,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isListed: boolean = tokenState === 'List';
     const isAuction: boolean = tokenState === 'Auction';
     const isOnSale: boolean = ( isListed || isAuction);
-   // const isOnStake: boolean = tokenState === 'Stake';
-    const isOnStake: boolean = true;
-
+    const isOnStake: boolean = tokenData.token.on_stake;
+    //const canUnStake: boolean = ((Date.now() - tokenData.token.stakeDate) / 36e5) >= 24;
+     const canUnStake: boolean = true;
     const onSaleText = isListed ? "Current price" : "Min bid"
-   
+
     const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
     // const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
 
@@ -788,7 +790,44 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${STAKE}/${collectionId}/${tokenNonce}`,
+      callbackRoute: `/confirmation/${STAKE}/${collectionId}/${tokenNonce}?onstake=1`,
+    });
+
+  };
+
+
+  const handleUnstakeAction = async () => {
+    const getStakeNFTResponse: any = await getStakeNftTemplateQueryTrigger({
+      userWalletAddress,
+      collectionId,
+      tokenNonce
+    });
+
+    if (getStakeNFTResponse.error) {
+      const {
+        status,
+        data: { error },
+      } = getStakeNFTResponse.error;
+
+      toast.error(`${status} | ${error}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+
+      return;
+    }
+
+    const { data: txData } = getStakeNFTResponse.data;
+
+    const unconsumedTransaction = prepareTransaction(txData);
+
+    sendTransaction({
+      transaction: unconsumedTransaction,
+      callbackRoute: `/confirmation/${STAKE}/${collectionId}/${tokenNonce}?onstake=0`,
     });
 
   };
@@ -969,6 +1008,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     [BUY]: actionHandlerWrapper(handleBuyAction),
     [SELL]: actionHandlerWrapper(handleSellAction),
     [STAKE]: actionHandlerWrapper(handleStakeAction),
+    [UNSTAKE]: actionHandlerWrapper(handleUnstakeAction),
     [WITHDRAW]: actionHandlerWrapper(handleWithdrawAction),
     [MAKE_BID]: actionHandlerWrapper(handleMakeBid),
     [MAKE_OFFER]: actionHandlerWrapper(handleMakeOffer),
@@ -1417,7 +1457,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         <div className="c-accordion_trigger">
                           {
                             <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                              Fixed price
+                              {isOnStake ?  "Stake" : "Fixed price"}
                             </p>
                           }
                         </div>
@@ -1463,7 +1503,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                           </button>
                         )}
 
-                      {!isOnSale && isCurrentTokenOwner && (
+                      {!isOnSale && !isOnStake && isCurrentTokenOwner && (
                         <div  style={{display: "inline-block"}}>
                           <Link
                             to={`/token/${ownerWalletAddress}/${collectionId}/${tokenNonce}/sell`}
@@ -1482,7 +1522,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                       )
                       }
   
-                      {!isOnSale && isOnStake &&
+                      {!isOnSale && !isOnStake &&
                         isCurrentTokenOwner &&
                         !(!isAuctionOngoing && hasBidderWinner) && (
                           <div style={{display: "inline-block"}}>
@@ -1503,6 +1543,31 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
                         </div>
                       )}        
+
+                      {!isOnSale && isOnStake && 
+                        isCurrentTokenOwner &&
+                        !(!isAuctionOngoing && hasBidderWinner) && (
+
+                          <div style={{display: "inline-block"}}>
+
+                          {canUnStake ? (
+                            <button
+                            onClick={actionsHandlers[UNSTAKE]}
+                            className="c-button c-button--primary u-margin-right-spacing-2"
+                            >
+                            <span className="u-padding-right-spacing-2">
+                              <FontAwesomeIcon
+                                width={"20px"}
+                                className="c-navbar_icon-link"
+                                icon={faIcons.faCoins}
+                              />
+                            </span>
+                            <span>Unstake</span>
+                          </button> ) : ( 
+                             <span>You may Unstake your NFT after {(24 - ((Date.now() - tokenData.token.stakeDate) / 36e5)).toFixed(2)} hours. (24 hour minimum)</span>
+                          )}
+                        </div>
+                      )}              
 
                       {shouldDisplayEndAuctionButton && (
                         <button

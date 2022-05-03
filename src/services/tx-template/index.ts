@@ -128,7 +128,6 @@ export const txTemplateApi = createApi({
             },
         }),
 
-
         getIssueNftTemplate: builder.mutation<any, any>({
 
             query: ({ userWalletAddress, tokenName, tokenTicker }): FetchArgs => {

@@ -48,6 +48,9 @@ import {
   ENG_STAKE_TITLE,
   ENG_STAKE_TITLE_FAIL,
   ENG_STAKE_MESSAGE,
+  ENG_UNSTAKE_TITLE,
+  ENG_UNSTAKE_TITLE_FAIL,
+  ENG_UNSTAKE_MESSAGE,
   ENG_WITHDRAW_TITLE,
   ENG_WITHDRAW_TITLE_FAIL,
   ENG_WITHDRAW_MESSAGE,
@@ -89,7 +92,8 @@ export const ConfirmationPage = () => {
   const { action, collectionId, tokenNonce, info } = useParams<UrlParameters>();
   const [globalToken, setGlobalToken] = useState<any>({});
   const queryString = window.location.search;
-  const [transactionHash, setTransactionHash] = useState(getQuerystringValue(queryString, "txHash") || "");
+  const [transactionHash] = useState(getQuerystringValue(queryString, "txHash") || "");
+  const [onStake] = useState(Boolean(Number(getQuerystringValue(queryString, "onstake") || 0)));
   const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
   const [isTransactionSuccessful, setIsTransactionSuccessful] = useState<boolean>(false);
   const [isTransactionLoaded, setIsTransactionLoaded] = useState<boolean>(false);
@@ -138,10 +142,18 @@ export const ConfirmationPage = () => {
         setPriceNominal(getQuerystringValue(queryString, "price") || "");
         break;
       case STAKE:
+
+        if (onStake) {
           txFailed == false
             ? setDisplayTitle(ENG_STAKE_TITLE)
             : setDisplayTitle(ENG_STAKE_TITLE_FAIL);
           setDisplayMessage(ENG_STAKE_MESSAGE);
+        } else {
+          txFailed == false
+            ? setDisplayTitle(ENG_UNSTAKE_TITLE)
+            : setDisplayTitle(ENG_UNSTAKE_TITLE_FAIL);
+          setDisplayMessage(ENG_UNSTAKE_MESSAGE);
+        }
           break;
       case MINT:
         txFailed == false
@@ -266,6 +278,9 @@ export const ConfirmationPage = () => {
             }
             if (jsonResponse.status == "fail") {
               setTxFailed(true);
+
+              setIsTransactionSuccessful(true);
+
             }
             if (jsonResponse.status == undefined) {
               setTxUnknown(true);
@@ -293,7 +308,7 @@ export const ConfirmationPage = () => {
     }
     const onSale = action.toUpperCase() == LIST;
 
-    const formattedData = {
+    var formattedData = {
       TokenId: collectionId,
       Nonce: parseInt(tokenNonce, 10),
       NonceStr: hexNonce,
@@ -310,7 +325,18 @@ export const ConfirmationPage = () => {
       Timestamp: globalToken.timestamp,
       TxConfirmed: isTransactionSuccessful,
       OnSale: onSale,
+      OnStake: Boolean(onStake),
+      Status: "",
+      StakeDate: 0,   
+      StakeType: "",
     };
+
+    if(onStake) {
+      formattedData.Status = "Stake";
+      formattedData.StakeDate = new Date().getTime();
+      formattedData.StakeType = "DAO"
+      formattedData.OnSale = false;
+    }
 
     var response = null;
     switch (action.toUpperCase()) {
@@ -320,7 +346,7 @@ export const ConfirmationPage = () => {
       case LIST:
         response = listTokenFromClientTrigger({ payload: formattedData });
         break;
-      case LIST:
+      case STAKE:
         response = stakeTokenFromClientTrigger({ payload: formattedData });
         break;  
       case WITHDRAW:

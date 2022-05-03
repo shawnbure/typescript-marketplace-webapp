@@ -111,6 +111,19 @@ export const accountsApi = createApi({
       },
     }),
 
+    getOnStakeAccountTokens: builder.mutation<any, any>({
+      query: ({ userWalletAddress, offset, limit }): FetchArgs => {
+        const customRequestArg: FetchArgs = {
+          method: GET,
+          url: `/${mainPath}/${userWalletAddress}/tokens?offset=${offset}&limit=${limit}&filter=${encodeURIComponent(
+            "on_stake|true|="
+          )}`,
+        };
+
+        return customRequestArg;
+      },
+    }),
+
     getAccountTokenGateway: builder.mutation<any, any>({
       query: ({ userWalletAddress, identifier, nonce }): FetchArgs => {
         let nonceStr = parseInt(nonce).toString(16);
@@ -236,6 +249,7 @@ export const {
   useSetProfileImageMutation,
   useGetAccountTokensMutation,
   useGetOnSaleAccountTokensMutation,
+  useGetOnStakeAccountTokensMutation,
   useGetAccountGatewayTokensMutation,
   useGetAccountTokenGatewayMutation,
   useGetAccountGatewayTokensNoLimitsMutation,
