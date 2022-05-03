@@ -30,7 +30,6 @@ import {
     useUpdateSaleStartTemplateMutation,
     useUpdateBuyerWhiteListCheckTemplateMutation
   } from "services/tx-template";
-import { off } from "gulp";
 
 export const CollectionEditPage: (props: any) => any = ({ }) => {
 
