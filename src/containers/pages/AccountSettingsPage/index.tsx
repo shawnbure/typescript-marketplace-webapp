@@ -322,7 +322,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
 
                                 <p className="text-xl u-text-bold mb-2">
                                     Profile Image: &nbsp;
-                                    <a href="javascript:alert('This image will appear as your c profile avatar image. Resolution: 350 x 350 recommended. Max Size of 5MB.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                    <a href="javascript:alert('This image will appear as your profile avatar image. Resolution: 350 x 350 recommended. Max Size of 5MB.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
                                 <p className="mb-2 text-gray-500 text-sm">
