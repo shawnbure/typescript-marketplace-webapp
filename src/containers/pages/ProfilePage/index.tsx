@@ -145,7 +145,6 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
     do 
     {
-      console.log("enter do loop : offset : " + offset)
       const dataResponse = await getFunctionTrigger({ userWalletAddress, limit, offset});
 
       if (!dataResponse.data) {
@@ -158,12 +157,8 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
       const newNFTs = [...nfts];
 
-      console.log(newNFTs)
-
-
       if( newNFTs.length == 0 )
       {
-        console.log("length of 0 - DONE");
         gotAllRecords = true
 
         break;
@@ -182,7 +177,6 @@ export const ProfilePage: (props: any) => any = ({}) => {
       HideElement("pLoadingUnlistedNFTs");
     }
 
-    console.log(arrayNFTs);
     setUnlistedNftsNoLimits(arrayNFTs);
 
     //inital so set it to the "filtered"
@@ -783,7 +777,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       <FontAwesomeIcon
                         width={"20px"}
                         className="c-navbar_icon-link"
-                        icon={faIcons.faImages}
+                        icon={faIcons.faListAlt}
                       />
                     </span>
                     <span className="c-accordion_trigger_title">
@@ -860,7 +854,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       <FontAwesomeIcon
                         width={"20px"}
                         className="c-navbar_icon-link"
-                        icon={faIcons.faClipboardList}
+                        icon={faIcons.faBarcode}
                       />
                     </span>
                     <span className="c-accordion_trigger_title">On Sale</span>
@@ -938,7 +932,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         icon={faIcons.faCoins}
                       />
                     </span>
-                    <span className="c-accordion_trigger_title">On Stake</span>
+                    <span className="c-accordion_trigger_title">Staked (Earning Rewards)</span>
                   </div>
                 }
               >
@@ -949,7 +943,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       mapOnStakeTokens()
                     ) : (
                       <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
-                        no NFTs on stake
+                        no NFTs being staked
                       </div>
                     )}
                   </div>
@@ -989,10 +983,10 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       <FontAwesomeIcon
                         width={"20px"}
                         className="c-navbar_icon-link"
-                        icon={faIcons.faListAlt}
+                        icon={faIcons.faWallet}
                       />
                     </span>
-                    <span className="c-accordion_trigger_title">Unlisted</span>
+                    <span className="c-accordion_trigger_title">Wallet</span>
                   </div>
                 }
               >
@@ -1007,7 +1001,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         <>
                           <div className="mb-10 md:text-center">
                             <span className=" mr-4 inline-block">
-                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Unlisted NFTs" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
+                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Wallet NFTs" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
                             
                             </span>
 
@@ -1044,10 +1038,10 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       mapUnlistedTokens()
                     ) : (
                       <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
-                        No Unlisted NFTs found
+                        No Wallet NFTs found
 
                         <p id="pLoadingUnlistedNFTs" hidden={true} className="my-10 text-2xl text-center">
-                          Loading Unlisted NFTs...
+                          Loading Wallet NFTs...
                         </p>
 
                         </div>

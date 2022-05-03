@@ -329,7 +329,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const isListed: boolean = tokenState === 'List';
     const isAuction: boolean = tokenState === 'Auction';
     const isOnSale: boolean = ( isListed || isAuction);
-    const isOnStake: boolean = tokenData.token.on_stake;
+    let isOnStake = false;
+    if(isOurs){
+      isOnStake = tokenData.token.onStake;
+    }
+
     //const canUnStake: boolean = ((Date.now() - tokenData.token.stakeDate) / 36e5) >= 24;
      const canUnStake: boolean = true;
     const onSaleText = isListed ? "Current price" : "Min bid"
