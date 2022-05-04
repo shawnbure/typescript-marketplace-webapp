@@ -278,9 +278,6 @@ export const ConfirmationPage = () => {
             }
             if (jsonResponse.status == "fail") {
               setTxFailed(true);
-
-              setIsTransactionSuccessful(true);
-
             }
             if (jsonResponse.status == undefined) {
               setTxUnknown(true);
