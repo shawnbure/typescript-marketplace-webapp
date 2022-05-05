@@ -350,7 +350,7 @@ export const SellTokenPage: (props: any) => any = ({}) => {
                             />
                           </span>
                         </p>
-
+ 
                         <div className="c-date-time-picker">
                           <DateTimePicker
                             value={endDate}

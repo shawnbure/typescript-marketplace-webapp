@@ -234,7 +234,7 @@ export const collectionsApi = createApi({
 
         getCollectionTokens: builder.mutation<any, any>({
 
-            query: ({ collectionId, offset, limit, filters = {}, sortRules = {}, onSaleFlag, queryFilters }): FetchArgs => {
+            query: ({ collectionId, offset, limit, filters = {}, sortRules = {}, onSaleFlag, onStakeFlag, queryFilters }): FetchArgs => {
 
                 const customRequestArg: FetchArgs = {
 
@@ -244,6 +244,7 @@ export const collectionsApi = createApi({
                         filters: filters,
                         sortRules: sortRules,
                         onSaleFlag: onSaleFlag,
+                        onStakeFlag: onStakeFlag,
                         queryFilters: queryFilters,
                     })
                 }

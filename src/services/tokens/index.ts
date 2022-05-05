@@ -34,6 +34,27 @@ export const tokensApi = createApi({
       },
     }),
 
+    stakeTokenFromClient: builder.mutation<any, any>({
+
+      query: ({ payload }): FetchArgs => {
+
+          const accessToken: string = selectAccessToken(store.getState());
+
+          const customRequestArg: FetchArgs = {
+
+              method: POST,
+              headers: {
+                  "Authorization": `Bearer ${accessToken}`,
+              },
+              body: JSON.stringify(payload),
+              url: `${mainPath}/stake-fc/${payload.OwnerAddress}/${payload.TokenId}/${payload.Nonce}`
+
+          }
+
+          return customRequestArg;
+        },
+    }),
+
     listTokenFromClient: builder.mutation<any, any>({
 
         query: ({ payload }): FetchArgs => {
@@ -262,4 +283,5 @@ export const {
     useGetTokenCollectionAvailablityMutation,
     useGetTokensCollectionsAvailablityMutation,
     useGetWhitelistBuyCountLimitTemplateMutation,
-    useGetBuyerWhiteListCheckTemplateMutation } = tokensApi;
+    useGetBuyerWhiteListCheckTemplateMutation,
+    useStakeTokenFromClientMutation } = tokensApi;
