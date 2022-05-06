@@ -335,8 +335,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     }
     //const canUnStake: boolean = ((Date.now() - tokenData.token.stakeDate) / 36e5) >= 24;
      const canUnStake: boolean = true;
-
-
+     const isStakeable = collectionData?.data?.collection?.isStakeable;
 
     const onSaleText = isListed ? "Current price" : "Min bid"
 
@@ -1529,7 +1528,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                       }
  
                       {/* HOTFIX IS releaseFeaureStaking */
-                      releaseFeaureStaking && (!isOnSale && !isOnStake &&
+                      releaseFeaureStaking && isStakeable && (!isOnSale && !isOnStake &&
                         isCurrentTokenOwner &&
                         !(!isAuctionOngoing && hasBidderWinner)) && (
                           <div style={{display: "inline-block"}}>
