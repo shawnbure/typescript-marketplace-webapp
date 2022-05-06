@@ -946,7 +946,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                             <div className="mb-10">
 
                                  <p className="text-xl u-text-bold mb-2">
-                                    Profile Banner: &nbsp;
+                                    Collection Banner: &nbsp;
                                     <a href="javascript:alert('This image will appear at the top of your collection page. Dimensions change on different devices. Resolution: 1400 x 400 recommended. Max Size of 5MB.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
