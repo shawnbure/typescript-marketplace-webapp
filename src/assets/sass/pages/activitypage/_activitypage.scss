@@ -167,7 +167,7 @@
         &__title {
             color: #fff;
 
-            font-size: 115px;
+            font-size: 72px;
             font-weight: bolder;
 
             position: absolute;
@@ -366,13 +366,21 @@
 
                 display: flex;
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: center;
                 justify-content: flex-start;
 
                 margin: 180px 0 0 0;
 
                 @include respond-to(mobile) {
                     margin: 110px 0 0 0;
+                }
+
+                &__scrollArea {
+                    width: 100%;
+
+                    @include respond-to(mobile) {
+                        padding: 0 0 0 72px;
+                    }
                 }
 
                 &-log {
@@ -517,7 +525,7 @@
                         font-size: 16px;
                         font-weight: normal;
 
-                        min-width: 120px;
+                        min-width: 110px;
 
                         @include respond-to(max-large-desktop) {
                             display: none;

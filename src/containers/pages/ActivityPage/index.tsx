@@ -2,6 +2,7 @@
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 //API Gateways
 import { useGetActivitiesLogMutation } from "services/activity";
@@ -9,12 +10,13 @@ import { useGetCollectionTrendingMutation } from "services/collections";
 
 //Assets
 import egldIcon from "./../../../assets/img/egld-icon.png";
-
+import tokenNoImage from "./../../../assets/img/token-no-img.png";
 import dollarSign from "./../../../assets/img/labels/dollar-sign.svg";
 import zapSign from "./../../../assets/img/labels/zap-sign.svg";
 import tagSign from "./../../../assets/img/labels/tag-sign.svg";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { isMobile } from "utils";
 
 export const ActivityPage = () => {
     let [collectionDropedDown, setCollectionDropedDown] = useState<any>(true);
@@ -29,6 +31,12 @@ export const ActivityPage = () => {
     );
     let [searchInputValue, setSearchInputValue] = useState<any>([]);
     let [filtersBar, setFiltersBar] = useState<any>(false);
+
+    let [currentPage, setCurrentPage] = useState(1);
+    let [nextPage, setNextPage] = useState(2);
+    let [filters, setFilters] = useState<string>("");
+
+    let [hasMoreData, setHasMoreData] = useState<boolean>(true);
 
     const [
         getActivitiesLogRequestTrigger,
@@ -58,6 +66,17 @@ export const ActivityPage = () => {
                 stateSetter(responeHolder.data.data.activities);
                 break;
 
+            case "LoadMoreLogs":
+                responeHolder = await functionTrigger(triggerInputObject);
+                if (responeHolder.data.data.activities.length < 30) {
+                    setHasMoreData(false);
+                }
+                stateSetter([
+                    ...stateGetter,
+                    ...responeHolder.data.data.activities,
+                ]);
+                break;
+
             case "CollectionTrending":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter(responeHolder.data.data);
@@ -74,17 +93,45 @@ export const ActivityPage = () => {
                 (item) =>
                     item.collectionName.toUpperCase().includes(keyword) == true
             );
-            console.log(filtered);
             setLogsFilteredByCollection(filtered);
         } else {
             setLogsFilteredByCollection(activities);
         }
     };
 
-    useEffect(() => {
+    let loadMoreLogs = (
+        timestamp: any,
+        currentPage: any,
+        nextPage: any,
+        filters: any
+    ) => {
         dataProcessor(
             getActivitiesLogRequestTrigger,
+            {
+                timestamp,
+                currentPage,
+                nextPage,
+                filters,
+            },
+            activities,
+            setActivities,
             {},
+            "LoadMoreLogs"
+        );
+        setCurrentPage(currentPage + 1);
+        setNextPage(nextPage + 1);
+    };
+
+    useEffect(() => {
+        setHasMoreData(true);
+        dataProcessor(
+            getActivitiesLogRequestTrigger,
+            {
+                timestamp: 0,
+                currentPage: 1,
+                nextPage: 1,
+                filters: filters,
+            },
             activities,
             setActivities,
             {},
@@ -98,7 +145,7 @@ export const ActivityPage = () => {
             {},
             "CollectionTrending"
         );
-    }, []);
+    }, [filters]);
 
     useEffect(() => {
         setLogsFilteredByCollection(activities);
@@ -208,8 +255,20 @@ export const ActivityPage = () => {
                                                 ? { background: "#4f4f4f" }
                                                 : {}
                                         }
-                                        onClick={() => setEventType("All")}
+                                        onClick={() => {
+                                            setEventType("All");
+                                            setFilters("");
+                                            setSearchInputValue("");
+                                        }}
                                     >
+                                        <FontAwesomeIcon
+                                            icon={faIcons.faLayerGroup}
+                                            style={{
+                                                margin: "0 8px 0 0",
+                                                color: "#fff",
+                                                fontSize: "12px",
+                                            }}
+                                        />{" "}
                                         All
                                     </button>
                                     <button
@@ -218,8 +277,20 @@ export const ActivityPage = () => {
                                                 ? { background: "#4f4f4f" }
                                                 : {}
                                         }
-                                        onClick={() => setEventType("List")}
+                                        onClick={() => {
+                                            setEventType("List");
+                                            setFilters("type|List|=");
+                                            setSearchInputValue("");
+                                        }}
                                     >
+                                        <FontAwesomeIcon
+                                            icon={faIcons.faTag}
+                                            style={{
+                                                margin: "0 8px 0 0",
+                                                color: "#fff",
+                                                fontSize: "12px",
+                                            }}
+                                        />{" "}
                                         Listings
                                     </button>
                                     <button
@@ -228,8 +299,20 @@ export const ActivityPage = () => {
                                                 ? { background: "#4f4f4f" }
                                                 : {}
                                         }
-                                        onClick={() => setEventType("Buy")}
+                                        onClick={() => {
+                                            setEventType("Buy");
+                                            setFilters("type|Buy|=");
+                                            setSearchInputValue("");
+                                        }}
                                     >
+                                        <FontAwesomeIcon
+                                            icon={faIcons.faDollarSign}
+                                            style={{
+                                                margin: "0 8px 0 0",
+                                                color: "#fff",
+                                                fontSize: "12px",
+                                            }}
+                                        />{" "}
                                         Buys
                                     </button>
                                     <button
@@ -238,8 +321,20 @@ export const ActivityPage = () => {
                                                 ? { background: "#4f4f4f" }
                                                 : {}
                                         }
-                                        onClick={() => setEventType("Auction")}
+                                        onClick={() => {
+                                            setEventType("Auction");
+                                            setFilters("type|Auction|=");
+                                            setSearchInputValue("");
+                                        }}
                                     >
+                                        <FontAwesomeIcon
+                                            icon={faIcons.faHammer}
+                                            style={{
+                                                margin: "0 8px 0 0",
+                                                color: "#fff",
+                                                fontSize: "12px",
+                                            }}
+                                        />{" "}
                                         Auctions
                                     </button>
                                 </div>
@@ -247,7 +342,7 @@ export const ActivityPage = () => {
                         )}
                     </div>
 
-                    <span className="activity-sidebar__title">Filters</span>
+                    <span className="activity-sidebar__title">Activity</span>
                 </div>
                 <div className="activity-main">
                     <table className="activity-main__table">
@@ -291,7 +386,11 @@ export const ActivityPage = () => {
                                                 ? { background: "#4f4f4f" }
                                                 : {}
                                         }
-                                        onClick={() => setEventType("All")}
+                                        onClick={() => {
+                                            setEventType("All");
+                                            setFilters("");
+                                            setSearchInputValue("");
+                                        }}
                                     >
                                         All
                                     </button>
@@ -301,7 +400,11 @@ export const ActivityPage = () => {
                                                 ? { background: "#4f4f4f" }
                                                 : {}
                                         }
-                                        onClick={() => setEventType("List")}
+                                        onClick={() => {
+                                            setEventType("List");
+                                            setFilters("type|List|=");
+                                            setSearchInputValue("");
+                                        }}
                                     >
                                         Listings
                                     </button>
@@ -311,7 +414,11 @@ export const ActivityPage = () => {
                                                 ? { background: "#4f4f4f" }
                                                 : {}
                                         }
-                                        onClick={() => setEventType("Buy")}
+                                        onClick={() => {
+                                            setEventType("Buy");
+                                            setFilters("type|Buy|=");
+                                            setSearchInputValue("");
+                                        }}
                                     >
                                         Buys
                                     </button>
@@ -321,7 +428,11 @@ export const ActivityPage = () => {
                                                 ? { background: "#4f4f4f" }
                                                 : {}
                                         }
-                                        onClick={() => setEventType("Auction")}
+                                        onClick={() => {
+                                            setEventType("Auction");
+                                            setFilters("type|Auction|=");
+                                            setSearchInputValue("");
+                                        }}
                                     >
                                         Auctions
                                     </button>
@@ -330,12 +441,47 @@ export const ActivityPage = () => {
                         </div>
 
                         <div className="activity-main__table--body">
-                            {logsFilteredByCollection &&
-                            logsFilteredByCollection.length > 0 ? (
-                                logsFilteredByCollection.map(
-                                    (item: any, index: any) =>
-                                        item.txType == eventType ||
-                                        eventType == "All" ? (
+                            <InfiniteScroll
+                                className="activity-main__table--body__scrollArea"
+                                dataLength={logsFilteredByCollection.length}
+                                next={() =>
+                                    loadMoreLogs(
+                                        logsFilteredByCollection[
+                                            logsFilteredByCollection.length - 1
+                                        ]
+                                            ? logsFilteredByCollection[
+                                                  logsFilteredByCollection.length -
+                                                      1
+                                              ].txTimestamp
+                                            : null,
+                                        currentPage,
+                                        nextPage,
+                                        filters
+                                    )
+                                }
+                                hasMore={hasMoreData}
+                                loader={
+                                    logsFilteredByCollection &&
+                                    logsFilteredByCollection.length > 0 ? (
+                                        <p style={{ textAlign: "center" }}>
+                                            <b>Loading...</b>
+                                        </p>
+                                    ) : null
+                                }
+                                height={560}
+                                endMessage={
+                                    logsFilteredByCollection &&
+                                    logsFilteredByCollection.length > 0 ? (
+                                        <p style={{ textAlign: "center" }}>
+                                            <b>Yay! You have seen it all</b>
+                                        </p>
+                                    ) : null
+                                }
+                            >
+                                {logsFilteredByCollection &&
+                                logsFilteredByCollection.length > 0 ? (
+                                    logsFilteredByCollection.map(
+                                        (item: any, index: any) => (
                                             <Link
                                                 key={index.toString()}
                                                 to={`/token/${
@@ -366,6 +512,10 @@ export const ActivityPage = () => {
                                                             src={
                                                                 item.tokenImageLink
                                                             }
+                                                            onError={(e) => {
+                                                                let tar = e.target as any;
+                                                                tar.src = tokenNoImage;
+                                                            }}
                                                         />
                                                         <div>
                                                             <span>
@@ -418,7 +568,12 @@ export const ActivityPage = () => {
                                                                 .length - 1
                                                         )}
                                                     </span>
-                                                    <span className="activity-main__table--body-log_time">
+                                                    <span
+                                                        className="activity-main__table--body-log_time"
+                                                        style={{
+                                                            fontSize: "12px",
+                                                        }}
+                                                    >
                                                         {moment(
                                                             item.txTimestamp *
                                                                 1000
@@ -426,13 +581,20 @@ export const ActivityPage = () => {
                                                     </span>
                                                 </div>
                                             </Link>
-                                        ) : null
-                                )
-                            ) : (
-                                <p style={{ margin: "160px auto 0 auto" }}>
-                                    There isn't item
-                                </p>
-                            )}
+                                        )
+                                    )
+                                ) : (
+                                    <div style={{ width: "100%" }}>
+                                        <p
+                                            style={{
+                                                margin: "160px auto 0 auto",
+                                            }}
+                                        >
+                                            There isn't item
+                                        </p>
+                                    </div>
+                                )}
+                            </InfiniteScroll>
                         </div>
                     </table>
                 </div>

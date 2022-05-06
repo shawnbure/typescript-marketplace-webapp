@@ -148,7 +148,6 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const [sort, setSort] = useState<any>(options[2].value);
   const [onSaleOption, setOnSaleOption] = useState<any>(true);
 
-
   const [tokens, setTokens] = useState<any>([]);
 
   const [filterQuery, setFilterQuery] = useState<any>({});
@@ -181,19 +180,47 @@ export const CollectionPage: (props: any) => any = ({}) => {
     newFilterQuery,
     newSortQuery,
     newOnSaleOption,
+    tokenTypeValue,
   }: {
     mergeWithExisting?: boolean;
     newFilterQuery?: any;
     newSortQuery?: any;
     newOnSaleOption?: any;
+    tokenTypeValue?: number
   }) => {
     const filters = newFilterQuery ? newFilterQuery : filterQuery;
     const offset = mergeWithExisting ? tokens.length : 0;
     const sortRules = newSortQuery ? newSortQuery : sort;
+    let onSaleFlag = false;
+    let onStakeFlag = false;
 
-    const onSaleFlag = (newOnSaleOption != null) ? newOnSaleOption : onSaleOption;
-    const queryFilters = "on_sale" + "|" + onSaleFlag + "|="
+    var queryFilters = "";
 
+    switch (Number(tokenTypeValue)){
+
+      case 0: //off market
+        queryFilters = "on_sale|0|=;AND;on_stake|0|=";
+        onSaleFlag = false;
+        onStakeFlag = false;
+        break;
+
+      case 1: //on sale
+        queryFilters = "on_sale|1|=;AND;on_stake|0|=";
+        onSaleFlag = true;
+        onStakeFlag = false;
+        break;
+
+      case 2: //on stake
+        queryFilters = "on_sale|0|=;AND;on_stake|1|=";
+        onSaleFlag = false;
+        onStakeFlag = true;
+        break;
+
+      default: //off market
+        queryFilters = "on_sale|0|=;AND;on_stake|0|=";
+        onSaleFlag = false;
+        onStakeFlag = false;
+      }
     //console.log(queryFilters)
 
     //on_sale|true|=
@@ -207,6 +234,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
       sortRules,
       filters,
       onSaleFlag,
+      onStakeFlag,
       queryFilters,
     });
 
@@ -508,25 +536,24 @@ export const CollectionPage: (props: any) => any = ({}) => {
     // setTokens([]);
 
     setSort(option.value);
-
+    
     triggerFilterAndSort({ newSortQuery: option.value });
   };
 
 
   const handleOnSaleRadioButtonChange = (option: any) => {
 
-    const onSaleFlagChange = (option.target.value == 1)
-
+    const onSaleFlagChange = (option.target.value == 1 || option.target.value == 2)
     setOnSaleOption(onSaleFlagChange)
     
-    triggerFilterAndSort({ newOnSaleOption: onSaleFlagChange });
+    triggerFilterAndSort({ newOnSaleOption: onSaleFlagChange, tokenTypeValue: option.target.value });
 
   };
   
-  
   const getInitialTokens = async () => {
 
-    const queryFilters = "on_sale" + "|" + onSaleOption + "|="
+    //const queryFilters = "on_sale" + "|" + onSaleOption + "|="
+    const queryFilters = "on_sale|1|=;AND;on_stake|0|=";
 
     //console.log(queryFilters)
 
@@ -583,8 +610,6 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const [showEdit, setShowEdit] = useState(false);
 
 
-
-
   const setValuesAccount = async () => {
 
     const accountData: any = await getAccountRequestTrigger({ userWalletAddress: userWalletAddress });
@@ -601,10 +626,6 @@ export const CollectionPage: (props: any) => any = ({}) => {
   }
 
   useEffect(() => {
-
-    
-
-
 
 
     getCollectionInfoTrigger({ collectionId: collectionId });
@@ -1009,21 +1030,36 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
                     <span className="u-text-theme-gray-light">
                         On Sale
-                      </span>                        
+                      </span>                       
 
-                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+                      <input
+                          value="2"
+                          type="radio"
+                          className="mr-2"
+                          title="Staked (Earning Rewards)"
+                          name="OnSaleType"
+                          onChange={handleOnSaleRadioButtonChange}
+                        />
+
+                      <span className="u-text-theme-gray-light">
+                      Staked (Earning Rewards)
+                      </span> 
+
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
                       <input
                           value="0"
                           type="radio"
                           className="mr-2"
-                          title="Unlisted"
+                          title="Wallet"
                           name="OnSaleType"
                           onChange={handleOnSaleRadioButtonChange}
                         />
 
                     <span className="u-text-theme-gray-light">
-                        Unlisted
+                    Wallet
                       </span> 
 
                       <br /><br/>

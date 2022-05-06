@@ -338,7 +338,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
                                     <div className="mr-4">
                                         <label className="c-button c-button--secondary ">
                                             <span className="mt-2 text-base leading-normal">Select a file</span>
-                                            <input onChange={handleUploadProfileImage} type="file" accept="image/png, image/jpeg" className="hidden" />
+                                            <input onChange={handleUploadProfileImage} type="file" accept="image/gif, image/png, image/jpeg" className="hidden" />
                                         </label>
                                     </div>
                                     <button onClick={handleSaveProfileImage} className="c-button c-button--primary">upload</button>
@@ -368,7 +368,7 @@ export const AccountSettingsPage: (props: any) => any = ({ }) => {
                                     <div className="mr-4">
                                         <label className="c-button c-button--secondary ">
                                             <span className="mt-2 text-base leading-normal">Select a file</span>
-                                            <input onChange={handleUploadSaveCoverImage} type="file" accept="image/png, image/jpeg" className="hidden" />
+                                            <input onChange={handleUploadSaveCoverImage} type="file" accept="image/gif, image/png, image/jpeg" className="hidden" />
                                         </label>
                                     </div>
                                     <button onClick={handleSaveCoverImage} className="c-button c-button--primary">upload</button>

@@ -16,21 +16,24 @@ export const activityApi = createApi({
     }),
 
     endpoints: (builder) => ({
-        
         getActivitiesLog: builder.mutation<any, any>({
-            query: (): FetchArgs => {
+            query: ({
+                timestamp,
+                currentPage,
+                nextPage,
+                filters,
+            }): FetchArgs => {
                 const customRequestArg: FetchArgs = {
                     method: GET,
-                    url: `/${mainPath}/all/0/0`,
+                    url: `/${mainPath}/all/${timestamp}/${currentPage}/${nextPage}?filter=${filters}&limit=30`,
                 };
+
+                console.log(customRequestArg);
 
                 return customRequestArg;
             },
         }),
-        
     }),
 });
 
-export const {
-    useGetActivitiesLogMutation,
-} = activityApi;
+export const { useGetActivitiesLogMutation } = activityApi;
