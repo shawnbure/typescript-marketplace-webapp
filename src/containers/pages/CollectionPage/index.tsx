@@ -278,6 +278,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
   const isCollectionOwner = userWalletAddress === creatorWalletAddress;
 
+  const isStakeable = collectionData?.data?.collection?.isStakeable;
 
 
 
@@ -1035,7 +1036,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
                       { /* HOTFIX releaseFeaureStaking */
 
-                      releaseFeaureStaking && (
+                      releaseFeaureStaking && isStakeable && (
                           <>
                               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                               
