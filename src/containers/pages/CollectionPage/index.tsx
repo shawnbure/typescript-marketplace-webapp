@@ -31,6 +31,9 @@ import { useGetWhitelistBuyCountLimitTemplateMutation,  } from "services/tokens"
 import { Footer } from 'components/index';
 import { MINT } from "constants/actions";
 
+/* temporary hot fixes */
+import {releaseFeaureStaking} from 'configs/dappConfig';
+
 export const CollectionPage: (props: any) => any = ({}) => {
   
   const { loggedIn, address: userWalletAddress } = Dapp.useContext();
@@ -275,6 +278,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
   const isCollectionOwner = userWalletAddress === creatorWalletAddress;
 
+  const isStakeable = collectionData?.data?.collection?.isStakeable;
 
 
 
@@ -1032,20 +1036,27 @@ export const CollectionPage: (props: any) => any = ({}) => {
                         On Sale
                       </span>                       
 
-                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
-                      <input
-                          value="2"
-                          type="radio"
-                          className="mr-2"
-                          title="Staked (Earning Rewards)"
-                          name="OnSaleType"
-                          onChange={handleOnSaleRadioButtonChange}
-                        />
+                      { /* HOTFIX releaseFeaureStaking */
 
-                      <span className="u-text-theme-gray-light">
-                      Staked (Earning Rewards)
-                      </span> 
+                      releaseFeaureStaking && isStakeable && (
+                          <>
+                              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                              
+                              <input
+                                value="2"
+                                type="radio"
+                                className="mr-2"
+                                title="Staked (Earning Rewards)"
+                                name="OnSaleType"
+                                onChange={handleOnSaleRadioButtonChange}
+                              />
+
+                              <span className="u-text-theme-gray-light"> Staked (Earning Rewards) </span> 
+                          </>
+                        )
+                      }
+                      
 
                       &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 

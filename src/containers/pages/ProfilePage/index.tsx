@@ -18,12 +18,12 @@ import {
 import { UrlParameters } from "./interfaces";
 import { routePaths } from "constants/router";
 import { Collapse } from "components";
-
 import * as faBrands from "@fortawesome/free-brands-svg-icons";
-
-import { alphaToastMessage } from 'components/AlphaToastError';
-
 import { Footer } from 'components/index';
+
+/* temporary hot fixes */
+import {releaseFeaureStaking} from 'configs/dappConfig';
+
 
 export const ProfilePage: (props: any) => any = ({}) => {
   const { walletAddress: walletAddressParam } = useParams<UrlParameters>();
@@ -913,7 +913,8 @@ export const ProfilePage: (props: any) => any = ({}) => {
                   )}
                 </div>
               </Collapsible>
-
+              { /* HOT FIX releaseFeaureStaking */
+              releaseFeaureStaking && (      
               <Collapsible
                 transitionTime={50}
                 open={false}
@@ -963,7 +964,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                   )}
                 </div>
               </Collapsible>
-
+              )}
 
               <Collapsible
                 transitionTime={50}

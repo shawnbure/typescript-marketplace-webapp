@@ -29,12 +29,12 @@ import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
 
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
-import { alphaToastMessage } from 'components/AlphaToastError';
-import store from 'redux/store';
-import { routePaths } from 'constants/router';
 
 import { Footer } from 'components/index';
-import { ContractDeployPayloadBuilder } from "@elrondnetwork/erdjs/out";
+
+/* temporary hot fixes */
+import { alphaToastMessage } from 'components/AlphaToastError';
+import {releaseFeaureStaking} from 'configs/dappConfig';
 
 export const TokenPage: (props: any) => any = ({ }) => {
 
@@ -390,9 +390,10 @@ export const TokenPage: (props: any) => any = ({ }) => {
     if(isOurs){
       isOnStake = tokenData.token.onStake;
     }
-
     //const canUnStake: boolean = ((Date.now() - tokenData.token.stakeDate) / 36e5) >= 24;
      const canUnStake: boolean = true;
+     const isStakeable = collectionData?.data?.collection?.isStakeable;
+
     const onSaleText = isListed ? "Current price" : "Min bid"
 
     const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
@@ -1595,10 +1596,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         </div>
                       )
                       }
-  
-                      {!isOnSale && !isOnStake &&
+ 
+                      {/* HOTFIX IS releaseFeaureStaking */
+                      releaseFeaureStaking && isStakeable && (!isOnSale && !isOnStake &&
                         isCurrentTokenOwner &&
-                        !(!isAuctionOngoing && hasBidderWinner) && (
+                        !(!isAuctionOngoing && hasBidderWinner)) && (
                           <div style={{display: "inline-block"}}>
     
                           <button
@@ -1616,11 +1618,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         </button>
 
                         </div>
-                      )}        
+                      )}     
 
-                      {!isOnSale && isOnStake && 
+                      {releaseFeaureStaking && (!isOnSale && isOnStake && 
                         isCurrentTokenOwner &&
-                        !(!isAuctionOngoing && hasBidderWinner) && (
+                        !(!isAuctionOngoing && hasBidderWinner)) && (
 
                           <div style={{display: "inline-block"}}>
 
@@ -1641,8 +1643,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                              <span>You may Unstake your NFT after {(24 - ((Date.now() - tokenData.token.stakeDate) / 36e5)).toFixed(2)} hours. (24 hour minimum)</span>
                           )}
                         </div>
-                      )}              
-
+                      )}
                       {shouldDisplayEndAuctionButton && (
                         <button
                           onClick={actionsHandlers[END_AUCTION]}

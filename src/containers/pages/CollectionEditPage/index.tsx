@@ -277,10 +277,11 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
 
     // =============================== ADMIN SECTION ==========================
-    // IsVerified & Noteworthy
+    // IsVerified & Noteworthy & Stakeable
 
     const [isVerifiedFlag, setIsVerifiedFlag] = useState('NO');
     const [isNoteworthyFlag, setIsNoteworthyFlag] = useState('NO');
+    const [isStakeableFlag, setIsStakeableFlag] = useState('NO');
 
 
     const handleIsVerifiedFlagYesChange = () => {
@@ -300,6 +301,14 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
         setIsNoteworthyFlag('NO');
     };
 
+    const handleIsStakeableFlagYesChange = () => {
+        setIsStakeableFlag('YES');
+      };
+    
+    const handleIsStakeableFlagNoChange = () => {
+        setIsStakeableFlag('NO');
+    };
+
 
     const schemaAdmin= yup.object({
         
@@ -314,12 +323,13 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
         const formattedData = {
             isVerified: (isVerifiedFlag == 'YES'),
-            isNoteworthy: (isNoteworthyFlag == 'YES')
+            isNoteworthy: (isNoteworthyFlag == 'YES'),
+            isStakeable: (isStakeableFlag == 'YES')
         }
 
 
 
-        //save isVerified and noteworthy
+        //save isVerified and noteworthy and stakeable
         const response: any = await updateCollectioAdminSectionTrigger({ collectionId, payload: formattedData });
 
         
@@ -621,10 +631,13 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
             //set the admin
             const dataIsVerified = collectionData?.data?.data?.collection.isVerified;
+            const dataIsStakeable = collectionData?.data?.data?.collection.isStakeable;
             const dataType = collectionData?.data?.data?.collection.type;
             
             setIsVerifiedFlag(dataIsVerified ? 'YES' : 'NO')
+            setIsStakeableFlag(dataIsStakeable ? 'YES' : 'NO')
             setIsNoteworthyFlag(dataType == 2 ? 'YES' : 'NO')
+            
 
 
             let editCollectionSignType = sessionStorage.getItem("EDIT_COLLECTION_SIGN_TYPE");
@@ -945,7 +958,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                             <div className="mb-10">
 
                                  <p className="text-xl u-text-bold mb-2">
-                                    Profile Banner: &nbsp;
+                                    Collection Banner: &nbsp;
                                     <a href="javascript:alert('This image will appear at the top of your collection page. Dimensions change on different devices. Resolution: 1400 x 400 recommended. Max Size of 5MB.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
                                 </p>
 
@@ -1159,6 +1172,52 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
 
                                     </div>
+                                </div>
+
+                                <br/>
+
+                                <p className="text-xl u-text-bold mb-2">
+                                    Is Stakable: &nbsp;
+                                    <a href="javascript:alert('Admin: Make the collection Stakeable.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+
+                                        &nbsp; 
+
+
+                                        <input
+                                            title="YES"
+                                            type="radio"
+                                            checked={isStakeableFlag === 'YES'}
+                                            onChange={handleIsStakeableFlagYesChange}
+                                        />
+
+                                        &nbsp;
+
+
+                                        <span className="u-text-theme-gray-light">
+                                            YES
+                                        </span>                        
+
+                                        &nbsp; &nbsp; &nbsp; &nbsp; 
+
+                                        <input
+                                                title="NO"
+                                                type="radio"
+                                                checked={isStakeableFlag === 'NO'}
+                                                onChange={handleIsStakeableFlagNoChange}
+                                            />
+
+                                        &nbsp;
+                                        
+                                        <span className="u-text-theme-gray-light">
+                                            NO
+                                    </span>
+
+                                    </div>
+
                                 </div>
 
                                 <br/>
