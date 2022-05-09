@@ -268,9 +268,9 @@ export const HomePage = () => {
                     <div className="row row--standard-max u-tac">
 
                         
-                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10" onClick={HandleCreateCollectionClick}>
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10" style={{cursor: 'pointer'}} onClick={HandleCreateCollectionClick}>
 
-                            <div className="u-padding-lr-spacing-2">
+                            <div className="u-padding-lr-spacing-2 p-homepage_hoverableArea">
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faBook} />  
                                 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
@@ -285,10 +285,10 @@ export const HomePage = () => {
                         </div>
 
 
-                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10" onClick={HandleRegisterCollectionClick}>
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10" style={{cursor: 'pointer'}} onClick={HandleRegisterCollectionClick}>
 
 
-                            <div className="u-padding-lr-spacing-2">
+                            <div className="u-padding-lr-spacing-2 p-homepage_hoverableArea">
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faTags} />
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
@@ -304,9 +304,9 @@ export const HomePage = () => {
 
                         
 
-                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10" onClick={HandleVerifyClick}>
+                        <div className="col-xs-12 col-md-4 u-margin-bottom-spacing-10" style={{cursor: 'pointer'}} onClick={HandleVerifyClick}>
 
-                            <div className="u-padding-lr-spacing-2">                                
+                            <div className="u-padding-lr-spacing-2 p-homepage_hoverableArea">                                
                                 <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faCheckCircle} />
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">

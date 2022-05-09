@@ -1,21 +1,27 @@
 .p-homepage {
-
     // min-width: 100vw;
     // min-height: 100vh;
 
     // background-color: var(--t-background-color);
 
-
     text-align: center;
-    
-    @include respond-to(desktop) {
-    
-        text-align: left;
 
+    @include respond-to(desktop) {
+        text-align: left;
+    }
+
+    &_hoverableArea {
+        cursor: pointer;
+
+        h3 {
+            transition: 0.5s;
+            &:hover {
+                font-size: 28px;
+            }
+        }
     }
 
     &_lead-background {
-
         background-size: cover;
         background-color: rgb(32, 34, 37);
         background-position: center center;
@@ -29,14 +35,11 @@
         z-index: 4;
 
         // background-image: url('https://erdsea.com/image/PIGSEL-91e91b.cover');
-        background-image: url('../../../img/Background.jpg');
+        background-image: url("../../../img/Background.jpg");
     }
 
     &_lead-container {
-
         position: relative;
         z-index: 8;
-
     }
-
 }
