@@ -514,7 +514,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
         data: { error },
       } = getBuyNFTResponse.error;
 
-      toast.error(`${status} | ${error}`, {
+      toast.error(`${status} | We noticed a problem , please check the input values and internet connection`, {
         autoClose: 5000,
         draggable: true,
         closeOnClick: true,
