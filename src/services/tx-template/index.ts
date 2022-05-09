@@ -128,6 +128,19 @@ export const txTemplateApi = createApi({
             },
         }),
 
+        getUnstakeNFTTemplate: builder.mutation<any, any>({
+
+            query: ({  userWalletAddress, collectionId, tokenNonce  }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/unstake/${userWalletAddress}/${collectionId}/${tokenNonce}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
         getIssueNftTemplate: builder.mutation<any, any>({
 
             query: ({ userWalletAddress, tokenName, tokenTicker }): FetchArgs => {
@@ -324,7 +337,19 @@ export const txTemplateApi = createApi({
         }),
 
         
+        getRedeemStakingRewardsTemplate: builder.mutation<any, any>({
 
+            query: ({ userWalletAddress }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/redeem-staking-rewards/${userWalletAddress}`
+                };
+
+                return customRequestArg;
+            },
+
+        }),
 
         getWithdrawCreatorRoyaltiesTemplate: builder.mutation<any, any>({
 
@@ -413,5 +438,8 @@ export const {
     useUpdateSaleStartTemplateMutation,
     useUpdateBuyerWhiteListCheckTemplateMutation,
     useGetStakeNFTTemplateMutation,
+    useGetUnstakeNFTTemplateMutation,
+    useGetRedeemStakingRewardsTemplateMutation,
+    
 } = txTemplateApi;
 
