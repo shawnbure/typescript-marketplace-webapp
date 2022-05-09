@@ -272,12 +272,19 @@ export const WalletSidebar: (Props: {
           >
             <ul className="">
               <li onClick={handleOverlayClick} className="c-navbar_list-item">
-                <a
-                  href={routePaths.rewards}
+                <Link
+                  to={routePaths.activity}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Activity
+                </Link>
+
+                <Link
+                  to={routePaths.rewards}
                   className="c-navbar_list-link text-lg"
                 >
                   Rewards
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -569,6 +576,19 @@ export const WalletSidebar: (Props: {
                                     Explore
                                 </Link>
                             </li> */}
+              <li
+                onClick={handleOverlayClick}
+                style={{ borderBottom: "1px solid #151b22" }}
+                className="c-navbar_list-item"
+              >
+                <Link
+                  to={routePaths.activity}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Activity
+                </Link>
+              </li>
+
               <li
                 onClick={handleOverlayClick}
                 style={{ borderBottom: "1px solid #151b22" }}

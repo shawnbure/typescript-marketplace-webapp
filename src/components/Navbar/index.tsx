@@ -228,7 +228,7 @@ export const Navbar = () => {
                                     to={routePaths.activity}
                                     className="c-navbar_list-link"
                                 >
-                                    Activities
+                                    Activity
                                 </Link>
                             </li>
 
