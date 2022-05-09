@@ -179,8 +179,8 @@ export const WalletSidebar: (Props: {
   };
 
   const redeemRewards = async () => {
-    //////
-    if(Number(usdStakingReward) != 0) {
+
+    if(Number(usdStakingReward) == 0) {
       toast.error(`${"You have no rewards to redeem."}`, {
         autoClose: 5000,
         draggable: true,
