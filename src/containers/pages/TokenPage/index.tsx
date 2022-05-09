@@ -15,7 +15,7 @@ import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation, useGetStakeNFTTemplateMutation } from 'services/tx-template';
+import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation, useGetStakeNFTTemplateMutation, useGetUnstakeNFTTemplateMutation } from 'services/tx-template';
 import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, useRefreshTokenMetadataMutation, useWithdrawTokenMutation, } from "services/tokens";
 
 import { prepareTransaction, getQuerystringValue } from "utils/transactions";
@@ -119,6 +119,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     //const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
     
     const [getStakeNftTemplateQueryTrigger] = useGetStakeNFTTemplateMutation();
+    const [getUnstakeNftTemplateQueryTrigger] = useGetUnstakeNFTTemplateMutation();
     const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
     const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
     
@@ -802,17 +803,17 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
 
   const handleUnstakeAction = async () => {
-    const getStakeNFTResponse: any = await getStakeNftTemplateQueryTrigger({
+    const getUnstakeNFTResponse: any = await getUnstakeNftTemplateQueryTrigger({
       userWalletAddress,
       collectionId,
       tokenNonce
     });
 
-    if (getStakeNFTResponse.error) {
+    if (getUnstakeNFTResponse.error) {
       const {
         status,
         data: { error },
-      } = getStakeNFTResponse.error;
+      } = getUnstakeNFTResponse.error;
 
       toast.error(`${status} | ${error}`, {
         autoClose: 5000,
@@ -826,7 +827,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
       return;
     }
 
-    const { data: txData } = getStakeNFTResponse.data;
+    const { data: txData } = getUnstakeNFTResponse.data;
 
     const unconsumedTransaction = prepareTransaction(txData);
 
@@ -1008,6 +1009,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
       callback?.({ ...rest });
     };
   };
+
 
   const actionsHandlers: { [key: string]: any } = {
     [BUY]: actionHandlerWrapper(handleBuyAction),
