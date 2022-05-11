@@ -115,6 +115,32 @@ export const txTemplateApi = createApi({
             },
         }),
 
+        updateCollectionStakeTemplate: builder.mutation<any, any>({
+
+            query: ({  userWalletAddress, collectionId  }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/stakecol/${userWalletAddress}/${collectionId}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+        updateCollectionUnstakeTemplate: builder.mutation<any, any>({
+
+            query: ({  userWalletAddress, collectionId  }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/unstakecol/${userWalletAddress}/${collectionId}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
         getStakeNFTTemplate: builder.mutation<any, any>({
 
             query: ({  userWalletAddress, collectionId, tokenNonce  }): FetchArgs => {
@@ -328,14 +354,10 @@ export const txTemplateApi = createApi({
                     url: `/${mainPath}/update-buyer-whitelist-check/${userWalletAddress}/${contractAddress}/${whiteListCheck}`
                 };
 
-                console.log("customRequestArg.ur: ");
-                console.log(customRequestArg.url);
-
                 return customRequestArg;
             },
 
         }),
-
         
         getRedeemStakingRewardsTemplate: builder.mutation<any, any>({
 
@@ -437,6 +459,8 @@ export const {
     useGetWithdrawDepositTemplateMutation,
     useUpdateSaleStartTemplateMutation,
     useUpdateBuyerWhiteListCheckTemplateMutation,
+    useUpdateCollectionStakeTemplateMutation,
+    useUpdateCollectionUnstakeTemplateMutation,
     useGetStakeNFTTemplateMutation,
     useGetUnstakeNFTTemplateMutation,
     useGetRedeemStakingRewardsTemplateMutation,

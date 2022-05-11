@@ -12,6 +12,7 @@ import * as faIcons from '@fortawesome/free-solid-svg-icons';
 
 import { handleCopyToClipboard, shorterAddress } from "utils";
 import { useSaveCollectionCoverImageMutation, useSaveCollectionProfileImageMutation, useUpdateCollectionMutation, useUpdateCollectionMintStartDateMutation, useUpdateCollectionAdminSectionMutation, useGetCollectionByIdMutation } from "services/collections";
+import { STAKECOL, UNSTAKECOL } from "constants/actions";
 
 import { useGetAccountMutation} from "services/accounts";
 
@@ -28,26 +29,27 @@ import { prepareTransaction } from "utils/transactions";
 
 import {
     useUpdateSaleStartTemplateMutation,
-    useUpdateBuyerWhiteListCheckTemplateMutation
+    useUpdateBuyerWhiteListCheckTemplateMutation,
+    useUpdateCollectionStakeTemplateMutation,
+    useUpdateCollectionUnstakeTemplateMutation
   } from "services/tx-template";
 
 export const CollectionEditPage: (props: any) => any = ({ }) => {
 
+const [
+    updateSaleStartTemplate,
+    { data: UpdateSaleStartData },
+    ] = useUpdateSaleStartTemplateMutation();
+
+
     const [
-        updateSaleStartTemplate,
-        { data: UpdateSaleStartData },
-      ] = useUpdateSaleStartTemplateMutation();
+    updateBuyerWhiteListCheckTemplate,
+    { data: updateBuyerWhiteListCheck },
+    ] = useUpdateBuyerWhiteListCheckTemplateMutation();
 
-
-      const [
-        updateBuyerWhiteListCheckTemplate,
-        { data: updateBuyerWhiteListCheck },
-      ] = useUpdateBuyerWhiteListCheckTemplateMutation();
-
-
-
-
-
+    const [updateCollectionStakeTemplate] = useUpdateCollectionStakeTemplateMutation();
+    const [updateCollectionUnstakeTemplate] = useUpdateCollectionUnstakeTemplateMutation();
+    
 
     const { pathname } = useLocation();
     const sendTransaction = Dapp.useSendTransaction();
@@ -91,37 +93,19 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
       
       
     const { collectionId } = useParams<UrlParameters>();
-
     const [updateCollectionMutationTrigger] = useUpdateCollectionMutation();
-
     const [updateCollectionMintStartDateTrigger] = useUpdateCollectionMintStartDateMutation();
-
     const [updateCollectioAdminSectionTrigger] = useUpdateCollectionAdminSectionMutation();
-
-    
-
-
     const [saveCollectionProfileImageTrigger] = useSaveCollectionProfileImageMutation();
     const [saveCollectionCoverImageTrigger] = useSaveCollectionCoverImageMutation();
-
     const [getCollectionByIdTrigger] = useGetCollectionByIdMutation();
-
     const [getAccountRequestTrigger] = useGetAccountMutation();
-
-
-
     const [coverImageB64, setCoverImageB64] = useState<string>('');
     const [profileImageB64, setProfileImageB64] = useState<string>('');
-
     const [coverName, setCoverName] = useState<string>('');
     const [profileName, setProfileName] = useState<string>('');
-
     const [contractAddress, setContractAddress] = useState<string>('');
-
-    const [isFinishLoading, setIsFinishLoading] = useState(false)
-
-    
-
+    const [isFinishLoading, setIsFinishLoading] = useState(false);
 
     useEffect(() => {
         if( contractAddress != '' )
@@ -281,7 +265,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
     const [isVerifiedFlag, setIsVerifiedFlag] = useState('NO');
     const [isNoteworthyFlag, setIsNoteworthyFlag] = useState('NO');
-    const [isStakeableFlag, setIsStakeableFlag] = useState('NO');
+    const [isStakeableFlag, setIsStakeableFlag] = useState('OFF');
 
 
     const handleIsVerifiedFlagYesChange = () => {
@@ -301,12 +285,12 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
         setIsNoteworthyFlag('NO');
     };
 
-    const handleIsStakeableFlagYesChange = () => {
-        setIsStakeableFlag('YES');
+    const handleIsStakeableFlagOnChange = () => {
+        setIsStakeableFlag('ON');
       };
     
-    const handleIsStakeableFlagNoChange = () => {
-        setIsStakeableFlag('NO');
+    const handleIsStakeableFlagOffChange = () => {
+        setIsStakeableFlag('OFF');
     };
 
 
@@ -324,7 +308,6 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
         const formattedData = {
             isVerified: (isVerifiedFlag == 'YES'),
             isNoteworthy: (isNoteworthyFlag == 'YES'),
-            isStakeable: (isStakeableFlag == 'YES')
         }
 
 
@@ -432,7 +415,25 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     };
 
 
+    const onSubmitStake = async (data: any) => {
 
+        const stakeOnOff = (isStakeableFlag == 'ON') ? 1 : 0
+        
+        if(stakeOnOff == 0){
+            signTemplateTransaction({
+                getTemplateData: { userWalletAddress, collectionId},
+                succesCallbackRoute:  `/confirmation/${UNSTAKECOL}/${collectionId}/0`,
+                getTemplateTrigger: updateCollectionUnstakeTemplate,
+              });
+        }else{
+            signTemplateTransaction({
+                getTemplateData: { userWalletAddress, collectionId},
+                succesCallbackRoute:  `/confirmation/${STAKECOL}/${collectionId}/0`,
+                getTemplateTrigger: updateCollectionStakeTemplate,
+            });
+        }
+          
+    };
 
 
     
@@ -445,7 +446,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     }).required();
 
 
-    const { register: registerMintingStartDate, handleSubmit: handleSubmitMintingStartDate, setValue: setValueMintingStartDate, control: controlMintingStartDate, setError: setErrorMintingStartDate, clearErrors: clearErrorsMintingStartDate, formState: { errors: errorsMintingStartDate } } = useForm({
+    const { register: registerMintingStartDate, handleSubmit: handleSubmitMintingStartDate, handleSubmit: handleSubmitCollectionStaking, setValue: setValueMintingStartDate, control: controlMintingStartDate, setError: setErrorMintingStartDate, clearErrors: clearErrorsMintingStartDate, formState: { errors: errorsMintingStartDate } } = useForm({
         resolver: yupResolver(schemaMintingStartDate),
     });
 
@@ -468,10 +469,6 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
             }
         }
     }
-
-
-
-
 
     
     const onSubmitMintingStartDate = async (data: any) => {
@@ -635,10 +632,10 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
             const dataType = collectionData?.data?.data?.collection.type;
             
             setIsVerifiedFlag(dataIsVerified ? 'YES' : 'NO')
-            setIsStakeableFlag(dataIsStakeable ? 'YES' : 'NO')
+            setIsStakeableFlag(dataIsStakeable ? 'ON' : 'OFF')
             setIsNoteworthyFlag(dataType == 2 ? 'YES' : 'NO')
             
-
+            //console.log(dataIsStakeable, "<<<<<<<<<<<<")
 
             let editCollectionSignType = sessionStorage.getItem("EDIT_COLLECTION_SIGN_TYPE");
 
@@ -699,14 +696,6 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                     setValueMintingStartDate("mintStartDate", new Date(mintStartDate).toISOString().split('T')[0])
                 }
             }
-
-
-
-
-
-
-
-
 
 
             //handleBuyWhiteListCheckONChange()
@@ -841,9 +830,6 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
     }
 
 
-
-    
-    
 
 
 
@@ -1173,7 +1159,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
 
                                     </div>
                                 </div>
-
+{/*
                                 <br/>
 
                                 <p className="text-xl u-text-bold mb-2">
@@ -1219,7 +1205,7 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                     </div>
 
                                 </div>
-
+                            */}
                                 <br/>
 
                                 <button className="c-button c-button--primary" type="submit">Save</button>
@@ -1231,15 +1217,6 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                 </div>
 
                               )}
-          
-
-
-
-
-
-
-
-              
 
                             <hr className="text-white my-10" />
 
@@ -1312,6 +1289,69 @@ export const CollectionEditPage: (props: any) => any = ({ }) => {
                                         checked={buyerWhiteListCheckFlag === 'OFF'}
 
                                         onChange={handleBuyWhiteListCheckOFFChange}
+                                    />
+
+                                &nbsp;
+                                
+                                <span className="u-text-theme-gray-light">
+                                    OFF
+                                </span> 
+
+
+                                    </div>
+                                </div>
+
+
+                                <br/>
+
+
+                                <button className="c-button c-button--primary" type="submit">Sign</button>
+
+                                <br/><br/>
+
+
+
+                            </form>
+
+                            <hr className="text-white my-10" />
+
+                            <br/>
+
+                            <form onSubmit={handleSubmitCollectionStaking(onSubmitStake)}>
+
+                                <p className="text-xl u-text-bold mb-2">
+                                    Collection Staking: &nbsp;
+                                    <a href="javascript:alert('Turn on or off staking for this collection. There is a gas fee associated with this feature since it is stored on the blockchain.')"><FontAwesomeIcon className="u-text-theme-blue-anchor " icon={faIcons.faQuestionCircle} /></a>
+                                </p>
+
+                                <div className="grid grid-cols-9 mb-4">
+                                    <div className="col-span-12">
+
+                                    &nbsp; 
+
+                                    <input
+                                        title="ON"
+                                        type="radio"
+                                        checked={isStakeableFlag === 'ON'}
+
+                                        onChange={handleIsStakeableFlagOnChange}
+                                    />
+
+                                &nbsp;
+
+
+                                <span className="u-text-theme-gray-light">
+                                    ON
+                                </span>                        
+
+                                &nbsp; &nbsp; &nbsp; &nbsp; 
+
+                                <input
+                                        title="OFF"
+                                        type="radio"
+                                        checked={isStakeableFlag === 'OFF'}
+
+                                        onChange={handleIsStakeableFlagOffChange}
                                     />
 
                                 &nbsp;

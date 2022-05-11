@@ -284,4 +284,5 @@ export const {
     useGetTokensCollectionsAvailablityMutation,
     useGetWhitelistBuyCountLimitTemplateMutation,
     useGetBuyerWhiteListCheckTemplateMutation,
-    useStakeTokenFromClientMutation } = tokensApi;
+    useStakeTokenFromClientMutation,
+    } = tokensApi;

@@ -161,6 +161,29 @@ export const collectionsApi = createApi({
 
         }),
 
+        stakeCollection: builder.mutation<any, any>({
+
+            query: ({ payload }): FetchArgs => {
+
+                const accessToken: string = selectAccessToken(store.getState());
+
+                const stakeOnOff = payload.isStakeable ? 'stake' : 'unstake';
+
+                const customRequestArg: FetchArgs = {
+                    method: POST,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(payload),
+                    url: `/${mainPath}/${payload.collectionId}/${stakeOnOff}`
+                }
+
+                return customRequestArg;
+
+            },
+
+        }),
+
         getCollectionById: builder.mutation<any, any>({
 
             query: ({ collectionId }): FetchArgs => {
@@ -328,4 +351,5 @@ export const {
     useGetAllCollectionMutation,
     useGetCollectionVerifiedMutation,
     useGetCollectionNoteworthyMutation,
-    useGetCollectionTrendingMutation, } = collectionsApi; 
+    useGetCollectionTrendingMutation, 
+    useStakeCollectionMutation} = collectionsApi; 

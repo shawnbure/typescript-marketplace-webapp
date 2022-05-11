@@ -329,14 +329,16 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const isListed: boolean = tokenState === 'List';
     const isAuction: boolean = tokenState === 'Auction';
-    const isOnSale: boolean = ( isListed || isAuction);
+    //const isOnSale: boolean = ( isListed || isAuction);
+    let isOnSale = false;
     let isOnStake = false;
     if(isOurs){
       isOnStake = tokenData.token.onStake;
+      isOnSale = tokenData.token.onSale;
     }
     //const canUnStake: boolean = ((Date.now() - tokenData.token.stakeDate) / 36e5) >= 24;
-     const canUnStake: boolean = true;
-     const isStakeable = collectionData?.data?.collection?.isStakeable;
+    const canUnStake: boolean = true;
+    const isStakeable = collectionData?.data?.collection?.isStakeable;
 
     const onSaleText = isListed ? "Current price" : "Min bid"
 
@@ -796,7 +798,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${STAKE}/${collectionId}/${tokenNonce}?onstake=1`,
+      callbackRoute: `/confirmation/${STAKE}/${collectionId}/${tokenNonce}`,
     });
 
   };
@@ -833,7 +835,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     sendTransaction({
       transaction: unconsumedTransaction,
-      callbackRoute: `/confirmation/${STAKE}/${collectionId}/${tokenNonce}?onstake=0`,
+      callbackRoute: `/confirmation/${UNSTAKE}/${collectionId}/${tokenNonce}`,
     });
 
   };
