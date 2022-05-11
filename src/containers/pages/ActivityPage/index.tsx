@@ -33,7 +33,8 @@ export const ActivityPage = () => {
 
     let [currentPage, setCurrentPage] = useState(1);
     let [nextPage, setNextPage] = useState(2);
-    let [filters, setFilters] = useState<string>("");
+    let [typeFilter, setTypeFilter] = useState<string>("");
+    let [collectionFilter, setCollectionFilter] = useState<string>("");
 
     let [hasMoreData, setHasMoreData] = useState<boolean>(true);
 
@@ -148,6 +149,8 @@ export const ActivityPage = () => {
                                                     setSelectedCollections(
                                                         filtered
                                                     );
+                                                    setCollectionFilter("");
+                                                    setSearchInputValue("");
                                                 }}
                                             >
                                                 {item}{" "}
@@ -173,7 +176,7 @@ export const ActivityPage = () => {
                                                                 item.name
                                                             ) &&
                                                             selectedCollections.length <
-                                                                3
+                                                                1
                                                         ) {
                                                             setSelectedCollections(
                                                                 [
@@ -181,9 +184,15 @@ export const ActivityPage = () => {
                                                                     `${item.name}`,
                                                                 ]
                                                             );
+                                                            setCollectionFilter(
+                                                                `collection_id%7C${item.id}%7C%3D`
+                                                            );
+                                                            setSearchInputValue(
+                                                                ""
+                                                            );
                                                         } else {
                                                             toast.error(
-                                                                `Error! Duplicate item or more than 3 items can not be selected`,
+                                                                `Error! Duplicate item or more than 1 items can not be selected`,
                                                                 {
                                                                     autoClose: 5000,
                                                                     draggable: true,
@@ -244,7 +253,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("All");
-                                            setFilters("");
+                                            setTypeFilter("");
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -266,7 +275,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("List");
-                                            setFilters("type|List|=");
+                                            setTypeFilter(`type%7CList%7C%3D`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -288,7 +297,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Buy");
-                                            setFilters("type|Buy|=");
+                                            setTypeFilter(`type%7CBuy%7C%3D`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -310,7 +319,9 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Auction");
-                                            setFilters("type|Auction|=");
+                                            setTypeFilter(
+                                                `type%7CAuction%7C%3D`
+                                            );
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -376,7 +387,14 @@ export const ActivityPage = () => {
                 timestamp: 0,
                 currentPage: 1,
                 nextPage: 1,
-                filters: filters,
+                filters:
+                    typeFilter.length > 0
+                        ? collectionFilter.length > 0
+                            ? `${typeFilter}%3BAND%3B${collectionFilter}`
+                            : `${typeFilter}`
+                        : collectionFilter.length > 0
+                        ? `${collectionFilter}`
+                        : "",
             },
             activities,
             setActivities,
@@ -391,7 +409,7 @@ export const ActivityPage = () => {
             {},
             "AllCollections"
         );
-    }, [filters]);
+    }, [typeFilter, collectionFilter]);
 
     useEffect(() => {
         setFilteredCollections(allCollections);
@@ -454,6 +472,8 @@ export const ActivityPage = () => {
                                                     setSelectedCollections(
                                                         filtered
                                                     );
+                                                    setCollectionFilter("");
+                                                    setSearchInputValue("");
                                                 }}
                                             >
                                                 {item}{" "}
@@ -479,7 +499,7 @@ export const ActivityPage = () => {
                                                                 item.name
                                                             ) &&
                                                             selectedCollections.length <
-                                                                3
+                                                                1
                                                         ) {
                                                             setSelectedCollections(
                                                                 [
@@ -487,9 +507,15 @@ export const ActivityPage = () => {
                                                                     `${item.name}`,
                                                                 ]
                                                             );
+                                                            setCollectionFilter(
+                                                                `collection_id%7C${item.id}%7C%3D`
+                                                            );
+                                                            setSearchInputValue(
+                                                                ""
+                                                            );
                                                         } else {
                                                             toast.error(
-                                                                `Error! Duplicate item or more than 3 items can not be selected`,
+                                                                `Error! Duplicate item or more than 1 items can not be selected`,
                                                                 {
                                                                     autoClose: 5000,
                                                                     draggable: true,
@@ -550,7 +576,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("All");
-                                            setFilters("");
+                                            setTypeFilter("");
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -572,7 +598,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("List");
-                                            setFilters("type|List|=");
+                                            setTypeFilter(`type%7CList%7C%3D`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -594,7 +620,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Buy");
-                                            setFilters("type|Buy|=");
+                                            setTypeFilter(`type%7CBuy%7C%3D`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -616,7 +642,9 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Auction");
-                                            setFilters("type|Auction|=");
+                                            setTypeFilter(
+                                                `type%7CAuction%7C%3D`
+                                            );
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -683,7 +711,13 @@ export const ActivityPage = () => {
                                             : null,
                                         currentPage,
                                         nextPage,
-                                        filters
+                                        typeFilter.length > 0
+                                            ? collectionFilter.length > 0
+                                                ? `${typeFilter}%3BAND%3B${collectionFilter}`
+                                                : `${typeFilter}`
+                                            : collectionFilter.length > 0
+                                            ? `${collectionFilter}`
+                                            : ""
                                     )
                                 }
                                 hasMore={hasMoreData}
