@@ -87,6 +87,28 @@
                     padding: 13px 24px 13px 54px;
                 }
 
+                &_selectedLabelBox {
+                    width: 100%;
+
+                    margin: 16px 0;
+
+                    div {
+                        height: 32px;
+
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+
+                        color: #fff;
+                        background: #2081e2;
+                        border-radius: 4px;
+                        cursor: pointer;
+
+                        padding: 0 8px;
+                        margin: 0 0 8px 0;
+                    }
+                }
+
                 &_selectionBox {
                     display: flex;
                     flex-wrap: wrap;
@@ -584,7 +606,31 @@
         height: 100%;
         background: #00000076;
 
-        position: absolute;
-        z-index: 1000;
+        position: fixed;
+        z-index: 10;
+    }
+
+    &-SideMenu {
+        width: 380px;
+        height: 100%;
+        background: #202225;
+        background-image: linear-gradient(to bottom, #303339, #30333900);
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+
+        padding: 40px 52px 0 52px;
+        overflow-y: scroll;
+
+        border-radius: 0 10px 10px 0;
+        position: fixed;
+        z-index: 10000;
+
+        @include respond-to(mobile-normal) {
+            width: 100%;
+            border-radius: 0px;
+        }
     }
 }

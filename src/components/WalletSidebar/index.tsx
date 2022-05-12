@@ -13,15 +13,15 @@ import { createVerifiedPayload, generateId, shorterAddress } from "utils";
 import {
   useGetAddDepositEgldTemplateMutation,
   useGetWithdrawDepositTemplateMutation,
+  useGetRedeemStakingRewardsTemplateMutation,
 } from "services/tx-template";
 import { prepareTransaction } from "utils/transactions";
 import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
-import { useGetDepositTemplateMutation } from "services/deposit";
+import { useGetDepositTemplateMutation, useGetStakingRewardsTemplateMutation } from "services/deposit";
 import Collapsible from "react-collapsible";
 import { SearchBar } from "components";
 import { useGetAccessTokenMutation } from "services/auth";
-import { alphaToastMessage } from "components/AlphaToastError";
 import LedgerLogin from "components/Login/Ledger";
 export const WalletSidebar: (Props: {
   overlayClickCallback?: Function;
@@ -34,6 +34,10 @@ export const WalletSidebar: (Props: {
   const dappLogout = Dapp.useLogout();
 
   const [
+    getStakingRewardsTemplateTrigger,
+    { data: userStakingRewardsData },
+  ] = useGetStakingRewardsTemplateMutation();
+  const [
     getDepositTemplateTrigger,
     { data: userDepositData },
   ] = useGetDepositTemplateMutation();
@@ -43,6 +47,11 @@ export const WalletSidebar: (Props: {
   const [
     getWithdrawDepositTemplateTrigger,
   ] = useGetWithdrawDepositTemplateMutation();
+
+  const [
+    getRedeemStakingRewardsTemplateTrigger,
+  ] = useGetRedeemStakingRewardsTemplateMutation();
+
 
   const [randomToken] = useState(generateId(32));
 
@@ -169,6 +178,36 @@ export const WalletSidebar: (Props: {
     });
   };
 
+  const redeemRewards = async () => {
+
+    if(Number(usdStakingReward) == 0) {
+      toast.error(`${"You have no rewards to redeem."}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+
+      return;
+
+    }else{
+
+      const getTemplateData = {
+        userWalletAddress: userWalletAddress
+      };
+  
+      signTemplateTransaction({
+        succesCallbackRoute: pathname,
+        getTemplateData: getTemplateData,
+        getTemplateTrigger: getRedeemStakingRewardsTemplateTrigger,
+      });
+
+    }
+
+  }
+
   const MaiarWrapper = (
     <div className="p-maiar-login">
       {
@@ -232,6 +271,16 @@ export const WalletSidebar: (Props: {
     getDepositTemplateTrigger({ userWalletAddress });
   }, [isUserLoggedIn]);
 
+  useEffect(() => {
+    if (!isUserLoggedIn) {
+      return;
+    }
+
+    getStakingRewardsTemplateTrigger({ userWalletAddress });
+
+  }, [isUserLoggedIn]);
+  
+
   if (shouldDisplayMaiarLogin && !isUserLoggedIn) {
     return (
       <aside className="c-wallet-sidebar">
@@ -272,12 +321,19 @@ export const WalletSidebar: (Props: {
           >
             <ul className="">
               <li onClick={handleOverlayClick} className="c-navbar_list-item">
-                <a
-                  href={routePaths.rewards}
+                <Link
+                  to={routePaths.activity}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Activity
+                </Link>
+
+                <Link
+                  to={routePaths.rewards}
                   className="c-navbar_list-link text-lg"
                 >
                   Rewards
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -297,6 +353,9 @@ export const WalletSidebar: (Props: {
 
   const deposit = userDepositData?.data || 0;
   const usdDeposit = (deposit * parseFloat(egldPriceString)).toFixed(2);
+
+  const stakingReward = userStakingRewardsData?.data || 0;
+  const usdStakingReward = (stakingReward * parseFloat(egldPriceString)).toFixed(2);
 
   return (
     <aside className="c-wallet-sidebar">
@@ -323,33 +382,46 @@ export const WalletSidebar: (Props: {
           </span>
         </p>
 
-        <div
-          style={{ border: "1px solid #151b22" }}
-          className="m-10 mb-0 mt-4 p-1 rounded-t-3xl"
-        >
+        <div style={{ border: "1px solid #151b22" }} className="m-10 mb-0 mt-4 p-1 rounded-t-3xl">
           <p className="text-gray-400 text-sm">Total balance</p>
           <p className="text-xl u-text-bold">${usdBalance} USD</p>
-          <p className="u-text-bold text-sm text-gray-400">
-            {egldBalance} EGLD
-          </p>
+          <p className="u-text-bold text-sm text-gray-400">{egldBalance} EGLD</p>
         </div>
-
-        <div
-          style={{ border: "1px solid #151b22" }}
-          className="m-10 mt-0 mb-4 p-1 rounded-b-3xl"
-        >
+{/*
+        <div style={{ border: "1px solid #151b22" }} className="m-10 mb-0 mt-0 p-1">
           <p className="text-gray-400 text-sm u-text-small">Deposit</p>
           <p className="text-xl u-text-bold">${usdDeposit} USD</p>
           <p className="u-text-bold text-sm text-gray-400">{deposit} EGLD</p>
         </div>
+  */}
+        <div style={{ border: "1px solid #151b22" }} className="m-10 mb-4 mt-0 p-1 rounded-b-3xl">
+          <p className="text-gray-400 text-sm u-text-small">Staking Rewards</p>
+          <p className="text-xl u-text-bold">${usdStakingReward} USD</p>
+          <p className="u-text-bold text-sm text-gray-400">{stakingReward} EGLD</p>
+        </div>
 
+        <div className="mt-6 mb-6">
+            <button
+              onClick={redeemRewards}
+              className="c-button c-button--primary "
+            >
+              <FontAwesomeIcon
+                width={"20px"}
+                className="c-navbar_icon-link mr-4"
+                icon={faIcons.faCoins}
+              />
+              Redeem Rewards
+            </button>
+          
+          </div>         
+      
         <div className="mb-3">
           <Link
             to={routePaths.account}
             onClick={() => {
               overlayClickCallback?.();
             }}
-            className="c-button c-button--primary"
+            className="c-button c-button--primary mt-5"
           >
             <div className="inline-flex">
               <FontAwesomeIcon
@@ -378,7 +450,7 @@ export const WalletSidebar: (Props: {
             <span>Deposit</span>
           </div>
           **************Remove after alpha below pop up is the production code****************************************/}
-          
+          {/*
 
                     <Popup 
                         modal
@@ -526,7 +598,7 @@ export const WalletSidebar: (Props: {
                                                     </div>
 
                                                 </Collapsible>
-
+                                             
                                                 <div className="align-items-center flex justify-content-center mb-8">
 
                                                     <input placeholder={"Amount to withdraw (EGLD)"} onChange={(e: any) => { setWithdrawDepositAmount(e.target.value) }} value={withdrawDepositAmount} type="number" className="rounded-l-lg text-center bg-opacity-10  bg-white border-1 border-gray-400 p-2 placeholder-opacity-10  text-white w-full" />
@@ -542,7 +614,7 @@ export const WalletSidebar: (Props: {
                                                         Withdraw deposit
                                                     </span>
                                                 </button>
-
+                                                     
                                             </div>
 
                                         </div>
@@ -553,10 +625,11 @@ export const WalletSidebar: (Props: {
                             </div>
                         )}
                     </Popup>
-                    
+                    */}
                     
         </div>
 
+                                          
         <div className="block lg:hidden mb-6">
           <div
             style={{ border: "1px solid #151b22" }}
@@ -569,6 +642,19 @@ export const WalletSidebar: (Props: {
                                     Explore
                                 </Link>
                             </li> */}
+              <li
+                onClick={handleOverlayClick}
+                style={{ borderBottom: "1px solid #151b22" }}
+                className="c-navbar_list-item"
+              >
+                <Link
+                  to={routePaths.activity}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Activity
+                </Link>
+              </li>
+
               <li
                 onClick={handleOverlayClick}
                 style={{ borderBottom: "1px solid #151b22" }}
