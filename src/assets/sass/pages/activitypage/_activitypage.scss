@@ -49,6 +49,10 @@
 
             margin: 0 0 16px 0;
 
+            @include respond-to(mobile) {
+                margin: 0 0 80px 0;
+            }
+
             &--title {
                 width: 100%;
 
@@ -69,22 +73,42 @@
             &--content {
                 margin: 16px 0;
 
-                input {
-                    width: 100%;
-                    background: #303339;
+                &_searchInput {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
 
-                    color: #fff;
-                    font-size: 16px;
+                    input {
+                        width: 100%;
+                        background: #303339;
 
-                    border: none;
-                    border-radius: 8px;
-                    box-shadow: 0px 33px 66px #00000030;
-                    outline: 0;
-                    background-repeat: no-repeat;
-                    background-position-y: 17px;
-                    background-position-x: 24px;
+                        color: #fff;
+                        font-size: 16px;
 
-                    padding: 13px 24px 13px 54px;
+                        border: none;
+                        border-radius: 8px 0 0 8px;
+                        box-shadow: 0px 33px 66px #00000030;
+                        outline: 0;
+                        background-repeat: no-repeat;
+                        background-position-y: 17px;
+                        background-position-x: 24px;
+
+                        padding: 13px 24px 13px 54px;
+                    }
+
+                    span {
+                        height: 51px;
+                        width: 51px;
+
+                        background: #303339;
+                        color: #fff;
+                        border-radius: 0 8px 8px 0;
+                        cursor: pointer;
+
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
                 }
 
                 &_selectedLabelBox {
@@ -113,6 +137,10 @@
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: space-between;
+
+                    @include respond-to(mobile) {
+                        justify-content: space-around;
+                    }
 
                     button {
                         width: 120px;
