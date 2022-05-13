@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 export const ActivityPage = () => {
     let [collectionDropedDown, setCollectionDropedDown] = useState<any>(true);
     let [eventDropedDown, setEventDropedDown] = useState<any>(true);
-    let [eventType, setEventType] = useState<string>("All");
+    let [eventType, setEventType] = useState<string>("List");
 
     let [activities, setActivities] = useState<any[]>([]);
     let [allCollections, setAllCollections] = useState<any[]>([]);
@@ -33,7 +33,7 @@ export const ActivityPage = () => {
 
     let [currentPage, setCurrentPage] = useState(1);
     let [nextPage, setNextPage] = useState(2);
-    let [typeFilter, setTypeFilter] = useState<string>("");
+    let [typeFilter, setTypeFilter] = useState<string>("type%7CList%7C%3D");
     let [collectionFilter, setCollectionFilter] = useState<string>("");
 
     let [hasMoreData, setHasMoreData] = useState<boolean>(true);
@@ -121,21 +121,36 @@ export const ActivityPage = () => {
                         </div>
                         {collectionDropedDown && (
                             <div className="activity-sidebar__dropbox--content">
-                                <input
-                                    type="text"
-                                    placeholder="Collection"
-                                    onChange={(e) => {
-                                        searchCollection(
-                                            e.target.value.toUpperCase()
-                                        );
-                                        setSearchInputValue(e.target.value);
-                                    }}
-                                    value={searchInputValue}
-                                    style={{
-                                        backgroundImage:
-                                            "url(/img/search-field-icon.png)",
-                                    }}
-                                />
+                                <div className="activity-sidebar__dropbox--content_searchInput">
+                                    <input
+                                        type="text"
+                                        placeholder="Collection"
+                                        onChange={(e) => {
+                                            searchCollection(
+                                                e.target.value.toUpperCase()
+                                            );
+                                            setSearchInputValue(e.target.value);
+                                        }}
+                                        value={searchInputValue}
+                                        style={{
+                                            backgroundImage:
+                                                "url(/img/search-field-icon.png)",
+                                        }}
+                                    />
+
+                                    <span
+                                        onClick={() => {
+                                            setSearchInputValue("");
+                                            setFilteredCollections(
+                                                allCollections
+                                            );
+                                        }}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faIcons.faTimes}
+                                        />
+                                    </span>
+                                </div>
 
                                 <div className="activity-sidebar__dropbox--content_selectedLabelBox">
                                     {selectedCollections.map(
@@ -210,6 +225,10 @@ export const ActivityPage = () => {
                                                         src={
                                                             item.profileImageLink
                                                         }
+                                                        onError={(e) => {
+                                                            let tar = e.target as any;
+                                                            tar.src = tokenNoImage;
+                                                        }}
                                                     />
                                                     <span>
                                                         {item.name.length > 10
@@ -248,7 +267,7 @@ export const ActivityPage = () => {
                                     <button
                                         style={
                                             eventType == "All"
-                                                ? { background: "#4f4f4f" }
+                                                ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
@@ -270,7 +289,7 @@ export const ActivityPage = () => {
                                     <button
                                         style={
                                             eventType == "List"
-                                                ? { background: "#4f4f4f" }
+                                                ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
@@ -292,7 +311,7 @@ export const ActivityPage = () => {
                                     <button
                                         style={
                                             eventType == "Buy"
-                                                ? { background: "#4f4f4f" }
+                                                ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
@@ -314,7 +333,7 @@ export const ActivityPage = () => {
                                     <button
                                         style={
                                             eventType == "Auction"
-                                                ? { background: "#4f4f4f" }
+                                                ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
@@ -444,21 +463,36 @@ export const ActivityPage = () => {
                         </div>
                         {collectionDropedDown && (
                             <div className="activity-sidebar__dropbox--content">
-                                <input
-                                    type="text"
-                                    placeholder="Collection"
-                                    onChange={(e) => {
-                                        searchCollection(
-                                            e.target.value.toUpperCase()
-                                        );
-                                        setSearchInputValue(e.target.value);
-                                    }}
-                                    value={searchInputValue}
-                                    style={{
-                                        backgroundImage:
-                                            "url(/img/search-field-icon.png)",
-                                    }}
-                                />
+                                <div className="activity-sidebar__dropbox--content_searchInput">
+                                    <input
+                                        type="text"
+                                        placeholder="Collection"
+                                        onChange={(e) => {
+                                            searchCollection(
+                                                e.target.value.toUpperCase()
+                                            );
+                                            setSearchInputValue(e.target.value);
+                                        }}
+                                        value={searchInputValue}
+                                        style={{
+                                            backgroundImage:
+                                                "url(/img/search-field-icon.png)",
+                                        }}
+                                    />
+
+                                    <span
+                                        onClick={() => {
+                                            setSearchInputValue("");
+                                            setFilteredCollections(
+                                                allCollections
+                                            );
+                                        }}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faIcons.faTimes}
+                                        />
+                                    </span>
+                                </div>
 
                                 <div className="activity-sidebar__dropbox--content_selectedLabelBox">
                                     {selectedCollections.map(
@@ -533,6 +567,10 @@ export const ActivityPage = () => {
                                                         src={
                                                             item.profileImageLink
                                                         }
+                                                        onError={(e) => {
+                                                            let tar = e.target as any;
+                                                            tar.src = tokenNoImage;
+                                                        }}
                                                     />
                                                     <span>
                                                         {item.name.length > 10
@@ -571,7 +609,7 @@ export const ActivityPage = () => {
                                     <button
                                         style={
                                             eventType == "All"
-                                                ? { background: "#4f4f4f" }
+                                                ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
@@ -593,7 +631,7 @@ export const ActivityPage = () => {
                                     <button
                                         style={
                                             eventType == "List"
-                                                ? { background: "#4f4f4f" }
+                                                ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
@@ -615,7 +653,7 @@ export const ActivityPage = () => {
                                     <button
                                         style={
                                             eventType == "Buy"
-                                                ? { background: "#4f4f4f" }
+                                                ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
@@ -637,7 +675,7 @@ export const ActivityPage = () => {
                                     <button
                                         style={
                                             eventType == "Auction"
-                                                ? { background: "#4f4f4f" }
+                                                ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
