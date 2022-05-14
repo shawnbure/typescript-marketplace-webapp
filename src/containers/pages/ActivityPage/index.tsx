@@ -745,7 +745,7 @@ export const ActivityPage = () => {
                                     loadMoreLogs(
                                         activities[activities.length - 1]
                                             ? activities[activities.length - 1]
-                                                  .txTimestamp
+                                                  .transaction.timestamp
                                             : null,
                                         currentPage,
                                         nextPage,
@@ -779,39 +779,42 @@ export const ActivityPage = () => {
                                     activities.map((item: any, index: any) =>
                                         selectedCollections.length > 0 ? (
                                             selectedCollections.includes(
-                                                item.collectionName
+                                                item.collection.name
                                             ) ? (
                                                 <Link
                                                     key={index.toString()}
-                                                    to={`/token/${
-                                                        item.collectionTokenId
-                                                    }/${
-                                                        item.tokenName.split(
-                                                            "#"
-                                                        )[1]
-                                                    }`}
+                                                    to={`/token/${item.token.tokenId}/${item.token.nonce}`}
                                                 >
                                                     <div className="activity-main__table--body-log">
                                                         <div className="activity-main__table--body-log_label">
                                                             <img
                                                                 src={
-                                                                    item.txType ==
+                                                                    item
+                                                                        .transaction
+                                                                        .type ==
                                                                     "Buy"
                                                                         ? dollarSign
-                                                                        : item.txType ==
+                                                                        : item
+                                                                              .transaction
+                                                                              .type ==
                                                                           "Acution"
                                                                         ? zapSign
                                                                         : tagSign
                                                                 }
                                                             />
                                                             <span>
-                                                                {item.txType}
+                                                                {
+                                                                    item
+                                                                        .transaction
+                                                                        .type
+                                                                }
                                                             </span>
                                                         </div>
                                                         <div className="activity-main__table--body-log_item">
                                                             <img
                                                                 src={
-                                                                    item.tokenImageLink
+                                                                    item.token
+                                                                        .imageLink
                                                                 }
                                                                 onError={(
                                                                     e
@@ -823,12 +826,16 @@ export const ActivityPage = () => {
                                                             <div>
                                                                 <span>
                                                                     {
-                                                                        item.tokenName
+                                                                        item
+                                                                            .token
+                                                                            .tokenName
                                                                     }
                                                                 </span>
                                                                 <span>
                                                                     {
-                                                                        item.collectionName
+                                                                        item
+                                                                            .collection
+                                                                            .name
                                                                     }
                                                                 </span>
                                                             </div>
@@ -841,7 +848,8 @@ export const ActivityPage = () => {
                                                                     }
                                                                 />
                                                                 {
-                                                                    item.txPriceNominal
+                                                                    item.token
+                                                                        .priceNominal
                                                                 }
                                                             </div>
                                                             EGLD
@@ -850,28 +858,36 @@ export const ActivityPage = () => {
                                                             1
                                                         </span>
                                                         <span className="activity-main__table--body-log_from">
-                                                            {item.fromAddress.slice(
+                                                            {item.transaction.seller.address.slice(
                                                                 0,
                                                                 4
                                                             )}
                                                             ...
-                                                            {item.fromAddress.slice(
-                                                                item.fromAddress
+                                                            {item.transaction.seller.address.slice(
+                                                                item.transaction
+                                                                    .seller
+                                                                    .address
                                                                     .length - 4,
-                                                                item.fromAddress
+                                                                item.transaction
+                                                                    .seller
+                                                                    .address
                                                                     .length - 1
                                                             )}
                                                         </span>
                                                         <span className="activity-main__table--body-log_to">
-                                                            {item.toAddress.slice(
+                                                            {item.transaction.buyer.address.slice(
                                                                 0,
                                                                 4
                                                             )}
                                                             ...
-                                                            {item.toAddress.slice(
-                                                                item.toAddress
+                                                            {item.transaction.buyer.address.slice(
+                                                                item.transaction
+                                                                    .buyer
+                                                                    .address
                                                                     .length - 4,
-                                                                item.toAddress
+                                                                item.transaction
+                                                                    .buyer
+                                                                    .address
                                                                     .length - 1
                                                             )}
                                                         </span>
@@ -883,7 +899,8 @@ export const ActivityPage = () => {
                                                             }}
                                                         >
                                                             {moment(
-                                                                item.txTimestamp *
+                                                                item.transaction
+                                                                    .timestamp *
                                                                     1000
                                                             ).fromNow()}
                                                         </span>
@@ -893,33 +910,36 @@ export const ActivityPage = () => {
                                         ) : (
                                             <Link
                                                 key={index.toString()}
-                                                to={`/token/${
-                                                    item.collectionTokenId
-                                                }/${
-                                                    item.tokenName.split("#")[1]
-                                                }`}
+                                                to={`/token/${item.token.tokenId}/${item.token.nonce}`}
                                             >
                                                 <div className="activity-main__table--body-log">
                                                     <div className="activity-main__table--body-log_label">
                                                         <img
                                                             src={
-                                                                item.txType ==
+                                                                item.transaction
+                                                                    .type ==
                                                                 "Buy"
                                                                     ? dollarSign
-                                                                    : item.txType ==
+                                                                    : item
+                                                                          .transaction
+                                                                          .type ==
                                                                       "Acution"
                                                                     ? zapSign
                                                                     : tagSign
                                                             }
                                                         />
                                                         <span>
-                                                            {item.txType}
+                                                            {
+                                                                item.transaction
+                                                                    .type
+                                                            }
                                                         </span>
                                                     </div>
                                                     <div className="activity-main__table--body-log_item">
                                                         <img
                                                             src={
-                                                                item.tokenImageLink
+                                                                item.token
+                                                                    .imageLink
                                                             }
                                                             onError={(e) => {
                                                                 let tar = e.target as any;
@@ -928,11 +948,16 @@ export const ActivityPage = () => {
                                                         />
                                                         <div>
                                                             <span>
-                                                                {item.tokenName}
+                                                                {
+                                                                    item.token
+                                                                        .tokenName
+                                                                }
                                                             </span>
                                                             <span>
                                                                 {
-                                                                    item.collectionName
+                                                                    item
+                                                                        .collection
+                                                                        .name
                                                                 }
                                                             </span>
                                                         </div>
@@ -943,7 +968,8 @@ export const ActivityPage = () => {
                                                                 src={egldIcon}
                                                             />
                                                             {
-                                                                item.txPriceNominal
+                                                                item.token
+                                                                    .priceNominal
                                                             }
                                                         </div>
                                                         EGLD
@@ -952,28 +978,32 @@ export const ActivityPage = () => {
                                                         1
                                                     </span>
                                                     <span className="activity-main__table--body-log_from">
-                                                        {item.fromAddress.slice(
+                                                        {item.transaction.seller.address.slice(
                                                             0,
                                                             4
                                                         )}
                                                         ...
-                                                        {item.fromAddress.slice(
-                                                            item.fromAddress
+                                                        {item.transaction.seller.address.slice(
+                                                            item.transaction
+                                                                .seller.address
                                                                 .length - 4,
-                                                            item.fromAddress
+                                                            item.transaction
+                                                                .seller.address
                                                                 .length - 1
                                                         )}
                                                     </span>
                                                     <span className="activity-main__table--body-log_to">
-                                                        {item.toAddress.slice(
+                                                        {item.transaction.buyer.address.slice(
                                                             0,
                                                             4
                                                         )}
                                                         ...
-                                                        {item.toAddress.slice(
-                                                            item.toAddress
+                                                        {item.transaction.buyer.address.slice(
+                                                            item.transaction
+                                                                .buyer.address
                                                                 .length - 4,
-                                                            item.toAddress
+                                                            item.transaction
+                                                                .buyer.address
                                                                 .length - 1
                                                         )}
                                                     </span>
@@ -984,7 +1014,8 @@ export const ActivityPage = () => {
                                                         }}
                                                     >
                                                         {moment(
-                                                            item.txTimestamp *
+                                                            item.transaction
+                                                                .timestamp *
                                                                 1000
                                                         ).fromNow()}
                                                     </span>
