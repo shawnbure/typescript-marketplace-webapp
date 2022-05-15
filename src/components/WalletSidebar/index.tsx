@@ -18,7 +18,10 @@ import {
 import { prepareTransaction } from "utils/transactions";
 import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
-import { useGetDepositTemplateMutation, useGetStakingRewardsTemplateMutation } from "services/deposit";
+import {
+  useGetDepositTemplateMutation,
+  useGetStakingRewardsTemplateMutation,
+} from "services/deposit";
 import Collapsible from "react-collapsible";
 import { SearchBar } from "components";
 import { useGetAccessTokenMutation } from "services/auth";
@@ -51,7 +54,6 @@ export const WalletSidebar: (Props: {
   const [
     getRedeemStakingRewardsTemplateTrigger,
   ] = useGetRedeemStakingRewardsTemplateMutation();
-
 
   const [randomToken] = useState(generateId(32));
 
@@ -179,8 +181,7 @@ export const WalletSidebar: (Props: {
   };
 
   const redeemRewards = async () => {
-
-    if(Number(usdStakingReward) == 0) {
+    if (Number(usdStakingReward) == 0) {
       toast.error(`${"You have no rewards to redeem."}`, {
         autoClose: 5000,
         draggable: true,
@@ -191,22 +192,18 @@ export const WalletSidebar: (Props: {
       });
 
       return;
-
-    }else{
-
+    } else {
       const getTemplateData = {
-        userWalletAddress: userWalletAddress
+        userWalletAddress: userWalletAddress,
       };
-  
+
       signTemplateTransaction({
         succesCallbackRoute: pathname,
         getTemplateData: getTemplateData,
         getTemplateTrigger: getRedeemStakingRewardsTemplateTrigger,
       });
-
     }
-
-  }
+  };
 
   const MaiarWrapper = (
     <div className="p-maiar-login">
@@ -277,9 +274,7 @@ export const WalletSidebar: (Props: {
     }
 
     getStakingRewardsTemplateTrigger({ userWalletAddress });
-
   }, [isUserLoggedIn]);
-  
 
   if (shouldDisplayMaiarLogin && !isUserLoggedIn) {
     return (
@@ -320,13 +315,13 @@ export const WalletSidebar: (Props: {
             className="lg:hidden m-10 mb-0 mt-4 p-1 rounded-3xl"
           >
             <ul className="">
-            <li onClick={handleOverlayClick} className="c-navbar_list-item">
+              <li onClick={handleOverlayClick} className="c-navbar_list-item">
                 <a
                   href={routePaths.rewards}
                   className="c-navbar_list-link text-lg"
                 >
                   Rewards
-                </Link>
+                </a>
               </li>
 
               <li onClick={handleOverlayClick} className="c-navbar_list-item">
@@ -366,7 +361,9 @@ export const WalletSidebar: (Props: {
   const usdDeposit = (deposit * parseFloat(egldPriceString)).toFixed(2);
 
   const stakingReward = userStakingRewardsData?.data || 0;
-  const usdStakingReward = (stakingReward * parseFloat(egldPriceString)).toFixed(2);
+  const usdStakingReward = (
+    stakingReward * parseFloat(egldPriceString)
+  ).toFixed(2);
 
   return (
     <aside className="c-wallet-sidebar">
@@ -393,39 +390,48 @@ export const WalletSidebar: (Props: {
           </span>
         </p>
 
-        <div style={{ border: "1px solid #151b22" }} className="m-10 mb-0 mt-4 p-1 rounded-t-3xl">
+        <div
+          style={{ border: "1px solid #151b22" }}
+          className="m-10 mb-0 mt-4 p-1 rounded-t-3xl"
+        >
           <p className="text-gray-400 text-sm">Total balance</p>
           <p className="text-xl u-text-bold">${usdBalance} USD</p>
-          <p className="u-text-bold text-sm text-gray-400">{egldBalance} EGLD</p>
+          <p className="u-text-bold text-sm text-gray-400">
+            {egldBalance} EGLD
+          </p>
         </div>
-{/*
+        {/*
         <div style={{ border: "1px solid #151b22" }} className="m-10 mb-0 mt-0 p-1">
           <p className="text-gray-400 text-sm u-text-small">Deposit</p>
           <p className="text-xl u-text-bold">${usdDeposit} USD</p>
           <p className="u-text-bold text-sm text-gray-400">{deposit} EGLD</p>
         </div>
   */}
-        <div style={{ border: "1px solid #151b22" }} className="m-10 mb-4 mt-0 p-1 rounded-b-3xl">
+        <div
+          style={{ border: "1px solid #151b22" }}
+          className="m-10 mb-4 mt-0 p-1 rounded-b-3xl"
+        >
           <p className="text-gray-400 text-sm u-text-small">Staking Rewards</p>
           <p className="text-xl u-text-bold">${usdStakingReward} USD</p>
-          <p className="u-text-bold text-sm text-gray-400">{stakingReward} EGLD</p>
+          <p className="u-text-bold text-sm text-gray-400">
+            {stakingReward} EGLD
+          </p>
         </div>
 
         <div className="mt-6 mb-6">
-            <button
-              onClick={redeemRewards}
-              className="c-button c-button--primary "
-            >
-              <FontAwesomeIcon
-                width={"20px"}
-                className="c-navbar_icon-link mr-4"
-                icon={faIcons.faCoins}
-              />
-              Redeem Rewards
-            </button>
-          
-          </div>         
-      
+          <button
+            onClick={redeemRewards}
+            className="c-button c-button--primary "
+          >
+            <FontAwesomeIcon
+              width={"20px"}
+              className="c-navbar_icon-link mr-4"
+              icon={faIcons.faCoins}
+            />
+            Redeem Rewards
+          </button>
+        </div>
+
         <div className="mb-3">
           <Link
             to={routePaths.account}
@@ -637,10 +643,8 @@ export const WalletSidebar: (Props: {
                         )}
                     </Popup>
                     */}
-                    
         </div>
 
-                                          
         <div className="block lg:hidden mb-6">
           <div
             style={{ border: "1px solid #151b22" }}
