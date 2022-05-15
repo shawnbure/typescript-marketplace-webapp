@@ -271,12 +271,30 @@ export const WalletSidebar: (Props: {
             className="lg:hidden m-10 mb-0 mt-4 p-1 rounded-3xl"
           >
             <ul className="">
-              <li onClick={handleOverlayClick} className="c-navbar_list-item">
+            <li onClick={handleOverlayClick} className="c-navbar_list-item">
                 <a
                   href={routePaths.rewards}
                   className="c-navbar_list-link text-lg"
                 >
                   Rewards
+                </a>
+              </li>
+
+              <li onClick={handleOverlayClick} className="c-navbar_list-item">
+                <a
+                  href={routePaths.explorer}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Explorer
+                </a>
+              </li>
+
+              <li onClick={handleOverlayClick} className="c-navbar_list-item">
+                <a
+                  href={routePaths.activity}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Activity
                 </a>
               </li>
             </ul>
@@ -579,6 +597,32 @@ export const WalletSidebar: (Props: {
                   className="c-navbar_list-link text-lg"
                 >
                   Rewards
+                </Link>
+              </li>
+
+              <li
+                onClick={handleOverlayClick}
+                style={{ borderBottom: "1px solid #151b22" }}
+                className="c-navbar_list-item"
+              >
+                <Link
+                  to={routePaths.explorer}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Explorer
+                </Link>
+              </li>
+
+              <li
+                onClick={handleOverlayClick}
+                style={{ borderBottom: "1px solid #151b22" }}
+                className="c-navbar_list-item"
+              >
+                <Link
+                  to={routePaths.activity}
+                  className="c-navbar_list-link text-lg"
+                >
+                  Activity
                 </Link>
               </li>
             </ul>

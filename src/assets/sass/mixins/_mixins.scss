@@ -165,6 +165,12 @@
         }
     }
 
+    @if $media == max-tablet {
+        @media screen and (max-width: $break-point-tablet) {
+            @content;
+        }
+    }
+
     @if $media == max-desktop {
         @media screen and (max-width: $break-point-desktop) {
             @content;

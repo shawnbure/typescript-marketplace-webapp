@@ -225,10 +225,19 @@ export const Navbar = () => {
 
                             <li className="c-navbar_list-item">
                                 <Link
+                                    to={routePaths.explorer}
+                                    className="c-navbar_list-link"
+                                >
+                                    Explorer
+                                </Link>
+                            </li>
+
+                            <li className="c-navbar_list-item">
+                                <Link
                                     to={routePaths.activity}
                                     className="c-navbar_list-link"
                                 >
-                                    Activities
+                                    Activity
                                 </Link>
                             </li>
 
