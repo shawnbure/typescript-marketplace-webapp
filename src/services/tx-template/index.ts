@@ -115,6 +115,57 @@ export const txTemplateApi = createApi({
             },
         }),
 
+        updateCollectionStakeTemplate: builder.mutation<any, any>({
+
+            query: ({  userWalletAddress, collectionId  }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/stakecol/${userWalletAddress}/${collectionId}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+        updateCollectionUnstakeTemplate: builder.mutation<any, any>({
+
+            query: ({  userWalletAddress, collectionId  }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/unstakecol/${userWalletAddress}/${collectionId}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+        getStakeNFTTemplate: builder.mutation<any, any>({
+
+            query: ({  userWalletAddress, collectionId, tokenNonce  }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/stake/${userWalletAddress}/${collectionId}/${tokenNonce}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
+        getUnstakeNFTTemplate: builder.mutation<any, any>({
+
+            query: ({  userWalletAddress, collectionId, tokenNonce  }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/unstake/${userWalletAddress}/${collectionId}/${tokenNonce}`
+                }
+
+                return customRequestArg;
+            },
+        }),
 
         getIssueNftTemplate: builder.mutation<any, any>({
 
@@ -303,16 +354,24 @@ export const txTemplateApi = createApi({
                     url: `/${mainPath}/update-buyer-whitelist-check/${userWalletAddress}/${contractAddress}/${whiteListCheck}`
                 };
 
-                console.log("customRequestArg.ur: ");
-                console.log(customRequestArg.url);
+                return customRequestArg;
+            },
+
+        }),
+        
+        getRedeemStakingRewardsTemplate: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/redeem-staking-rewards/${userWalletAddress}`
+                };
 
                 return customRequestArg;
             },
 
         }),
-
-        
-
 
         getWithdrawCreatorRoyaltiesTemplate: builder.mutation<any, any>({
 
@@ -399,5 +458,12 @@ export const {
     useGetWithdrawNftTemplateMutation, 
     useGetWithdrawDepositTemplateMutation,
     useUpdateSaleStartTemplateMutation,
-    useUpdateBuyerWhiteListCheckTemplateMutation } = txTemplateApi;
+    useUpdateBuyerWhiteListCheckTemplateMutation,
+    useUpdateCollectionStakeTemplateMutation,
+    useUpdateCollectionUnstakeTemplateMutation,
+    useGetStakeNFTTemplateMutation,
+    useGetUnstakeNFTTemplateMutation,
+    useGetRedeemStakingRewardsTemplateMutation,
+    
+} = txTemplateApi;
 

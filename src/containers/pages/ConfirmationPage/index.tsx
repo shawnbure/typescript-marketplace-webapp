@@ -12,12 +12,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as faIcons from '@fortawesome/free-solid-svg-icons';
 import { handleCopyToClipboard } from "utils";
 import { faFacebookSquare, faTelegram, faTwitterSquare, faWhatsappSquare } from "@fortawesome/free-brands-svg-icons";
-
+import { routePaths } from 'constants/router';
 import {
   useWithdrawTokenMutation,
   useListTokenFromClientMutation,
   useBuyTokenFromClientMutation,
+  useStakeTokenFromClientMutation,
 } from "services/tokens";
+import {
+   useStakeCollectionMutation,
+} from "services/collections";
+
 
 import {
   GetTransactionRequestHttpURL,
@@ -36,6 +41,10 @@ import {
   MINT,
   WITHDRAW,
   AUCTION,
+  STAKE,
+  UNSTAKE,
+  STAKECOL,
+  UNSTAKECOL
 } from "constants/actions";
 import {
   ENG_BUY_TITLE,
@@ -43,6 +52,18 @@ import {
   ENG_LIST_TITLE,
   ENG_LIST_TITLE_FAIL,
   ENG_LIST_MESSAGE,
+  ENG_STAKE_TITLE,
+  ENG_STAKE_TITLE_FAIL,
+  ENG_STAKE_MESSAGE,
+  ENG_UNSTAKE_TITLE,
+  ENG_UNSTAKE_TITLE_FAIL,
+  ENG_UNSTAKE_MESSAGE,
+  ENG_STAKECOL_TITLE,
+  ENG_STAKECOL_TITLE_FAIL,
+  ENG_STAKECOL_MESSAGE,
+  ENG_UNSTAKECOL_TITLE,
+  ENG_UNSTAKECOL_TITLE_FAIL,
+  ENG_UNSTAKECOL_MESSAGE,
   ENG_WITHDRAW_TITLE,
   ENG_WITHDRAW_TITLE_FAIL,
   ENG_WITHDRAW_MESSAGE,
@@ -81,10 +102,12 @@ import {
 
 export const ConfirmationPage = () => {
   const { address: userWalletAddress } = Dapp.useContext();
-  const { action, collectionId, tokenNonce, info } = useParams<UrlParameters>();
+  const { action, collectionId, tokenNonce } = useParams<UrlParameters>();
   const [globalToken, setGlobalToken] = useState<any>({});
   const queryString = window.location.search;
-  const [transactionHash, setTransactionHash] = useState(getQuerystringValue(queryString, "txHash") || "");
+  const [transactionHash] = useState(getQuerystringValue(queryString, "txHash") || "");
+  const [onStake, setOnStake] = useState<boolean>(false);
+  const [onStakeCol, setOnStakeCol] = useState<boolean>(false);
   const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
   const [isTransactionSuccessful, setIsTransactionSuccessful] = useState<boolean>(false);
   const [isTransactionLoaded, setIsTransactionLoaded] = useState<boolean>(false);
@@ -101,9 +124,11 @@ export const ConfirmationPage = () => {
   const [startDate, setStartDate] = useState<number>(0);
   const [numberMinted, setNumberMinted] = useState<number>(0);
   const [endDate, setEndDate] = useState<number>(0);
+  const [stakeTokenFromClientTrigger] = useStakeTokenFromClientMutation();
   const [listTokenFromClientTrigger] = useListTokenFromClientMutation();
   const [buyTokenFromClientTrigger] = useBuyTokenFromClientMutation();
   const [withdrawTokenTrigger] = useWithdrawTokenMutation();
+  const [stakeCollectionFromClientTrigger] = useStakeCollectionMutation();
   
 
   const imageBoxStyle = {
@@ -130,17 +155,43 @@ export const ConfirmationPage = () => {
           : setDisplayTitle(ENG_LIST_TITLE_FAIL);
         setDisplayMessage(ENG_LIST_MESSAGE);
         setPriceNominal(getQuerystringValue(queryString, "price") || "");
-        
         break;
+      case STAKE:
+          txFailed == false
+            ? setDisplayTitle(ENG_STAKE_TITLE)
+            : setDisplayTitle(ENG_STAKE_TITLE_FAIL);
+          setDisplayMessage(ENG_STAKE_MESSAGE);
+          setOnStake(true);
+          break;
+    case UNSTAKE:
+        txFailed == false
+          ? setDisplayTitle(ENG_UNSTAKE_TITLE)
+          : setDisplayTitle(ENG_UNSTAKE_TITLE_FAIL);
+        setDisplayMessage(ENG_UNSTAKE_MESSAGE);
+        setOnStake(false);
+        break;
+        case STAKECOL:
+          txFailed == false
+            ? setDisplayTitle(ENG_STAKECOL_TITLE)
+            : setDisplayTitle(ENG_STAKECOL_TITLE_FAIL);
+          setDisplayMessage(ENG_STAKECOL_MESSAGE);
+          setOnStakeCol(true);
+          break;
+      case UNSTAKECOL:
+          txFailed == false
+            ? setDisplayTitle(ENG_UNSTAKECOL_TITLE)
+            : setDisplayTitle(ENG_UNSTAKECOL_TITLE_FAIL);
+          setDisplayMessage(ENG_UNSTAKECOL_MESSAGE);
+          setOnStakeCol(false);
+          break;    
       case MINT:
         txFailed == false
           ? setDisplayTitle(ENG_MINT_TITLE)
           : setDisplayTitle(ENG_MINT_TITLE_FAIL);
         setDisplayMessage(ENG_MINT_MESSAGE);
-        console.log(getQuerystringValue(queryString, "number_minted"))
         setNumberMinted(Number(getQuerystringValue(queryString, "number_minted")) || 0);
         setImageLink("/img/collections/GreenCheck.png");
-        setNftLink(window.location.origin + "/collection/" + collectionId);
+        setNftLink(window.location.origin + routePaths.collection.replace(":collectionId", collectionId));
         break;
       case WITHDRAW:
         txFailed == false
@@ -283,7 +334,7 @@ export const ConfirmationPage = () => {
     }
     const onSale = action.toUpperCase() == LIST;
 
-    const formattedData = {
+    var formattedData = {
       TokenId: collectionId,
       Nonce: parseInt(tokenNonce, 10),
       NonceStr: hexNonce,
@@ -300,7 +351,18 @@ export const ConfirmationPage = () => {
       Timestamp: globalToken.timestamp,
       TxConfirmed: isTransactionSuccessful,
       OnSale: onSale,
+      OnStake: Boolean(onStake),
+      Status: "",
+      StakeDate: 0,   
+      StakeType: "",
     };
+
+    if(onStake) {
+      formattedData.Status = "Stake";
+      formattedData.StakeDate = new Date().getTime();
+      formattedData.StakeType = "DAO"
+      formattedData.OnSale = false;
+    }
 
     var response = null;
     switch (action.toUpperCase()) {
@@ -309,7 +371,21 @@ export const ConfirmationPage = () => {
         break;
       case LIST:
         response = listTokenFromClientTrigger({ payload: formattedData });
-        break;
+        break; 
+      case STAKE:
+      case UNSTAKE:    
+        response = stakeTokenFromClientTrigger({ payload: formattedData });
+        break;  
+      case STAKECOL:
+      case UNSTAKECOL:  
+ 
+        var collectionData = {
+          collectionId: collectionId,
+          ownerAddress: userWalletAddress,
+          isStakeable: onStakeCol
+        };
+        response = stakeCollectionFromClientTrigger({ payload: collectionData });
+        break;    
       case WITHDRAW:
         response = withdrawTokenTrigger({ payload: formattedData });
         break;

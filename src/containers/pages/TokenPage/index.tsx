@@ -15,7 +15,7 @@ import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation } from 'services/tx-template';
+import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation, useGetStakeNFTTemplateMutation, useGetUnstakeNFTTemplateMutation } from 'services/tx-template';
 import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, useRefreshTokenMetadataMutation, useWithdrawTokenMutation, } from "services/tokens";
 
 import { prepareTransaction, getQuerystringValue } from "utils/transactions";
@@ -23,18 +23,18 @@ import { prepareTransaction, getQuerystringValue } from "utils/transactions";
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
 import { formatImgLink, shorterAddress } from "utils";
-import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION } from "constants/actions";
+import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION, STAKE, UNSTAKE } from "constants/actions";
 import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
 
 import { useGetAccountTokenGatewayMutation } from 'services/accounts';
 import { useGetCollectionByIdMutation } from 'services/collections';
-import { alphaToastMessage } from 'components/AlphaToastError';
-import store from 'redux/store';
-import { routePaths } from 'constants/router';
 
 import { Footer } from 'components/index';
-import { ContractDeployPayloadBuilder } from "@elrondnetwork/erdjs/out";
+
+/* temporary hot fixes */
+import { alphaToastMessage } from 'components/AlphaToastError';
+import {releaseFeaureStaking} from 'configs/dappConfig';
 
 export const TokenPage: (props: any) => any = ({ }) => {
 
@@ -117,7 +117,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
 
     //const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
-
+    
+    const [getStakeNftTemplateQueryTrigger] = useGetStakeNFTTemplateMutation();
+    const [getUnstakeNftTemplateQueryTrigger] = useGetUnstakeNFTTemplateMutation();
     const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
     const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
     
@@ -209,7 +211,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
         identifier: collectionId,
         nonce: tokenNonce,
       })
-      return;
+      //return; - this was commented out because I seem to believe the logic is backwards but at least I can get the data - SMB
     }
     getTokenDataTrigger({ collectionId, tokenNonce });
 
@@ -236,13 +238,13 @@ export const TokenPage: (props: any) => any = ({ }) => {
     : tokenResponseData;
 
   const isOurs = !Boolean(tokenResponseData == undefined);
-  //console.log(gatewayTokenData)
 
   if (isOurs === true) {
     tokenData = tokenResponseData.data;
   }
 
   const getBaseTokenData = (tokenData: any) => {
+
     const token = isOurs ? tokenData.token : tokenData.tokenData;
     const nonce = token.nonce;
     const name = isOurs ? token.tokenName : token.name;
@@ -250,6 +252,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     const imageLink: string = isOurs ? token.imageLink : atob(token?.uris?.[0] || "");
     let metadataLink: string = isOurs ? token.metadataLink : atob(token?.uris?.[1] || "");
     const royaltiesPercent = isOurs ? token.royaltiesPercent : parseFloat(token.royalties) / 100;
+
     if (metadataLink.indexOf(".json") == -1) {
       metadataLink = metadataLink + ".json"; //TODO REMOVE , shoudl be added to contract ?
     }
@@ -326,9 +329,19 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
     const isListed: boolean = tokenState === 'List';
     const isAuction: boolean = tokenState === 'Auction';
-    const isOnSale: boolean = ( isListed || isAuction);
+    //const isOnSale: boolean = ( isListed || isAuction);
+    let isOnSale = false;
+    let isOnStake = false;
+    if(isOurs){
+      isOnStake = tokenData.token.onStake;
+      isOnSale = tokenData.token.onSale;
+    }
+    //const canUnStake: boolean = ((Date.now() - tokenData.token.stakeDate) / 36e5) >= 24;
+    const canUnStake: boolean = true;
+    const isStakeable = collectionData?.data?.collection?.isStakeable;
+
     const onSaleText = isListed ? "Current price" : "Min bid"
-   
+
     const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
     // const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
 
@@ -754,6 +767,79 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
   };
 
+  const handleStakeAction = async () => {
+    const getStakeNFTResponse: any = await getStakeNftTemplateQueryTrigger({
+      userWalletAddress,
+      collectionId,
+      tokenNonce
+    });
+
+    if (getStakeNFTResponse.error) {
+      const {
+        status,
+        data: { error },
+      } = getStakeNFTResponse.error;
+
+      toast.error(`${status} | ${error}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+
+      return;
+    }
+
+    const { data: txData } = getStakeNFTResponse.data;
+
+    const unconsumedTransaction = prepareTransaction(txData);
+
+    sendTransaction({
+      transaction: unconsumedTransaction,
+      callbackRoute: `/confirmation/${STAKE}/${collectionId}/${tokenNonce}`,
+    });
+
+  };
+
+
+  const handleUnstakeAction = async () => {
+    const getUnstakeNFTResponse: any = await getUnstakeNftTemplateQueryTrigger({
+      userWalletAddress,
+      collectionId,
+      tokenNonce
+    });
+
+    if (getUnstakeNFTResponse.error) {
+      const {
+        status,
+        data: { error },
+      } = getUnstakeNFTResponse.error;
+
+      toast.error(`${status} | ${error}`, {
+        autoClose: 5000,
+        draggable: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        hideProgressBar: false,
+        position: "bottom-right",
+      });
+
+      return;
+    }
+
+    const { data: txData } = getUnstakeNFTResponse.data;
+
+    const unconsumedTransaction = prepareTransaction(txData);
+
+    sendTransaction({
+      transaction: unconsumedTransaction,
+      callbackRoute: `/confirmation/${UNSTAKE}/${collectionId}/${tokenNonce}`,
+    });
+
+  };
+
   const handleWithdrawAction = async () => {
     const getWithdrawNFTResponse: any = await getWithdrawNftTemplateQueryTrigger(
       { userWalletAddress, collectionId, tokenNonce }
@@ -926,9 +1012,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
     };
   };
 
+
   const actionsHandlers: { [key: string]: any } = {
     [BUY]: actionHandlerWrapper(handleBuyAction),
     [SELL]: actionHandlerWrapper(handleSellAction),
+    [STAKE]: actionHandlerWrapper(handleStakeAction),
+    [UNSTAKE]: actionHandlerWrapper(handleUnstakeAction),
     [WITHDRAW]: actionHandlerWrapper(handleWithdrawAction),
     [MAKE_BID]: actionHandlerWrapper(handleMakeBid),
     [MAKE_OFFER]: actionHandlerWrapper(handleMakeOffer),
@@ -1377,7 +1466,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         <div className="c-accordion_trigger">
                           {
                             <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                              Fixed price
+                              {isOnStake ?  "Stake" : "Fixed price"}
                             </p>
                           }
                         </div>
@@ -1405,25 +1494,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         </>
                       )}
                       
-                      {!isOnSale && isCurrentTokenOwner && (
-                        <div>
-                          <Link
-                            to={`/token/${ownerWalletAddress}/${collectionId}/${tokenNonce}/sell`}
-                            className="c-button c-button--primary u-margin-right-spacing-2"
-                          >
-                            <span className="u-padding-right-spacing-2">
-                              <FontAwesomeIcon
-                                width={"20px"}
-                                className="c-navbar_icon-link"
-                                icon={faIcons.faWallet}
-                              />
-                            </span>
-                            <span>Sell</span>
-                          </Link>
-                        </div>
-                      )
-                      }
-
                       {isOnSale &&
                         isCurrentTokenOwner &&
                         !(!isAuctionOngoing && hasBidderWinner) && (
@@ -1442,6 +1512,72 @@ export const TokenPage: (props: any) => any = ({ }) => {
                           </button>
                         )}
 
+                      {!isOnSale && !isOnStake && isCurrentTokenOwner && (
+                        <div  style={{display: "inline-block"}}>
+                          <Link
+                            to={`/token/${ownerWalletAddress}/${collectionId}/${tokenNonce}/sell`}
+                            className="c-button c-button--primary u-margin-right-spacing-2"
+                          >
+                            <span className="u-padding-right-spacing-2">
+                              <FontAwesomeIcon
+                                width={"20px"}
+                                className="c-navbar_icon-link"
+                                icon={faIcons.faWallet}
+                              />
+                            </span>
+                            <span style={{display: "inline-block"}}>Sell</span>
+                          </Link>
+                        </div>
+                      )
+                      }
+ 
+                      {/* HOTFIX IS releaseFeaureStaking */
+                      releaseFeaureStaking && isStakeable && (!isOnSale && !isOnStake &&
+                        isCurrentTokenOwner &&
+                        !(!isAuctionOngoing && hasBidderWinner)) && (
+                          <div style={{display: "inline-block"}}>
+    
+                          <button
+                          onClick={actionsHandlers[STAKE]}
+                          className="c-button c-button--primary u-margin-right-spacing-2"
+                        >
+                          <span className="u-padding-right-spacing-2">
+                            <FontAwesomeIcon
+                              width={"20px"}
+                              className="c-navbar_icon-link"
+                              icon={faIcons.faCoins}
+                            />
+                          </span>
+                          <span>Stake</span>
+                        </button>
+
+                        </div>
+                      )}     
+
+                      {releaseFeaureStaking && (!isOnSale && isOnStake && 
+                        isCurrentTokenOwner &&
+                        !(!isAuctionOngoing && hasBidderWinner)) && (
+
+                          <div style={{display: "inline-block"}}>
+
+                          {canUnStake ? (
+                            <button
+                            onClick={actionsHandlers[UNSTAKE]}
+                            className="c-button c-button--primary u-margin-right-spacing-2"
+                            >
+                            <span className="u-padding-right-spacing-2">
+                              <FontAwesomeIcon
+                                width={"20px"}
+                                className="c-navbar_icon-link"
+                                icon={faIcons.faCoins}
+                              />
+                            </span>
+                            <span>Unstake</span>
+                          </button> ) : ( 
+                             <span>You may Unstake your NFT after {(24 - ((Date.now() - tokenData.token.stakeDate) / 36e5)).toFixed(2)} hours. (24 hour minimum)</span>
+                          )}
+                        </div>
+                      )}
                       {shouldDisplayEndAuctionButton && (
                         <button
                           onClick={actionsHandlers[END_AUCTION]}

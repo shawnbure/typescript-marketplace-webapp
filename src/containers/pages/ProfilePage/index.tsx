@@ -13,16 +13,17 @@ import {
   useGetAccountTokensMutation,
   useGetOnSaleAccountTokensMutation,
   useGetAccountGatewayTokensMutation,
+  useGetOnStakeAccountTokensMutation,
 } from "services/accounts";
 import { UrlParameters } from "./interfaces";
 import { routePaths } from "constants/router";
 import { Collapse } from "components";
-
 import * as faBrands from "@fortawesome/free-brands-svg-icons";
-
-import { alphaToastMessage } from 'components/AlphaToastError';
-
 import { Footer } from 'components/index';
+
+/* temporary hot fixes */
+import {releaseFeaureStaking} from 'configs/dappConfig';
+
 
 export const ProfilePage: (props: any) => any = ({}) => {
   const { walletAddress: walletAddressParam } = useParams<UrlParameters>();
@@ -60,6 +61,15 @@ export const ProfilePage: (props: any) => any = ({}) => {
     },
   ] = useGetOnSaleAccountTokensMutation();
 
+  const [
+    getOnStakeAccountTokensRequestTrigger,
+    {
+      data: accountOnStakeTokenData,
+      isLoading: isLoadingOnStakeAccountTokensRequest,
+      isUninitialized: isUninitializedOnStakeAccountTokensRequest,
+    },
+  ] = useGetOnStakeAccountTokensMutation();
+
 
   const [
     getAccountGatewayRequestTrigger,
@@ -91,10 +101,12 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
   const [onSaleNfts, setOnSaleNfts] = useState<Array<any>>([]);
   const [unlistedNfts, setUnlistedNfts] = useState<Array<any>>([]);
+  const [onStakeNfts, setOnStakeNfts] = useState<Array<any>>([]);
   const [availableTokens, setAvailableTokens] = useState<any>({});
   const [userCollections, setUserCollections] = useState<Array<any>>([]);
 
   const [loadMoreOnSale, setLoadMoreOnSale] = useState<boolean>(true);
+  const [loadMoreOnStake, setLoadMoreOnStake] = useState<boolean>(true);
   const [loadMoreUnlisted, setLoadMoreUnlisted] = useState<boolean>(true);
   const [loadMoreCollections, setLoadMoreCollections] = useState<boolean>(true);
 
@@ -133,7 +145,6 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
     do 
     {
-      console.log("enter do loop : offset : " + offset)
       const dataResponse = await getFunctionTrigger({ userWalletAddress, limit, offset});
 
       if (!dataResponse.data) {
@@ -146,12 +157,8 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
       const newNFTs = [...nfts];
 
-      console.log(newNFTs)
-
-
       if( newNFTs.length == 0 )
       {
-        console.log("length of 0 - DONE");
         gotAllRecords = true
 
         break;
@@ -170,7 +177,6 @@ export const ProfilePage: (props: any) => any = ({}) => {
       HideElement("pLoadingUnlistedNFTs");
     }
 
-    console.log(arrayNFTs);
     setUnlistedNftsNoLimits(arrayNFTs);
 
     //inital so set it to the "filtered"
@@ -300,9 +306,6 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
       element.value = newValue;
   }
-  
-  
-
   
   const getOffsetToLimit = async (
     getFunction: any,
@@ -453,6 +456,66 @@ export const ProfilePage: (props: any) => any = ({}) => {
     });
   };
 
+  const mapOnStakeTokens = () => {
+    return onStakeNfts.map((tokenData: any) => {
+      const { collection, token } = tokenData;
+      const { collectionName } = collection;
+      const {
+        imageLink,
+        tokenName,
+        tokenId,
+        nonce,
+        state,
+        priceNominal
+      } = token;
+      const icon = faIcons.faCoins;
+
+      return (
+        <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3 md:mx-4 mb-8">
+          <Link to={`/token/${tokenId}/${nonce}`}>
+            <div className={`c-card`}>
+              <div className="c-card_img-container">
+                <img
+                  src={formatImgLink(imageLink)}
+                  className="c-card_img"
+                  alt=""
+                />
+              </div>
+
+              <div className="c-card_info justify-between">
+                <div className="c-card_details">
+                  <p className="text-gray-700 text-xs">
+                    {collectionName && (
+                      <Link
+                        className="text-gray-500 hover:text-gray-200"
+                        to={`/collection/${tokenId}`}
+                      >
+                        {collectionName || tokenId}
+                      </Link>
+                    )}
+                  </p>
+
+                  <p className="text-sm u-text-bold">{tokenName}</p>
+                </div>
+
+                <div className="c-card_price">
+                  <p className="text-sm">{priceNominal}</p>
+
+                  <p className="text-xs">
+                    <FontAwesomeIcon
+                      className="text-gray-500 mr-1"
+                      icon={icon}
+                    />
+                    <span className="text-gray-500 u-text-bold">{state}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+      );
+    });
+  };
 
   const mapUnlistedTokens = (): any => {
     return unlistedNfts?.map((tokenData: any) => {
@@ -509,9 +572,6 @@ export const ProfilePage: (props: any) => any = ({}) => {
     });
   };
 
-
-
-
   const getMoreUnlistedTokens = async () => {
 
     const { hasFetchedNewData } = await GetMoreUnlistedProcess();
@@ -520,6 +580,17 @@ export const ProfilePage: (props: any) => any = ({}) => {
     
   };
 
+  const getMoreOnStakeTokens = async () => {
+    const { hasFetchedNewData } = await getOffsetToLimit(
+      getOnStakeAccountTokensRequestTrigger,
+      onStakeNfts.length,
+      8,
+      onStakeNfts,
+      setOnStakeNfts
+    );
+
+    setLoadMoreOnStake(hasFetchedNewData);
+  };
   
   const getMoreOnSaleTokens = async () => {
     const { hasFetchedNewData } = await getOffsetToLimit(
@@ -562,20 +633,6 @@ export const ProfilePage: (props: any) => any = ({}) => {
 
   }, []);
 
-
-
-
-
-
-
-
-  // if (shouldRedirectHome) {
-
-  //     return (
-  //         <Redirect to={routePaths.home} />
-  //     );
-
-  // };
 
   return (
     <div className="p-profile-page">
@@ -720,7 +777,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       <FontAwesomeIcon
                         width={"20px"}
                         className="c-navbar_icon-link"
-                        icon={faIcons.faImages}
+                        icon={faIcons.faListAlt}
                       />
                     </span>
                     <span className="c-accordion_trigger_title">
@@ -797,7 +854,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       <FontAwesomeIcon
                         width={"20px"}
                         className="c-navbar_icon-link"
-                        icon={faIcons.faClipboardList}
+                        icon={faIcons.faBarcode}
                       />
                     </span>
                     <span className="c-accordion_trigger_title">On Sale</span>
@@ -856,6 +913,58 @@ export const ProfilePage: (props: any) => any = ({}) => {
                   )}
                 </div>
               </Collapsible>
+              { /* HOT FIX releaseFeaureStaking */
+              releaseFeaureStaking && (      
+              <Collapsible
+                transitionTime={50}
+                open={false}
+                className="c-accordion"
+                onOpening={() => {
+                  if (isUninitializedAccountTokensRequest) {
+                    getMoreOnStakeTokens();
+                  }
+                }}
+                trigger={
+                  <div className="c-accordion_trigger">
+                    <span className="c-accordion_trigger_icon">
+                      <FontAwesomeIcon
+                        width={"20px"}
+                        className="c-navbar_icon-link"
+                        icon={faIcons.faCoins}
+                      />
+                    </span>
+                    <span className="c-accordion_trigger_title">Staked (Earning Rewards)</span>
+                  </div>
+                }
+              >
+                <div className="c-accordion_content bg-transparent">
+                  <div className="grid grid-cols-12">
+                    
+                    {Boolean(onStakeNfts.length) ? (
+                      mapOnStakeTokens()
+                    ) : (
+                      <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
+                        no NFTs being staked
+                      </div>
+                    )}
+                  </div>
+
+                  {loadMoreOnStake && Boolean(onStakeNfts.length) && (
+                    <div className="col-span-12 mr-8 mb-8">
+                      <div className="text-center my-10">
+                        <button
+                          onClick={getMoreOnStakeTokens}
+                          className="c-button c-button--secondary"
+                        >
+                          Load more
+                        </button>
+                      </div>
+                      1
+                    </div>
+                  )}
+                </div>
+              </Collapsible>
+              )}
 
               <Collapsible
                 transitionTime={50}
@@ -875,10 +984,10 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       <FontAwesomeIcon
                         width={"20px"}
                         className="c-navbar_icon-link"
-                        icon={faIcons.faListAlt}
+                        icon={faIcons.faWallet}
                       />
                     </span>
-                    <span className="c-accordion_trigger_title">Unlisted</span>
+                    <span className="c-accordion_trigger_title">Wallet</span>
                   </div>
                 }
               >
@@ -893,7 +1002,7 @@ export const ProfilePage: (props: any) => any = ({}) => {
                         <>
                           <div className="mb-10 md:text-center">
                             <span className=" mr-4 inline-block">
-                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Unlisted NFTs" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
+                            <input autoComplete="off" type="text" id="txtFilterUnlisted" placeholder="🔍 Wallet NFTs" className="text-xl bg-opacity-10 bg-white border-1 border-black border-gray-400 p-2 placeholder-opacity-10 rounded-2 text-white" />
                             
                             </span>
 
@@ -930,10 +1039,10 @@ export const ProfilePage: (props: any) => any = ({}) => {
                       mapUnlistedTokens()
                     ) : (
                       <div className="text-gray-500 text-center u-text-bold col-span-12 mr-8 mb-8">
-                        No Unlisted NFTs found
+                        No Wallet NFTs found
 
                         <p id="pLoadingUnlistedNFTs" hidden={true} className="my-10 text-2xl text-center">
-                          Loading Unlisted NFTs...
+                          Loading Wallet NFTs...
                         </p>
 
                         </div>

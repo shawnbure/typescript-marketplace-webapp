@@ -29,9 +29,23 @@ export const depositApi = createApi({
             },
         }),
 
+        getStakingRewardsTemplate: builder.mutation<any, any>({
+
+            query: ({ userWalletAddress }): FetchArgs => {
+
+                const customRequestArg: FetchArgs = {
+                    method: GET,
+                    url: `/${mainPath}/stakingrewards/${userWalletAddress}`
+                }
+
+                return customRequestArg;
+            },
+        }),
+
     }),
 })
 
 export const {
     useGetDepositTemplateMutation,
+    useGetStakingRewardsTemplateMutation,
 } = depositApi;
