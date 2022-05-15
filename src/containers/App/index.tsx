@@ -25,6 +25,7 @@ import CreateCollectionPage from 'containers/pages/CreateCollectionPage';
 import RegisterCollectionPage from 'containers/pages/RegisterCollectionPage';
 import StatsPage from 'containers/pages/StatsPage';
 import ActivityPage from 'containers/pages/ActivityPage';
+import ExplorerPage from 'containers/pages/ExplorerPage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as faIcons from "@fortawesome/free-regular-svg-icons";
 import { Helmet } from 'react-helmet';
@@ -248,6 +249,12 @@ export const App: () => JSX.Element = () => {
 
                         </Route>
 
+                        <Route path={routePaths.explorer} exact={true} >
+
+                            <ExplorerPage />
+
+                        </Route>
+                        
                         <Route path={routePaths.royalties} exact={true} >
 
                             <AuthProtected>
