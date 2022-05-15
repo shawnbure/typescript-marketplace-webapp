@@ -12,6 +12,7 @@ export const routePaths = {
     walletconnect: "/walletconnect",
     stats: '/admin/stats',
     activity: '/activity',
+    explorer: '/explorer',
     profile: '/profile/:walletAddress',
     accountSettings: '/account/settings',
     collectionCreate: "/collection/create",
