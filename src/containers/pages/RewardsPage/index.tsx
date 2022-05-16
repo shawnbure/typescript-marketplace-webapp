@@ -74,15 +74,13 @@ export const RewardsPage = () => {
 
                             <p className="u-margin-bottom-spacing-10">
 
-                                <Link to={'/collection/ENFT-d40748'} className="c-button c-button--primary" >                        
+                                <Link to={'/collection/ENFT-d40748'} className="c-button c-button--primary" style={{margin: '0 8px 0 0'}} >                        
                                     <div className="inline-flex">
                                         <span>
                                              Buy Vaults
                                         </span>
                                     </div>
                                 </Link>
-                            
-                                &nbsp; &nbsp;
 
                                 <Link to={'/collection/ENFT-c26061'} className="c-button c-button--primary" >                        
                                     <div className="inline-flex">
