@@ -154,7 +154,7 @@ export const RewardsPage = () => {
 
                             <div className="u-padding-lr-spacing-2">
                                 
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessPawn} />  
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor" style={{fontSize: '24px'}} icon={faIcons.faChessPawn} />  
                                 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Alpha <br/>
@@ -172,7 +172,7 @@ export const RewardsPage = () => {
 
                             <div className="u-padding-lr-spacing-2">
 
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessKnight} />
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor" style={{fontSize: '24px'}} icon={faIcons.faChessKnight} />
 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Beta <br/>
@@ -189,7 +189,7 @@ export const RewardsPage = () => {
 
                             <div className="u-padding-lr-spacing-2">
 
-                                <FontAwesomeIcon className="u-text-theme-blue-anchor c-navbar_icon-link" icon={faIcons.faChessKing} />
+                                <FontAwesomeIcon className="u-text-theme-blue-anchor" style={{fontSize: '24px'}} icon={faIcons.faChessKing} />
                                 
                                 <h3 className="u-text-lead u-text-bold u-tac u-margin-bottom-spacing-6">
                                     Gamma <br/>
