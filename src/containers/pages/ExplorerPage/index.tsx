@@ -69,7 +69,6 @@ export const ExplorerPage = () => {
         switch (requestCase) {
             case "ExplorationItems":
                 responeHolder = await functionTrigger(triggerInputObject);
-                console.log(responeHolder)
                 stateSetter([]);
                 if (responeHolder.data) {
                     setTotalExplorationItems(responeHolder.data.data.total);
