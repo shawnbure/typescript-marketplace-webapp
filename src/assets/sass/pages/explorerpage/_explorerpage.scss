@@ -361,11 +361,21 @@
 
                 padding: 0 24px;
 
-                img {
+                &_collectionLogo {
                     width: 40px;
                     height: 40px;
 
+                    background: #2081e2;
+                    color: #fff;
+
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    font-weight: bold;
+
                     border-radius: 64px;
+
                 }
 
                 div:nth-child(2) {

@@ -70,6 +70,7 @@ export const ExplorerPage = () => {
         switch (requestCase) {
             case "ExplorationItems":
                 responeHolder = await functionTrigger(triggerInputObject);
+                console.log(responeHolder)
                 stateSetter([]);
                 if (responeHolder.data) {
                     setTotalExplorationItems(responeHolder.data.data.total);
@@ -375,7 +376,7 @@ export const ExplorerPage = () => {
                                                             );
                                                         } else {
                                                             toast.error(
-                                                                `Error! Duplicate item or more than 1 items can not be selected`,
+                                                                `Error! Duplicate item or more than 1 item can not be selected`,
                                                                 {
                                                                     autoClose: 5000,
                                                                     draggable: true,
@@ -597,12 +598,12 @@ export const ExplorerPage = () => {
         tokenImage: any,
         tokenPrice: any,
         tokenName: any,
-        collectionLogo: any,
         collectionName: any,
-        collectionTokenId: any
+        collectionTokenId: any,
+        tokenNonce: any
     ) => {
         return (
-            <Link to={`/token/${collectionTokenId}/${tokenName.split("#")[1]}`}>
+            <Link to={`/token/${collectionTokenId}/${tokenNonce}`}>
                 <div className="explorer-contentBox__holderBox--holder">
                     <div
                         className="explorer-contentBox__content"
@@ -624,13 +625,9 @@ export const ExplorerPage = () => {
                             </div>
                         </div>
                         <div className="explorer-contentBox__content--details">
-                            <img
-                                src={collectionLogo}
-                                onError={(e) => {
-                                    let tar = e.target as any;
-                                    tar.src = tokenNoImage;
-                                }}
-                            />
+                            <div className="explorer-contentBox__content--details_collectionLogo">
+                                {collectionName[0]}
+                            </div>
                             <div>
                                 <span>{tokenName}</span>
                                 <span>{collectionName}</span>
@@ -893,7 +890,7 @@ export const ExplorerPage = () => {
                         }
                         hasMore={hasMoreData}
                         loader={<></>}
-                        height={isMobile() ? 650 : 705}
+                        height={isMobile() ? 480 : 705}
                         endMessage={<></>}
                     >
                         <div className="explorer-contentBox__holderBox">
@@ -902,12 +899,12 @@ export const ExplorerPage = () => {
                                     (item: any, index: any) => {
                                         return contentRender(
                                             320,
-                                            item.tokenImage,
-                                            item.tokenPriceNominal,
-                                            item.tokenName,
-                                            `https://ui-avatars.com/api/?name=${item.collectionName}&background=04111d&color=fff`,
-                                            item.collectionName,
-                                            item.collectionTokenId
+                                            item.token.imageLink,
+                                            item.token.priceNominal,
+                                            item.token.tokenName,
+                                            item.collection.name,
+                                            item.collection.tokenId,
+                                            item.token.nonce
                                         );
                                     }
                                 )

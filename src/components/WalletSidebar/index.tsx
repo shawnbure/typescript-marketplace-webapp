@@ -326,7 +326,7 @@ export const WalletSidebar: (Props: {
                   className="c-navbar_list-link text-lg"
                 >
                   Rewards
-                </Link>
+                </a>
               </li>
 
               <li onClick={handleOverlayClick} className="c-navbar_list-item">
