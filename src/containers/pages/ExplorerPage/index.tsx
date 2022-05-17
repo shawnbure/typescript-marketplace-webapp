@@ -16,7 +16,6 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 export const ExplorerPage = () => {
-    // let randomHeights = [240, 320, 400];
 
     let [explorationItems, setExplorationItems] = useState<any>([]);
     let [totalExplorationItems, setTotalExplorationItems] = useState<any>(0);
