@@ -58,54 +58,6 @@ export const ExplorerPage = () => {
 
     const [getAllCollectionTrigger] = useGetAllCollectionMutation();
 
-    let dataProcessor = async (
-        functionTrigger: any,
-        triggerInputObject: any,
-        stateGetter: any,
-        stateSetter: any,
-        responeHolder: any,
-        requestCase: string
-    ) => {
-        switch (requestCase) {
-            case "ExplorationItems":
-                responeHolder = await functionTrigger(triggerInputObject);
-                stateSetter([]);
-                if (responeHolder.data) {
-                    setTotalExplorationItems(responeHolder.data.data.total);
-                    setPriceRangeExplorationItems({
-                        min: responeHolder.data.data.min_price,
-                        max: responeHolder.data.data.max_price,
-                    });
-                    stateSetter(responeHolder.data.data.tokens);
-                    if (
-                        explorationItems.length >= responeHolder.data.data.total
-                    ) {
-                        setHasMoreData(false);
-                    }
-                }
-                break;
-
-            case "LoadMoreItems":
-                responeHolder = await functionTrigger(triggerInputObject);
-                if (explorationItems.length >= responeHolder.data.data.total) {
-                    setHasMoreData(false);
-                }
-                stateSetter([
-                    ...stateGetter,
-                    ...responeHolder.data.data.tokens,
-                ]);
-                break;
-
-            case "AllCollections":
-                responeHolder = await functionTrigger(triggerInputObject);
-                stateSetter(responeHolder.data.data);
-                break;
-
-            default:
-                break;
-        }
-    };
-
     let searchCollection = (keyword: any) => {
         if (keyword.length > 0) {
             let filtered = allCollections.filter(
@@ -217,6 +169,54 @@ export const ExplorerPage = () => {
             </>
         );
     };
+  
+  let dataProcessor = async (
+        functionTrigger: any,
+        triggerInputObject: any,
+        stateGetter: any,
+        stateSetter: any,
+        responeHolder: any,
+        requestCase: string
+    ) => {
+        switch (requestCase) {
+            case "ExplorationItems":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter([]);
+                if (responeHolder.data) {
+                    setTotalExplorationItems(responeHolder.data.data.total);
+                    setPriceRangeExplorationItems({
+                        min: responeHolder.data.data.min_price,
+                        max: responeHolder.data.data.max_price,
+                    });
+                    stateSetter(responeHolder.data.data.tokens);
+                    if (
+                        explorationItems.length >= responeHolder.data.data.total
+                    ) {
+                        setHasMoreData(false);
+                    }
+                }
+                break;
+
+            case "LoadMoreItems":
+                responeHolder = await functionTrigger(triggerInputObject);
+                if (explorationItems.length >= responeHolder.data.data.total) {
+                    setHasMoreData(false);
+                }
+                stateSetter([
+                    ...stateGetter,
+                    ...responeHolder.data.data.tokens,
+                ]);
+                break;
+
+            case "AllCollections":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter(responeHolder.data.data);
+                break;
+
+            default:
+                break;
+        }
+    };
 
     let openModal = (modal: any) => {
         switch (modal) {
@@ -277,6 +277,60 @@ export const ExplorerPage = () => {
                 );
                 break;
 
+            case "sort":
+                return (
+                    <div className="explorer-modal">
+                        <div className="explorer-modal__box">
+                            <div className="explorer-modal__box--title">
+                                <span>Sort</span>
+                                <span>Select an option to filter result</span>
+                            </div>
+                            <div className="explorer-modal__box--content">
+                                <div className="explorer-modal__box--content_item-sort">
+                                    <div
+                                        onClick={() =>
+                                            setSortTypeSelected("asc")
+                                        }
+                                        style={
+                                            sortTypeSelected == "asc"
+                                                ? { background: "#2081e2" }
+                                                : { background: "#303339" }
+                                        }
+                                    >
+                                        <span>Older Tokens</span>
+                                        <span>
+                                            Lorem ipsum dolor, sit amet
+                                            consectetur adipisicing elit.
+                                        </span>
+                                    </div>
+                                    <div
+                                        onClick={() =>
+                                            setSortTypeSelected("desc")
+                                        }
+                                        style={
+                                            sortTypeSelected == "desc"
+                                                ? { background: "#2081e2" }
+                                                : { background: "#303339" }
+                                        }
+                                    >
+                                        <span>Newest Tokens</span>
+                                        <span>
+                                            Lorem ipsum dolor, sit amet
+                                            consectetur adipisicing elit.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="explorer-modal__box--control_single">
+                                <button onClick={() => setShowModal(false)}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+                break;
+            
             case "collections":
                 return (
                     <div className="explorer-modal">
@@ -420,60 +474,6 @@ export const ExplorerPage = () => {
                 );
                 break;
 
-            case "sort":
-                return (
-                    <div className="explorer-modal">
-                        <div className="explorer-modal__box">
-                            <div className="explorer-modal__box--title">
-                                <span>Sort</span>
-                                <span>Select an option to filter result</span>
-                            </div>
-                            <div className="explorer-modal__box--content">
-                                <div className="explorer-modal__box--content_item-sort">
-                                    <div
-                                        onClick={() =>
-                                            setSortTypeSelected("asc")
-                                        }
-                                        style={
-                                            sortTypeSelected == "asc"
-                                                ? { background: "#2081e2" }
-                                                : { background: "#303339" }
-                                        }
-                                    >
-                                        <span>Older Tokens</span>
-                                        <span>
-                                            Lorem ipsum dolor, sit amet
-                                            consectetur adipisicing elit.
-                                        </span>
-                                    </div>
-                                    <div
-                                        onClick={() =>
-                                            setSortTypeSelected("desc")
-                                        }
-                                        style={
-                                            sortTypeSelected == "desc"
-                                                ? { background: "#2081e2" }
-                                                : { background: "#303339" }
-                                        }
-                                    >
-                                        <span>Newest Tokens</span>
-                                        <span>
-                                            Lorem ipsum dolor, sit amet
-                                            consectetur adipisicing elit.
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="explorer-modal__box--control_single">
-                                <button onClick={() => setShowModal(false)}>
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                );
-                break;
-
             case "priceRange":
                 return (
                     <div className="explorer-modal">
@@ -545,51 +545,6 @@ export const ExplorerPage = () => {
                 break;
         }
     };
-
-    useEffect(() => {
-        setExplorationItems([]);
-
-        dataProcessor(
-            getExplorationItemsRequestTrigger,
-            {
-                lastTimestamp: "0",
-                currentPage: "1",
-                nextPage: "1",
-                filters: `price_nominal|${priceRangeSelector}|${
-                    priceLimitationType == "More" ? ">" : "<"
-                }%3BAND%3Bstatus%7C${typeFilter}%7C%3D${
-                    collectionFilter.length > 0
-                        ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
-                        : ``
-                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30`,
-            },
-            explorationItems,
-            setExplorationItems,
-            {},
-            "ExplorationItems"
-        );
-
-        setHasMoreData(true);
-
-        dataProcessor(
-            getAllCollectionTrigger,
-            {},
-            allCollections,
-            setAllCollections,
-            {},
-            "AllCollections"
-        );
-    }, [
-        typeFilter,
-        priceRangeSelector,
-        priceLimitationType,
-        collectionFilter,
-        sortTypeSelected,
-    ]);
-
-    useEffect(() => {
-        setFilteredCollections(allCollections);
-    }, [allCollections]);
 
     let contentRender = (
         height: any,
@@ -663,6 +618,51 @@ export const ExplorerPage = () => {
         setCurrentPage(currentPage + 1);
         setNextPage(nextPage + 1);
     };
+  
+  useEffect(() => {
+        setExplorationItems([]);
+
+        dataProcessor(
+            getExplorationItemsRequestTrigger,
+            {
+                lastTimestamp: "0",
+                currentPage: "1",
+                nextPage: "1",
+                filters: `price_nominal|${priceRangeSelector}|${
+                    priceLimitationType == "More" ? ">" : "<"
+                }%3BAND%3Bstatus%7C${typeFilter}%7C%3D${
+                    collectionFilter.length > 0
+                        ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
+                        : ``
+                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30`,
+            },
+            explorationItems,
+            setExplorationItems,
+            {},
+            "ExplorationItems"
+        );
+
+        setHasMoreData(true);
+
+        dataProcessor(
+            getAllCollectionTrigger,
+            {},
+            allCollections,
+            setAllCollections,
+            {},
+            "AllCollections"
+        );
+    }, [
+        typeFilter,
+        priceRangeSelector,
+        priceLimitationType,
+        collectionFilter,
+        sortTypeSelected,
+    ]);
+
+    useEffect(() => {
+        setFilteredCollections(allCollections);
+    }, [allCollections]);
 
     return (
         <>
