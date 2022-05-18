@@ -186,9 +186,13 @@ export const ExplorerPage = () => {
             max: responeHolder.data.data.max_price,
           });
           stateSetter(responeHolder.data.data.tokens);
-          if (explorationItems.length >= responeHolder.data.data.total) {
-            setHasMoreData(false);
-          }
+          explorationItems.length == 0
+            ? responeHolder.data.data.total <= 30
+              ? setHasMoreData(false)
+              : setHasMoreData(true)
+            : explorationItems.length >= responeHolder.data.data.total
+            ? setHasMoreData(false)
+            : setHasMoreData(true);
         }
         break;
 
@@ -197,7 +201,9 @@ export const ExplorerPage = () => {
         if (explorationItems.length >= responeHolder.data.data.total) {
           setHasMoreData(false);
         }
-        stateSetter([...stateGetter, ...responeHolder.data.data.tokens]);
+        if (explorationItems.length < responeHolder.data.data.total) {
+          stateSetter([...stateGetter, ...responeHolder.data.data.tokens]);
+        }
         break;
 
       case "AllCollections":
@@ -286,9 +292,7 @@ export const ExplorerPage = () => {
                     }
                   >
                     <span>Older Tokens</span>
-                    <span>
-                      Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    </span>
+                    <span>List NFTs from longest listed to most recent.</span>
                   </div>
                   <div
                     onClick={() => setSortTypeSelected("desc")}
@@ -299,9 +303,7 @@ export const ExplorerPage = () => {
                     }
                   >
                     <span>Newest Tokens</span>
-                    <span>
-                      Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    </span>
+                    <span>List NFTs from most recent listed to longest.</span>
                   </div>
                 </div>
               </div>
@@ -436,8 +438,8 @@ export const ExplorerPage = () => {
                 <div>
                   <input
                     type="range"
-                    min={0.0}
-                    max={1}
+                    min={0}
+                    max={100}
                     defaultValue={priceRangeSelector}
                     step={0.01}
                     onInput={(e) => {
@@ -471,7 +473,14 @@ export const ExplorerPage = () => {
                 </div>
 
                 <div className="explorer-modal__box--content_item-priceRangeValue">
-                  <span>{priceRangeSelector}</span>
+                  <input
+                    type="text"
+                    onChange={(e) => {
+                      let et = e.target as any;
+                      setPriceRangeSelector(et.value);
+                    }}
+                    value={priceRangeSelector}
+                  ></input>
                   <span>EGLD</span>
                 </div>
               </div>
@@ -563,6 +572,7 @@ export const ExplorerPage = () => {
 
   useEffect(() => {
     setExplorationItems([]);
+    setHasMoreData(true);
 
     dataProcessor(
       getExplorationItemsRequestTrigger,
@@ -583,8 +593,6 @@ export const ExplorerPage = () => {
       {},
       "ExplorationItems"
     );
-
-    setHasMoreData(true);
 
     dataProcessor(
       getAllCollectionTrigger,
@@ -805,8 +813,8 @@ export const ExplorerPage = () => {
             next={() =>
               loadMoreItems(
                 explorationItems[explorationItems.length - 1]
-                  ? explorationItems[explorationItems.length - 1]
-                      .tokenLastMarketTimestamp
+                  ? explorationItems[explorationItems.length - 1].token
+                      .lastMarketTimestamp
                   : null,
                 currentPage,
                 nextPage,
@@ -816,12 +824,16 @@ export const ExplorerPage = () => {
                   collectionFilter.length > 0
                     ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
                     : ``
-                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30`
+                }&sort=last_market_timestamp|${sortTypeSelected}&limit=${
+                  totalExplorationItems - explorationItems.length > 30
+                    ? "30"
+                    : totalExplorationItems - explorationItems.length
+                }`
               )
             }
             hasMore={hasMoreData}
             loader={<></>}
-            height={isMobile() ? 480 : 705}
+            height={isMobile() ? 520 : 705}
             endMessage={<></>}
           >
             <div className="explorer-contentBox__holderBox">
