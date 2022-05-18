@@ -16,7 +16,6 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 export const ExplorerPage = () => {
-
     let [explorationItems, setExplorationItems] = useState<any>([]);
     let [totalExplorationItems, setTotalExplorationItems] = useState<any>(0);
     let [priceRangeExplorationItems, setPriceRangeExplorationItems] = useState<
@@ -169,8 +168,8 @@ export const ExplorerPage = () => {
             </>
         );
     };
-  
-  let dataProcessor = async (
+
+    let dataProcessor = async (
         functionTrigger: any,
         triggerInputObject: any,
         stateGetter: any,
@@ -189,11 +188,7 @@ export const ExplorerPage = () => {
                         max: responeHolder.data.data.max_price,
                     });
                     stateSetter(responeHolder.data.data.tokens);
-                    if (
-                        explorationItems.length >= responeHolder.data.data.total
-                    ) {
-                        setHasMoreData(false);
-                    }
+                    explorationItems.length == 0 ? responeHolder.data.data.total <= 30 ? setHasMoreData(false) : setHasMoreData(true) : explorationItems.length >= responeHolder.data.data.total ? setHasMoreData(false) : setHasMoreData(true)
                 }
                 break;
 
@@ -202,10 +197,12 @@ export const ExplorerPage = () => {
                 if (explorationItems.length >= responeHolder.data.data.total) {
                     setHasMoreData(false);
                 }
-                stateSetter([
-                    ...stateGetter,
-                    ...responeHolder.data.data.tokens,
-                ]);
+                if (explorationItems.length < responeHolder.data.data.total) {
+                    stateSetter([
+                        ...stateGetter,
+                        ...responeHolder.data.data.tokens,
+                    ]);
+                }
                 break;
 
             case "AllCollections":
@@ -299,8 +296,7 @@ export const ExplorerPage = () => {
                                     >
                                         <span>Older Tokens</span>
                                         <span>
-                                            Lorem ipsum dolor, sit amet
-                                            consectetur adipisicing elit.
+                                        List NFTs from longest listed to most recent. 
                                         </span>
                                     </div>
                                     <div
@@ -315,8 +311,7 @@ export const ExplorerPage = () => {
                                     >
                                         <span>Newest Tokens</span>
                                         <span>
-                                            Lorem ipsum dolor, sit amet
-                                            consectetur adipisicing elit.
+                                        List NFTs from most recent listed to longest.
                                         </span>
                                     </div>
                                 </div>
@@ -330,7 +325,7 @@ export const ExplorerPage = () => {
                     </div>
                 );
                 break;
-            
+
             case "collections":
                 return (
                     <div className="explorer-modal">
@@ -488,8 +483,8 @@ export const ExplorerPage = () => {
                                 <div>
                                     <input
                                         type="range"
-                                        min={0.0}
-                                        max={1}
+                                        min={0}
+                                        max={100}
                                         defaultValue={priceRangeSelector}
                                         step={0.01}
                                         onInput={(e) => {
@@ -618,9 +613,10 @@ export const ExplorerPage = () => {
         setCurrentPage(currentPage + 1);
         setNextPage(nextPage + 1);
     };
-  
-  useEffect(() => {
+
+    useEffect(() => {
         setExplorationItems([]);
+        setHasMoreData(true);
 
         dataProcessor(
             getExplorationItemsRequestTrigger,
@@ -641,8 +637,6 @@ export const ExplorerPage = () => {
             {},
             "ExplorationItems"
         );
-
-        setHasMoreData(true);
 
         dataProcessor(
             getAllCollectionTrigger,
@@ -873,7 +867,7 @@ export const ExplorerPage = () => {
                                 explorationItems[explorationItems.length - 1]
                                     ? explorationItems[
                                           explorationItems.length - 1
-                                      ].tokenLastMarketTimestamp
+                                      ].token.lastMarketTimestamp
                                     : null,
                                 currentPage,
                                 nextPage,
@@ -883,12 +877,12 @@ export const ExplorerPage = () => {
                                     collectionFilter.length > 0
                                         ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
                                         : ``
-                                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30`
+                                }&sort=last_market_timestamp|${sortTypeSelected}&limit=${(totalExplorationItems - explorationItems.length) > 30 ? '30' : (totalExplorationItems - explorationItems.length)}`
                             )
                         }
                         hasMore={hasMoreData}
                         loader={<></>}
-                        height={isMobile() ? 480 : 705}
+                        height={isMobile() ? 520 : 705}
                         endMessage={<></>}
                     >
                         <div className="explorer-contentBox__holderBox">
