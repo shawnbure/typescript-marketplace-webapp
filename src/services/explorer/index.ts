@@ -23,7 +23,6 @@ export const explorerApi = createApi({
                     method: GET,
                     url: `/${mainPath}/all/${lastTimestamp}/${currentPage}/${nextPage}?filter=${filters}`,
                 };
-                console.log('customRequestArg', customRequestArg)
                 return customRequestArg;
             },
         }),

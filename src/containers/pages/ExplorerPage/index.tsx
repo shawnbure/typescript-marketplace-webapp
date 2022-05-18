@@ -16,7 +16,6 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 export const ExplorerPage = () => {
-
     let [explorationItems, setExplorationItems] = useState<any>([]);
     let [totalExplorationItems, setTotalExplorationItems] = useState<any>(0);
     let [priceRangeExplorationItems, setPriceRangeExplorationItems] = useState<
@@ -57,54 +56,6 @@ export const ExplorerPage = () => {
     ] = useGetExplorationItemsMutation();
 
     const [getAllCollectionTrigger] = useGetAllCollectionMutation();
-
-    let dataProcessor = async (
-        functionTrigger: any,
-        triggerInputObject: any,
-        stateGetter: any,
-        stateSetter: any,
-        responeHolder: any,
-        requestCase: string
-    ) => {
-        switch (requestCase) {
-            case "ExplorationItems":
-                responeHolder = await functionTrigger(triggerInputObject);
-                stateSetter([]);
-                if (responeHolder.data) {
-                    setTotalExplorationItems(responeHolder.data.data.total);
-                    setPriceRangeExplorationItems({
-                        min: responeHolder.data.data.min_price,
-                        max: responeHolder.data.data.max_price,
-                    });
-                    stateSetter(responeHolder.data.data.tokens);
-                    if (
-                        explorationItems.length >= responeHolder.data.data.total
-                    ) {
-                        setHasMoreData(false);
-                    }
-                }
-                break;
-
-            case "LoadMoreItems":
-                responeHolder = await functionTrigger(triggerInputObject);
-                if (explorationItems.length >= responeHolder.data.data.total) {
-                    setHasMoreData(false);
-                }
-                stateSetter([
-                    ...stateGetter,
-                    ...responeHolder.data.data.tokens,
-                ]);
-                break;
-
-            case "AllCollections":
-                responeHolder = await functionTrigger(triggerInputObject);
-                stateSetter(responeHolder.data.data);
-                break;
-
-            default:
-                break;
-        }
-    };
 
     let searchCollection = (keyword: any) => {
         if (keyword.length > 0) {
@@ -218,6 +169,52 @@ export const ExplorerPage = () => {
         );
     };
 
+    let dataProcessor = async (
+        functionTrigger: any,
+        triggerInputObject: any,
+        stateGetter: any,
+        stateSetter: any,
+        responeHolder: any,
+        requestCase: string
+    ) => {
+        switch (requestCase) {
+            case "ExplorationItems":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter([]);
+                if (responeHolder.data) {
+                    setTotalExplorationItems(responeHolder.data.data.total);
+                    setPriceRangeExplorationItems({
+                        min: responeHolder.data.data.min_price,
+                        max: responeHolder.data.data.max_price,
+                    });
+                    stateSetter(responeHolder.data.data.tokens);
+                    explorationItems.length == 0 ? responeHolder.data.data.total <= 30 ? setHasMoreData(false) : setHasMoreData(true) : explorationItems.length >= responeHolder.data.data.total ? setHasMoreData(false) : setHasMoreData(true)
+                }
+                break;
+
+            case "LoadMoreItems":
+                responeHolder = await functionTrigger(triggerInputObject);
+                if (explorationItems.length >= responeHolder.data.data.total) {
+                    setHasMoreData(false);
+                }
+                if (explorationItems.length < responeHolder.data.data.total) {
+                    stateSetter([
+                        ...stateGetter,
+                        ...responeHolder.data.data.tokens,
+                    ]);
+                }
+                break;
+
+            case "AllCollections":
+                responeHolder = await functionTrigger(triggerInputObject);
+                stateSetter(responeHolder.data.data);
+                break;
+
+            default:
+                break;
+        }
+    };
+
     let openModal = (modal: any) => {
         switch (modal) {
             case "saleType":
@@ -265,6 +262,58 @@ export const ExplorerPage = () => {
                                         style={{ color: "#8a939b" }}
                                     />
                                     <span>List</span>
+                                </div>
+                            </div>
+                            <div className="explorer-modal__box--control_single">
+                                <button onClick={() => setShowModal(false)}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+                break;
+
+            case "sort":
+                return (
+                    <div className="explorer-modal">
+                        <div className="explorer-modal__box">
+                            <div className="explorer-modal__box--title">
+                                <span>Sort</span>
+                                <span>Select an option to filter result</span>
+                            </div>
+                            <div className="explorer-modal__box--content">
+                                <div className="explorer-modal__box--content_item-sort">
+                                    <div
+                                        onClick={() =>
+                                            setSortTypeSelected("asc")
+                                        }
+                                        style={
+                                            sortTypeSelected == "asc"
+                                                ? { background: "#2081e2" }
+                                                : { background: "#303339" }
+                                        }
+                                    >
+                                        <span>Older Tokens</span>
+                                        <span>
+                                        List NFTs from longest listed to most recent. 
+                                        </span>
+                                    </div>
+                                    <div
+                                        onClick={() =>
+                                            setSortTypeSelected("desc")
+                                        }
+                                        style={
+                                            sortTypeSelected == "desc"
+                                                ? { background: "#2081e2" }
+                                                : { background: "#303339" }
+                                        }
+                                    >
+                                        <span>Newest Tokens</span>
+                                        <span>
+                                        List NFTs from most recent listed to longest.
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             <div className="explorer-modal__box--control_single">
@@ -420,60 +469,6 @@ export const ExplorerPage = () => {
                 );
                 break;
 
-            case "sort":
-                return (
-                    <div className="explorer-modal">
-                        <div className="explorer-modal__box">
-                            <div className="explorer-modal__box--title">
-                                <span>Sort</span>
-                                <span>Select an option to filter result</span>
-                            </div>
-                            <div className="explorer-modal__box--content">
-                                <div className="explorer-modal__box--content_item-sort">
-                                    <div
-                                        onClick={() =>
-                                            setSortTypeSelected("asc")
-                                        }
-                                        style={
-                                            sortTypeSelected == "asc"
-                                                ? { background: "#2081e2" }
-                                                : { background: "#303339" }
-                                        }
-                                    >
-                                        <span>Older Tokens</span>
-                                        <span>
-                                            Lorem ipsum dolor, sit amet
-                                            consectetur adipisicing elit.
-                                        </span>
-                                    </div>
-                                    <div
-                                        onClick={() =>
-                                            setSortTypeSelected("desc")
-                                        }
-                                        style={
-                                            sortTypeSelected == "desc"
-                                                ? { background: "#2081e2" }
-                                                : { background: "#303339" }
-                                        }
-                                    >
-                                        <span>Newest Tokens</span>
-                                        <span>
-                                            Lorem ipsum dolor, sit amet
-                                            consectetur adipisicing elit.
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="explorer-modal__box--control_single">
-                                <button onClick={() => setShowModal(false)}>
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                );
-                break;
-
             case "priceRange":
                 return (
                     <div className="explorer-modal">
@@ -488,8 +483,8 @@ export const ExplorerPage = () => {
                                 <div>
                                     <input
                                         type="range"
-                                        min={0.0}
-                                        max={1}
+                                        min={0}
+                                        max={100}
                                         defaultValue={priceRangeSelector}
                                         step={0.01}
                                         onInput={(e) => {
@@ -545,51 +540,6 @@ export const ExplorerPage = () => {
                 break;
         }
     };
-
-    useEffect(() => {
-        setExplorationItems([]);
-
-        dataProcessor(
-            getExplorationItemsRequestTrigger,
-            {
-                lastTimestamp: "0",
-                currentPage: "1",
-                nextPage: "1",
-                filters: `price_nominal|${priceRangeSelector}|${
-                    priceLimitationType == "More" ? ">" : "<"
-                }%3BAND%3Bstatus%7C${typeFilter}%7C%3D${
-                    collectionFilter.length > 0
-                        ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
-                        : ``
-                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30`,
-            },
-            explorationItems,
-            setExplorationItems,
-            {},
-            "ExplorationItems"
-        );
-
-        setHasMoreData(true);
-
-        dataProcessor(
-            getAllCollectionTrigger,
-            {},
-            allCollections,
-            setAllCollections,
-            {},
-            "AllCollections"
-        );
-    }, [
-        typeFilter,
-        priceRangeSelector,
-        priceLimitationType,
-        collectionFilter,
-        sortTypeSelected,
-    ]);
-
-    useEffect(() => {
-        setFilteredCollections(allCollections);
-    }, [allCollections]);
 
     let contentRender = (
         height: any,
@@ -663,6 +613,50 @@ export const ExplorerPage = () => {
         setCurrentPage(currentPage + 1);
         setNextPage(nextPage + 1);
     };
+
+    useEffect(() => {
+        setExplorationItems([]);
+        setHasMoreData(true);
+
+        dataProcessor(
+            getExplorationItemsRequestTrigger,
+            {
+                lastTimestamp: "0",
+                currentPage: "1",
+                nextPage: "1",
+                filters: `price_nominal|${priceRangeSelector}|${
+                    priceLimitationType == "More" ? ">" : "<"
+                }%3BAND%3Bstatus%7C${typeFilter}%7C%3D${
+                    collectionFilter.length > 0
+                        ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
+                        : ``
+                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30`,
+            },
+            explorationItems,
+            setExplorationItems,
+            {},
+            "ExplorationItems"
+        );
+
+        dataProcessor(
+            getAllCollectionTrigger,
+            {},
+            allCollections,
+            setAllCollections,
+            {},
+            "AllCollections"
+        );
+    }, [
+        typeFilter,
+        priceRangeSelector,
+        priceLimitationType,
+        collectionFilter,
+        sortTypeSelected,
+    ]);
+
+    useEffect(() => {
+        setFilteredCollections(allCollections);
+    }, [allCollections]);
 
     return (
         <>
@@ -873,7 +867,7 @@ export const ExplorerPage = () => {
                                 explorationItems[explorationItems.length - 1]
                                     ? explorationItems[
                                           explorationItems.length - 1
-                                      ].tokenLastMarketTimestamp
+                                      ].token.lastMarketTimestamp
                                     : null,
                                 currentPage,
                                 nextPage,
@@ -883,12 +877,12 @@ export const ExplorerPage = () => {
                                     collectionFilter.length > 0
                                         ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
                                         : ``
-                                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30`
+                                }&sort=last_market_timestamp|${sortTypeSelected}&limit=${(totalExplorationItems - explorationItems.length) > 30 ? '30' : (totalExplorationItems - explorationItems.length)}`
                             )
                         }
                         hasMore={hasMoreData}
                         loader={<></>}
-                        height={isMobile() ? 480 : 705}
+                        height={isMobile() ? 520 : 705}
                         endMessage={<></>}
                     >
                         <div className="explorer-contentBox__holderBox">
