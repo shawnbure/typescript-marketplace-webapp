@@ -207,7 +207,7 @@ export const ActivityPage = () => {
                                                             );
                                                         } else {
                                                             toast.error(
-                                                                `Error! Duplicate item or more than 1 items can not be selected`,
+                                                                `Error! Duplicate item or more than 1 item can not be selected`,
                                                                 {
                                                                     autoClose: 5000,
                                                                     draggable: true,
@@ -549,7 +549,7 @@ export const ActivityPage = () => {
                                                             );
                                                         } else {
                                                             toast.error(
-                                                                `Error! Duplicate item or more than 1 items can not be selected`,
+                                                                `Error! Duplicate item or more than 1 item can not be selected`,
                                                                 {
                                                                     autoClose: 5000,
                                                                     draggable: true,
