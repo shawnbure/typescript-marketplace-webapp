@@ -1215,7 +1215,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
                     {tokenMetadataData?.data?.attributes?.map(
                       (attribute: any) => {
                         const { trait_type, value } = attribute;
-
                         const itemsTotal =
                           collectionData?.data?.statistics?.itemsTotal || 0;
 

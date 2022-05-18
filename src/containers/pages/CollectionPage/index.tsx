@@ -288,7 +288,6 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
     attributes?.forEach((attribute: any) => {
       const { trait_type, value, total } = attribute;
-
       if (!mappedAttributes[trait_type]) {
         mappedAttributes[trait_type] = {};
       }
