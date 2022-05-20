@@ -17,6 +17,7 @@ export const routePaths = {
     accountSettings: '/account/settings',
     collectionCreate: "/collection/create",
     collection: "/collection/:collectionId",
+    freeMintCollection: "/collection/1852-568e49",
     token: "/token/:collectionId/:tokenNonce",
     collectionRegister: "/collection/register",
     resources: "https://erdseanft.gitbook.io/docs/",
