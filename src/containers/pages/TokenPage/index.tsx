@@ -5,143 +5,197 @@ import { useEffect, useState } from "react";
 import * as Dapp from "@elrondnetwork/dapp";
 import { Helmet } from "react-helmet";
 
-import Collapsible from 'react-collapsible';
+import Collapsible from "react-collapsible";
 import { Redirect, useLocation, Link, useParams } from "react-router-dom";
-import * as faIcons from '@fortawesome/free-solid-svg-icons';
-import * as faBrands from '@fortawesome/free-brands-svg-icons';
-import { toast } from 'react-toastify';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import DateTimePicker from 'react-datetime-picker';
-import moment from 'moment';
+import * as faIcons from "@fortawesome/free-solid-svg-icons";
+import * as faBrands from "@fortawesome/free-brands-svg-icons";
+import { toast } from "react-toastify";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import DateTimePicker from "react-datetime-picker";
+import moment from "moment";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useGetAcceptOfferTemplateMutation, useGetBuyNftTemplateMutation, useGetCancelOfferTemplateMutation, useGetEndAuctionTemplateMutation, useGetMakeBidTemplateMutation, useGetMakeOfferTemplateMutation, useGetWithdrawNftTemplateMutation, useGetStakeNFTTemplateMutation, useGetUnstakeNFTTemplateMutation } from 'services/tx-template';
-import { useGetTokenBidsMutation, useGetTokenDataMutation, useGetTokenMetadataMutation, useGetTokenOffersMutation, useGetTransactionsMutation, useRefreshTokenMetadataMutation, useWithdrawTokenMutation, } from "services/tokens";
+import {
+  useGetAcceptOfferTemplateMutation,
+  useGetBuyNftTemplateMutation,
+  useGetCancelOfferTemplateMutation,
+  useGetEndAuctionTemplateMutation,
+  useGetMakeBidTemplateMutation,
+  useGetMakeOfferTemplateMutation,
+  useGetWithdrawNftTemplateMutation,
+  useGetStakeNFTTemplateMutation,
+  useGetUnstakeNFTTemplateMutation,
+} from "services/tx-template";
+import {
+  useGetTokenBidsMutation,
+  useGetTokenDataMutation,
+  useGetTokenMetadataMutation,
+  useGetTokenOffersMutation,
+  useGetTransactionsMutation,
+  useRefreshTokenMetadataMutation,
+  useWithdrawTokenMutation,
+} from "services/tokens";
 
 import { prepareTransaction, getQuerystringValue } from "utils/transactions";
 
 import { UrlParameters } from "./interfaces";
 import { useGetEgldPriceQuery } from "services/oracle";
 import { formatImgLink, shorterAddress } from "utils";
-import { ACCEPT_OFFER, BUY, CANCEL_OFFER, END_AUCTION, MAKE_BID, MAKE_OFFER, SELL, WITHDRAW, AUCTION, STAKE, UNSTAKE } from "constants/actions";
+import {
+  ACCEPT_OFFER,
+  BUY,
+  CANCEL_OFFER,
+  END_AUCTION,
+  MAKE_BID,
+  MAKE_OFFER,
+  SELL,
+  WITHDRAW,
+  AUCTION,
+  STAKE,
+  UNSTAKE,
+} from "constants/actions";
 import { useAppDispatch } from "redux/store";
 import { setShouldDisplayWalletSidebar } from "redux/slices/ui";
 
-import { useGetAccountTokenGatewayMutation } from 'services/accounts';
-import { useGetCollectionByIdMutation } from 'services/collections';
+import { useGetAccountTokenGatewayMutation } from "services/accounts";
+import { useGetCollectionByIdMutation } from "services/collections";
 
-import { Footer } from 'components/index';
+import { Footer } from "components/index";
 
 /* temporary hot fixes */
-import { alphaToastMessage } from 'components/AlphaToastError';
-import {releaseFeaureStaking} from 'configs/dappConfig';
+import { alphaToastMessage } from "components/AlphaToastError";
+import { releaseFeaureStaking } from "configs/dappConfig";
 
-export const TokenPage: (props: any) => any = ({ }) => {
+export const TokenPage: (props: any) => any = ({}) => {
+  const dispatch = useAppDispatch();
+  //const { pathname } = useLocation();
 
-    const dispatch = useAppDispatch();
-    //const { pathname } = useLocation();
+  //this walletAddressParam below actuall gets the contract address for the URL?
+  const {
+    collectionId,
+    tokenNonce,
+    walletAddress: walletAddressParam,
+  } = useParams<UrlParameters>();
+  const [hasLoadMoreActivity, setHasLoadMoreActivity] = useState(true);
+  const [offerAmount, setOfferAmount] = useState<number>(0);
+  const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
+  const [expireOffer, setExpireOffer] = useState<any>();
+  const [transactions, setTransactions] = useState<any>([]);
+  const { loggedIn, address: userWalletAddress } = Dapp.useContext();
 
-    //this walletAddressParam below actuall gets the contract address for the URL?
-    const { collectionId, tokenNonce, walletAddress: walletAddressParam } = useParams<UrlParameters>();
-    const [hasLoadMoreActivity, setHasLoadMoreActivity] = useState(true);
-    const [offerAmount, setOfferAmount] = useState<number>(0);
-    const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
-    const [expireOffer, setExpireOffer] = useState<any>();
-    const [transactions, setTransactions] = useState<any>([]);
-    const { loggedIn, address: userWalletAddress, } = Dapp.useContext();
+  const sendTransaction = Dapp.useSendTransaction();
 
-    const sendTransaction = Dapp.useSendTransaction();
+  const [
+    getAccountTokenTrigger,
+    {
+      data: gatewayTokenData,
+      // isLoading: isLoadingGatewayTokenDataQuery,
+      isSuccess: isSuccessGatewayTokenDataQuery,
+      isError: isErrorGatewayTokenDataQuery,
+      // isUninitialized: isUninitializedGatewayTokenDataQuery,
+    },
+  ] = useGetAccountTokenGatewayMutation();
 
-    const [getAccountTokenTrigger, {
-        data: gatewayTokenData,
-        // isLoading: isLoadingGatewayTokenDataQuery,
-        isSuccess: isSuccessGatewayTokenDataQuery,
-        isError: isErrorGatewayTokenDataQuery,
-        // isUninitialized: isUninitializedGatewayTokenDataQuery,
-    }] = useGetAccountTokenGatewayMutation();
+  const [
+    getCollectionByIdTrigger,
+    { data: collectionData, isError: isErrorGetCollectionData },
+  ] = useGetCollectionByIdMutation();
 
+  const [
+    getTokenDataTrigger,
+    {
+      data: tokenResponseData,
+      isError: isErrorGetTokenDataQuery,
+      isSuccess: isSuccessGetTokenDataQuery,
+      isUninitialized: isUninitializedGetTokenDataQuery,
+    },
+  ] = useGetTokenDataMutation();
 
-    const [getCollectionByIdTrigger, {
-        data: collectionData,
-        isError: isErrorGetCollectionData,
-    }] = useGetCollectionByIdMutation();
+  const [
+    getTokenMetadataTrigger,
+    {
+      data: tokenMetadataData,
+      isUninitialized: isUninitializedGetTokenMetadata,
+    },
+  ] = useGetTokenMetadataMutation();
 
+  const [
+    getTokenOffersTrigger,
+    { data: tokenOffersData },
+  ] = useGetTokenOffersMutation();
 
-    const [getTokenDataTrigger, {
+  const [
+    getTokenBidsTrigger,
+    { data: tokenBidsData },
+  ] = useGetTokenBidsMutation();
 
-        data: tokenResponseData,
-        isError: isErrorGetTokenDataQuery,
-        isSuccess: isSuccessGetTokenDataQuery,
-        isUninitialized: isUninitializedGetTokenDataQuery,
+  const [
+    getTokenTransactionsTrigger,
+    { data: getTokenTransactionsData },
+  ] = useGetTransactionsMutation();
 
-    }] = useGetTokenDataMutation();
+  const [getMakeBidTemplateTrigger] = useGetMakeBidTemplateMutation();
+  const [getMakeOfferTemplateTrigger] = useGetMakeOfferTemplateMutation();
+  const [getEndAuctionTemplateTrigger] = useGetEndAuctionTemplateMutation();
+  const [getAcceptOfferTemplateTrigger] = useGetAcceptOfferTemplateMutation();
+  const [getCancelOfferTemplateTrigger] = useGetCancelOfferTemplateMutation();
+  const [refreshMetadataTrigger] = useRefreshTokenMetadataMutation();
 
+  const {
+    data: egldPriceData,
+    // isError: isErrorEgldPriceQuery,
+    // isLoading: isLoadingEgldPriceQuery,
+    isSuccess: isSuccessEgldPriceQuery,
+  } = useGetEgldPriceQuery();
 
-    const [getTokenMetadataTrigger, {
-        data: tokenMetadataData,
-        isUninitialized: isUninitializedGetTokenMetadata
-    }] = useGetTokenMetadataMutation();
+  const isEgldPriceFetched: boolean =
+    isSuccessEgldPriceQuery && Boolean(egldPriceData);
+  const isTokenDataFetched: boolean =
+    isSuccessGetTokenDataQuery && Boolean(tokenResponseData?.data?.token);
+  const isGatewayTokenFetched: boolean =
+    isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
+  const shouldRenderPage: boolean = walletAddressParam
+    ? isGatewayTokenFetched
+    : isTokenDataFetched && isEgldPriceFetched;
 
-    const [getTokenOffersTrigger, {
-        data: tokenOffersData,
-    }] = useGetTokenOffersMutation();
+  //const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
 
-    const [getTokenBidsTrigger, {
-        data: tokenBidsData,
-    }] = useGetTokenBidsMutation();
+  const [getStakeNftTemplateQueryTrigger] = useGetStakeNFTTemplateMutation();
+  const [
+    getUnstakeNftTemplateQueryTrigger,
+  ] = useGetUnstakeNFTTemplateMutation();
+  const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
+  const [
+    getWithdrawNftTemplateQueryTrigger,
+  ] = useGetWithdrawNftTemplateMutation();
 
+  const triggerActivityLoad = async ({
+    mergeWithExisting = false,
+    newFilterQuery,
+    newSortQuery,
+  }: {
+    mergeWithExisting?: boolean;
+    newFilterQuery?: any;
+    newSortQuery?: any;
+  }) => {
+    // const filters = newFilterQuery ? newFilterQuery : filterQuery;
+    const offset = mergeWithExisting ? transactions.length : 0;
+    // const sortRules = newSortQuery ? newSortQuery : sort;
 
-    const [getTokenTransactionsTrigger, {
-        data: getTokenTransactionsData,
-    }] = useGetTransactionsMutation();
-
-    const [getMakeBidTemplateTrigger] = useGetMakeBidTemplateMutation();
-    const [getMakeOfferTemplateTrigger] = useGetMakeOfferTemplateMutation();
-    const [getEndAuctionTemplateTrigger] = useGetEndAuctionTemplateMutation();
-    const [getAcceptOfferTemplateTrigger] = useGetAcceptOfferTemplateMutation();
-    const [getCancelOfferTemplateTrigger] = useGetCancelOfferTemplateMutation();
-    const [refreshMetadataTrigger] = useRefreshTokenMetadataMutation();
-
-    const {
-
-        data: egldPriceData,
-        // isError: isErrorEgldPriceQuery,
-        // isLoading: isLoadingEgldPriceQuery,
-        isSuccess: isSuccessEgldPriceQuery,
-
-    } = useGetEgldPriceQuery();
-
-    const isEgldPriceFetched: boolean = isSuccessEgldPriceQuery && Boolean(egldPriceData);
-    const isTokenDataFetched: boolean = isSuccessGetTokenDataQuery && Boolean(tokenResponseData?.data?.token);
-    const isGatewayTokenFetched: boolean = isSuccessGatewayTokenDataQuery && Boolean(gatewayTokenData?.data);
-    const shouldRenderPage: boolean = walletAddressParam ? isGatewayTokenFetched : (isTokenDataFetched && isEgldPriceFetched);
-
-    //const shouldRedirect: boolean = walletAddressParam ? (isErrorGatewayTokenDataQuery || (!Boolean(gatewayTokenData?.data?.tokenData?.creator) && isSuccessGatewayTokenDataQuery)) : (isErrorGetTokenDataQuery || (!Boolean(tokenResponseData?.data?.ownerWalletAddress) && isSuccessGetTokenDataQuery));
-    
-    const [getStakeNftTemplateQueryTrigger] = useGetStakeNFTTemplateMutation();
-    const [getUnstakeNftTemplateQueryTrigger] = useGetUnstakeNFTTemplateMutation();
-    const [getBuyNftTemplateQueryTrigger] = useGetBuyNftTemplateMutation();
-    const [getWithdrawNftTemplateQueryTrigger] = useGetWithdrawNftTemplateMutation();
-    
-    const triggerActivityLoad = async ({
-      mergeWithExisting = false,
-      newFilterQuery,
-      newSortQuery,
-    }: {
-      mergeWithExisting?: boolean;
-      newFilterQuery?: any;
-      newSortQuery?: any;
-    }) => {
-      // const filters = newFilterQuery ? newFilterQuery : filterQuery;
-      const offset = mergeWithExisting ? transactions.length : 0;
-      // const sortRules = newSortQuery ? newSortQuery : sort;
-  
-      const tokenTransactionsResponse: any = await getTokenTransactionsTrigger({
-        collectionId,
-        tokenNonce,
-        offset: offset,
-        limit: 8,
-      });
+    const tokenTransactionsResponse: any = await getTokenTransactionsTrigger({
+      collectionId,
+      tokenNonce,
+      offset: offset,
+      limit: 8,
+    });
 
     if (getTokenTransactionsData?.data) {
       const txsResponse = tokenTransactionsResponse?.data?.data;
@@ -159,16 +213,18 @@ export const TokenPage: (props: any) => any = ({ }) => {
   };
 
   const getInitialTxs = async () => {
-
     const response: any = await getTokenTransactionsTrigger({
       collectionId,
       tokenNonce,
       offset: 0,
       limit: 10,
     });
-   
-    if (response?.error ) {
-      if ((response?.error.data.error as string).indexOf("record not found") !== -1){
+
+    if (response?.error) {
+      if (
+        (response?.error.data.error as string).indexOf("record not found") !==
+        -1
+      ) {
         return;
       }
       toast.error(`Error getting initial transcaction history`, {
@@ -185,91 +241,63 @@ export const TokenPage: (props: any) => any = ({ }) => {
     setTransactions(response.data.data);
   };
 
-
-
   const [loadingImageLinkType, setLoadingImageLinkType] = useState(false);
 
-  useEffect(() => { 
-    
-    if( loadingImageLinkType )
-    {
+  useEffect(() => {
+    if (loadingImageLinkType) {
       //fetch(imageLink)
       //fetch("https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM")
-      
-      fetch(imageLink)
-      .then(response => {
-  
-          response.blob().then(blob => {
 
-            if( blob.type.includes("image") )
-            {
-              setImageMediaType(1);
-            }
-            else if( blob.type.includes("video") )
-            {
-              setImageMediaType(2);
-            }
+      fetch(imageLink).then((response) => {
+        response.blob().then((blob) => {
+          if (blob.type.includes("image")) {
+            setImageMediaType(1);
+          } else if (blob.type.includes("video")) {
+            setImageMediaType(2);
+          }
 
-            //console.log("blob.type:" + blob.type );
-  
-  
-          });
-      });  
+          //console.log("blob.type:" + blob.type );
+        });
+      });
     }
-    
-  
-  },[loadingImageLinkType]);
-
-
-
+  }, [loadingImageLinkType]);
 
   //0: none, 1: image, 2: video
   const [imageMediaType, setImageMediaType] = useState<number>(0);
 
+  useEffect(() => {
+    getTokenOffersTrigger({
+      collectionId,
+      tokenNonce,
+      offset: 0,
+      limit: 10,
+    });
 
+    getTokenBidsTrigger({
+      collectionId,
+      tokenNonce,
+      offset: 0,
+      limit: 10,
+    });
 
-
-
-
-    useEffect(() => {
-
-      getTokenOffersTrigger({
-          collectionId,
-          tokenNonce,
-          offset: 0,
-          limit: 10,
-      });
-  
-      getTokenBidsTrigger({
-          collectionId,
-          tokenNonce,
-          offset: 0,
-          limit: 10,
-      });
-  
     getInitialTxs();
 
     getCollectionByIdTrigger({ collectionId: collectionId });
-
-
 
     if (walletAddressParam) {
       getAccountTokenTrigger({
         userWalletAddress: walletAddressParam,
         identifier: collectionId,
         nonce: tokenNonce,
-      }).then(r=>{
+      }).then((r) => {
         setLoadingImageLinkType(true);
-      })
+      });
       //return; - this was commented out because I seem to believe the logic is backwards but at least I can get the data - SMB
     }
 
-    getTokenDataTrigger({ collectionId, tokenNonce }).then(r=>{
-        setLoadingImageLinkType(true);
-      });
-
-
-
+    getTokenDataTrigger({ collectionId, tokenNonce }).then((r) => {
+      setLoadingImageLinkType(true);
+    });
   }, []);
 
   if (isErrorGetTokenDataQuery && !walletAddressParam) {
@@ -299,14 +327,22 @@ export const TokenPage: (props: any) => any = ({ }) => {
   }
 
   const getBaseTokenData = (tokenData: any) => {
-
     const token = isOurs ? tokenData.token : tokenData.tokenData;
+    const attributes = isOurs ? tokenData.token.attributes : [];
     const nonce = token.nonce;
     const name = isOurs ? token.tokenName : token.name;
-    const ownerWalletAddress = isOurs ? tokenData.ownerWalletAddress : walletAddressParam;
-    const imageLink: string = isOurs ? token.imageLink : atob(token?.uris?.[0] || "");
-    let metadataLink: string = isOurs ? token.metadataLink : atob(token?.uris?.[1] || "");
-    const royaltiesPercent = isOurs ? token.royaltiesPercent : parseFloat(token.royalties) / 100;
+    const ownerWalletAddress = isOurs
+      ? tokenData.ownerWalletAddress
+      : walletAddressParam;
+    const imageLink: string = isOurs
+      ? token.imageLink
+      : atob(token?.uris?.[0] || "");
+    let metadataLink: string = isOurs
+      ? token.metadataLink
+      : atob(token?.uris?.[1] || "");
+    const royaltiesPercent = isOurs
+      ? token.royaltiesPercent
+      : parseFloat(token.royalties) / 100;
 
     if (metadataLink.indexOf(".json") == -1) {
       metadataLink = metadataLink + ".json"; //TODO REMOVE , shoudl be added to contract ?
@@ -328,6 +364,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
           priceNominal: token.priceNominal,
           auctionDeadline: token.auctionDeadline,
           auctionStartTime: token.auctionStartTime,
+          attributes: attributes,
         }
       : {
           id: 0,
@@ -336,158 +373,179 @@ export const TokenPage: (props: any) => any = ({ }) => {
           priceNominal: 0,
           auctionDeadline: 0,
           auctionStartTime: 0,
+          attributes: [],
         };
 
-        
-        
-        return { ...baseData, ...ourExtraData };
-    };
+    return { ...baseData, ...ourExtraData };
+  };
 
+  const {
+    nonce,
+    imageLink,
+    metadataLink,
+    name: tokenName,
+    auctionDeadline,
+    auctionStartTime,
+    royaltiesPercent,
+    ownerWalletAddress,
+    id,
+    ownerName,
+    tokenState,
+    priceNominal: tokenPrice,
+    attributes: attributes,
+  } = getBaseTokenData(tokenData);
 
-    const {
+  // if (!isOurs && tokenData.tokenData.balance === "0" && walletAddressParam) {
 
-        nonce,
-        imageLink,
-        metadataLink,
-        name: tokenName,
-        auctionDeadline,
-        auctionStartTime,
-        royaltiesPercent,
-        ownerWalletAddress,
-        id,
-        ownerName,
-        tokenState,
-        priceNominal: tokenPrice,
+  //     return (<>
+  //         <p className="my-10 text-2xl text-center">{walletAddressParam}</p>
+  //         <p className="my-10 text-2xl text-center">is not the owner of  {collectionId} {tokenNonce}</p>
+  //     </>)
 
-    } = getBaseTokenData(tokenData);
+  // }
 
-    // if (!isOurs && tokenData.tokenData.balance === "0" && walletAddressParam) {
+  if (Boolean(metadataLink) && isUninitializedGetTokenMetadata) {
+    getTokenMetadataTrigger({ metadataLink });
+  }
 
-    //     return (<>
-    //         <p className="my-10 text-2xl text-center">{walletAddressParam}</p>
-    //         <p className="my-10 text-2xl text-center">is not the owner of  {collectionId} {tokenNonce}</p>
-    //     </>)
+  const description = collectionData?.data?.collection?.description;
+  const discordLink = collectionData?.data?.collection?.discordLink;
+  const twitterLink = collectionData?.data?.collection?.twitterLink;
+  const telegramLink = collectionData?.data?.collection?.telegramLink;
+  const instagramLink = collectionData?.data?.collection?.instagramLink;
+  const websiteLink = collectionData?.data?.collection?.website;
 
-    // }
+  const isListed: boolean = tokenState === "List";
+  const isAuction: boolean = tokenState === "Auction";
+  //const isOnSale: boolean = ( isListed || isAuction);
+  let isOnSale = false;
+  let isOnStake = false;
+  if (isOurs) {
+    isOnStake = tokenData.token.onStake;
+    isOnSale = tokenData.token.onSale;
+  }
+  //const canUnStake: boolean = ((Date.now() - tokenData.token.stakeDate) / 36e5) >= 24;
+  const canUnStake: boolean = true;
+  const isStakeable = collectionData?.data?.collection?.isStakeable;
 
+  const onSaleText = isListed ? "Current price" : "Min bid";
 
-    if (Boolean(metadataLink) && isUninitializedGetTokenMetadata) {
+  const ownerShortWalletAddress: string = shorterAddress(
+    ownerWalletAddress,
+    7,
+    4
+  );
+  // const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
 
-        getTokenMetadataTrigger({ metadataLink });
+  const displayedOwner = Boolean(ownerName)
+    ? ownerName
+    : ownerShortWalletAddress;
+  // const displayedCreator = creatorName ? creatorName : creatorShortWalletAddress;
 
-    };
+  const isCurrentTokenOwner: boolean = ownerWalletAddress === userWalletAddress;
 
-    const description = collectionData?.data?.collection?.description;
-    const discordLink = collectionData?.data?.collection?.discordLink;
-    const twitterLink = collectionData?.data?.collection?.twitterLink;
-    const telegramLink = collectionData?.data?.collection?.telegramLink;
-    const instagramLink = collectionData?.data?.collection?.instagramLink;
-    const websiteLink = collectionData?.data?.collection?.website;
+  const hasBidderWinner = Boolean(tokenBidsData?.data?.[0]);
+  const bidderWinnerName = tokenBidsData?.data?.[0]?.bidderName;
+  const isBidderWinnerAddress: boolean =
+    tokenBidsData?.data?.[0]?.bid.bidderAddress === userWalletAddress;
 
-    const isListed: boolean = tokenState === 'List';
-    const isAuction: boolean = tokenState === 'Auction';
-    //const isOnSale: boolean = ( isListed || isAuction);
-    let isOnSale = false;
-    let isOnStake = false;
-    if(isOurs){
-      isOnStake = tokenData.token.onStake;
-      isOnSale = tokenData.token.onSale;
-    }
-    //const canUnStake: boolean = ((Date.now() - tokenData.token.stakeDate) / 36e5) >= 24;
-    const canUnStake: boolean = true;
-    const isStakeable = collectionData?.data?.collection?.isStakeable;
+  const egldPriceString = egldPriceData?.data;
+  const priceTokenDollars = tokenPrice * parseFloat(egldPriceString);
+  const priceTokenDollarsFixed = parseFloat(`${priceTokenDollars}`).toFixed(3);
 
-    const onSaleText = isListed ? "Current price" : "Min bid"
+  const nowDate = new Date();
+  const auctionDeadlineDate = new Date(auctionDeadline * 1000);
+  const auctionStartTimeDate = new Date(auctionStartTime * 1000);
+  const auctionDeadlineTitle = moment(
+    new Date(auctionDeadlineDate),
+    "YYYY-MM-DD HH:mm:ss"
+  );
+  const auctionStartTimeTitle = moment(
+    new Date(auctionStartTimeDate),
+    "YYYY-MM-DD HH:mm:ss"
+  );
 
-    const ownerShortWalletAddress: string = shorterAddress(ownerWalletAddress, 7, 4);
-    // const creatorShortWalletAddress: string = shorterAddress(creatorWalletAddress, 7, 4);
+  const isAuctionOngoing: boolean = nowDate < auctionDeadlineDate;
+  const hasAuctionFinished: boolean = auctionDeadlineDate < nowDate;
+  const hasAuctionStarted: boolean = auctionStartTimeDate < nowDate;
 
+  const hasFinishedWithoutWinner = hasAuctionFinished && !hasBidderWinner;
 
-    const displayedOwner = Boolean(ownerName) ? ownerName : ownerShortWalletAddress;
-    // const displayedCreator = creatorName ? creatorName : creatorShortWalletAddress;
+  const shouldDisplayEndAuctionButton =
+    isAuction &&
+    !isAuctionOngoing &&
+    hasBidderWinner &&
+    (isCurrentTokenOwner || isBidderWinnerAddress);
 
-    const isCurrentTokenOwner: boolean = ownerWalletAddress === userWalletAddress;
+  const offersTableColumns = [
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      className: "c-table_column",
+    },
+    {
+      title: "Expiration",
+      dataIndex: "expiration",
+      key: "expiration",
+      className: "c-table_column",
+    },
+    {
+      title: "From",
+      dataIndex: "from",
+      key: "from",
+      className: "c-table_column",
+    },
+  ];
 
-    const hasBidderWinner = Boolean(tokenBidsData?.data?.[0]);
-    const bidderWinnerName = tokenBidsData?.data?.[0]?.bidderName;
-    const isBidderWinnerAddress: boolean = tokenBidsData?.data?.[0]?.bid.bidderAddress === userWalletAddress;
+  const listingTableColumns = [
+    {
+      title: "Type",
+      dataIndex: "event",
+      key: "event",
+      className: "c-table_column",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      className: "c-table_column",
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      className: "c-table_column",
+    },
+  ];
 
-    const egldPriceString = egldPriceData?.data;
-    const priceTokenDollars = tokenPrice * parseFloat(egldPriceString);
-    const priceTokenDollarsFixed = parseFloat(`${priceTokenDollars}`).toFixed(3);
+  const bidsTableColumns = [
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      className: "c-table_column",
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      className: "c-table_column",
+    },
+    {
+      title: "From",
+      dataIndex: "from",
+      key: "from",
+      className: "c-table_column",
+    },
+  ];
 
-    const nowDate = new Date();
-    const auctionDeadlineDate = new Date(auctionDeadline * 1000);
-    const auctionStartTimeDate = new Date(auctionStartTime * 1000);
-    const auctionDeadlineTitle = moment(new Date(auctionDeadlineDate), "YYYY-MM-DD HH:mm:ss");
-    const auctionStartTimeTitle = moment(new Date(auctionStartTimeDate), "YYYY-MM-DD HH:mm:ss");
+  const tokenBuys = getTokenTransactionsData?.data?.filter(
+    (transaction: any) => transaction.type === "Buy"
+  );
 
-    const isAuctionOngoing: boolean = nowDate < auctionDeadlineDate;
-    const hasAuctionFinished: boolean = auctionDeadlineDate < nowDate;
-    const hasAuctionStarted: boolean = auctionStartTimeDate < nowDate;
-
-    const hasFinishedWithoutWinner = hasAuctionFinished && !hasBidderWinner;
-
-    const shouldDisplayEndAuctionButton = isAuction && !isAuctionOngoing && hasBidderWinner && (isCurrentTokenOwner || isBidderWinnerAddress);
-
-
-    const offersTableColumns = [
-        {
-            title: 'Price',
-            dataIndex: 'price',
-            key: 'price',
-            className: 'c-table_column',
-        }, {
-            title: 'Expiration',
-            dataIndex: 'expiration',
-            key: 'expiration',
-            className: 'c-table_column',
-        }, {
-            title: 'From',
-            dataIndex: 'from',
-            key: 'from',
-            className: 'c-table_column',
-        }
-    ];
-
-    const listingTableColumns = [{
-        title: 'Type',
-        dataIndex: 'event',
-        key: 'event',
-        className: 'c-table_column',
-    }, {
-        title: 'Price',
-        dataIndex: 'price',
-        key: 'price',
-        className: 'c-table_column',
-    }, {
-        title: 'Date',
-        dataIndex: 'date',
-        key: 'date',
-        className: 'c-table_column',
-    }];
-
-    const bidsTableColumns = [{
-        title: 'Price',
-        dataIndex: 'price',
-        key: 'price',
-        className: 'c-table_column',
-    }, {
-        title: 'Date',
-        dataIndex: 'date',
-        key: 'date',
-        className: 'c-table_column',
-    }, {
-        title: 'From',
-        dataIndex: 'from',
-        key: 'from',
-        className: 'c-table_column',
-    }];
-
-    const tokenBuys = getTokenTransactionsData?.data?.filter((transaction: any) => transaction.type === "Buy");
-
-    const chartData = tokenBuys?.map((buy: any, index: number) => {
-      
+  const chartData = tokenBuys
+    ?.map((buy: any, index: number) => {
       const { priceNominal, timestamp } = buy;
 
       const date = moment(new Date(timestamp * 1000), "YYYY-MM-DD HH:mm:ss");
@@ -498,7 +556,8 @@ export const TokenPage: (props: any) => any = ({ }) => {
         name: `${month}/${day}`,
         pv: priceNominal,
       };
-    }).reverse();
+    })
+    .reverse();
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -600,7 +659,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     (transaction: any) =>
       transaction.type === "List" || transaction.type === "Auction"
   );
- 
+
   const mapListingTableData = tokenListings?.map(
     (transaction: any, index: number) => {
       const { priceNominal, timestamp, hash, type } = transaction;
@@ -784,7 +843,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
       transaction: unconsumedTransaction,
       callbackRoute: `/confirmation/${BUY}/${collectionId}/${tokenNonce}`,
     });
-
   };
 
   const handleSellAction = async () => {
@@ -821,14 +879,13 @@ export const TokenPage: (props: any) => any = ({ }) => {
       transaction: unconsumedTransaction,
       callbackRoute: `/confirmation/${SELL}/${collectionId}/${tokenNonce}`,
     });
-
   };
 
   const handleStakeAction = async () => {
     const getStakeNFTResponse: any = await getStakeNftTemplateQueryTrigger({
       userWalletAddress,
       collectionId,
-      tokenNonce
+      tokenNonce,
     });
 
     if (getStakeNFTResponse.error) {
@@ -857,15 +914,13 @@ export const TokenPage: (props: any) => any = ({ }) => {
       transaction: unconsumedTransaction,
       callbackRoute: `/confirmation/${STAKE}/${collectionId}/${tokenNonce}`,
     });
-
   };
-
 
   const handleUnstakeAction = async () => {
     const getUnstakeNFTResponse: any = await getUnstakeNftTemplateQueryTrigger({
       userWalletAddress,
       collectionId,
-      tokenNonce
+      tokenNonce,
     });
 
     if (getUnstakeNFTResponse.error) {
@@ -894,7 +949,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
       transaction: unconsumedTransaction,
       callbackRoute: `/confirmation/${UNSTAKE}/${collectionId}/${tokenNonce}`,
     });
-
   };
 
   const handleWithdrawAction = async () => {
@@ -968,14 +1022,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
   };
 
   const handleMakeOffer = () => {
-    
     const getTemplateData = {
       userWalletAddress,
       collectionId,
       tokenNonce,
       amount: offerAmount,
       expire: new Date(expireOffer).getTime() / 1000,
-      
     };
 
     setOfferAmount(0);
@@ -985,7 +1037,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
       getTemplateData: getTemplateData,
       getTemplateTrigger: getMakeOfferTemplateTrigger,
     });
-
   };
 
   const handleMakeBid = () => {
@@ -998,7 +1049,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
     };
 
     setOfferAmount(0);
-
 
     signTemplateTransaction({
       successCallbackRoute: `/confirmation/${MAKE_BID}/${collectionId}/${tokenNonce}`,
@@ -1037,7 +1087,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     };
 
     signTemplateTransaction({
-      succesCallbackRoute:`/confirmation/${END_AUCTION}/${collectionId}/${tokenNonce}`,
+      succesCallbackRoute: `/confirmation/${END_AUCTION}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getEndAuctionTemplateTrigger,
     });
@@ -1052,7 +1102,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
     };
 
     signTemplateTransaction({
-      succesCallbackRoute:`/confirmation/${CANCEL_OFFER}/${collectionId}/${tokenNonce}`,
+      succesCallbackRoute: `/confirmation/${CANCEL_OFFER}/${collectionId}/${tokenNonce}`,
       getTemplateData: getTemplateData,
       getTemplateTrigger: getCancelOfferTemplateTrigger,
     });
@@ -1068,7 +1118,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
       callback?.({ ...rest });
     };
   };
-
 
   const actionsHandlers: { [key: string]: any } = {
     [BUY]: actionHandlerWrapper(handleBuyAction),
@@ -1139,30 +1188,24 @@ export const TokenPage: (props: any) => any = ({ }) => {
     </>
   );
 
-
-
-
-
-
-
-
-
-
-
-
   return (
     <div className="p-token-page">
-
-    <Helmet>
-      <title>{tokenName}</title>
-      <meta property="og:title" content={`${tokenName} - Youbei`} />
-      <meta name="description" content="Youbei is a profit-sharing community distributing UBI. We are a digital cooperative that builds Web3 infrastructure and mindful community." />
-      <meta property="og:image" content={formatImgLink(imageLink)} />
-      <meta name="theme-color" content="#303339" />
-      <meta name="twitter:title" content={`${tokenName} - Youbei`} />
-      <meta name="twitter:image" content={formatImgLink(imageLink)} />
-      <meta property="og:image:secure_url" content={formatImgLink(imageLink)} />
-    </Helmet>
+      <Helmet>
+        <title>{tokenName}</title>
+        <meta property="og:title" content={`${tokenName} - Youbei`} />
+        <meta
+          name="description"
+          content="Youbei is a profit-sharing community distributing UBI. We are a digital cooperative that builds Web3 infrastructure and mindful community."
+        />
+        <meta property="og:image" content={formatImgLink(imageLink)} />
+        <meta name="theme-color" content="#303339" />
+        <meta name="twitter:title" content={`${tokenName} - Youbei`} />
+        <meta name="twitter:image" content={formatImgLink(imageLink)} />
+        <meta
+          property="og:image:secure_url"
+          content={formatImgLink(imageLink)}
+        />
+      </Helmet>
 
       <div className="grid grid-cols-12 my-10">
         <div className="col-span-12">
@@ -1171,25 +1214,22 @@ export const TokenPage: (props: any) => any = ({ }) => {
 
             <div className="col-span-12 md:col-span-6 p-token-page_visual-holder u-margin-bottom-spacing-4 justify-center px-6">
               <div className="p-token-page_asset-container">
-
-                {(imageMediaType == 1) && (
-                <img
-                className={`p-token-page_img`}
-                src={formatImgLink(imageLink)}
-                alt=""
-              />
-                )};
-
-                {(imageMediaType == 2) && (
+                {imageMediaType == 1 && (
+                  <img
+                    className={`p-token-page_img`}
+                    src={formatImgLink(imageLink)}
+                    alt=""
+                  />
+                )}
+                ;
+                {imageMediaType == 2 && (
                   <video width="100%" height="100%" controls>
-                  <source src={formatImgLink(imageLink)} type="video/mp4" />
-                  <source src="movie.ogg" type="video/ogg" />
-                  Your browser does not support the video tag.
-                </video>   
-                )};
-
-
-
+                    <source src={formatImgLink(imageLink)} type="video/mp4" />
+                    <source src="movie.ogg" type="video/ogg" />
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+                ;
               </div>
 
               <div className="p-token-page_token-data u-border-radius-2 u-overflow-hidden">
@@ -1212,9 +1252,40 @@ export const TokenPage: (props: any) => any = ({ }) => {
                   }
                 >
                   <div className="c-accordion_content flex flex-wrap justify-center py-4">
-                    {tokenMetadataData?.data?.attributes?.map(
-                      (attribute: any) => {
-                        const { trait_type, value } = attribute;
+                    {attributes?.map((attribute: any) => {
+                      const { trait_type, value } = attribute;
+                      if (trait_type == undefined) {
+                        const [entries, _] = Object.entries(attribute);
+                        const key = entries[0] as string
+                        const value = entries[1] as string
+                        const itemsTotal =
+                          collectionData?.data?.statistics?.itemsTotal || 0;
+
+                        const trait = collectionData?.data?.statistics?.attributes?.find(
+                          (attribute: any) => {
+                            const [akey, avalue] = Object.entries(attribute);
+
+                            return (
+                              (attribute.trait_type === key &&
+                                attribute.value === value) ||
+                              (attribute.trait_type === akey &&
+                                attribute.value === avalue)
+                            );
+                          }
+                        );
+                        return (
+                          <div className="c-property">
+                            <div className="c-property_type">{trait_type}</div>
+                            <div className="c-property_value">{value}</div>
+                            {itemsTotal && trait && (
+                              <div className="c-property_rarity">
+                                {((100 * trait.total) / itemsTotal).toFixed(2)}%
+                                have this trait
+                              </div>
+                            )}
+                          </div>
+                        );
+                      } else {
                         const itemsTotal =
                           collectionData?.data?.statistics?.itemsTotal || 0;
 
@@ -1226,7 +1297,6 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             );
                           }
                         );
-
                         return (
                           <div className="c-property">
                             <div className="c-property_type">{trait_type}</div>
@@ -1240,12 +1310,11 @@ export const TokenPage: (props: any) => any = ({ }) => {
                           </div>
                         );
                       }
-                    )}
-
-               
-                    
+                    })}
                   </div>
-                  <div className="accordion_content c-property_rarity_message">Rarity Trait % Calculated Only for Items Listed on Youbei</div>
+                  <div className="accordion_content c-property_rarity_message">
+                    Rarity Trait % Calculated Only for Items Listed on Youbei
+                  </div>
                 </Collapsible>
 
                 <Collapsible
@@ -1535,7 +1604,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         <div className="c-accordion_trigger">
                           {
                             <p className="u-margin-bottom-spacing-0 u-text-small u-text-theme-gray-mid ">
-                              {isOnStake ?  "Stake" : "Fixed price"}
+                              {isOnStake ? "Stake" : "Fixed price"}
                             </p>
                           }
                         </div>
@@ -1562,7 +1631,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                           </p>
                         </>
                       )}
-                      
+
                       {isOnSale &&
                         isCurrentTokenOwner &&
                         !(!isAuctionOngoing && hasBidderWinner) && (
@@ -1582,7 +1651,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                         )}
 
                       {!isOnSale && !isOnStake && isCurrentTokenOwner && (
-                        <div  style={{display: "inline-block"}}>
+                        <div style={{ display: "inline-block" }}>
                           <Link
                             to={`/token/${ownerWalletAddress}/${collectionId}/${tokenNonce}/sell`}
                             className="c-button c-button--primary u-margin-right-spacing-2"
@@ -1594,59 +1663,70 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                 icon={faIcons.faWallet}
                               />
                             </span>
-                            <span style={{display: "inline-block"}}>Sell</span>
+                            <span style={{ display: "inline-block" }}>
+                              Sell
+                            </span>
                           </Link>
                         </div>
-                      )
-                      }
- 
-                      {/* HOTFIX IS releaseFeaureStaking */
-                      releaseFeaureStaking && isStakeable && (!isOnSale && !isOnStake &&
-                        isCurrentTokenOwner &&
-                        !(!isAuctionOngoing && hasBidderWinner)) && (
-                          <div style={{display: "inline-block"}}>
-    
-                          <button
-                          onClick={actionsHandlers[STAKE]}
-                          className="c-button c-button--primary u-margin-right-spacing-2"
-                        >
-                          <span className="u-padding-right-spacing-2">
-                            <FontAwesomeIcon
-                              width={"20px"}
-                              className="c-navbar_icon-link"
-                              icon={faIcons.faCoins}
-                            />
-                          </span>
-                          <span>Stake</span>
-                        </button>
-
-                        </div>
-                      )}     
-
-                      {releaseFeaureStaking && (!isOnSale && isOnStake && 
-                        isCurrentTokenOwner &&
-                        !(!isAuctionOngoing && hasBidderWinner)) && (
-
-                          <div style={{display: "inline-block"}}>
-
-                          {canUnStake ? (
-                            <button
-                            onClick={actionsHandlers[UNSTAKE]}
-                            className="c-button c-button--primary u-margin-right-spacing-2"
-                            >
-                            <span className="u-padding-right-spacing-2">
-                              <FontAwesomeIcon
-                                width={"20px"}
-                                className="c-navbar_icon-link"
-                                icon={faIcons.faCoins}
-                              />
-                            </span>
-                            <span>Unstake</span>
-                          </button> ) : ( 
-                             <span>You may Unstake your NFT after {(24 - ((Date.now() - tokenData.token.stakeDate) / 36e5)).toFixed(2)} hours. (24 hour minimum)</span>
-                          )}
-                        </div>
                       )}
+
+                      {/* HOTFIX IS releaseFeaureStaking */
+                      releaseFeaureStaking &&
+                        isStakeable &&
+                        !isOnSale &&
+                        !isOnStake &&
+                        isCurrentTokenOwner &&
+                        !(!isAuctionOngoing && hasBidderWinner) && (
+                          <div style={{ display: "inline-block" }}>
+                            <button
+                              onClick={actionsHandlers[STAKE]}
+                              className="c-button c-button--primary u-margin-right-spacing-2"
+                            >
+                              <span className="u-padding-right-spacing-2">
+                                <FontAwesomeIcon
+                                  width={"20px"}
+                                  className="c-navbar_icon-link"
+                                  icon={faIcons.faCoins}
+                                />
+                              </span>
+                              <span>Stake</span>
+                            </button>
+                          </div>
+                        )}
+
+                      {releaseFeaureStaking &&
+                        !isOnSale &&
+                        isOnStake &&
+                        isCurrentTokenOwner &&
+                        !(!isAuctionOngoing && hasBidderWinner) && (
+                          <div style={{ display: "inline-block" }}>
+                            {canUnStake ? (
+                              <button
+                                onClick={actionsHandlers[UNSTAKE]}
+                                className="c-button c-button--primary u-margin-right-spacing-2"
+                              >
+                                <span className="u-padding-right-spacing-2">
+                                  <FontAwesomeIcon
+                                    width={"20px"}
+                                    className="c-navbar_icon-link"
+                                    icon={faIcons.faCoins}
+                                  />
+                                </span>
+                                <span>Unstake</span>
+                              </button>
+                            ) : (
+                              <span>
+                                You may Unstake your NFT after{" "}
+                                {(
+                                  24 -
+                                  (Date.now() - tokenData.token.stakeDate) /
+                                    36e5
+                                ).toFixed(2)}{" "}
+                                hours. (24 hour minimum)
+                              </span>
+                            )}
+                          </div>
+                        )}
                       {shouldDisplayEndAuctionButton && (
                         <button
                           onClick={actionsHandlers[END_AUCTION]}
@@ -1682,7 +1762,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                           )}
 
                           {isAuction && isAuctionOngoing && (
-                            <Popup 
+                            <Popup
                               modal
                               className="c-modal_container"
                               trigger={
@@ -1739,9 +1819,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
                             </Popup>
                           )}
 
-                          {
-                          !(isAuction && hasBidderWinner) && (
-                            <Popup disabled //SMB REMOVE TO ENABLE
+                          {!(isAuction && hasBidderWinner) && (
+                            <Popup
+                              disabled //SMB REMOVE TO ENABLE
                               modal
                               className="c-modal_container"
                               trigger={
@@ -1754,7 +1834,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                     />
                                   </span>
                                   {/* SMB REMOVE onClick={alphaToastMessage} TO ENABLE MAKE OFFER */}
-                                  <span onClick={alphaToastMessage}>Make offer</span>
+                                  <span onClick={alphaToastMessage}>
+                                    Make offer
+                                  </span>
                                 </button>
                               }
                             >
@@ -1780,7 +1862,12 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                           <span className="u-text-theme-gray-light">
                                             Offer expire date
                                           </span>
-                                          <span className="u-text-theme-gray-mid"><FontAwesomeIcon width={'20px'} icon={faIcons.faInfoCircle} /></span>
+                                          <span className="u-text-theme-gray-mid">
+                                            <FontAwesomeIcon
+                                              width={"20px"}
+                                              icon={faIcons.faInfoCircle}
+                                            />
+                                          </span>
                                         </p>
 
                                         <div className="c-date-time-picker">
@@ -1815,8 +1902,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                                 </div>
                               )}
                             </Popup>
-                          )
-                          }
+                          )}
                         </div>
                       )}
                     </div>
@@ -1926,7 +2012,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                 </div>
               }
 
-              {(
+              {
                 <div className="u-border-radius-2 u-overflow-hidden my-10">
                   <Collapsible
                     open={true}
@@ -1971,7 +2057,7 @@ export const TokenPage: (props: any) => any = ({ }) => {
                     </div>
                   </Collapsible>
                 </div>
-              )}
+              }
 
               <div className="u-border-radius-2 u-overflow-hidden my-10">
                 <Collapsible
@@ -2117,10 +2203,9 @@ export const TokenPage: (props: any) => any = ({ }) => {
             </div>
           </div>
 
-          <br/>
+          <br />
 
-        <Footer /> 
-                  
+          <Footer />
         </div>
       </div>
     </div>
