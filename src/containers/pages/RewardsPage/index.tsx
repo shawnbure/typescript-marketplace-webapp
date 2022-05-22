@@ -14,7 +14,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { handleCopyToClipboard } from "utils";
+import { handleCopyToClipboard, isMobile } from "utils";
 
 import { toast } from 'react-toastify';
 
@@ -74,7 +74,7 @@ export const RewardsPage = () => {
 
                             <p className="u-margin-bottom-spacing-10">
 
-                                <Link to={'/collection/ENFT-d40748'} className="c-button c-button--primary" style={{margin: '0 8px 0 0'}} >                        
+                                <Link to={'/collection/ENFT-d40748'} className={`c-button c-button--primary${isMobile() ? ' u-margin-bottom-spacing-4' : ''}`} style={isMobile() ? {} : {margin: '0 8px 0 0'}} >                        
                                     <div className="inline-flex">
                                         <span>
                                              Buy Vaults
@@ -105,8 +105,8 @@ export const RewardsPage = () => {
 
 
                                 <br/><br/>
-                                <a href={'https://discord.gg/xBh7dEEeBc'} className="c-button c-button--secondary u-margin-bottom-spacing-4 u-margin-right-spacing-4" target="_blank">Get latest</a>
-                                <a href={'https://twitter.com/ElrondNFT'} className="c-button c-button--secondary u-margin-bottom-spacing-4 u-margin-right-spacing-4" target="_blank">Follow us</a>
+                                <a href={'https://discord.gg/xBh7dEEeBc'} className={`c-button c-button--secondary${isMobile() ? ' u-margin-bottom-spacing-4' : ' u-margin-bottom-spacing-4 u-margin-right-spacing-4'}`} target="_blank">Get latest</a>
+                                <a href={'https://twitter.com/ElrondNFT'} className={`c-button c-button--secondary${isMobile() ? ' u-margin-bottom-spacing-4' : ' u-margin-bottom-spacing-4 u-margin-right-spacing-4'}`} target="_blank">Follow us</a>
 
                             </p>
 
