@@ -38,6 +38,7 @@ export const ExplorerPage = () => {
     let [searchInputValue, setSearchInputValue] = useState<any>([]);
     let [selectedCollections, setSelectedCollections] = useState<any>([]);
     let [collectionFilter, setCollectionFilter] = useState<string>("");
+    let [showVerifiedItems, setShowVerifiedItems] = useState<boolean>(false);
 
     //Modals
     let [showModal, setShowModal] = useState<boolean>(false);
@@ -162,6 +163,26 @@ export const ExplorerPage = () => {
                             </button>
                             {priceRangeSelector > 0 ? <span></span> : null}
                         </div>
+
+                        <div>
+                            <button
+                                onClick={() => {
+                                    setActiveModal("status");
+                                    setShowModal(true);
+                                    setShowSideMenu(false);
+                                }}
+                            >
+                                <FontAwesomeIcon
+                                    style={{
+                                        margin: "0 8px 0 0",
+                                        opacity: "0.5",
+                                    }}
+                                    icon={faIcons.faFilter}
+                                />
+                                Status
+                            </button>
+                            {showVerifiedItems == false ? <span></span> : null}
+                        </div>
                     </div>
                 </div>
                 <div className="explorer-overlay"></div>
@@ -188,7 +209,14 @@ export const ExplorerPage = () => {
                         max: responeHolder.data.data.max_price,
                     });
                     stateSetter(responeHolder.data.data.tokens);
-                    explorationItems.length == 0 ? responeHolder.data.data.total <= 30 ? setHasMoreData(false) : setHasMoreData(true) : explorationItems.length >= responeHolder.data.data.total ? setHasMoreData(false) : setHasMoreData(true)
+                    explorationItems.length == 0
+                        ? responeHolder.data.data.total <= 30
+                            ? setHasMoreData(false)
+                            : setHasMoreData(true)
+                        : explorationItems.length >=
+                          responeHolder.data.data.total
+                        ? setHasMoreData(false)
+                        : setHasMoreData(true);
                 }
                 break;
 
@@ -296,7 +324,8 @@ export const ExplorerPage = () => {
                                     >
                                         <span>Older Tokens</span>
                                         <span>
-                                        List NFTs from longest listed to most recent. 
+                                            List NFTs from longest listed to
+                                            most recent.
                                         </span>
                                     </div>
                                     <div
@@ -311,7 +340,62 @@ export const ExplorerPage = () => {
                                     >
                                         <span>Newest Tokens</span>
                                         <span>
-                                        List NFTs from most recent listed to longest.
+                                            List NFTs from most recent listed to
+                                            longest.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="explorer-modal__box--control_single">
+                                <button onClick={() => setShowModal(false)}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+                break;
+
+            case "status":
+                return (
+                    <div className="explorer-modal">
+                        <div className="explorer-modal__box">
+                            <div className="explorer-modal__box--title">
+                                <span>Status</span>
+                                <span>Select an option to filter result</span>
+                            </div>
+                            <div className="explorer-modal__box--content">
+                                <div className="explorer-modal__box--content_item-sort">
+                                    <div
+                                        onClick={() =>
+                                            setShowVerifiedItems(false)
+                                        }
+                                        style={
+                                            !showVerifiedItems
+                                                ? { background: "#2081e2" }
+                                                : { background: "#303339" }
+                                        }
+                                    >
+                                        <span>All</span>
+                                        <span>
+                                            List of all NFTs available on the
+                                            platform.
+                                        </span>
+                                    </div>
+                                    <div
+                                        onClick={() =>
+                                            setShowVerifiedItems(true)
+                                        }
+                                        style={
+                                            showVerifiedItems
+                                                ? { background: "#2081e2" }
+                                                : { background: "#303339" }
+                                        }
+                                    >
+                                        <span>Verified</span>
+                                        <span>
+                                            List of NFTs on the platform that
+                                            have been approved.
                                         </span>
                                     </div>
                                 </div>
@@ -394,7 +478,14 @@ export const ExplorerPage = () => {
                                     )}
                                 </div>
 
-                                <div className="explorer-modal__box--content_item-collectionsResult">
+                                <div
+                                    className="explorer-modal__box--content_item-collectionsResult"
+                                    style={
+                                        selectedCollections.length
+                                            ? { height: "120px" }
+                                            : { height: "160px" }
+                                    }
+                                >
                                     {filteredCollections &&
                                         filteredCollections.length > 0 &&
                                         filteredCollections.map(
@@ -630,7 +721,7 @@ export const ExplorerPage = () => {
                     collectionFilter.length > 0
                         ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
                         : ``
-                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30`,
+                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30&collectionFilter=is_verified|${showVerifiedItems}|=`,
             },
             explorationItems,
             setExplorationItems,
@@ -652,6 +743,7 @@ export const ExplorerPage = () => {
         priceLimitationType,
         collectionFilter,
         sortTypeSelected,
+        showVerifiedItems,
     ]);
 
     useEffect(() => {
@@ -740,6 +832,25 @@ export const ExplorerPage = () => {
                                     icon={faIcons.faMoneyBill}
                                 />{" "}
                                 Price range
+                            </button>
+                            {priceRangeSelector > 0 ? <span></span> : null}
+                        </div>
+
+                        <div>
+                            <button
+                                onClick={() => {
+                                    setActiveModal("status");
+                                    setShowModal(true);
+                                }}
+                            >
+                                <FontAwesomeIcon
+                                    style={{
+                                        margin: "0 8px 0 0",
+                                        opacity: "0.5",
+                                    }}
+                                    icon={faIcons.faFilter}
+                                />{" "}
+                                Status
                             </button>
                             {priceRangeSelector > 0 ? <span></span> : null}
                         </div>
@@ -856,6 +967,25 @@ export const ExplorerPage = () => {
                                 </button>
                                 {priceRangeSelector > 0 ? <span></span> : null}
                             </div>
+
+                            <div>
+                                <button
+                                    onClick={() => {
+                                        setActiveModal("status");
+                                        setShowModal(true);
+                                    }}
+                                >
+                                    <FontAwesomeIcon
+                                        style={{
+                                            margin: "0 8px 0 0",
+                                            opacity: "0.5",
+                                        }}
+                                        icon={faIcons.faFilter}
+                                    />{" "}
+                                    Status
+                                </button>
+                                {priceRangeSelector > 0 ? <span></span> : null}
+                            </div>
                         </div>
                     </div>
 
@@ -877,7 +1007,14 @@ export const ExplorerPage = () => {
                                     collectionFilter.length > 0
                                         ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
                                         : ``
-                                }&sort=last_market_timestamp|${sortTypeSelected}&limit=${(totalExplorationItems - explorationItems.length) > 30 ? '30' : (totalExplorationItems - explorationItems.length)}`
+                                }&sort=last_market_timestamp|${sortTypeSelected}&limit=${
+                                    totalExplorationItems -
+                                        explorationItems.length >
+                                    30
+                                        ? "30"
+                                        : totalExplorationItems -
+                                          explorationItems.length
+                                }`
                             )
                         }
                         hasMore={hasMoreData}
