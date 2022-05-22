@@ -104,8 +104,8 @@ export const SearchBar = ({
             const results: any = await searchByStringTrigger({ searchString });
 
 
-            const collections = results?.data?.data?.Collections?.map(({ tokenId: value, name, }: any) => ({ value, label: "📖  " + name, type: "collection" })) || [];
-            const accounts = results?.data?.data?.Accounts?.map(({ address: value, name, }: any) => ({ value, label: "👤  " + name, type: "profile" })) || [];
+            const collections = results?.data?.data?.Collections?.map(({ tokenId: value, name, isVerified}: any) => ({ value, label: "📖  " + name + " " + (isVerified ? "☑️" : " "), type: "collection" })) || [];
+            const accounts = results?.data?.data?.Accounts?.map(({ address: value, name, isVerified}: any) => ({ value, label: "👤  " + name + " " + (isVerified ? "☑️" : " "), type: "profile" })) || [];
             
 
             const allResults = [...collections, ...accounts];
