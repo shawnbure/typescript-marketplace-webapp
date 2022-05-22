@@ -85,11 +85,11 @@ export const HomePage = () => {
 
     const HandleVerifyClick = () => {
         window.open(
-        'https://www.notion.so/enftdao/Verification-e874591432eb4e0388df94470a3854a9',
+        'https://enftdao.notion.site/Verification-e874591432eb4e0388df94470a3854a9',
           '_blank' // <- This is what makes it open in a new window.
         );
 
-       
+        
     }      
 
     const initializeCollections = async () => {

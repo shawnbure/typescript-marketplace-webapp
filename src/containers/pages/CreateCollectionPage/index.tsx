@@ -674,7 +674,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
                 //set CURRENT as new txtHash to session 
                 sessionStorage.setItem("Create_Collection_TxHash", txHashCurrent)
 
-                setIsFinishLoading(false); 
+                //setIsFinishLoading(false); 
 
 
                 initSessionStateJSONFromDB(); 
@@ -746,7 +746,7 @@ export const CreateCollectionPage: (props: any) => any = ({ }) => {
         const unconsumedTransaction = prepareTransaction(txData);
 
         //Henry: reset so that Maiar wallet is accounted for
-        setIsFinishLoading(true);
+        //setIsFinishLoading(true);
 
 
         sendTransaction({
