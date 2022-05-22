@@ -344,9 +344,9 @@ export const TokenPage: (props: any) => any = ({}) => {
       ? token.royaltiesPercent
       : parseFloat(token.royalties) / 100;
 
-    if (metadataLink.indexOf(".json") == -1) {
-      metadataLink = metadataLink + ".json"; //TODO REMOVE , shoudl be added to contract ?
-    }
+    // if (metadataLink.indexOf(".json") == -1) {
+    //   metadataLink = metadataLink + ".json"; //TODO REMOVE , shoudl be added to contract ?
+    // }
     const baseData = {
       name,
       nonce,
