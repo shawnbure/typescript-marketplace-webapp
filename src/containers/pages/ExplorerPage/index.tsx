@@ -38,7 +38,7 @@ export const ExplorerPage = () => {
     let [searchInputValue, setSearchInputValue] = useState<any>([]);
     let [selectedCollections, setSelectedCollections] = useState<any>([]);
     let [collectionFilter, setCollectionFilter] = useState<string>("");
-    let [showVerifiedItems, setShowVerifiedItems] = useState<boolean>(false);
+    let [showVerifiedItems, setShowVerifiedItems] = useState<boolean>(true);
 
     //Modals
     let [showModal, setShowModal] = useState<boolean>(false);
