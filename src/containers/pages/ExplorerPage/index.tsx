@@ -708,7 +708,9 @@ export const ExplorerPage = () => {
     useEffect(() => {
         setExplorationItems([]);
         setHasMoreData(true);
-
+        if (showVerifiedItems != false){
+            
+        }
         dataProcessor(
             getExplorationItemsRequestTrigger,
             {
@@ -721,7 +723,7 @@ export const ExplorerPage = () => {
                     collectionFilter.length > 0
                         ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
                         : ``
-                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30&collectionFilter=is_verified|${showVerifiedItems}|=`,
+                }${showVerifiedItems == false ? `&sort=last_market_timestamp|${sortTypeSelected}&limit=30`: `&sort=last_market_timestamp|${sortTypeSelected}&limit=30&collectionFilter=is_verified|${showVerifiedItems}|=`}`,
             },
             explorationItems,
             setExplorationItems,
