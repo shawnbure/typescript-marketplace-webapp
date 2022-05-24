@@ -26,7 +26,6 @@ export const ExplorerPage = () => {
     let [nextPage, setNextPage] = useState<any>(2);
     let [hasMoreData, setHasMoreData] = useState<any>(true);
 
-    let [filters, setFilters] = useState<any>("");
     let [typeFilter, setTypeFilter] = useState<any>("List");
     let [saleTypeSelected, setSaleTypeSelected] = useState<any>("List");
     let [sortTypeSelected, setSortTypeSelected] = useState<any>("desc");
@@ -209,14 +208,14 @@ export const ExplorerPage = () => {
                         max: responeHolder.data.data.max_price,
                     });
                     stateSetter(responeHolder.data.data.tokens);
-                    explorationItems.length == 0
-                        ? responeHolder.data.data.total <= 30
-                            ? setHasMoreData(false)
-                            : setHasMoreData(true)
-                        : explorationItems.length >=
-                          responeHolder.data.data.total
-                        ? setHasMoreData(false)
-                        : setHasMoreData(true);
+                    // explorationItems.length == 0
+                    //     ? responeHolder.data.data.total <= 30
+                    //         ? setHasMoreData(false)
+                    //         : setHasMoreData(true)
+                    //     : explorationItems.length >=
+                    //       responeHolder.data.data.total
+                    //     ? setHasMoreData(false)
+                    //     : setHasMoreData(true);
                 }
                 break;
 
@@ -686,7 +685,12 @@ export const ExplorerPage = () => {
         lastTimestamp: any,
         currentPage: any,
         nextPage: any,
-        filters: any
+        priceNominalFilter: any,
+        priceSortFilter: any,
+        typeFilter : any,
+        collectionFilter : any,
+        sortTypeFilter : any,
+        statusFilter : any
     ) => {
         dataProcessor(
             getExplorationItemsRequestTrigger,
@@ -694,7 +698,12 @@ export const ExplorerPage = () => {
                 lastTimestamp,
                 currentPage,
                 nextPage,
-                filters,
+                priceNominalFilter,
+                priceSortFilter,
+                typeFilter,
+                collectionFilter,
+                sortTypeFilter,
+                statusFilter
             },
             explorationItems,
             setExplorationItems,
@@ -708,6 +717,8 @@ export const ExplorerPage = () => {
     useEffect(() => {
         setExplorationItems([]);
         setHasMoreData(true);
+        setCurrentPage(1);
+        setNextPage(2);
 
         dataProcessor(
             getExplorationItemsRequestTrigger,
@@ -715,13 +726,12 @@ export const ExplorerPage = () => {
                 lastTimestamp: "0",
                 currentPage: "1",
                 nextPage: "1",
-                filters: `price_nominal|${priceRangeSelector}|${
-                    priceLimitationType == "More" ? ">" : "<"
-                }%3BAND%3Bstatus%7C${typeFilter}%7C%3D${
-                    collectionFilter.length > 0
-                        ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
-                        : ``
-                }&sort=last_market_timestamp|${sortTypeSelected}&limit=30&collectionFilter=is_verified|${showVerifiedItems}|=`,
+                priceNominalFilter: priceRangeSelector,
+                priceSortFilter: priceLimitationType,
+                typeFilter : typeFilter,
+                collectionFilter : collectionFilter,
+                sortTypeFilter : sortTypeSelected,
+                statusFilter : showVerifiedItems
             },
             explorationItems,
             setExplorationItems,
@@ -852,7 +862,7 @@ export const ExplorerPage = () => {
                                 />{" "}
                                 Status
                             </button>
-                            {priceRangeSelector > 0 ? <span></span> : null}
+                            {showVerifiedItems == false ? <span></span> : null}
                         </div>
                     </div>
 
@@ -870,6 +880,7 @@ export const ExplorerPage = () => {
                                 setSortTypeSelected("desc");
                                 setCollectionFilter("");
                                 setSelectedCollections([]);
+                                setShowVerifiedItems(true)
                             }}
                         >
                             <FontAwesomeIcon icon={faIcons.faTrash} />
@@ -984,7 +995,7 @@ export const ExplorerPage = () => {
                                     />{" "}
                                     Status
                                 </button>
-                                {priceRangeSelector > 0 ? <span></span> : null}
+                                {showVerifiedItems == false ? <span></span> : null}
                             </div>
                         </div>
                     </div>
@@ -994,27 +1005,15 @@ export const ExplorerPage = () => {
                         dataLength={explorationItems.length}
                         next={() =>
                             loadMoreItems(
-                                explorationItems[explorationItems.length - 1]
-                                    ? explorationItems[
-                                          explorationItems.length - 1
-                                      ].token.lastMarketTimestamp
-                                    : null,
+                                explorationItems[explorationItems.length - 1] ? explorationItems[ explorationItems.length - 1 ].token.lastMarketTimestamp : null,
                                 currentPage,
                                 nextPage,
-                                `price_nominal|${priceRangeSelector}|${
-                                    priceLimitationType == "More" ? ">" : "<"
-                                }%3BAND%3Bstatus%7C${typeFilter}%7C%3D${
-                                    collectionFilter.length > 0
-                                        ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
-                                        : ``
-                                }&sort=last_market_timestamp|${sortTypeSelected}&limit=${
-                                    totalExplorationItems -
-                                        explorationItems.length >
-                                    30
-                                        ? "30"
-                                        : totalExplorationItems -
-                                          explorationItems.length
-                                }`
+                                priceRangeSelector,
+                                priceLimitationType,
+                                typeFilter,
+                                collectionFilter,
+                                sortTypeSelected,
+                                showVerifiedItems
                             )
                         }
                         hasMore={hasMoreData}
@@ -1058,3 +1057,7 @@ export const ExplorerPage = () => {
 };
 
 export default ExplorerPage;
+function priceNominalFilter(arg0: any, currentPage: any, nextPage: any, priceNominalFilter: any): any {
+    throw new Error("Function not implemented.");
+}
+
