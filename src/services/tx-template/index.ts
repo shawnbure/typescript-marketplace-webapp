@@ -330,9 +330,6 @@ export const txTemplateApi = createApi({
                     url: `/${mainPath}/update-sale-start/${userWalletAddress}/${contractAddress}/${saleStart}`
                 };
 
-                console.log("customRequestArg.ur: ");
-                console.log(customRequestArg.url);
-
                 return customRequestArg;
             },
 

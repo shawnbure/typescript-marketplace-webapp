@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $spacing-point-0: 0;
 $spacing-point-1: 4px;
 $spacing-point-2: 8px;
@@ -18,8 +20,8 @@ $spacing-point-13: 96px;
 
 
 $base-dimension-unit: 8px;
-$base-dimension-unit-half: $base-dimension-unit / 2;
-$base-dimension-unit-quarter: $base-dimension-unit / 4;
+$base-dimension-unit-half: math.div($base-dimension-unit, 2);
+$base-dimension-unit-quarter: math.div($base-dimension-unit, 4);
 
 $spacer-xsm: $base-dimension-unit * 2;
 $spacer-sm: $base-dimension-unit * 3;
