@@ -147,10 +147,88 @@
                 position: absolute;
             }
         }
+
+        &__topMenu {
+            width: 100%;
+            height: 120px;
+            background-image: linear-gradient(
+                180deg,
+                #303339,
+                rgba(48, 51, 57, 0)
+            );
+
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+
+            border-radius: 10px;
+
+            margin: 0 0 32px 0;
+            padding: 0 40px;
+
+            @include respond-to(max-large-desktop) {
+                width: 720px;
+            }
+
+            @include respond-to(max-tablet) {
+                width: 320px;
+            }
+
+            @include respond-to(desktop-high-large) {
+                display: flex;
+            }
+
+            &--info {
+
+                display: flex;
+
+                span {
+                    font-size: 48px;
+                    font-weight: bold;
+                    margin: 0 24px 0 0;
+                    line-height: 1;
+                }
+
+                div {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+
+                    p:nth-child(1) {
+                        font-size: 16px;
+                        line-height: 1.5;
+                    }
+
+                    p:nth-child(2) {
+                        font-size: 13px;
+                        line-height: 1.5;
+                    }
+                }
+            }
+
+            &--btn {
+
+                width: 40px;
+                height: 40px;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+
+                background: #2081e2;
+                border-radius: 160px;
+                cursor: pointer;
+            }
+        }
     }
 
     &-contentBox {
         width: 1060px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 
         ::-webkit-scrollbar {
             width: 4px;
@@ -176,6 +254,10 @@
             &--holder {
                 width: 320px;
                 margin: 0 24px 24px 0;
+
+                @include respond-to(max-tablet) {
+                    margin: 0 0 24px 0;
+                }
             }
         }
 
@@ -528,6 +610,8 @@
                 }
 
                 &_item-collectionsSearch {
+                    width: 90%;
+
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -564,7 +648,7 @@
                 }
 
                 &_item-selectedLabelBox {
-                    width: 100%;
+                    width: 90%;
 
                     margin: 16px 0 0 0;
                     div {
@@ -713,6 +797,18 @@
                     span:nth-child(2) {
                         border-radius: 0 8px 8px 0;
                     }
+                }
+            }
+
+            &--collections {
+                width: 640px !important;
+                
+                @include respond-to(mobile) {
+                    width: 360px !important;
+                }
+
+                @include respond-to(mobile-normal) {
+                    width: 320px !important;
                 }
             }
 
