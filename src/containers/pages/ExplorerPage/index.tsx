@@ -1,8 +1,9 @@
 //Modules
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import LoadingBar from 'react-top-loading-bar'
 
 import { isMobile } from "utils";
 
@@ -26,7 +27,6 @@ export const ExplorerPage = () => {
     let [nextPage, setNextPage] = useState<any>(2);
     let [hasMoreData, setHasMoreData] = useState<any>(true);
 
-    let [filters, setFilters] = useState<any>("");
     let [typeFilter, setTypeFilter] = useState<any>("List");
     let [saleTypeSelected, setSaleTypeSelected] = useState<any>("List");
     let [sortTypeSelected, setSortTypeSelected] = useState<any>("desc");
@@ -39,6 +39,8 @@ export const ExplorerPage = () => {
     let [selectedCollections, setSelectedCollections] = useState<any>([]);
     let [collectionFilter, setCollectionFilter] = useState<string>("");
     let [showVerifiedItems, setShowVerifiedItems] = useState<boolean>(true);
+
+    let [loadingProgressBar, setLoadingProgressBar] = useState<any>(0);
 
     //Modals
     let [showModal, setShowModal] = useState<boolean>(false);
@@ -179,7 +181,7 @@ export const ExplorerPage = () => {
                                     }}
                                     icon={faIcons.faFilter}
                                 />
-                                Status
+                                Verified Status
                             </button>
                             {showVerifiedItems == false ? <span></span> : null}
                         </div>
@@ -198,6 +200,7 @@ export const ExplorerPage = () => {
         responeHolder: any,
         requestCase: string
     ) => {
+        setLoadingProgressBar(60)
         switch (requestCase) {
             case "ExplorationItems":
                 responeHolder = await functionTrigger(triggerInputObject);
@@ -209,15 +212,11 @@ export const ExplorerPage = () => {
                         max: responeHolder.data.data.max_price,
                     });
                     stateSetter(responeHolder.data.data.tokens);
-                    explorationItems.length == 0
-                        ? responeHolder.data.data.total <= 30
-                            ? setHasMoreData(false)
-                            : setHasMoreData(true)
-                        : explorationItems.length >=
-                          responeHolder.data.data.total
-                        ? setHasMoreData(false)
-                        : setHasMoreData(true);
                 }
+                if (responeHolder.data == null) {
+                    setTotalExplorationItems(0);
+                }
+                setLoadingProgressBar(100)
                 break;
 
             case "LoadMoreItems":
@@ -231,11 +230,13 @@ export const ExplorerPage = () => {
                         ...responeHolder.data.data.tokens,
                     ]);
                 }
+                setLoadingProgressBar(100)
                 break;
 
             case "AllCollections":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter(responeHolder.data.data);
+                setLoadingProgressBar(100)
                 break;
 
             default:
@@ -361,7 +362,7 @@ export const ExplorerPage = () => {
                     <div className="explorer-modal">
                         <div className="explorer-modal__box">
                             <div className="explorer-modal__box--title">
-                                <span>Status</span>
+                                <span>Verified Status</span>
                                 <span>Select an option to filter result</span>
                             </div>
                             <div className="explorer-modal__box--content">
@@ -394,8 +395,7 @@ export const ExplorerPage = () => {
                                     >
                                         <span>Verified</span>
                                         <span>
-                                            List of NFTs on the platform that
-                                            have been approved.
+                                            Only NFTs from verified projects will be shown
                                         </span>
                                     </div>
                                 </div>
@@ -413,7 +413,7 @@ export const ExplorerPage = () => {
             case "collections":
                 return (
                     <div className="explorer-modal">
-                        <div className="explorer-modal__box">
+                        <div className="explorer-modal__box explorer-modal__box--collections">
                             <div className="explorer-modal__box--title">
                                 <span>Collections</span>
                                 <span>
@@ -541,8 +541,8 @@ export const ExplorerPage = () => {
                                                         {item.name.length > 10
                                                             ? `${item.name.substr(
                                                                   0,
-                                                                  9
-                                                              )}...`
+                                                                  isMobile() ? 10 : 40
+                                                              )}${isMobile() ? item.name.length > 10 ? '...' : '' : item.name.length > 40 ? '...' : ''}`
                                                             : item.name}
                                                     </span>
                                                 </div>
@@ -686,7 +686,12 @@ export const ExplorerPage = () => {
         lastTimestamp: any,
         currentPage: any,
         nextPage: any,
-        filters: any
+        priceNominalFilter: any,
+        priceSortFilter: any,
+        typeFilter : any,
+        collectionFilter : any,
+        sortTypeFilter : any,
+        statusFilter : any
     ) => {
         dataProcessor(
             getExplorationItemsRequestTrigger,
@@ -694,7 +699,12 @@ export const ExplorerPage = () => {
                 lastTimestamp,
                 currentPage,
                 nextPage,
-                filters,
+                priceNominalFilter,
+                priceSortFilter,
+                typeFilter,
+                collectionFilter,
+                sortTypeFilter,
+                statusFilter
             },
             explorationItems,
             setExplorationItems,
@@ -708,22 +718,22 @@ export const ExplorerPage = () => {
     useEffect(() => {
         setExplorationItems([]);
         setHasMoreData(true);
-        if (showVerifiedItems != false){
-            
-        }
+        setCurrentPage(1);
+        setNextPage(2);
+        setLoadingProgressBar(10)
+
         dataProcessor(
             getExplorationItemsRequestTrigger,
             {
                 lastTimestamp: "0",
                 currentPage: "1",
                 nextPage: "1",
-                filters: `price_nominal|${priceRangeSelector}|${
-                    priceLimitationType == "More" ? ">" : "<"
-                }%3BAND%3Bstatus%7C${typeFilter}%7C%3D${
-                    collectionFilter.length > 0
-                        ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
-                        : ``
-                }${showVerifiedItems == false ? `&sort=last_market_timestamp|${sortTypeSelected}&limit=30`: `&sort=last_market_timestamp|${sortTypeSelected}&limit=30&collectionFilter=is_verified|${showVerifiedItems}|=`}`,
+                priceNominalFilter: priceRangeSelector,
+                priceSortFilter: priceLimitationType,
+                typeFilter : typeFilter,
+                collectionFilter : collectionFilter,
+                sortTypeFilter : sortTypeSelected,
+                statusFilter : showVerifiedItems
             },
             explorationItems,
             setExplorationItems,
@@ -745,7 +755,7 @@ export const ExplorerPage = () => {
         priceLimitationType,
         collectionFilter,
         sortTypeSelected,
-        showVerifiedItems,
+        showVerifiedItems
     ]);
 
     useEffect(() => {
@@ -753,7 +763,8 @@ export const ExplorerPage = () => {
     }, [allCollections]);
 
     return (
-        <>
+        <React.Fragment>
+        <LoadingBar color='#2081e2' progress={loadingProgressBar} onLoaderFinished={() => setLoadingProgressBar(0)}/>
             {showModal && openModal(activeModal)}
             {showSideMenu && openSideMenu()}
             <div className="explorer-container">
@@ -852,26 +863,28 @@ export const ExplorerPage = () => {
                                     }}
                                     icon={faIcons.faFilter}
                                 />{" "}
-                                Status
+                                Verified Status
                             </button>
-                            {priceRangeSelector > 0 ? <span></span> : null}
+                            {showVerifiedItems == false ? <span></span> : null}
                         </div>
                     </div>
 
                     <div className="explorer-filterBox__info">
                         <div>
                             <span>{totalExplorationItems}</span>
-                            <span>Item Found</span>
+                            <span>Items Found</span>
                             <span>for exploring</span>
                         </div>
                         <div
                             onClick={() => {
                                 setSaleTypeSelected("List");
+                                setTypeFilter('List')
                                 setPriceRangeSelector(0);
                                 setPriceLimitationType("More");
                                 setSortTypeSelected("desc");
                                 setCollectionFilter("");
                                 setSelectedCollections([]);
+                                setShowVerifiedItems(true)
                             }}
                         >
                             <FontAwesomeIcon icon={faIcons.faTrash} />
@@ -984,10 +997,35 @@ export const ExplorerPage = () => {
                                         }}
                                         icon={faIcons.faFilter}
                                     />{" "}
-                                    Status
+                                    Verified Status
                                 </button>
-                                {priceRangeSelector > 0 ? <span></span> : null}
+                                {showVerifiedItems == false ? <span></span> : null}
                             </div>
+                        </div>
+                    </div>
+
+                    <div className="explorer-filterBox__topMenu">
+                        <div className="explorer-filterBox__topMenu--info">
+                            <span>{totalExplorationItems}</span>
+                            <div>
+                                <p>Items Found</p>
+                                <p>for exploring</p>
+                            </div>
+                        </div>
+                        <div
+                        className="explorer-filterBox__topMenu--btn"
+                            onClick={() => {
+                                setSaleTypeSelected("List");
+                                setTypeFilter('List')
+                                setPriceRangeSelector(0);
+                                setPriceLimitationType("More");
+                                setSortTypeSelected("desc");
+                                setCollectionFilter("");
+                                setSelectedCollections([]);
+                                setShowVerifiedItems(true)
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faIcons.faTrash} />
                         </div>
                     </div>
 
@@ -996,32 +1034,20 @@ export const ExplorerPage = () => {
                         dataLength={explorationItems.length}
                         next={() =>
                             loadMoreItems(
-                                explorationItems[explorationItems.length - 1]
-                                    ? explorationItems[
-                                          explorationItems.length - 1
-                                      ].token.lastMarketTimestamp
-                                    : null,
+                                explorationItems[explorationItems.length - 1] ? explorationItems[ explorationItems.length - 1 ].token.lastMarketTimestamp : null,
                                 currentPage,
                                 nextPage,
-                                `price_nominal|${priceRangeSelector}|${
-                                    priceLimitationType == "More" ? ">" : "<"
-                                }%3BAND%3Bstatus%7C${typeFilter}%7C%3D${
-                                    collectionFilter.length > 0
-                                        ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
-                                        : ``
-                                }&sort=last_market_timestamp|${sortTypeSelected}&limit=${
-                                    totalExplorationItems -
-                                        explorationItems.length >
-                                    30
-                                        ? "30"
-                                        : totalExplorationItems -
-                                          explorationItems.length
-                                }`
+                                priceRangeSelector,
+                                priceLimitationType,
+                                typeFilter,
+                                collectionFilter,
+                                sortTypeSelected,
+                                showVerifiedItems
                             )
                         }
                         hasMore={hasMoreData}
                         loader={<></>}
-                        height={isMobile() ? 520 : 705}
+                        height={isMobile() ? 420 : 705}
                         endMessage={<></>}
                     >
                         <div className="explorer-contentBox__holderBox">
@@ -1055,8 +1081,12 @@ export const ExplorerPage = () => {
                     </InfiniteScroll>
                 </div>
             </div>
-        </>
+        </React.Fragment>
     );
 };
 
 export default ExplorerPage;
+function priceNominalFilter(arg0: any, currentPage: any, nextPage: any, priceNominalFilter: any): any {
+    throw new Error("Function not implemented.");
+}
+

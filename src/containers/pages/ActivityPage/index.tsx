@@ -3,6 +3,7 @@ import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import InfiniteScroll from "react-infinite-scroll-component";
+import LoadingBar from 'react-top-loading-bar'
 
 //API Gateways
 import { useGetActivitiesLogMutation } from "services/activity";
@@ -14,13 +15,14 @@ import tokenNoImage from "./../../../assets/img/token-no-img.png";
 import dollarSign from "./../../../assets/img/labels/dollar-sign.svg";
 import zapSign from "./../../../assets/img/labels/zap-sign.svg";
 import tagSign from "./../../../assets/img/labels/tag-sign.svg";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export const ActivityPage = () => {
     let [collectionDropedDown, setCollectionDropedDown] = useState<any>(true);
     let [eventDropedDown, setEventDropedDown] = useState<any>(true);
+    let [loadingProgressBar, setLoadingProgressBar] = useState<any>(0);
     let [eventType, setEventType] = useState<string>("List");
 
     let [activities, setActivities] = useState<any[]>([]);
@@ -30,10 +32,11 @@ export const ActivityPage = () => {
     let [searchInputValue, setSearchInputValue] = useState<any>([]);
     let [selectedCollections, setSelectedCollections] = useState<any>([]);
     let [filtersSideBar, setFiltersSideBar] = useState<any>(false);
+    let [showVerifiedItems, setShowVerifiedItems] = useState<any>(true);
 
     let [currentPage, setCurrentPage] = useState(1);
     let [nextPage, setNextPage] = useState(2);
-    let [typeFilter, setTypeFilter] = useState<string>("type%7CList%7C%3D");
+    let [typeFilter, setTypeFilter] = useState<string>("List");
     let [collectionFilter, setCollectionFilter] = useState<string>("");
 
     let [hasMoreData, setHasMoreData] = useState<boolean>(true);
@@ -57,10 +60,12 @@ export const ActivityPage = () => {
         responeHolder: any,
         requestCase: string
     ) => {
+        setLoadingProgressBar(60)
         switch (requestCase) {
             case "ActivitiesLog":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter(responeHolder.data.data.activities);
+                setLoadingProgressBar(100)
                 break;
 
             case "LoadMoreLogs":
@@ -72,11 +77,13 @@ export const ActivityPage = () => {
                     ...stateGetter,
                     ...responeHolder.data.data.activities,
                 ]);
+                setLoadingProgressBar(100)
                 break;
 
             case "AllCollections":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter(responeHolder.data.data);
+                setLoadingProgressBar(100)
                 break;
 
             default:
@@ -199,9 +206,7 @@ export const ActivityPage = () => {
                                                                     `${item.name}`,
                                                                 ]
                                                             );
-                                                            setCollectionFilter(
-                                                                `collection_id%7C${item.id}%7C%3D`
-                                                            );
+                                                            setCollectionFilter(item.id)
                                                             setSearchInputValue(
                                                                 ""
                                                             );
@@ -294,7 +299,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("List");
-                                            setTypeFilter(`type%7CList%7C%3D`);
+                                            setTypeFilter(`List`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -316,7 +321,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Buy");
-                                            setTypeFilter(`type%7CBuy%7C%3D`);
+                                            setTypeFilter(`Buy`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -338,9 +343,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Auction");
-                                            setTypeFilter(
-                                                `type%7CAuction%7C%3D`
-                                            );
+                                            setTypeFilter(`Auction`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -358,6 +361,20 @@ export const ActivityPage = () => {
                             </div>
                         )}
                     </div>
+
+                    <div className="activity-sidebar__dropbox activity-sidebar__dropbox--lastItem">
+                        <div className="activity-sidebar__dropbox--title">
+                            <span>Verified Collections</span>
+                            <label className="activity-switch">
+                                <input type="checkbox" checked={showVerifiedItems} onChange={(e) => {
+                                    let tar = e.target as any
+                                    setShowVerifiedItems(tar.checked)
+                                }}/>
+                                <span className="activity-slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
                 </div>
                 <div className="activity-overlay"></div>
             </>
@@ -379,7 +396,9 @@ export const ActivityPage = () => {
         timestamp: any,
         currentPage: any,
         nextPage: any,
-        filters: any
+        typeFilter: any,
+        collectionFilter: any,
+        verifiedItems: any
     ) => {
         dataProcessor(
             getActivitiesLogRequestTrigger,
@@ -387,7 +406,9 @@ export const ActivityPage = () => {
                 timestamp,
                 currentPage,
                 nextPage,
-                filters,
+                typeFilter,
+                collectionFilter,
+                verifiedItems
             },
             activities,
             setActivities,
@@ -400,20 +421,16 @@ export const ActivityPage = () => {
 
     useEffect(() => {
         setHasMoreData(true);
+        setLoadingProgressBar(10)
         dataProcessor(
             getActivitiesLogRequestTrigger,
             {
                 timestamp: 0,
                 currentPage: 1,
                 nextPage: 1,
-                filters:
-                    typeFilter.length > 0
-                        ? collectionFilter.length > 0
-                            ? `${typeFilter}%3BAND%3B${collectionFilter}`
-                            : `${typeFilter}`
-                        : collectionFilter.length > 0
-                        ? `${collectionFilter}`
-                        : "",
+                typeFilter: typeFilter,
+                collectionFilter: collectionFilter,
+                verifiedItems: showVerifiedItems
             },
             activities,
             setActivities,
@@ -428,14 +445,15 @@ export const ActivityPage = () => {
             {},
             "AllCollections"
         );
-    }, [typeFilter, collectionFilter]);
+    }, [typeFilter, collectionFilter, showVerifiedItems]);
 
     useEffect(() => {
         setFilteredCollections(allCollections);
     }, [allCollections]);
 
     return (
-        <>
+        <React.Fragment>
+        <LoadingBar color='#2081e2' progress={loadingProgressBar} onLoaderFinished={() => setLoadingProgressBar(0)}/>
             {filtersSideBar ? openSideMenu() : null}
             <div className="activity-modal">
                 <button onClick={() => setFiltersSideBar(!filtersSideBar)}>
@@ -541,9 +559,7 @@ export const ActivityPage = () => {
                                                                     `${item.name}`,
                                                                 ]
                                                             );
-                                                            setCollectionFilter(
-                                                                `collection_id%7C${item.id}%7C%3D`
-                                                            );
+                                                            setCollectionFilter(item.id)
                                                             setSearchInputValue(
                                                                 ""
                                                             );
@@ -636,7 +652,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("List");
-                                            setTypeFilter(`type%7CList%7C%3D`);
+                                            setTypeFilter(`List`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -658,7 +674,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Buy");
-                                            setTypeFilter(`type%7CBuy%7C%3D`);
+                                            setTypeFilter(`Buy`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -680,9 +696,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Auction");
-                                            setTypeFilter(
-                                                `type%7CAuction%7C%3D`
-                                            );
+                                            setTypeFilter(`Auction`);
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -701,10 +715,23 @@ export const ActivityPage = () => {
                         )}
                     </div>
 
+                    <div className="activity-sidebar__dropbox">
+                        <div className="activity-sidebar__dropbox--title">
+                            <span>Verified Collections</span>
+                            <label className="activity-switch">
+                                <input type="checkbox" checked={showVerifiedItems} onChange={(e) => {
+                                    let tar = e.target as any
+                                    setShowVerifiedItems(tar.checked)
+                                }}/>
+                                <span className="activity-slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
                     <span className="activity-sidebar__title">Activity</span>
                 </div>
                 <div className="activity-main">
-                    <table className="activity-main__table">
+                    <div className="activity-main__table">
                         <div className="activity-main__table--head">
                             <span>
                                 <div
@@ -749,13 +776,9 @@ export const ActivityPage = () => {
                                             : null,
                                         currentPage,
                                         nextPage,
-                                        typeFilter.length > 0
-                                            ? collectionFilter.length > 0
-                                                ? `${typeFilter}%3BAND%3B${collectionFilter}`
-                                                : `${typeFilter}`
-                                            : collectionFilter.length > 0
-                                            ? `${collectionFilter}`
-                                            : ""
+                                        typeFilter,
+                                        collectionFilter,
+                                        showVerifiedItems
                                     )
                                 }
                                 hasMore={hasMoreData}
@@ -1036,10 +1059,10 @@ export const ActivityPage = () => {
                                 )}
                             </InfiniteScroll>
                         </div>
-                    </table>
+                    </div>
                 </div>
             </div>
-        </>
+        </React.Fragment>
     );
 };
 
