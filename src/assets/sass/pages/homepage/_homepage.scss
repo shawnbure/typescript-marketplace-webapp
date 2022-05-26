@@ -346,11 +346,13 @@
                         padding: 0 20% 0 0;
 
                         justify-content: flex-start;
+                    }
 
-                        // -webkit-overflow-scrolling: touch;
-                        // &::-webkit-scrollbar {
-                        //     display: none;
-                        //   }
+                    @include respond-to(mobile-normal) {
+                        -webkit-overflow-scrolling: touch;
+                        &::-webkit-scrollbar {
+                            display: none;
+                          }
                     }
 
                     &--collection {
