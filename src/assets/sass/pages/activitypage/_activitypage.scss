@@ -10,7 +10,7 @@
 
         margin: 0 auto;
 
-        @include respond-to(desktop-high-large) {
+        @include respond-to(desktop-max-large) {
             width: 100%;
             justify-content: center;
         }
@@ -33,7 +33,7 @@
         padding: 40px 52px 0 52px;
         margin: 64px 0 0 0;
 
-        @include respond-to(desktop-high-large) {
+        @include respond-to(desktop-max-large) {
             display: none;
             position: absolute;
             z-index: 1000000;
@@ -238,7 +238,7 @@
 
         margin: 0 0 0 440px;
 
-        @include respond-to(desktop-high-large) {
+        @include respond-to(desktop-max-large) {
             margin: 0 auto;
         }
 
@@ -319,7 +319,7 @@
                         bottom: 24px;
                         left: 32px;
 
-                        @include respond-to(desktop-high-large) {
+                        @include respond-to(desktop-max-large) {
                             display: flex;
                         }
 

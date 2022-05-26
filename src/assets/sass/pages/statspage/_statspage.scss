@@ -12,7 +12,7 @@
         margin: 64px auto;
         color: #fff;
 
-        @include respond-to(desktop-high-large) {
+        @include respond-to(desktop-max-large) {
             flex-wrap: wrap;
             height: 100%;
             width: 1080px;
@@ -35,7 +35,7 @@
         display: flex;
         align-items: flex-start;
 
-        @include respond-to(desktop-high-large) {
+        @include respond-to(desktop-max-large) {
             width: 100%;
             height: 705px;
             margin: 0 0 64px 0;
@@ -248,7 +248,7 @@
         justify-content: flex-start;
         align-items: flex-end;
 
-        @include respond-to(desktop-high-large) {
+        @include respond-to(desktop-max-large) {
             bottom: 880px;
         }
 
@@ -338,7 +338,7 @@
         align-items: flex-start;
         justify-content: flex-start;
 
-        @include respond-to(desktop-high-large) {
+        @include respond-to(desktop-max-large) {
             width: 100%;
         }
 
@@ -355,7 +355,7 @@
 
             margin: 0 0 48px 0;
 
-            @include respond-to(desktop-high-large) {
+            @include respond-to(desktop-max-large) {
                 width: 100%;
             }
 
@@ -375,7 +375,7 @@
                 justify-content: center;
                 align-items: center;
 
-                @include respond-to(desktop-high-large) {
+                @include respond-to(desktop-max-large) {
                     width: 100%;
                 }
 
@@ -400,11 +400,11 @@
             align-items: center;
             justify-content: flex-start;
 
-            @include respond-to(desktop-high-large) {
+            @include respond-to(desktop-max-large) {
                 width: 100%;
             }
 
-            @include respond-to(desktop-high-large) {
+            @include respond-to(desktop-max-large) {
                 margin: 0 0 64px 0;
             }
 
@@ -512,7 +512,7 @@
                     font-size: 13px;
                 }
 
-                @include respond-to(desktop-high-large) {
+                @include respond-to(desktop-max-large) {
                     bottom: 64px;
                 }
             }

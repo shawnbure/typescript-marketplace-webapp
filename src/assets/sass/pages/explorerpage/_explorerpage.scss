@@ -8,7 +8,7 @@
 
         margin: 90px auto 0 auto;
 
-        @include respond-to(desktop-high-large) {
+        @include respond-to(desktop-max-large) {
             justify-content: space-around;
         }
 
@@ -26,7 +26,7 @@
     &-filterBox {
         width: 360px;
 
-        @include respond-to(desktop-high-large) {
+        @include respond-to(desktop-max-large) {
             display: none;
         }
 
@@ -141,10 +141,15 @@
                 background: #2081e2;
                 border-radius: 160px;
                 cursor: pointer;
+                transition: 0.4s;
 
                 margin: 270px 0 0 0;
 
                 position: absolute;
+
+                &:hover {
+                    background: #4f9deb;
+                }
             }
         }
 
@@ -174,7 +179,7 @@
                 width: 320px;
             }
 
-            @include respond-to(desktop-high-large) {
+            @include respond-to(desktop-max-large) {
                 display: flex;
             }
 
@@ -358,7 +363,7 @@
                 }
             }
 
-            @include respond-to(desktop-high-large) {
+            @include respond-to(desktop-max-large) {
                 display: flex;
             }
 

@@ -205,4 +205,10 @@
             @content;
         }
     }
+
+    @if $media == desktop-max-large {
+        @media screen and (max-width: $break-point-max-large-desktop) {
+            @content;
+        }
+    }
 }

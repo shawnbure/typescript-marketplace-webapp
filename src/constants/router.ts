@@ -27,4 +27,5 @@ export const routePaths = {
     dao: "/dao",
     rewards: "/rewards",
     confirmation: "/confirmation/:action/:collectionId/:tokenNonce",
+    
 };
