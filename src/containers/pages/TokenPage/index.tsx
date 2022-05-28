@@ -1187,6 +1187,14 @@ export const TokenPage: (props: any) => any = ({}) => {
     </>
   );
 
+  const tokenAttributesTypeConverter = (attr:any) => {
+    if (!attr[0]) {
+      return Object.keys(attr).map((key) => ({"value": key, "trait_type": attr[key]}));
+    }
+
+    return attr
+  }
+
   return (
     <div className="p-token-page">
 
@@ -1235,7 +1243,8 @@ export const TokenPage: (props: any) => any = ({}) => {
                   }
                 >
                   <div className="c-accordion_content flex flex-wrap justify-center py-4">
-                    {attributes?.map((attribute: any) => {
+                    
+                    {attributes && tokenAttributesTypeConverter(attributes).map((attribute: any, index:any) => {
                       const { trait_type, value } = attribute;
                       if (trait_type == undefined) {
                         const [entries, _] = Object.entries(attribute);
@@ -1257,7 +1266,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                           }
                         );
                         return (
-                          <div className="c-property">
+                          <div className="c-property" key={index.toString()}>
                             <div className="c-property_type">{trait_type}</div>
                             <div className="c-property_value">{value}</div>
                             {itemsTotal && trait && (
@@ -1281,7 +1290,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                           }
                         );
                         return (
-                          <div className="c-property">
+                          <div className="c-property" key={index.toString()}>
                             <div className="c-property_type">{trait_type}</div>
                             <div className="c-property_value">{value}</div>
                             {itemsTotal && trait && (
