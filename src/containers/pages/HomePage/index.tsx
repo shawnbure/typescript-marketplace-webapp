@@ -258,9 +258,7 @@ export const HomePage = () => {
                         </div>
                     </div>
 
-                    <hr className="text-white my-10" />
-
-                    <div className="row row--standard-max u-tac">
+                    <div className="row row--standard-max u-tac" style={{margin: '40px auto'}}>
                         <div
                             className="col-xs-12 col-md-4 u-margin-bottom-spacing-10"
                             style={{ cursor: "pointer" }}

@@ -95,6 +95,11 @@
                     margin: 12px;
 
                     color: #fff;
+
+                    @include respond-to(mobile-normal) {
+                        line-height: 32px;
+                        margin: 0 12px;
+                    }
                 }
             }
 
