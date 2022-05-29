@@ -115,7 +115,13 @@ export const HomePage = () => {
 
         if (collectionsTrendingData?.data) {
             //set the api collection data call to the state array variable
-            setCollectionTrendingList(collectionsTrendingData.data.data);
+            setCollectionTrendingList([
+                collectionsTrendingData.data.data[0],
+                collectionsTrendingData.data.data[1],
+                collectionsTrendingData.data.data[2],
+                collectionsTrendingData.data.data[3],
+                collectionsTrendingData.data.data[4],
+            ]);
         }
     };
 
@@ -144,17 +150,19 @@ export const HomePage = () => {
                             )})`,
                         }}
                     ></div>
-                    <span>{name.length > 12 ? name.substr(0, 12)+'...' : name}</span>
-                    <p>
-                        {description.length > 0
-                            ? description.length > 100
-                                ? description.substr(0, 100) + "..."
-                                : description
-                            : "This collection has no description! See the collection page for more information"}
-                    </p>
-                    <div className="home-collectionBox__box--right_collections--collection_btn">
-                        <span>More</span>
-                        <FontAwesomeIcon icon={faIcons.faChevronRight} />
+                    <div className="home-collectionBox__box--details">
+                        <span>
+                            {name.length > 12
+                                ? name.substr(0, 12) + "..."
+                                : name}
+                        </span>
+                        <p>
+                            {description.length > 0
+                                ? description.length > 100
+                                    ? description.substr(0, 100) + "..."
+                                    : description
+                                : "This collection has no description! See the collection page for more information"}
+                        </p>
                     </div>
                 </Link>
             );
@@ -250,9 +258,7 @@ export const HomePage = () => {
                         </div>
                     </div>
 
-                    <hr className="text-white my-10" />
-
-                    <div className="row row--standard-max u-tac">
+                    <div className="row row--standard-max u-tac" style={{margin: '40px auto'}}>
                         <div
                             className="col-xs-12 col-md-4 u-margin-bottom-spacing-10"
                             style={{ cursor: "pointer" }}
@@ -319,45 +325,6 @@ export const HomePage = () => {
                     <div className="home-collectionBox">
                         <div
                             className="home-collectionBox__box"
-                            style={{ background: `#2081E2` }}
-                        >
-                            <div
-                                className="home-collectionBox__box--left"
-                                style={{
-                                    background: `url(${verifiedCollectionBg})`,
-                                }}
-                            >
-                                <div className="home-collectionBox__box--left_title">
-                                    <span>
-                                        Verified
-                                        <br />
-                                        Collections
-                                    </span>
-                                </div>
-
-                                <div className="home-collectionBox__box--head">
-                                    <span>Verified Collections</span>
-                                </div>
-
-                                <div className="home-collectionBox__box--left_collections">
-                                    {Boolean(collectionVerifiedList.length) ? (
-                                        mapCollectionList(
-                                            collectionVerifiedList
-                                        )
-                                    ) : (
-                                        <div className="text-white text-center u-text-normal col-span-12 mr-8 mb-8">
-                                            Currently, There are No Verified
-                                            Collections
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="home-collectionBox">
-                        <div
-                            className="home-collectionBox__box"
                             style={{ background: `#111217` }}
                         >
                             <div
@@ -379,24 +346,51 @@ export const HomePage = () => {
                                 </div>
 
                                 <div className="home-collectionBox__box--right_collections">
-                                    {Boolean(
-                                        collectionNoteworthyList.length
-                                    ) ? (
-                                        mapCollectionList(
-                                            collectionNoteworthyList
-                                        )
-                                    ) : (
-                                        <div className="text-white text-center u-text-normal col-span-12 mr-8 mb-8">
-                                            Currently, There are No Noteworthy
-                                            Collections
-                                        </div>
-                                    )}
+                                    {Boolean(collectionNoteworthyList.length)
+                                        ? mapCollectionList(
+                                              collectionNoteworthyList
+                                          )
+                                        : null}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <hr className="text-white my-10" />
+                    <div className="home-collectionBox">
+                        <div
+                            className="home-collectionBox__box"
+                            style={{
+                                background: `linear-gradient(to bottom, #303339, rgba(48, 51, 57, 0))`,
+                            }}
+                        >
+                            <div
+                                className="home-collectionBox__box--left"
+                                style={{
+                                    background: `url(${verifiedCollectionBg})`,
+                                }}
+                            >
+                                <div className="home-collectionBox__box--left_title">
+                                    <span>
+                                        Verified
+                                        <br />
+                                        Collections
+                                    </span>
+                                </div>
+
+                                <div className="home-collectionBox__box--head">
+                                    <span>Verified Collections</span>
+                                </div>
+
+                                <div className="home-collectionBox__box--left_collections">
+                                    {Boolean(collectionVerifiedList.length)
+                                        ? mapCollectionList(
+                                              collectionVerifiedList
+                                          )
+                                        : null}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div className="row row--standard-max u-tac">
                         <h2 className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white">
