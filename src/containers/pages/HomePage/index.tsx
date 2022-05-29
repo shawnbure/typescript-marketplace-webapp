@@ -115,7 +115,13 @@ export const HomePage = () => {
 
         if (collectionsTrendingData?.data) {
             //set the api collection data call to the state array variable
-            setCollectionTrendingList([collectionsTrendingData.data.data[0], collectionsTrendingData.data.data[1], collectionsTrendingData.data.data[2], collectionsTrendingData.data.data[3], collectionsTrendingData.data.data[4]]);
+            setCollectionTrendingList([
+                collectionsTrendingData.data.data[0],
+                collectionsTrendingData.data.data[1],
+                collectionsTrendingData.data.data[2],
+                collectionsTrendingData.data.data[3],
+                collectionsTrendingData.data.data[4],
+            ]);
         }
     };
 
@@ -144,17 +150,19 @@ export const HomePage = () => {
                             )})`,
                         }}
                     ></div>
-                    <span>{name.length > 12 ? name.substr(0, 12)+'...' : name}</span>
-                    <p>
-                        {description.length > 0
-                            ? description.length > 100
-                                ? description.substr(0, 100) + "..."
-                                : description
-                            : "This collection has no description! See the collection page for more information"}
-                    </p>
-                    <div className="home-collectionBox__box--right_collections--collection_btn">
-                        <span>More</span>
-                        <FontAwesomeIcon icon={faIcons.faChevronRight} style={{color: '#fff'}} />
+                    <div className="home-collectionBox__box--details">
+                        <span>
+                            {name.length > 12
+                                ? name.substr(0, 12) + "..."
+                                : name}
+                        </span>
+                        <p>
+                            {description.length > 0
+                                ? description.length > 100
+                                    ? description.substr(0, 100) + "..."
+                                    : description
+                                : "This collection has no description! See the collection page for more information"}
+                        </p>
                     </div>
                 </Link>
             );
@@ -340,23 +348,22 @@ export const HomePage = () => {
                                 </div>
 
                                 <div className="home-collectionBox__box--right_collections">
-                                    {Boolean(
-                                        collectionNoteworthyList.length
-                                    ) ? (
-                                        mapCollectionList(
-                                            collectionNoteworthyList
-                                        )
-                                    ) : null}
+                                    {Boolean(collectionNoteworthyList.length)
+                                        ? mapCollectionList(
+                                              collectionNoteworthyList
+                                          )
+                                        : null}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-
                     <div className="home-collectionBox">
                         <div
                             className="home-collectionBox__box"
-                            style={{ background: `linear-gradient(to bottom, #303339, rgba(48, 51, 57, 0))` }}
+                            style={{
+                                background: `linear-gradient(to bottom, #303339, rgba(48, 51, 57, 0))`,
+                            }}
                         >
                             <div
                                 className="home-collectionBox__box--left"
@@ -377,11 +384,11 @@ export const HomePage = () => {
                                 </div>
 
                                 <div className="home-collectionBox__box--left_collections">
-                                    {Boolean(collectionVerifiedList.length) ? (
-                                        mapCollectionList(
-                                            collectionVerifiedList
-                                        )
-                                    ) : null}
+                                    {Boolean(collectionVerifiedList.length)
+                                        ? mapCollectionList(
+                                              collectionVerifiedList
+                                          )
+                                        : null}
                                 </div>
                             </div>
                         </div>

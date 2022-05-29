@@ -47,7 +47,7 @@
 .home {
     &-collectionBox {
         width: 1280px;
-        height: 640px;
+        height: 500px;
 
         margin: 0 auto 80px auto;
 
@@ -96,6 +96,15 @@
 
                     color: #fff;
                 }
+            }
+
+            &--details {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+
+                padding: 8px 20px;
             }
 
             &--left {
@@ -178,7 +187,7 @@
 
                     &--collection {
                         width: 240px;
-                        height: 520px;
+                        height: 360px;
 
                         background: #303339;
                         border-radius: 8px;
@@ -191,7 +200,6 @@
                         box-shadow: 0px 66px 66px #00000071;
                         transition: 0.7s;
 
-                        padding: 20px;
                         margin: 0 12px;
 
                         &:hover {
@@ -212,7 +220,7 @@
                         }
 
                         span {
-                            font-size: 24px;
+                            font-size: 18px;
                             font-weight: bold;
                             line-height: 1;
 
@@ -229,9 +237,9 @@
                             font-weight: normal;
                             line-height: 18px;
 
-                            color: #fff;
+                            color: #8A939B;
 
-                            margin: 0 0 16px 0;
+                            margin: 4px 0 16px 0;
                         }
 
                         &_img {
@@ -357,7 +365,7 @@
 
                     &--collection {
                         width: 240px;
-                        height: 520px;
+                        height: 360px;
 
                         background: #303339;
                         border-radius: 8px;
@@ -370,7 +378,6 @@
                         box-shadow: 0px 66px 66px #00000030;
                         transition: 0.7s;
 
-                        padding: 20px;
                         margin: 0 12px;
 
                         &:hover {
@@ -391,7 +398,7 @@
                         }
 
                         span {
-                            font-size: 24px;
+                            font-size: 18px;
                             font-weight: bold;
                             line-height: 1;
 
@@ -408,9 +415,9 @@
                             font-weight: normal;
                             line-height: 18px;
 
-                            color: #fff;
+                            color: #8A939B;
 
-                            margin: 0 0 16px 0;
+                            margin: 4px 0 16px 0;
                         }
 
                         &_img {
