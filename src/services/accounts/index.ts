@@ -158,7 +158,7 @@ export const accountsApi = createApi({
       query: ({ userWalletAddress, offset, limit }): FetchArgs => {
         const customRequestArg: FetchArgs = {
           method: GET,
-          url: `${ELROND_API}/accounts/${userWalletAddress}/nfts?from=${offset}&size=${limit}&type=NonFungibleESDT&order=desc`,
+          url: `${ELROND_API}/accounts/${userWalletAddress}/nfts?from=${offset}&size=${limit}&type=NonFungibleESDT`,
         };
 
         return customRequestArg;
