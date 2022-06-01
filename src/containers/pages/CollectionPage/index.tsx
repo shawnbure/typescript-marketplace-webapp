@@ -274,6 +274,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const collectionName = collectionData?.data?.collection?.name;
   const collectionTokenId = collectionData?.data?.collection?.tokenId;
   const creatorWalletAddress = collectionData?.data?.creatorWalletAddress;
+  console.log(`create wallet ${creatorWalletAddress}`)
   const contractAddress = collectionData?.data?.collection?.contractAddress;
 
   const isCollectionOwner = userWalletAddress === creatorWalletAddress;

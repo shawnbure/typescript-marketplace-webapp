@@ -185,8 +185,8 @@ export const collectionsApi = createApi({
         }),
 
         getCollectionById: builder.mutation<any, any>({
-
             query: ({ collectionId }): FetchArgs => {
+                console.log("query getCollectionById")
 
                 const customRequestArg: FetchArgs = {
                     method: GET,
