@@ -149,7 +149,7 @@ export const tokensApi = createApi({
             newOwner
           }),
         };
-        console.log(customRequestArg)
+        
         return customRequestArg;
       },
     }),

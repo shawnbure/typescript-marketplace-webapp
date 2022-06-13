@@ -274,7 +274,6 @@ export const CollectionPage: (props: any) => any = ({}) => {
   const collectionName = collectionData?.data?.collection?.name;
   const collectionTokenId = collectionData?.data?.collection?.tokenId;
   const creatorWalletAddress = collectionData?.data?.creatorWalletAddress;
-  console.log(`create wallet ${creatorWalletAddress}`)
   const contractAddress = collectionData?.data?.collection?.contractAddress;
 
   const isCollectionOwner = userWalletAddress === creatorWalletAddress;
@@ -558,9 +557,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
     //const queryFilters = "on_sale" + "|" + onSaleOption + "|="
     const queryFilters = "on_sale|1|=;AND;on_stake|0|=";
-
-    //console.log(queryFilters)
-
+    
     const response: any = await getCollectionTokensTrigger({
       collectionId,
       offset: 0,
