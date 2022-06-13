@@ -125,9 +125,9 @@ export const accountsApi = createApi({
     }),
 
     getAccountTokenGateway: builder.mutation<any, any>({
-      query: ({ userWalletAddress, identifier, nonce }): FetchArgs => {
+      query: ({ identifier, nonce }): FetchArgs => {
         let nonceStr = parseInt(nonce).toString(16);
-        console.log(nonceStr);
+        
         if (nonceStr.length % 2 !== 0) {
           nonceStr = `0${nonceStr}`;
         }

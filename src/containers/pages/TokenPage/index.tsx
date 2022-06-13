@@ -40,7 +40,7 @@ import {
     useGetTokenOffersMutation,
     useGetTransactionsMutation,
     useRefreshTokenMetadataMutation,
-    useWithdrawTokenMutation,
+    useSetNewTokenOwnerMutation,
 } from "services/tokens";
 
 import { prepareTransaction, getQuerystringValue } from "utils/transactions";
@@ -85,7 +85,8 @@ export const TokenPage: (props: any) => any = ({}) => {
     } = useParams<UrlParameters>();
     const [hasLoadMoreActivity, setHasLoadMoreActivity] = useState(true);
     const [offerAmount, setOfferAmount] = useState<number>(0);
-    const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
+    const [blockchainOwnerAddress, setBlockchainOwnerAddress] = useState<any>('');
+    const [databaseOwnerAddress, setDatabaseOwnerAddress] = useState<any>('');
     const [expireOffer, setExpireOffer] = useState<any>();
     const [transactions, setTransactions] = useState<any>([]);
     const { loggedIn, address: userWalletAddress } = Dapp.useContext();
@@ -125,6 +126,8 @@ export const TokenPage: (props: any) => any = ({}) => {
             isUninitialized: isUninitializedGetTokenMetadata,
         },
     ] = useGetTokenMetadataMutation();
+
+    const [setNewTokenOwnerTrigger] = useSetNewTokenOwnerMutation();
 
     const [
         getTokenOffersTrigger,
@@ -286,21 +289,36 @@ export const TokenPage: (props: any) => any = ({}) => {
 
         getCollectionByIdTrigger({ collectionId: collectionId });
 
-        if (walletAddressParam) {
-            getAccountTokenTrigger({
-                userWalletAddress: walletAddressParam,
-                identifier: collectionId,
-                nonce: tokenNonce,
-            }).then((r) => {
-                setLoadingImageLinkType(true);
-            });
-            //return; - this was commented out because I seem to believe the logic is backwards but at least I can get the data - SMB
-        }
+        getAccountTokenTrigger({
+            identifier: collectionId,
+            nonce: tokenNonce,
+        }).then((r) => {
+            let response = r as any
+            if(!response.error) {
+                setBlockchainOwnerAddress(response.data.data.tokenData.owner)
+            }
+
+            walletAddressParam ? setLoadingImageLinkType(true) : null
+        });
 
         getTokenDataTrigger({ collectionId, tokenNonce }).then((r) => {
+            let response = r as any
+            if(!response.error) {
+                setDatabaseOwnerAddress(response.data.data.ownerWalletAddress)
+            }
+
             setLoadingImageLinkType(true);
         });
+        
     }, []);
+
+    useEffect(() => {
+        if(databaseOwnerAddress != blockchainOwnerAddress && databaseOwnerAddress.length > 0 && blockchainOwnerAddress.length > 0 && !isOnSale) {
+            let trd = tokenResponseData.data.token
+            let gtd = gatewayTokenData.data.tokenData
+            setNewTokenOwnerTrigger({tokenId : trd.tokenId.toString(), nonceHexStr : trd.nonceStr.toString(), newOwner: gtd.owner.toString()})
+        }
+    }, [databaseOwnerAddress, blockchainOwnerAddress])
 
     if (isErrorGetTokenDataQuery && !walletAddressParam) {
         return (
