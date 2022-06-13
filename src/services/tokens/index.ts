@@ -138,7 +138,7 @@ export const tokensApi = createApi({
       },
     }),
 
-    getChangeTokenOwner: builder.mutation<any, any>({
+    setNewTokenOwner: builder.mutation<any, any>({
       query: ({ tokenId, nonceHexStr, newOwner }): FetchArgs => {
         const customRequestArg: FetchArgs = {
           method: POST,
@@ -298,7 +298,7 @@ export const {
     useGetTokenDataMutation,
     useGetTokenCollectionAvailablityMutation,
     useGetTokensCollectionsAvailablityMutation,
-    useGetChangeTokenOwnerMutation,
+    useSetNewTokenOwnerMutation,
     useGetWhitelistBuyCountLimitTemplateMutation,
     useGetBuyerWhiteListCheckTemplateMutation,
     useStakeTokenFromClientMutation,

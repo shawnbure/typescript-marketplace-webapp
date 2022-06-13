@@ -40,7 +40,7 @@ import {
     useGetTokenOffersMutation,
     useGetTransactionsMutation,
     useRefreshTokenMetadataMutation,
-    useGetChangeTokenOwnerMutation,
+    useSetNewTokenOwnerMutation,
 } from "services/tokens";
 
 import { prepareTransaction, getQuerystringValue } from "utils/transactions";
@@ -127,7 +127,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         },
     ] = useGetTokenMetadataMutation();
 
-    const [getChangeTokenOwnerTrigger] = useGetChangeTokenOwnerMutation();
+    const [setNewTokenOwnerTrigger] = useSetNewTokenOwnerMutation();
 
     const [
         getTokenOffersTrigger,
@@ -316,7 +316,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         if(databaseOwnerAddress != blockchainOwnerAddress && databaseOwnerAddress.length > 0 && blockchainOwnerAddress.length > 0 && !isOnSale) {
             let trd = tokenResponseData.data.token
             let gtd = gatewayTokenData.data.tokenData
-            getChangeTokenOwnerTrigger({tokenId : trd.tokenId.toString(), nonceHexStr : trd.nonceStr.toString(), newOwner: gtd.owner.toString()})
+            setNewTokenOwnerTrigger({tokenId : trd.tokenId.toString(), nonceHexStr : trd.nonceStr.toString(), newOwner: gtd.owner.toString()})
         }
     }, [databaseOwnerAddress, blockchainOwnerAddress])
 
