@@ -96,8 +96,15 @@ import {
   ENG_TX_LINK,
   ENG_COPY_TO_CLIPBOARD_TITLE,
   ENG_SHARE_TO, 
-  ENG_TX_NAV_TO_HASH
+  ENG_TX_NAV_TO_HASH,
+  ENG_TX_FAILD_TITLE,
+  ENG_TX_SUCCESS_TITLE,
+  ENG_LOADING
 } from "constants/messages";
+
+//Images
+import failedIcon from './../../../assets/img/failed-icon.png'
+import successIcon from './../../../assets/img/success-icon.png'
 
 
 export const ConfirmationPage = () => {
@@ -190,7 +197,6 @@ export const ConfirmationPage = () => {
           : setDisplayTitle(ENG_MINT_TITLE_FAIL);
         setDisplayMessage(ENG_MINT_MESSAGE);
         setNumberMinted(Number(getQuerystringValue(queryString, "number_minted")) || 0);
-        setImageLink("/img/collections/GreenCheck.png");
         setNftLink(window.location.origin + routePaths.collection.replace(":collectionId", collectionId));
         break;
       case WITHDRAW:
@@ -438,7 +444,7 @@ export const ConfirmationPage = () => {
                   className="u-heading-lead u-text-bold u-margin-bottom-spacing-6 u-text-theme-white justify-center"
                 >
                   <br />
-                  {txUnknown ? ENG_TX_UNKNOWN_TITLE : displayTitle}
+                  { txFailed || txUnknown ? txFailed ? ENG_TX_FAILD_TITLE : txUnknown ? ENG_TX_UNKNOWN_TITLE : ENG_TX_SUCCESS_TITLE : ENG_LOADING }
                 </h2>
                 <hr className="text-white" />
                 <h2
@@ -457,14 +463,14 @@ export const ConfirmationPage = () => {
                 </h2>
 
                 <div className={isAssetLoaded ? "" : "p-token-page_asset-container"}>
-                  <img
+                  {txFailed || txUnknown ? (<img
                     className={`p-token-page_img`}
-                    src={isAssetLoaded ? imageLink : "/img/collections/CollectionProfileImageEmpty.jpg"}
+                    src={isAssetLoaded ? imageLink ? imageLink : txFailed ? "/img/failed-icon.png" : txUnknown ? "/img/unknown-icon.png" : "/img/success-icon.png" : "/img/collections/CollectionProfileImageEmpty.jpg"}
                     alt=""
                     onLoad={() => {
                       setIsAssetLoaded(true);
                     }}
-                  />
+                  />) : <p style={{margin: '0 auto'}}>...</p>}
                 </div>
                     <br/>
                 <p
