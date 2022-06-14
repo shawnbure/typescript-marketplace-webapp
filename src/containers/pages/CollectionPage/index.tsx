@@ -557,9 +557,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
     //const queryFilters = "on_sale" + "|" + onSaleOption + "|="
     const queryFilters = "on_sale|1|=;AND;on_stake|0|=";
-
-    //console.log(queryFilters)
-
+    
     const response: any = await getCollectionTokensTrigger({
       collectionId,
       offset: 0,

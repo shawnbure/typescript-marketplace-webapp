@@ -40,7 +40,7 @@ import {
     useGetTokenOffersMutation,
     useGetTransactionsMutation,
     useRefreshTokenMetadataMutation,
-    useWithdrawTokenMutation,
+    useSetNewTokenOwnerMutation,
 } from "services/tokens";
 
 import { prepareTransaction, getQuerystringValue } from "utils/transactions";
@@ -73,6 +73,9 @@ import { Footer } from "components/index";
 import { alphaToastMessage } from "components/AlphaToastError";
 import { releaseFeaureStaking } from "configs/dappConfig";
 
+//Images
+import bgBox from "./../../../assets/img/boxBg.png";
+
 export const TokenPage: (props: any) => any = ({}) => {
     const dispatch = useAppDispatch();
     //const { pathname } = useLocation();
@@ -85,7 +88,12 @@ export const TokenPage: (props: any) => any = ({}) => {
     } = useParams<UrlParameters>();
     const [hasLoadMoreActivity, setHasLoadMoreActivity] = useState(true);
     const [offerAmount, setOfferAmount] = useState<number>(0);
-    const [isAssetLoaded, setIsAssetLoaded] = useState<boolean>(false);
+    const [tokenRank, setTokenRank] = useState<string>("0");
+    const [blockchainOwnerAddress, setBlockchainOwnerAddress] = useState<any>(
+        ""
+    );
+    const [databaseOwnerAddress, setDatabaseOwnerAddress] = useState<any>("");
+    const [imageUrlLink, setImageUrlLink] = useState<any>("");
     const [expireOffer, setExpireOffer] = useState<any>();
     const [transactions, setTransactions] = useState<any>([]);
     const { loggedIn, address: userWalletAddress } = Dapp.useContext();
@@ -125,6 +133,8 @@ export const TokenPage: (props: any) => any = ({}) => {
             isUninitialized: isUninitializedGetTokenMetadata,
         },
     ] = useGetTokenMetadataMutation();
+
+    const [setNewTokenOwnerTrigger] = useSetNewTokenOwnerMutation();
 
     const [
         getTokenOffersTrigger,
@@ -186,7 +196,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         newSortQuery?: any;
     }) => {
         // const filters = newFilterQuery ? newFilterQuery : filterQuery;
-        const offset = mergeWithExisting ? transactions.length : 0;
+        const offset = mergeWithExisting ? transactions?.length : 0;
         // const sortRules = newSortQuery ? newSortQuery : sort;
 
         const tokenTransactionsResponse: any = await getTokenTransactionsTrigger(
@@ -243,14 +253,14 @@ export const TokenPage: (props: any) => any = ({}) => {
         setTransactions(response.data.data);
     };
 
-    const [loadingImageLinkType, setLoadingImageLinkType] = useState(false);
+    const [loadingImageLinkType, setLoadingImageLinkType] = useState(true);
 
     useEffect(() => {
         if (loadingImageLinkType) {
             //fetch(imageLink)
             //fetch("https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM")
 
-            fetch(imageLink).then((response) => {
+            fetch(imageUrlLink).then((response) => {
                 response.blob().then((blob) => {
                     if (blob.type.includes("image")) {
                         setImageMediaType(1);
@@ -262,7 +272,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                 });
             });
         }
-    }, [loadingImageLinkType]);
+    }, [imageUrlLink]);
 
     //0: none, 1: image, 2: video
     const [imageMediaType, setImageMediaType] = useState<number>(0);
@@ -286,21 +296,49 @@ export const TokenPage: (props: any) => any = ({}) => {
 
         getCollectionByIdTrigger({ collectionId: collectionId });
 
-        if (walletAddressParam) {
-            getAccountTokenTrigger({
-                userWalletAddress: walletAddressParam,
-                identifier: collectionId,
-                nonce: tokenNonce,
-            }).then((r) => {
-                setLoadingImageLinkType(true);
-            });
-            //return; - this was commented out because I seem to believe the logic is backwards but at least I can get the data - SMB
-        }
+        getAccountTokenTrigger({
+            identifier: collectionId,
+            nonce: tokenNonce,
+        }).then((r) => {
+            let response = r as any;
+            if (!response.error) {
+                setBlockchainOwnerAddress(response.data.data.tokenData.owner);
+            }
+
+            setImageUrlLink(
+                "https://media.elrond.com/nfts/asset/QmRS856rPGWBoFEHGy9cVVQb3SvaQx7VgxB9AmLSrtGRuZ/1122.png"
+            );
+        });
 
         getTokenDataTrigger({ collectionId, tokenNonce }).then((r) => {
-            setLoadingImageLinkType(true);
+            let response = r as any;
+            if (!response.error) {
+                setDatabaseOwnerAddress(response.data.data.ownerWalletAddress);
+            }
+
+            setImageUrlLink(
+                "https://media.elrond.com/nfts/asset/QmRS856rPGWBoFEHGy9cVVQb3SvaQx7VgxB9AmLSrtGRuZ/1122.png"
+            );
         });
     }, []);
+
+    useEffect(() => {
+        if (
+            databaseOwnerAddress != blockchainOwnerAddress &&
+            databaseOwnerAddress?.length > 0 &&
+            blockchainOwnerAddress?.length > 0
+        ) {
+            let trd = tokenResponseData.data.token;
+            let gtd = gatewayTokenData.data.tokenData;
+            setNewTokenOwnerTrigger({
+                tokenId: trd.tokenId.toString(),
+                nonceHexStr: trd.nonceStr.toString(),
+                newOwner: gtd.owner.toString(),
+            });
+        }
+
+        setTokenRank(tokenResponseData?.data?.token?.rank.toString());
+    }, [databaseOwnerAddress, blockchainOwnerAddress]);
 
     if (isErrorGetTokenDataQuery && !walletAddressParam) {
         return (
@@ -568,7 +606,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         .reverse();
 
     const CustomTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
+        if (active && payload && payload?.length) {
             return (
                 <div className="flex p-4 rounded-xl flex-col justify-center bg-black bg-opacity-50 text-white items-center content-center align-middle">
                     <div>Day: {label}</div>
@@ -604,7 +642,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                 (!hasAuctionStarted || hasFinishedWithoutWinner);
 
             if (
-                offersTableColumns.length === 3 &&
+                offersTableColumns?.length === 3 &&
                 hasAction &&
                 (shouldDisplayAcceptButton || isCurrentOfferor)
             ) {
@@ -1212,7 +1250,13 @@ export const TokenPage: (props: any) => any = ({}) => {
             {Boolean(ownerWalletAddress) && (
                 <p className="u-margin-bottom-spacing-5 u-text-small">
                     <span className="u-text-theme-gray-mid">Owned by </span>{" "}
-                    <Link to={`/profile/${ownerWalletAddress}`}>
+                    <Link
+                        to={`/profile/${
+                            isOnSale
+                                ? ownerWalletAddress
+                                : blockchainOwnerAddress
+                        }`}
+                    >
                         {displayedOwner}
                     </Link>
                 </p>
@@ -1692,6 +1736,18 @@ export const TokenPage: (props: any) => any = ({}) => {
 
                         <div className="col-span-12 md:col-span-6 px-6">
                             <div className="hidden md:block">{TokenHeader}</div>
+
+                            <div
+                                style={{ backgroundImage: `url(${bgBox})` }}
+                                className="p-token-page_rankBox"
+                            >
+                                <span>Rank</span>
+                                <span>
+                                    {tokenRank?.length > 0 && tokenRank != "0"
+                                        ? tokenRank
+                                        : "Unknown"}
+                                </span>
+                            </div>
 
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
                                 {
