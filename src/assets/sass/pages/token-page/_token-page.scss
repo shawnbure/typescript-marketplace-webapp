@@ -23,4 +23,40 @@
     &_token-data {
         // border: 1px solid rgb(21, 27, 34);
     }
+
+    &_rankBox {
+        width: 100%;
+        height: 80px;
+        background: #262b2f;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        background-repeat: no-repeat;
+        background-position-x: center;
+        background-position-y: bottom;
+        margin: 32px 0 24px 0;
+
+        padding: 0 48px;
+
+        border-radius: 8px;
+
+        span {
+            line-height: 1;
+        }
+
+        span:nth-child(2) {
+            font-size: 24px;
+            font-weight: bold;
+
+            @include respond-to(mobile-normal) {
+                font-size: 16px;
+            }
+        }
+
+        @include respond-to(mobile-normal) {
+            padding: 0 24px;
+        }
+    }
 }
