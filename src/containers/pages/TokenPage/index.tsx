@@ -247,13 +247,14 @@ export const TokenPage: (props: any) => any = ({}) => {
     };
 
     const [loadingImageLinkType, setLoadingImageLinkType] = useState(false);
+    const [linkOfImage, setLinkOfImage] = useState('')
 
     useEffect(() => {
         if (loadingImageLinkType) {
             //fetch(imageLink)
             //fetch("https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM")
 
-            fetch(imageLink).then((response) => {
+            fetch(linkOfImage).then((response) => {
                 response.blob().then((blob) => {
                     if (blob.type.includes("image")) {
                         setImageMediaType(1);
@@ -298,7 +299,8 @@ export const TokenPage: (props: any) => any = ({}) => {
                 setBlockchainOwnerAddress(response.data.data.tokenData.owner)
             }
 
-            walletAddressParam ? setLoadingImageLinkType(true) : null
+            setLinkOfImage(response?.data?.data?.tokenData?.url)
+            setLoadingImageLinkType(true)
         });
 
         getTokenDataTrigger({ collectionId, tokenNonce }).then((r) => {
@@ -307,16 +309,29 @@ export const TokenPage: (props: any) => any = ({}) => {
                 setDatabaseOwnerAddress(response.data.data.ownerWalletAddress)
             }
 
+            setLinkOfImage(response?.data?.data?.token?.imageLink)
             setLoadingImageLinkType(true);
         });
         
     }, []);
 
     useEffect(() => {
-        if(databaseOwnerAddress != blockchainOwnerAddress && databaseOwnerAddress.length > 0 && blockchainOwnerAddress.length > 0 && !isOnSale) {
-            let trd = tokenResponseData.data.token
-            let gtd = gatewayTokenData.data.tokenData
-            setNewTokenOwnerTrigger({tokenId : trd.tokenId.toString(), nonceHexStr : trd.nonceStr.toString(), newOwner: gtd.owner.toString()})
+        
+        if (
+            databaseOwnerAddress != blockchainOwnerAddress &&
+            databaseOwnerAddress?.length > 0 &&
+            blockchainOwnerAddress?.length > 0
+        ) {
+            let {tokenId, nonceStr, onSale} = tokenResponseData.data.token;
+            let {owner} = gatewayTokenData.data.tokenData;
+
+            if(onSale === false) {
+                setNewTokenOwnerTrigger({
+                    tokenId: tokenId.toString(),
+                    nonceHexStr: nonceStr.toString(),
+                    newOwner: owner.toString(),
+                });
+            }
         }
     }, [databaseOwnerAddress, blockchainOwnerAddress])
 
@@ -354,9 +369,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         const ownerWalletAddress = isOurs
             ? tokenData.ownerWalletAddress
             : walletAddressParam;
-        const imageLink: string = isOurs
-            ? token.imageLink
-            : atob(token?.uris?.[0] || "");
+        const imageLink: string = linkOfImage;
         let metadataLink: string = isOurs
             ? token.metadataLink
             : atob(token?.uris?.[1] || "");
