@@ -85,8 +85,9 @@ export const TokenPage: (props: any) => any = ({}) => {
     } = useParams<UrlParameters>();
     const [hasLoadMoreActivity, setHasLoadMoreActivity] = useState(true);
     const [offerAmount, setOfferAmount] = useState<number>(0);
-    const [blockchainOwnerAddress, setBlockchainOwnerAddress] = useState<any>('');
-    const [databaseOwnerAddress, setDatabaseOwnerAddress] = useState<any>('');
+    const [tokenRank, setTokenRank] = useState<string>("0");
+    const [blockchainOwnerAddress, setBlockchainOwnerAddress] = useState<any>("");
+    const [databaseOwnerAddress, setDatabaseOwnerAddress] = useState<any>("");
     const [expireOffer, setExpireOffer] = useState<any>();
     const [transactions, setTransactions] = useState<any>([]);
     const { loggedIn, address: userWalletAddress } = Dapp.useContext();
@@ -189,7 +190,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         newSortQuery?: any;
     }) => {
         // const filters = newFilterQuery ? newFilterQuery : filterQuery;
-        const offset = mergeWithExisting ? transactions.length : 0;
+        const offset = mergeWithExisting ? transactions?.length : 0;
         // const sortRules = newSortQuery ? newSortQuery : sort;
 
         const tokenTransactionsResponse: any = await getTokenTransactionsTrigger(
@@ -246,6 +247,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         setTransactions(response.data.data);
     };
 
+
     const [loadingImageLinkType, setLoadingImageLinkType] = useState(false);
     const [linkOfImage, setLinkOfImage] = useState('')
 
@@ -253,6 +255,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         if (loadingImageLinkType) {
             //fetch(imageLink)
             //fetch("https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM")
+
 
             fetch(linkOfImage).then((response) => {
                 response.blob().then((blob) => {
@@ -294,34 +297,32 @@ export const TokenPage: (props: any) => any = ({}) => {
             identifier: collectionId,
             nonce: tokenNonce,
         }).then((r) => {
-            let response = r as any
-            if(!response.error) {
-                setBlockchainOwnerAddress(response.data.data.tokenData.owner)
+            let response = r as any;
+            if (!response.error) {
+                setBlockchainOwnerAddress(response.data.data.tokenData.owner);
             }
-
             setLinkOfImage(response?.data?.data?.tokenData?.url)
             setLoadingImageLinkType(true)
         });
 
         getTokenDataTrigger({ collectionId, tokenNonce }).then((r) => {
-            let response = r as any
-            if(!response.error) {
-                setDatabaseOwnerAddress(response.data.data.ownerWalletAddress)
+            let response = r as any;
+            if (!response.error) {
+                setDatabaseOwnerAddress(response.data.data.ownerWalletAddress);
             }
 
             setLinkOfImage(response?.data?.data?.token?.imageLink)
             setLoadingImageLinkType(true);
         });
-        
     }, []);
 
     useEffect(() => {
-        
         if (
             databaseOwnerAddress != blockchainOwnerAddress &&
             databaseOwnerAddress?.length > 0 &&
             blockchainOwnerAddress?.length > 0
         ) {
+
             let {tokenId, nonceStr, onSale} = tokenResponseData.data.token;
             let {owner} = gatewayTokenData.data.tokenData;
 
@@ -333,7 +334,9 @@ export const TokenPage: (props: any) => any = ({}) => {
                 });
             }
         }
-    }, [databaseOwnerAddress, blockchainOwnerAddress])
+
+        setTokenRank(tokenResponseData?.data?.token?.rank.toString());
+    }, [databaseOwnerAddress, blockchainOwnerAddress]);
 
     if (isErrorGetTokenDataQuery && !walletAddressParam) {
         return (
@@ -599,7 +602,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         .reverse();
 
     const CustomTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
+        if (active && payload && payload?.length) {
             return (
                 <div className="flex p-4 rounded-xl flex-col justify-center bg-black bg-opacity-50 text-white items-center content-center align-middle">
                     <div>Day: {label}</div>
@@ -635,7 +638,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                 (!hasAuctionStarted || hasFinishedWithoutWinner);
 
             if (
-                offersTableColumns.length === 3 &&
+                offersTableColumns?.length === 3 &&
                 hasAction &&
                 (shouldDisplayAcceptButton || isCurrentOfferor)
             ) {
@@ -1243,7 +1246,13 @@ export const TokenPage: (props: any) => any = ({}) => {
             {Boolean(ownerWalletAddress) && (
                 <p className="u-margin-bottom-spacing-5 u-text-small">
                     <span className="u-text-theme-gray-mid">Owned by </span>{" "}
-                    <Link to={`/profile/${ownerWalletAddress}`}>
+                    <Link
+                        to={`/profile/${
+                            isOnSale
+                                ? ownerWalletAddress
+                                : blockchainOwnerAddress
+                        }`}
+                    >
                         {displayedOwner}
                     </Link>
                 </p>
