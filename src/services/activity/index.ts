@@ -21,13 +21,25 @@ export const activityApi = createApi({
                 timestamp,
                 currentPage,
                 nextPage,
-                typeFilter,
-                collectionFilter,
-                verifiedItems
+                typeFilter = "List",
+                collectionFilter = "",
+                verifiedItems = "true",
             }): FetchArgs => {
                 const customRequestArg: FetchArgs = {
                     method: GET,
-                    url: `/${mainPath}/all/${timestamp}/${currentPage}/${nextPage}?filter=${typeFilter.length ? `type%7C${typeFilter}%7C%3D` : ``}${collectionFilter.length ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D` : ``}${verifiedItems ? `&collectionFilter=is_verified|true|=` : ``}&limit=30`,
+                    url: `/${mainPath}/all/${timestamp}/${currentPage}/${nextPage}?${
+                        typeFilter.length
+                            ? `filter=type%7C${typeFilter}%7C%3D`
+                            : "filter=type%7CList%7C%3D"
+                    }${
+                        collectionFilter.length
+                            ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
+                            : ``
+                    }${
+                        verifiedItems == "true"
+                            ? `&collectionFilter=is_verified|true|=`
+                            : ``
+                    }&limit=30`,
                 };
 
                 return customRequestArg;

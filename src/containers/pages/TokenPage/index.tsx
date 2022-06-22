@@ -73,6 +73,9 @@ import { Footer } from "components/index";
 import { alphaToastMessage } from "components/AlphaToastError";
 import { releaseFeaureStaking } from "configs/dappConfig";
 
+//Images
+import bgBox from "./../../../assets/img/boxBg.png";
+
 export const TokenPage: (props: any) => any = ({}) => {
     const dispatch = useAppDispatch();
     //const { pathname } = useLocation();
@@ -1732,6 +1735,18 @@ export const TokenPage: (props: any) => any = ({}) => {
 
                         <div className="col-span-12 md:col-span-6 px-6">
                             <div className="hidden md:block">{TokenHeader}</div>
+
+                            <div
+                                style={{ backgroundImage: `url(${bgBox})` }}
+                                className="p-token-page_rankBox"
+                            >
+                                <span>Rank</span>
+                                <span>
+                                    {tokenRank?.length > 0 && tokenRank != "0"
+                                        ? tokenRank
+                                        : "Unknown"}
+                                </span>
+                            </div>
 
                             <div className="u-border-radius-2 u-overflow-hidden my-10">
                                 {
