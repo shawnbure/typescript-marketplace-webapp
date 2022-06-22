@@ -89,11 +89,8 @@ export const TokenPage: (props: any) => any = ({}) => {
     const [hasLoadMoreActivity, setHasLoadMoreActivity] = useState(true);
     const [offerAmount, setOfferAmount] = useState<number>(0);
     const [tokenRank, setTokenRank] = useState<string>("0");
-    const [blockchainOwnerAddress, setBlockchainOwnerAddress] = useState<any>(
-        ""
-    );
+    const [blockchainOwnerAddress, setBlockchainOwnerAddress] = useState<any>("");
     const [databaseOwnerAddress, setDatabaseOwnerAddress] = useState<any>("");
-    const [imageUrlLink, setImageUrlLink] = useState<any>("");
     const [expireOffer, setExpireOffer] = useState<any>();
     const [transactions, setTransactions] = useState<any>([]);
     const { loggedIn, address: userWalletAddress } = Dapp.useContext();
@@ -253,14 +250,17 @@ export const TokenPage: (props: any) => any = ({}) => {
         setTransactions(response.data.data);
     };
 
-    const [loadingImageLinkType, setLoadingImageLinkType] = useState(true);
+
+    const [loadingImageLinkType, setLoadingImageLinkType] = useState(false);
+    const [linkOfImage, setLinkOfImage] = useState('')
 
     useEffect(() => {
         if (loadingImageLinkType) {
             //fetch(imageLink)
             //fetch("https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM")
 
-            fetch(imageUrlLink).then((response) => {
+
+            fetch(linkOfImage).then((response) => {
                 response.blob().then((blob) => {
                     if (blob.type.includes("image")) {
                         setImageMediaType(1);
@@ -272,7 +272,7 @@ export const TokenPage: (props: any) => any = ({}) => {
                 });
             });
         }
-    }, [imageUrlLink]);
+    }, [loadingImageLinkType]);
 
     //0: none, 1: image, 2: video
     const [imageMediaType, setImageMediaType] = useState<number>(0);
@@ -304,10 +304,8 @@ export const TokenPage: (props: any) => any = ({}) => {
             if (!response.error) {
                 setBlockchainOwnerAddress(response.data.data.tokenData.owner);
             }
-
-            setImageUrlLink(
-                "https://media.elrond.com/nfts/asset/QmRS856rPGWBoFEHGy9cVVQb3SvaQx7VgxB9AmLSrtGRuZ/1122.png"
-            );
+            setLinkOfImage(response?.data?.data?.tokenData?.url)
+            setLoadingImageLinkType(true)
         });
 
         getTokenDataTrigger({ collectionId, tokenNonce }).then((r) => {
@@ -316,9 +314,8 @@ export const TokenPage: (props: any) => any = ({}) => {
                 setDatabaseOwnerAddress(response.data.data.ownerWalletAddress);
             }
 
-            setImageUrlLink(
-                "https://media.elrond.com/nfts/asset/QmRS856rPGWBoFEHGy9cVVQb3SvaQx7VgxB9AmLSrtGRuZ/1122.png"
-            );
+            setLinkOfImage(response?.data?.data?.token?.imageLink)
+            setLoadingImageLinkType(true);
         });
     }, []);
 
@@ -328,13 +325,17 @@ export const TokenPage: (props: any) => any = ({}) => {
             databaseOwnerAddress?.length > 0 &&
             blockchainOwnerAddress?.length > 0
         ) {
-            let trd = tokenResponseData.data.token;
-            let gtd = gatewayTokenData.data.tokenData;
-            setNewTokenOwnerTrigger({
-                tokenId: trd.tokenId.toString(),
-                nonceHexStr: trd.nonceStr.toString(),
-                newOwner: gtd.owner.toString(),
-            });
+
+            let {tokenId, nonceStr, onSale} = tokenResponseData.data.token;
+            let {owner} = gatewayTokenData.data.tokenData;
+
+            if(onSale === false) {
+                setNewTokenOwnerTrigger({
+                    tokenId: tokenId.toString(),
+                    nonceHexStr: nonceStr.toString(),
+                    newOwner: owner.toString(),
+                });
+            }
         }
 
         setTokenRank(tokenResponseData?.data?.token?.rank.toString());
@@ -374,9 +375,7 @@ export const TokenPage: (props: any) => any = ({}) => {
         const ownerWalletAddress = isOurs
             ? tokenData.ownerWalletAddress
             : walletAddressParam;
-        const imageLink: string = isOurs
-            ? token.imageLink
-            : atob(token?.uris?.[0] || "");
+        const imageLink: string = linkOfImage;
         let metadataLink: string = isOurs
             ? token.metadataLink
             : atob(token?.uris?.[1] || "");
