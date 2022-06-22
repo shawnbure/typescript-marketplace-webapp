@@ -3,7 +3,7 @@ import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import InfiniteScroll from "react-infinite-scroll-component";
-import LoadingBar from 'react-top-loading-bar'
+import LoadingBar from "react-top-loading-bar";
 
 //API Gateways
 import { useGetActivitiesLogMutation } from "services/activity";
@@ -16,10 +16,12 @@ import dollarSign from "./../../../assets/img/labels/dollar-sign.svg";
 import zapSign from "./../../../assets/img/labels/zap-sign.svg";
 import tagSign from "./../../../assets/img/labels/tag-sign.svg";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export const ActivityPage = () => {
+    const params = new URLSearchParams(window.location.search); // Initialize query controller
+
     let [collectionDropedDown, setCollectionDropedDown] = useState<any>(true);
     let [eventDropedDown, setEventDropedDown] = useState<any>(true);
     let [loadingProgressBar, setLoadingProgressBar] = useState<any>(0);
@@ -36,10 +38,11 @@ export const ActivityPage = () => {
 
     let [currentPage, setCurrentPage] = useState(1);
     let [nextPage, setNextPage] = useState(2);
-    let [typeFilter, setTypeFilter] = useState<string>("List");
-    let [collectionFilter, setCollectionFilter] = useState<string>("");
 
     let [hasMoreData, setHasMoreData] = useState<boolean>(true);
+
+    // Filters
+    let [urlParameters, setUrlParameters] = useState<any>("");
 
     const [
         getActivitiesLogRequestTrigger,
@@ -60,12 +63,12 @@ export const ActivityPage = () => {
         responeHolder: any,
         requestCase: string
     ) => {
-        setLoadingProgressBar(60)
+        setLoadingProgressBar(60);
         switch (requestCase) {
             case "ActivitiesLog":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter(responeHolder.data.data.activities);
-                setLoadingProgressBar(100)
+                setLoadingProgressBar(100);
                 break;
 
             case "LoadMoreLogs":
@@ -77,13 +80,13 @@ export const ActivityPage = () => {
                     ...stateGetter,
                     ...responeHolder.data.data.activities,
                 ]);
-                setLoadingProgressBar(100)
+                setLoadingProgressBar(100);
                 break;
 
             case "AllCollections":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter(responeHolder.data.data);
-                setLoadingProgressBar(100)
+                setLoadingProgressBar(100);
                 break;
 
             default:
@@ -171,7 +174,9 @@ export const ActivityPage = () => {
                                                     setSelectedCollections(
                                                         filtered
                                                     );
-                                                    setCollectionFilter("");
+                                                    removeParam(
+                                                        "collection_id"
+                                                    );
                                                     setSearchInputValue("");
                                                 }}
                                             >
@@ -206,7 +211,10 @@ export const ActivityPage = () => {
                                                                     `${item.name}`,
                                                                 ]
                                                             );
-                                                            setCollectionFilter(item.id)
+                                                            setParam(
+                                                                "collection_id",
+                                                                `${item.id}`
+                                                            );
                                                             setSearchInputValue(
                                                                 ""
                                                             );
@@ -271,25 +279,25 @@ export const ActivityPage = () => {
                                 <div className="activity-sidebar__dropbox--content_selectionBox">
                                     <button
                                         style={
-                                            eventType == "All"
+                                            eventType == "Withdraw"
                                                 ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
-                                            setEventType("All");
-                                            setTypeFilter("");
+                                            setEventType("Withdraw");
+                                            setParam("filter", "Withdraw");
                                             setSearchInputValue("");
                                         }}
                                     >
                                         <FontAwesomeIcon
-                                            icon={faIcons.faLayerGroup}
+                                            icon={faIcons.faArrowUp}
                                             style={{
                                                 margin: "0 8px 0 0",
                                                 color: "#fff",
                                                 fontSize: "12px",
                                             }}
                                         />{" "}
-                                        All
+                                        Withdraw
                                     </button>
                                     <button
                                         style={
@@ -299,7 +307,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("List");
-                                            setTypeFilter(`List`);
+                                            setParam("filter", "List");
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -321,7 +329,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Buy");
-                                            setTypeFilter(`Buy`);
+                                            setParam("filter", "Buy");
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -343,7 +351,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Auction");
-                                            setTypeFilter(`Auction`);
+                                            setParam("filter", "Auction");
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -366,15 +374,19 @@ export const ActivityPage = () => {
                         <div className="activity-sidebar__dropbox--title">
                             <span>Verified Collections</span>
                             <label className="activity-switch">
-                                <input type="checkbox" checked={showVerifiedItems} onChange={(e) => {
-                                    let tar = e.target as any
-                                    setShowVerifiedItems(tar.checked)
-                                }}/>
+                                <input
+                                    type="checkbox"
+                                    checked={showVerifiedItems}
+                                    onChange={(e) => {
+                                        let tar = e.target as any;
+                                        setShowVerifiedItems(tar.checked);
+                                        setParam("is_verified", tar.checked);
+                                    }}
+                                />
                                 <span className="activity-slider round"></span>
                             </label>
                         </div>
                     </div>
-
                 </div>
                 <div className="activity-overlay"></div>
             </>
@@ -392,23 +404,47 @@ export const ActivityPage = () => {
         }
     };
 
-    let loadMoreLogs = (
-        timestamp: any,
-        currentPage: any,
-        nextPage: any,
-        typeFilter: any,
-        collectionFilter: any,
-        verifiedItems: any
-    ) => {
+    // Query Filtering Func's
+
+    let pushParams = () => {
+        window.history.pushState({}, "", `?${params.toString()}`);
+    };
+
+    let setParam = (parameter: any, value: any) => {
+        if (!params.has(parameter)) {
+            params.append(parameter, value);
+        } else {
+            removeParam(parameter);
+            params.append(parameter, value);
+        }
+        pushParams();
+        setUrlParameters(params.toString());
+    };
+
+    let removeParam = (parameter: any) => {
+        if (params.has(parameter)) {
+            params.delete(parameter);
+        }
+        pushParams();
+        setUrlParameters(params.toString());
+    };
+
+    let getParam = (parameter: any) => {
+        if (params.has(parameter)) {
+            return params.get(parameter);
+        }
+    };
+
+    let loadMoreLogs = (timestamp: any, currentPage: any, nextPage: any) => {
         dataProcessor(
             getActivitiesLogRequestTrigger,
             {
                 timestamp,
                 currentPage,
                 nextPage,
-                typeFilter,
-                collectionFilter,
-                verifiedItems
+                typeFilter: getParam("filter"),
+                collectionFilter: getParam("collection_id"),
+                verifiedItems: getParam("is_verified"),
             },
             activities,
             setActivities,
@@ -421,16 +457,16 @@ export const ActivityPage = () => {
 
     useEffect(() => {
         setHasMoreData(true);
-        setLoadingProgressBar(10)
+        setLoadingProgressBar(10);
         dataProcessor(
             getActivitiesLogRequestTrigger,
             {
                 timestamp: 0,
                 currentPage: 1,
                 nextPage: 1,
-                typeFilter: typeFilter,
-                collectionFilter: collectionFilter,
-                verifiedItems: showVerifiedItems
+                typeFilter: getParam("filter"), //String
+                collectionFilter: getParam("collection_id"), //Number
+                verifiedItems: getParam("is_verified"), // True/False
             },
             activities,
             setActivities,
@@ -445,15 +481,42 @@ export const ActivityPage = () => {
             {},
             "AllCollections"
         );
-    }, [typeFilter, collectionFilter, showVerifiedItems]);
+    }, [urlParameters]);
 
     useEffect(() => {
         setFilteredCollections(allCollections);
     }, [allCollections]);
 
+    useEffect(() => {
+        filteredCollections.map((item: any) => {
+            if (
+                getParam("collection_id") &&
+                !selectedCollections.includes(item.name)
+            ) {
+                if (item.id.toString() == getParam("collection_id")) {
+                    setSelectedCollections([item.name]);
+                }
+            }
+        });
+
+        if (getParam("filter")) {
+            setEventType(String(getParam("filter")));
+        }
+
+        if (getParam("is_verified")) {
+            setShowVerifiedItems(getParam("is_verified") != "false");
+        } else {
+            setShowVerifiedItems(false)
+        }
+    });
+
     return (
         <React.Fragment>
-        <LoadingBar color='#2081e2' progress={loadingProgressBar} onLoaderFinished={() => setLoadingProgressBar(0)}/>
+            <LoadingBar
+                color="#2081e2"
+                progress={loadingProgressBar}
+                onLoaderFinished={() => setLoadingProgressBar(0)}
+            />
             {filtersSideBar ? openSideMenu() : null}
             <div className="activity-modal">
                 <button onClick={() => setFiltersSideBar(!filtersSideBar)}>
@@ -524,7 +587,9 @@ export const ActivityPage = () => {
                                                     setSelectedCollections(
                                                         filtered
                                                     );
-                                                    setCollectionFilter("");
+                                                    removeParam(
+                                                        "collection_id"
+                                                    );
                                                     setSearchInputValue("");
                                                 }}
                                             >
@@ -559,7 +624,10 @@ export const ActivityPage = () => {
                                                                     `${item.name}`,
                                                                 ]
                                                             );
-                                                            setCollectionFilter(item.id)
+                                                            setParam(
+                                                                "collection_id",
+                                                                `${item.id}`
+                                                            );
                                                             setSearchInputValue(
                                                                 ""
                                                             );
@@ -624,25 +692,25 @@ export const ActivityPage = () => {
                                 <div className="activity-sidebar__dropbox--content_selectionBox">
                                     <button
                                         style={
-                                            eventType == "All"
+                                            eventType == "Withdraw"
                                                 ? { background: "#2081e2" }
                                                 : {}
                                         }
                                         onClick={() => {
-                                            setEventType("All");
-                                            setTypeFilter("");
+                                            setEventType("Withdraw");
+                                            setParam("filter", "Withdraw");
                                             setSearchInputValue("");
                                         }}
                                     >
                                         <FontAwesomeIcon
-                                            icon={faIcons.faLayerGroup}
+                                            icon={faIcons.faArrowUp}
                                             style={{
                                                 margin: "0 8px 0 0",
                                                 color: "#fff",
                                                 fontSize: "12px",
                                             }}
                                         />{" "}
-                                        All
+                                        Withdraw
                                     </button>
                                     <button
                                         style={
@@ -652,7 +720,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("List");
-                                            setTypeFilter(`List`);
+                                            setParam("filter", "List");
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -674,7 +742,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Buy");
-                                            setTypeFilter(`Buy`);
+                                            setParam("filter", "Buy");
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -696,7 +764,7 @@ export const ActivityPage = () => {
                                         }
                                         onClick={() => {
                                             setEventType("Auction");
-                                            setTypeFilter(`Auction`);
+                                            setParam("filter", "Auction");
                                             setSearchInputValue("");
                                         }}
                                     >
@@ -719,10 +787,15 @@ export const ActivityPage = () => {
                         <div className="activity-sidebar__dropbox--title">
                             <span>Verified Collections</span>
                             <label className="activity-switch">
-                                <input type="checkbox" checked={showVerifiedItems} onChange={(e) => {
-                                    let tar = e.target as any
-                                    setShowVerifiedItems(tar.checked)
-                                }}/>
+                                <input
+                                    type="checkbox"
+                                    checked={showVerifiedItems}
+                                    onChange={(e) => {
+                                        let tar = e.target as any;
+                                        setShowVerifiedItems(tar.checked);
+                                        setParam("is_verified", tar.checked);
+                                    }}
+                                />
                                 <span className="activity-slider round"></span>
                             </label>
                         </div>
@@ -775,10 +848,7 @@ export const ActivityPage = () => {
                                                   .transaction.timestamp
                                             : null,
                                         currentPage,
-                                        nextPage,
-                                        typeFilter,
-                                        collectionFilter,
-                                        showVerifiedItems
+                                        nextPage
                                     )
                                 }
                                 hasMore={hasMoreData}
