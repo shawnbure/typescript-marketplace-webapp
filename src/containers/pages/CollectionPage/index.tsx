@@ -227,11 +227,6 @@ export const CollectionPage: (props: any) => any = ({}) => {
                 onSaleFlag = false;
                 onStakeFlag = false;
         }
-        //console.log(queryFilters)
-
-        //on_sale|true|=
-        //on_sale|true|=;AND;date|1231232|>
-        //    -> on_sale=true AND date > 1231232
 
         const collectionTokensResponse: any = await getCollectionTokensTrigger({
             collectionId,
@@ -517,7 +512,6 @@ export const CollectionPage: (props: any) => any = ({}) => {
                 nextPage: 1,
                 collectionFilter: String(collectionData?.data?.collection?.id),
             })) as any;
-            console.log(responeHolder);
             setCollectionActivities(responeHolder?.data?.data?.activities);
         };
         doThis();
