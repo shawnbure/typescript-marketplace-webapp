@@ -36,13 +36,15 @@ import { MINT } from "constants/actions";
 import { useGetActivitiesLogMutation } from "services/activity";
 import moment from "moment";
 
-export const CollectionPage: (props: any) => any = ({}) => {
+export const CollectionPage: (props: any) => any = (props:any) => {
     const { loggedIn, address: userWalletAddress } = Dapp.useContext();
     const { collectionId } = useParams<UrlParameters>();
     const [buyLimit, setBuyLimit] = useState<number>(0);
     const [buyCount, setBuyCount] = useState<number>(0);
     const queryString = window.location.search;
     const { pathname } = useLocation();
+
+    let { setLoadStage } = props
 
     // Defines
     let [scrollTopPosition, setScrollTopPosition] = useState(320);
@@ -473,6 +475,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
     };
 
     useEffect(() => {
+        setLoadStage(10)
         getCollectionInfoTrigger({ collectionId: collectionId });
 
         getCollectionByIdTrigger({ collectionId: collectionId })
@@ -488,6 +491,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
     useEffect(() => {
         if (collectionDataLoaded) {
+            setLoadStage(100)
             if (
                 collectionData?.data?.creatorWalletAddress == userWalletAddress
             ) {
@@ -505,6 +509,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
     }, [selectedTraits]);
 
     useEffect(() => {
+        setLoadStage(10)
         const doThis = async () => {
             let responeHolder = (await getActivitiesLogRequestTrigger({
                 timestamp: 0,
@@ -512,6 +517,9 @@ export const CollectionPage: (props: any) => any = ({}) => {
                 nextPage: 1,
                 collectionFilter: String(collectionData?.data?.collection?.id),
             })) as any;
+            if(responeHolder?.data?.data?.activities) {
+                setLoadStage(100)
+            }
             setCollectionActivities(responeHolder?.data?.data?.activities);
         };
         doThis();
@@ -548,14 +556,7 @@ export const CollectionPage: (props: any) => any = ({}) => {
 
         setTracking(!tracking);
     };
-
-    //Traites
-    const selectOptions = [
-        { value: "chocolate", label: "Chocolate" },
-        { value: "strawberry", label: "Strawberry" },
-        { value: "vanilla", label: "Vanilla" },
-    ];
-
+    
     // Style Of Tratis Selectors
     const selectStyle = {
         control: (base: any, state: any) => ({
