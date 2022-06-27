@@ -16,7 +16,10 @@ import tokenNoImage from "./../../../assets/img/token-no-img.png";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
-export const ExplorerPage = () => {
+export const ExplorerPage = (props:any) => {
+
+    let { setLoadStage } = props
+
     let [explorationItems, setExplorationItems] = useState<any>([]);
     let [totalExplorationItems, setTotalExplorationItems] = useState<any>(0);
     let [priceRangeExplorationItems, setPriceRangeExplorationItems] = useState<
@@ -39,8 +42,6 @@ export const ExplorerPage = () => {
     let [selectedCollections, setSelectedCollections] = useState<any>([]);
     let [collectionFilter, setCollectionFilter] = useState<string>("");
     let [showVerifiedItems, setShowVerifiedItems] = useState<boolean>(true);
-
-    let [loadingProgressBar, setLoadingProgressBar] = useState<any>(0);
 
     //Modals
     let [showModal, setShowModal] = useState<boolean>(false);
@@ -200,9 +201,9 @@ export const ExplorerPage = () => {
         responeHolder: any,
         requestCase: string
     ) => {
-        setLoadingProgressBar(60)
         switch (requestCase) {
             case "ExplorationItems":
+                setLoadStage(10)
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter([]);
                 if (responeHolder.data) {
@@ -212,14 +213,15 @@ export const ExplorerPage = () => {
                         max: responeHolder.data.data.max_price,
                     });
                     stateSetter(responeHolder.data.data.tokens);
+                    setLoadStage(100)
                 }
                 if (responeHolder.data == null) {
                     setTotalExplorationItems(0);
                 }
-                setLoadingProgressBar(100)
                 break;
 
             case "LoadMoreItems":
+                setLoadStage(10)
                 responeHolder = await functionTrigger(triggerInputObject);
                 if (explorationItems.length >= responeHolder.data.data.total) {
                     setHasMoreData(false);
@@ -229,14 +231,17 @@ export const ExplorerPage = () => {
                         ...stateGetter,
                         ...responeHolder.data.data.tokens,
                     ]);
+                    setLoadStage(100)
                 }
-                setLoadingProgressBar(100)
                 break;
 
             case "AllCollections":
+                setLoadStage(10)
                 responeHolder = await functionTrigger(triggerInputObject);
-                stateSetter(responeHolder.data.data);
-                setLoadingProgressBar(100)
+                if(responeHolder.data) {
+                    stateSetter(responeHolder.data.data);
+                    setLoadStage(100)
+                }
                 break;
 
             default:
@@ -720,7 +725,6 @@ export const ExplorerPage = () => {
         setHasMoreData(true);
         setCurrentPage(1);
         setNextPage(2);
-        setLoadingProgressBar(10)
 
         dataProcessor(
             getExplorationItemsRequestTrigger,
@@ -764,7 +768,7 @@ export const ExplorerPage = () => {
 
     return (
         <React.Fragment>
-        <LoadingBar color='#2081e2' progress={loadingProgressBar} onLoaderFinished={() => setLoadingProgressBar(0)}/>
+
             {showModal && openModal(activeModal)}
             {showSideMenu && openSideMenu()}
             <div className="explorer-container">

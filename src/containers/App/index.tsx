@@ -28,6 +28,7 @@ import ActivityPage from 'containers/pages/ActivityPage';
 import ExplorerPage from 'containers/pages/ExplorerPage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as faIcons from "@fortawesome/free-regular-svg-icons";
+import LoadProgressiveBar from 'components/LoadProgressiveBar';
 
 
 
@@ -118,9 +119,14 @@ export const App: () => JSX.Element = () => {
         }
     }
 
+    // Loading Bar Progress Value
+    let [loadBarValue, setLoadBarValue] = useState<any>(0);
+
     return (
 
         <div className={generatedClasses}>
+
+            <LoadProgressiveBar barColor="#2081e2" loadStep={loadBarValue} />
 
             {
                 isMobile() ?  suggestionBanner() : null
@@ -176,7 +182,7 @@ export const App: () => JSX.Element = () => {
 
                         <Route path={[routePaths.token, routePaths.unlistedToken]} exact={true} >
 
-                            <TokenPage />
+                            <TokenPage setLoadStage={setLoadBarValue} />
 
                         </Route>
 
@@ -205,7 +211,7 @@ export const App: () => JSX.Element = () => {
 
                         <Route path={routePaths.collection} exact={true} >
 
-                            <CollectionPage />
+                            <CollectionPage setLoadStage={setLoadBarValue} />
 
                         </Route>
 
@@ -239,13 +245,13 @@ export const App: () => JSX.Element = () => {
 
                         <Route path={routePaths.activity} exact={true} >
 
-                            <ActivityPage />
+                            <ActivityPage setLoadStage={setLoadBarValue} />
 
                         </Route>
 
                         <Route path={routePaths.explorer} exact={true} >
 
-                            <ExplorerPage />
+                            <ExplorerPage setLoadStage={setLoadBarValue} />
 
                         </Route>
                         

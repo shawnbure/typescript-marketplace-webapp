@@ -76,11 +76,11 @@ import { releaseFeaureStaking } from "configs/dappConfig";
 //Images
 import bgBox from "./../../../assets/img/boxBg.png";
 
-export const TokenPage: (props: any) => any = ({}) => {
+export const TokenPage: (props: any) => any = (props:any) => {
     const dispatch = useAppDispatch();
-    //const { pathname } = useLocation();
 
-    //this walletAddressParam below actuall gets the contract address for the URL?
+    let { setLoadStage } = props
+    
     const {
         collectionId,
         tokenNonce,
@@ -255,6 +255,7 @@ export const TokenPage: (props: any) => any = ({}) => {
     const [linkOfImage, setLinkOfImage] = useState('')
 
     useEffect(() => {
+        setLoadStage(10)
         if (loadingImageLinkType) {
             //fetch(imageLink)
             //fetch("https://gateway.pinata.cloud/ipfs/QmUzHDP4n63FxNXWFkxpKGeFrRoYEXADaDTfMoVPPh8itM")
@@ -262,6 +263,7 @@ export const TokenPage: (props: any) => any = ({}) => {
 
             fetch(linkOfImage).then((response) => {
                 response.blob().then((blob) => {
+                    setLoadStage(100)
                     if (blob.type.includes("image")) {
                         setImageMediaType(1);
                     } else if (blob.type.includes("video")) {
@@ -278,6 +280,7 @@ export const TokenPage: (props: any) => any = ({}) => {
     const [imageMediaType, setImageMediaType] = useState<number>(0);
 
     useEffect(() => {
+        setLoadStage(10)
         getTokenOffersTrigger({
             collectionId,
             tokenNonce,
@@ -300,6 +303,7 @@ export const TokenPage: (props: any) => any = ({}) => {
             identifier: collectionId,
             nonce: tokenNonce,
         }).then((r) => {
+            setLoadStage(100)
             let response = r as any;
             if (!response.error) {
                 setBlockchainOwnerAddress(response.data.data.tokenData.owner);
@@ -308,7 +312,8 @@ export const TokenPage: (props: any) => any = ({}) => {
             setLoadingImageLinkType(true)
         });
 
-        getTokenDataTrigger({ collectionId, tokenNonce }).then((r) => {
+        getTokenDataTrigger({ collectionId, tokenNonce }).then((r:any) => {
+            setLoadStage(100)
             let response = r as any;
             if (!response.error) {
                 setDatabaseOwnerAddress(response.data.data.ownerWalletAddress);
