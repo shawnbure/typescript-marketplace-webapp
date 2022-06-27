@@ -3,11 +3,12 @@
     // display: flex;
     align-items: center;
     color: var(--t-text-color);
-    background-color: $dark-blue;
+    background-color: rgba(48, 51, 57, 0.5);
     justify-content: space-between;
     padding: 0 $spacing-point-4;
     position: -webkit-sticky;
     position: sticky;
+    backdrop-filter: blur(7px);
     top: 0;
     z-index: 8000;
 
