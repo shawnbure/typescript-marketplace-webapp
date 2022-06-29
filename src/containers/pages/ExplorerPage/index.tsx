@@ -24,6 +24,8 @@ export const ExplorerPage = () => {
     let [nextPage, setNextPage] = useState<any>(2);
     let [hasMoreData, setHasMoreData] = useState<any>(true);
 
+    let [refreshPage, setRefreshPage] = useState<any>(true);
+
     let [saleTypeSelected, setSaleTypeSelected] = useState<any>("List");
     let [sortTypeSelected, setSortTypeSelected] = useState<any>("desc");
     let [priceRangeSelector, setPriceRangeSelector] = useState<any>(0);
@@ -775,6 +777,8 @@ export const ExplorerPage = () => {
         setNextPage(2);
         setLoadingProgressBar(10);
 
+        console.log('REFRESH...')
+
         dataProcessor(
             getExplorationItemsRequestTrigger,
             {
@@ -802,7 +806,7 @@ export const ExplorerPage = () => {
             {},
             "AllCollections"
         );
-    }, [urlParameters]);
+    }, [urlParameters, refreshPage]);
 
     useEffect(() => {
         setFilteredCollections(allCollections);
@@ -859,6 +863,7 @@ export const ExplorerPage = () => {
         setShowVerifiedItems(true);
 
         setUrlParameters(params.toString());
+        setRefreshPage(!refreshPage)
     };
 
     return (
