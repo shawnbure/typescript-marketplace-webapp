@@ -16,9 +16,8 @@ import tokenNoImage from "./../../../assets/img/token-no-img.png";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
-export const ExplorerPage = (props:any) => {
-
-    let { setLoadStage } = props
+export const ExplorerPage = (props: any) => {
+    let { setLoadStage, loadStage } = props;
 
     let [explorationItems, setExplorationItems] = useState<any>([]);
     let [totalExplorationItems, setTotalExplorationItems] = useState<any>(0);
@@ -239,13 +238,13 @@ export const ExplorerPage = (props:any) => {
 
         switch (requestCase) {
             case "ExplorationItems":
-                setLoadStage(10)
+                setLoadStage(10);
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter([]);
                 if (responeHolder.data) {
                     setTotalExplorationItems(responeHolder.data.data.total);
                     stateSetter(responeHolder.data.data.tokens);
-                    setLoadStage(100)
+                    setLoadStage(100);
                 }
                 if (responeHolder.data == null) {
                     setTotalExplorationItems(0);
@@ -254,7 +253,7 @@ export const ExplorerPage = (props:any) => {
                 break;
 
             case "LoadMoreItems":
-                setLoadStage(10)
+                setLoadStage(10);
                 responeHolder = await functionTrigger(triggerInputObject);
                 if (explorationItems.length >= responeHolder.data.data.total) {
                     setHasMoreData(false);
@@ -264,18 +263,17 @@ export const ExplorerPage = (props:any) => {
                         ...stateGetter,
                         ...responeHolder.data.data.tokens,
                     ]);
-                    setLoadStage(100)
+                    setLoadStage(100);
                 }
 
                 break;
 
             case "AllCollections":
-                setLoadStage(10)
+                setLoadStage(10);
                 responeHolder = await functionTrigger(triggerInputObject);
-
                 if(responeHolder.data) {
                     stateSetter(responeHolder.data.data);
-                    setLoadStage(100)
+                    setLoadStage(100);
                 }
                 
                 break;
@@ -875,7 +873,6 @@ export const ExplorerPage = (props:any) => {
 
     return (
         <React.Fragment>
-
             {showModal && openModal(activeModal)}
             {showSideMenu && openSideMenu()}
             <div className="explorer-container">
@@ -1156,7 +1153,7 @@ export const ExplorerPage = (props:any) => {
                                         );
                                     }
                                 )
-                            ) : (
+                            ) : loadStage == 100 ? (
                                 <p
                                     style={{
                                         margin: "auto",
@@ -1167,6 +1164,8 @@ export const ExplorerPage = (props:any) => {
                                 >
                                     There isn't items
                                 </p>
+                            ) : (
+                                <p>Loading...</p>
                             )}
                         </div>
                     </InfiniteScroll>

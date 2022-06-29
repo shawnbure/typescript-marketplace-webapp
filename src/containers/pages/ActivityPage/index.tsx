@@ -19,10 +19,10 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export const ActivityPage = (props:any) => {
+export const ActivityPage = (props: any) => {
     const params = new URLSearchParams(window.location.search); // Initialize query controller
 
-    let { setLoadStage } = props
+    let { setLoadStage, loadStage } = props;
 
     let [collectionDropedDown, setCollectionDropedDown] = useState<any>(true);
     let [eventDropedDown, setEventDropedDown] = useState<any>(true);
@@ -497,13 +497,12 @@ export const ActivityPage = (props:any) => {
         if (getParam("is_verified")) {
             setShowVerifiedItems(getParam("is_verified") != "false");
         } else {
-            setShowVerifiedItems(false)
+            setShowVerifiedItems(false);
         }
     });
 
     return (
         <React.Fragment>
-            
             {filtersSideBar ? openSideMenu() : null}
             <div className="activity-modal">
                 <button onClick={() => setFiltersSideBar(!filtersSideBar)}>
@@ -1103,7 +1102,7 @@ export const ActivityPage = (props:any) => {
                                             </Link>
                                         )
                                     )
-                                ) : (
+                                ) : loadStage == 100 ? (
                                     <div style={{ width: "100%" }}>
                                         <p
                                             style={{
@@ -1113,6 +1112,8 @@ export const ActivityPage = (props:any) => {
                                             There isn't item
                                         </p>
                                     </div>
+                                ) : (
+                                    <p>Loading...</p>
                                 )}
                             </InfiniteScroll>
                         </div>
