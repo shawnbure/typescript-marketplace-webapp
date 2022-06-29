@@ -21,15 +21,13 @@ export const ExplorerPage = (props: any) => {
 
     let [explorationItems, setExplorationItems] = useState<any>([]);
     let [totalExplorationItems, setTotalExplorationItems] = useState<any>(0);
-    let [priceRangeExplorationItems, setPriceRangeExplorationItems] = useState<
-        any
-    >({});
 
     let [currentPage, setCurrentPage] = useState<any>(1);
     let [nextPage, setNextPage] = useState<any>(2);
     let [hasMoreData, setHasMoreData] = useState<any>(true);
 
-    let [typeFilter, setTypeFilter] = useState<any>("List");
+    let [refreshPage, setRefreshPage] = useState<any>(true);
+
     let [saleTypeSelected, setSaleTypeSelected] = useState<any>("List");
     let [sortTypeSelected, setSortTypeSelected] = useState<any>("desc");
     let [priceRangeSelector, setPriceRangeSelector] = useState<any>(0);
@@ -39,7 +37,6 @@ export const ExplorerPage = (props: any) => {
     let [filteredCollections, setFilteredCollections] = useState<any>([]);
     let [searchInputValue, setSearchInputValue] = useState<any>([]);
     let [selectedCollections, setSelectedCollections] = useState<any>([]);
-    let [collectionFilter, setCollectionFilter] = useState<string>("");
     let [showVerifiedItems, setShowVerifiedItems] = useState<boolean>(true);
 
     //Modals
@@ -48,6 +45,9 @@ export const ExplorerPage = (props: any) => {
 
     //SideMenu
     let [showSideMenu, setShowSideMenu] = useState<any>(false);
+
+    // Filters
+    let [urlParameters, setUrlParameters] = useState<any>("");
 
     const [
         getExplorationItemsRequestTrigger,
@@ -70,6 +70,41 @@ export const ExplorerPage = (props: any) => {
             setFilteredCollections(allCollections);
         }
     };
+
+    // Query Filtering Functions
+
+    const params = new URLSearchParams(window.location.search); // Initialize query controller
+
+    const pushParams = () => {
+        window.history.pushState({}, "", `?${params.toString()}`);
+    };
+
+    const setParam = (parameter: any, value: any) => {
+        if (!params.has(parameter)) {
+            params.append(parameter, value);
+        } else {
+            removeParam(parameter);
+            params.append(parameter, value);
+        }
+        pushParams();
+        setUrlParameters(params.toString());
+    };
+
+    const removeParam = (parameter: any) => {
+        if (params.has(parameter)) {
+            params.delete(parameter);
+        }
+        pushParams();
+        setUrlParameters(params.toString());
+    };
+
+    const getParam = (parameter: any) => {
+        if (params.has(parameter)) {
+            return params.get(parameter);
+        }
+    };
+
+    // -------------------
 
     let openSideMenu = () => {
         return (
@@ -200,6 +235,7 @@ export const ExplorerPage = (props: any) => {
         responeHolder: any,
         requestCase: string
     ) => {
+
         switch (requestCase) {
             case "ExplorationItems":
                 setLoadStage(10);
@@ -207,16 +243,13 @@ export const ExplorerPage = (props: any) => {
                 stateSetter([]);
                 if (responeHolder.data) {
                     setTotalExplorationItems(responeHolder.data.data.total);
-                    setPriceRangeExplorationItems({
-                        min: responeHolder.data.data.min_price,
-                        max: responeHolder.data.data.max_price,
-                    });
                     stateSetter(responeHolder.data.data.tokens);
                     setLoadStage(100);
                 }
                 if (responeHolder.data == null) {
                     setTotalExplorationItems(0);
                 }
+
                 break;
 
             case "LoadMoreItems":
@@ -232,15 +265,17 @@ export const ExplorerPage = (props: any) => {
                     ]);
                     setLoadStage(100);
                 }
+
                 break;
 
             case "AllCollections":
                 setLoadStage(10);
                 responeHolder = await functionTrigger(triggerInputObject);
-                if (responeHolder.data) {
+                if(responeHolder.data) {
                     stateSetter(responeHolder.data.data);
                     setLoadStage(100);
                 }
+                
                 break;
 
             default:
@@ -262,7 +297,7 @@ export const ExplorerPage = (props: any) => {
                                 <div
                                     onClick={() => {
                                         setSaleTypeSelected("Auction");
-                                        setTypeFilter(`Auction`);
+                                        setParam("status", "Auction");
                                     }}
                                     className="explorer-modal__box--content_item-saleType"
                                     style={
@@ -281,7 +316,7 @@ export const ExplorerPage = (props: any) => {
                                 <div
                                     onClick={() => {
                                         setSaleTypeSelected("List");
-                                        setTypeFilter(`List`);
+                                        setParam("status", "List");
                                     }}
                                     className="explorer-modal__box--content_item-saleType"
                                     style={
@@ -318,9 +353,10 @@ export const ExplorerPage = (props: any) => {
                             <div className="explorer-modal__box--content">
                                 <div className="explorer-modal__box--content_item-sort">
                                     <div
-                                        onClick={() =>
-                                            setSortTypeSelected("asc")
-                                        }
+                                        onClick={() => {
+                                            setSortTypeSelected("asc");
+                                            setParam("sort", "asc");
+                                        }}
                                         style={
                                             sortTypeSelected == "asc"
                                                 ? { background: "#2081e2" }
@@ -334,9 +370,10 @@ export const ExplorerPage = (props: any) => {
                                         </span>
                                     </div>
                                     <div
-                                        onClick={() =>
-                                            setSortTypeSelected("desc")
-                                        }
+                                        onClick={() => {
+                                            setSortTypeSelected("desc");
+                                            setParam("sort", "desc");
+                                        }}
                                         style={
                                             sortTypeSelected == "desc"
                                                 ? { background: "#2081e2" }
@@ -372,9 +409,10 @@ export const ExplorerPage = (props: any) => {
                             <div className="explorer-modal__box--content">
                                 <div className="explorer-modal__box--content_item-sort">
                                     <div
-                                        onClick={() =>
-                                            setShowVerifiedItems(false)
-                                        }
+                                        onClick={() => {
+                                            setShowVerifiedItems(false);
+                                            setParam("is_verified", "false");
+                                        }}
                                         style={
                                             !showVerifiedItems
                                                 ? { background: "#2081e2" }
@@ -388,9 +426,10 @@ export const ExplorerPage = (props: any) => {
                                         </span>
                                     </div>
                                     <div
-                                        onClick={() =>
-                                            setShowVerifiedItems(true)
-                                        }
+                                        onClick={() => {
+                                            setShowVerifiedItems(true);
+                                            setParam("is_verified", "true");
+                                        }}
                                         style={
                                             showVerifiedItems
                                                 ? { background: "#2081e2" }
@@ -469,7 +508,9 @@ export const ExplorerPage = (props: any) => {
                                                     setSelectedCollections(
                                                         filtered
                                                     );
-                                                    setCollectionFilter("");
+                                                    removeParam(
+                                                        "collection_id"
+                                                    );
                                                     setSearchInputValue("");
                                                 }}
                                             >
@@ -511,8 +552,9 @@ export const ExplorerPage = (props: any) => {
                                                                     `${item.name}`,
                                                                 ]
                                                             );
-                                                            setCollectionFilter(
-                                                                `${item.id}`
+                                                            setParam(
+                                                                "collection_id",
+                                                                String(item.id)
                                                             );
                                                             setSearchInputValue(
                                                                 ""
@@ -602,15 +644,20 @@ export const ExplorerPage = (props: any) => {
                                         onInput={(e) => {
                                             let et = e.target as any;
                                             setPriceRangeSelector(et.value);
+                                            setParam(
+                                                "price_value",
+                                                String(et.value)
+                                            );
                                         }}
                                     />
                                 </div>
 
                                 <div className="explorer-modal__box--content_item-priceRangeType">
                                     <span
-                                        onClick={() =>
-                                            setPriceLimitationType("More")
-                                        }
+                                        onClick={() => {
+                                            setPriceLimitationType("More");
+                                            setParam("price_filter", "More");
+                                        }}
                                         style={
                                             priceLimitationType == "More"
                                                 ? { background: "#2081e2" }
@@ -620,9 +667,10 @@ export const ExplorerPage = (props: any) => {
                                         More than
                                     </span>
                                     <span
-                                        onClick={() =>
-                                            setPriceLimitationType("Less")
-                                        }
+                                        onClick={() => {
+                                            setPriceLimitationType("Less");
+                                            setParam("price_filter", "Less");
+                                        }}
                                         style={
                                             priceLimitationType == "Less"
                                                 ? { background: "#2081e2" }
@@ -706,13 +754,7 @@ export const ExplorerPage = (props: any) => {
     let loadMoreItems = (
         lastTimestamp: any,
         currentPage: any,
-        nextPage: any,
-        priceNominalFilter: any,
-        priceSortFilter: any,
-        typeFilter: any,
-        collectionFilter: any,
-        sortTypeFilter: any,
-        statusFilter: any
+        nextPage: any
     ) => {
         dataProcessor(
             getExplorationItemsRequestTrigger,
@@ -720,12 +762,12 @@ export const ExplorerPage = (props: any) => {
                 lastTimestamp,
                 currentPage,
                 nextPage,
-                priceNominalFilter,
-                priceSortFilter,
-                typeFilter,
-                collectionFilter,
-                sortTypeFilter,
-                statusFilter,
+                priceNominalFilter: getParam("price_value"),
+                priceSortFilter: getParam("price_filter"),
+                typeFilter: getParam("status"),
+                collectionFilter: getParam("collection_id"),
+                sortTypeFilter: getParam("sort"),
+                statusFilter: getParam("is_verified"),
             },
             explorationItems,
             setExplorationItems,
@@ -748,12 +790,12 @@ export const ExplorerPage = (props: any) => {
                 lastTimestamp: "0",
                 currentPage: "1",
                 nextPage: "1",
-                priceNominalFilter: priceRangeSelector,
-                priceSortFilter: priceLimitationType,
-                typeFilter: typeFilter,
-                collectionFilter: collectionFilter,
-                sortTypeFilter: sortTypeSelected,
-                statusFilter: showVerifiedItems,
+                priceNominalFilter: getParam("price_value"),
+                priceSortFilter: getParam("price_filter"),
+                typeFilter: getParam("status"),
+                collectionFilter: getParam("collection_id"),
+                sortTypeFilter: getParam("sort"),
+                statusFilter: getParam("is_verified"),
             },
             explorationItems,
             setExplorationItems,
@@ -769,18 +811,65 @@ export const ExplorerPage = (props: any) => {
             {},
             "AllCollections"
         );
-    }, [
-        typeFilter,
-        priceRangeSelector,
-        priceLimitationType,
-        collectionFilter,
-        sortTypeSelected,
-        showVerifiedItems,
-    ]);
+    }, [urlParameters, refreshPage]);
 
     useEffect(() => {
         setFilteredCollections(allCollections);
     }, [allCollections]);
+
+    useEffect(() => {
+        filteredCollections.map((item: any) => {
+            if (
+                getParam("collection_id") &&
+                !selectedCollections.includes(item.name)
+            ) {
+                if (item.id.toString() == getParam("collection_id")) {
+                    setSelectedCollections([item.name]);
+                }
+            }
+        });
+
+        if (getParam("status")) {
+            setSaleTypeSelected(getParam("status"));
+        }
+
+        if (getParam("price_value")) {
+            setPriceRangeSelector(getParam("price_value"));
+        }
+
+        if (getParam("price_filter")) {
+            setPriceLimitationType(getParam("price_filter"));
+        }
+
+        if (getParam("sort")) {
+            setSortTypeSelected(getParam("sort"));
+        }
+
+        if (getParam("is_verified")) {
+            setShowVerifiedItems(getParam("is_verified") != "false");
+        } else {
+            setShowVerifiedItems(true);
+        }
+    });
+
+    let removeFilters = () => {
+        removeParam("status");
+        removeParam("collection_id");
+        removeParam("price_value");
+        removeParam("price_filter");
+        removeParam("sort");
+        removeParam("is_verified");
+
+        setSaleTypeSelected("List");
+        setPriceRangeSelector(0);
+        setPriceLimitationType("More");
+        setSortTypeSelected("desc");
+        setSelectedCollections([]);
+        setShowVerifiedItems(true);
+
+        setUrlParameters(params.toString());
+        setRefreshPage(!refreshPage)
+    };
 
     return (
         <React.Fragment>
@@ -894,18 +983,7 @@ export const ExplorerPage = (props: any) => {
                             <span>Items Found</span>
                             <span>for exploring</span>
                         </div>
-                        <div
-                            onClick={() => {
-                                setSaleTypeSelected("List");
-                                setTypeFilter("List");
-                                setPriceRangeSelector(0);
-                                setPriceLimitationType("More");
-                                setSortTypeSelected("desc");
-                                setCollectionFilter("");
-                                setSelectedCollections([]);
-                                setShowVerifiedItems(true);
-                            }}
-                        >
+                        <div onClick={() => removeFilters()}>
                             <FontAwesomeIcon icon={faIcons.faTrash} />
                         </div>
                     </div>
@@ -1035,16 +1113,7 @@ export const ExplorerPage = (props: any) => {
                         </div>
                         <div
                             className="explorer-filterBox__topMenu--btn"
-                            onClick={() => {
-                                setSaleTypeSelected("List");
-                                setTypeFilter("List");
-                                setPriceRangeSelector(0);
-                                setPriceLimitationType("More");
-                                setSortTypeSelected("desc");
-                                setCollectionFilter("");
-                                setSelectedCollections([]);
-                                setShowVerifiedItems(true);
-                            }}
+                            onClick={() => removeFilters()}
                         >
                             <FontAwesomeIcon icon={faIcons.faTrash} />
                         </div>
@@ -1061,13 +1130,7 @@ export const ExplorerPage = (props: any) => {
                                       ].token.lastMarketTimestamp
                                     : null,
                                 currentPage,
-                                nextPage,
-                                priceRangeSelector,
-                                priceLimitationType,
-                                typeFilter,
-                                collectionFilter,
-                                sortTypeSelected,
-                                showVerifiedItems
+                                nextPage
                             )
                         }
                         hasMore={hasMoreData}

@@ -405,36 +405,26 @@ export const ActivityPage = (props: any) => {
         }
     };
 
-    // Query Filtering Func's
+    // Query Filtering Functions
 
-    let pushParams = () => {
-        window.history.pushState({}, "", `?${params.toString()}`);
+    const params = new URLSearchParams(window.location.search); // Initialize query controller
+
+    const pushParams = () => { window.history.pushState({}, "", `?${params.toString()}`); };
+
+    const setParam = (parameter: any, value: any) => {
+        if (!params.has(parameter)) { params.append(parameter, value); }
+        else { removeParam(parameter); params.append(parameter, value); }
+        pushParams(); setUrlParameters(params.toString());
     };
 
-    let setParam = (parameter: any, value: any) => {
-        if (!params.has(parameter)) {
-            params.append(parameter, value);
-        } else {
-            removeParam(parameter);
-            params.append(parameter, value);
-        }
-        pushParams();
-        setUrlParameters(params.toString());
+    const removeParam = (parameter: any) => {
+        if (params.has(parameter)) { params.delete(parameter); }
+        pushParams(); setUrlParameters(params.toString());
     };
 
-    let removeParam = (parameter: any) => {
-        if (params.has(parameter)) {
-            params.delete(parameter);
-        }
-        pushParams();
-        setUrlParameters(params.toString());
-    };
+    const getParam = (parameter: any) => { if (params.has(parameter)) { return params.get(parameter); } };
 
-    let getParam = (parameter: any) => {
-        if (params.has(parameter)) {
-            return params.get(parameter);
-        }
-    };
+    // -------------------
 
     let loadMoreLogs = (timestamp: any, currentPage: any, nextPage: any) => {
         dataProcessor(
