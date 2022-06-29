@@ -19,11 +19,13 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export const ActivityPage = () => {
+export const ActivityPage = (props:any) => {
+    const params = new URLSearchParams(window.location.search); // Initialize query controller
+
+    let { setLoadStage } = props
 
     let [collectionDropedDown, setCollectionDropedDown] = useState<any>(true);
     let [eventDropedDown, setEventDropedDown] = useState<any>(true);
-    let [loadingProgressBar, setLoadingProgressBar] = useState<any>(0);
     let [eventType, setEventType] = useState<string>("List");
 
     let [activities, setActivities] = useState<any[]>([]);
@@ -62,12 +64,12 @@ export const ActivityPage = () => {
         responeHolder: any,
         requestCase: string
     ) => {
-        setLoadingProgressBar(60);
+        setLoadStage(60);
         switch (requestCase) {
             case "ActivitiesLog":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter(responeHolder.data.data.activities);
-                setLoadingProgressBar(100);
+                setLoadStage(100);
                 break;
 
             case "LoadMoreLogs":
@@ -79,13 +81,13 @@ export const ActivityPage = () => {
                     ...stateGetter,
                     ...responeHolder.data.data.activities,
                 ]);
-                setLoadingProgressBar(100);
+                setLoadStage(100);
                 break;
 
             case "AllCollections":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter(responeHolder.data.data);
-                setLoadingProgressBar(100);
+                setLoadStage(100);
                 break;
 
             default:
@@ -446,7 +448,7 @@ export const ActivityPage = () => {
 
     useEffect(() => {
         setHasMoreData(true);
-        setLoadingProgressBar(10);
+        setLoadStage(10);
         dataProcessor(
             getActivitiesLogRequestTrigger,
             {
@@ -501,11 +503,7 @@ export const ActivityPage = () => {
 
     return (
         <React.Fragment>
-            <LoadingBar
-                color="#2081e2"
-                progress={loadingProgressBar}
-                onLoaderFinished={() => setLoadingProgressBar(0)}
-            />
+            
             {filtersSideBar ? openSideMenu() : null}
             <div className="activity-modal">
                 <button onClick={() => setFiltersSideBar(!filtersSideBar)}>
