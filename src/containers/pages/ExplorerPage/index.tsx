@@ -3,7 +3,7 @@ import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import LoadingBar from 'react-top-loading-bar'
+import LoadingBar from "react-top-loading-bar";
 
 import { isMobile } from "utils";
 
@@ -16,9 +16,8 @@ import tokenNoImage from "./../../../assets/img/token-no-img.png";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
-export const ExplorerPage = (props:any) => {
-
-    let { setLoadStage } = props
+export const ExplorerPage = (props: any) => {
+    let { setLoadStage, loadStage } = props;
 
     let [explorationItems, setExplorationItems] = useState<any>([]);
     let [totalExplorationItems, setTotalExplorationItems] = useState<any>(0);
@@ -203,7 +202,7 @@ export const ExplorerPage = (props:any) => {
     ) => {
         switch (requestCase) {
             case "ExplorationItems":
-                setLoadStage(10)
+                setLoadStage(10);
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter([]);
                 if (responeHolder.data) {
@@ -213,7 +212,7 @@ export const ExplorerPage = (props:any) => {
                         max: responeHolder.data.data.max_price,
                     });
                     stateSetter(responeHolder.data.data.tokens);
-                    setLoadStage(100)
+                    setLoadStage(100);
                 }
                 if (responeHolder.data == null) {
                     setTotalExplorationItems(0);
@@ -221,7 +220,7 @@ export const ExplorerPage = (props:any) => {
                 break;
 
             case "LoadMoreItems":
-                setLoadStage(10)
+                setLoadStage(10);
                 responeHolder = await functionTrigger(triggerInputObject);
                 if (explorationItems.length >= responeHolder.data.data.total) {
                     setHasMoreData(false);
@@ -231,16 +230,16 @@ export const ExplorerPage = (props:any) => {
                         ...stateGetter,
                         ...responeHolder.data.data.tokens,
                     ]);
-                    setLoadStage(100)
+                    setLoadStage(100);
                 }
                 break;
 
             case "AllCollections":
-                setLoadStage(10)
+                setLoadStage(10);
                 responeHolder = await functionTrigger(triggerInputObject);
-                if(responeHolder.data) {
+                if (responeHolder.data) {
                     stateSetter(responeHolder.data.data);
-                    setLoadStage(100)
+                    setLoadStage(100);
                 }
                 break;
 
@@ -400,7 +399,8 @@ export const ExplorerPage = (props:any) => {
                                     >
                                         <span>Verified</span>
                                         <span>
-                                            Only NFTs from verified projects will be shown
+                                            Only NFTs from verified projects
+                                            will be shown
                                         </span>
                                     </div>
                                 </div>
@@ -546,8 +546,24 @@ export const ExplorerPage = (props:any) => {
                                                         {item.name.length > 10
                                                             ? `${item.name.substr(
                                                                   0,
-                                                                  isMobile() ? 10 : 40
-                                                              )}${isMobile() ? item.name.length > 10 ? '...' : '' : item.name.length > 40 ? '...' : ''}`
+                                                                  isMobile()
+                                                                      ? 10
+                                                                      : 40
+                                                              )}${
+                                                                  isMobile()
+                                                                      ? item
+                                                                            .name
+                                                                            .length >
+                                                                        10
+                                                                          ? "..."
+                                                                          : ""
+                                                                      : item
+                                                                            .name
+                                                                            .length >
+                                                                        40
+                                                                      ? "..."
+                                                                      : ""
+                                                              }`
                                                             : item.name}
                                                     </span>
                                                 </div>
@@ -693,10 +709,10 @@ export const ExplorerPage = (props:any) => {
         nextPage: any,
         priceNominalFilter: any,
         priceSortFilter: any,
-        typeFilter : any,
-        collectionFilter : any,
-        sortTypeFilter : any,
-        statusFilter : any
+        typeFilter: any,
+        collectionFilter: any,
+        sortTypeFilter: any,
+        statusFilter: any
     ) => {
         dataProcessor(
             getExplorationItemsRequestTrigger,
@@ -709,7 +725,7 @@ export const ExplorerPage = (props:any) => {
                 typeFilter,
                 collectionFilter,
                 sortTypeFilter,
-                statusFilter
+                statusFilter,
             },
             explorationItems,
             setExplorationItems,
@@ -734,10 +750,10 @@ export const ExplorerPage = (props:any) => {
                 nextPage: "1",
                 priceNominalFilter: priceRangeSelector,
                 priceSortFilter: priceLimitationType,
-                typeFilter : typeFilter,
-                collectionFilter : collectionFilter,
-                sortTypeFilter : sortTypeSelected,
-                statusFilter : showVerifiedItems
+                typeFilter: typeFilter,
+                collectionFilter: collectionFilter,
+                sortTypeFilter: sortTypeSelected,
+                statusFilter: showVerifiedItems,
             },
             explorationItems,
             setExplorationItems,
@@ -759,7 +775,7 @@ export const ExplorerPage = (props:any) => {
         priceLimitationType,
         collectionFilter,
         sortTypeSelected,
-        showVerifiedItems
+        showVerifiedItems,
     ]);
 
     useEffect(() => {
@@ -768,7 +784,6 @@ export const ExplorerPage = (props:any) => {
 
     return (
         <React.Fragment>
-
             {showModal && openModal(activeModal)}
             {showSideMenu && openSideMenu()}
             <div className="explorer-container">
@@ -882,13 +897,13 @@ export const ExplorerPage = (props:any) => {
                         <div
                             onClick={() => {
                                 setSaleTypeSelected("List");
-                                setTypeFilter('List')
+                                setTypeFilter("List");
                                 setPriceRangeSelector(0);
                                 setPriceLimitationType("More");
                                 setSortTypeSelected("desc");
                                 setCollectionFilter("");
                                 setSelectedCollections([]);
-                                setShowVerifiedItems(true)
+                                setShowVerifiedItems(true);
                             }}
                         >
                             <FontAwesomeIcon icon={faIcons.faTrash} />
@@ -1003,7 +1018,9 @@ export const ExplorerPage = (props:any) => {
                                     />{" "}
                                     Verified Status
                                 </button>
-                                {showVerifiedItems == false ? <span></span> : null}
+                                {showVerifiedItems == false ? (
+                                    <span></span>
+                                ) : null}
                             </div>
                         </div>
                     </div>
@@ -1017,16 +1034,16 @@ export const ExplorerPage = (props:any) => {
                             </div>
                         </div>
                         <div
-                        className="explorer-filterBox__topMenu--btn"
+                            className="explorer-filterBox__topMenu--btn"
                             onClick={() => {
                                 setSaleTypeSelected("List");
-                                setTypeFilter('List')
+                                setTypeFilter("List");
                                 setPriceRangeSelector(0);
                                 setPriceLimitationType("More");
                                 setSortTypeSelected("desc");
                                 setCollectionFilter("");
                                 setSelectedCollections([]);
-                                setShowVerifiedItems(true)
+                                setShowVerifiedItems(true);
                             }}
                         >
                             <FontAwesomeIcon icon={faIcons.faTrash} />
@@ -1038,7 +1055,11 @@ export const ExplorerPage = (props:any) => {
                         dataLength={explorationItems.length}
                         next={() =>
                             loadMoreItems(
-                                explorationItems[explorationItems.length - 1] ? explorationItems[ explorationItems.length - 1 ].token.lastMarketTimestamp : null,
+                                explorationItems[explorationItems.length - 1]
+                                    ? explorationItems[
+                                          explorationItems.length - 1
+                                      ].token.lastMarketTimestamp
+                                    : null,
                                 currentPage,
                                 nextPage,
                                 priceRangeSelector,
@@ -1069,7 +1090,7 @@ export const ExplorerPage = (props:any) => {
                                         );
                                     }
                                 )
-                            ) : (
+                            ) : loadStage == 100 ? (
                                 <p
                                     style={{
                                         margin: "auto",
@@ -1080,6 +1101,8 @@ export const ExplorerPage = (props:any) => {
                                 >
                                     There isn't items
                                 </p>
+                            ) : (
+                                <p>Loading...</p>
                             )}
                         </div>
                     </InfiniteScroll>
@@ -1090,7 +1113,11 @@ export const ExplorerPage = (props:any) => {
 };
 
 export default ExplorerPage;
-function priceNominalFilter(arg0: any, currentPage: any, nextPage: any, priceNominalFilter: any): any {
+function priceNominalFilter(
+    arg0: any,
+    currentPage: any,
+    nextPage: any,
+    priceNominalFilter: any
+): any {
     throw new Error("Function not implemented.");
 }
-
