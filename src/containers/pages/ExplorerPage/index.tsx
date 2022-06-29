@@ -3,7 +3,7 @@ import * as faIcons from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import LoadingBar from 'react-top-loading-bar'
+import LoadingBar from "react-top-loading-bar";
 
 import { isMobile } from "utils";
 
@@ -19,15 +19,11 @@ import { Link } from "react-router-dom";
 export const ExplorerPage = () => {
     let [explorationItems, setExplorationItems] = useState<any>([]);
     let [totalExplorationItems, setTotalExplorationItems] = useState<any>(0);
-    let [priceRangeExplorationItems, setPriceRangeExplorationItems] = useState<
-        any
-    >({});
 
     let [currentPage, setCurrentPage] = useState<any>(1);
     let [nextPage, setNextPage] = useState<any>(2);
     let [hasMoreData, setHasMoreData] = useState<any>(true);
 
-    let [typeFilter, setTypeFilter] = useState<any>("List");
     let [saleTypeSelected, setSaleTypeSelected] = useState<any>("List");
     let [sortTypeSelected, setSortTypeSelected] = useState<any>("desc");
     let [priceRangeSelector, setPriceRangeSelector] = useState<any>(0);
@@ -37,7 +33,6 @@ export const ExplorerPage = () => {
     let [filteredCollections, setFilteredCollections] = useState<any>([]);
     let [searchInputValue, setSearchInputValue] = useState<any>([]);
     let [selectedCollections, setSelectedCollections] = useState<any>([]);
-    let [collectionFilter, setCollectionFilter] = useState<string>("");
     let [showVerifiedItems, setShowVerifiedItems] = useState<boolean>(true);
 
     let [loadingProgressBar, setLoadingProgressBar] = useState<any>(0);
@@ -48,6 +43,9 @@ export const ExplorerPage = () => {
 
     //SideMenu
     let [showSideMenu, setShowSideMenu] = useState<any>(false);
+
+    // Filters
+    let [urlParameters, setUrlParameters] = useState<any>("");
 
     const [
         getExplorationItemsRequestTrigger,
@@ -70,6 +68,41 @@ export const ExplorerPage = () => {
             setFilteredCollections(allCollections);
         }
     };
+
+    // Query Filtering Functions
+
+    const params = new URLSearchParams(window.location.search); // Initialize query controller
+
+    const pushParams = () => {
+        window.history.pushState({}, "", `?${params.toString()}`);
+    };
+
+    const setParam = (parameter: any, value: any) => {
+        if (!params.has(parameter)) {
+            params.append(parameter, value);
+        } else {
+            removeParam(parameter);
+            params.append(parameter, value);
+        }
+        pushParams();
+        setUrlParameters(params.toString());
+    };
+
+    const removeParam = (parameter: any) => {
+        if (params.has(parameter)) {
+            params.delete(parameter);
+        }
+        pushParams();
+        setUrlParameters(params.toString());
+    };
+
+    const getParam = (parameter: any) => {
+        if (params.has(parameter)) {
+            return params.get(parameter);
+        }
+    };
+
+    // -------------------
 
     let openSideMenu = () => {
         return (
@@ -200,23 +233,19 @@ export const ExplorerPage = () => {
         responeHolder: any,
         requestCase: string
     ) => {
-        setLoadingProgressBar(60)
+        setLoadingProgressBar(60);
         switch (requestCase) {
             case "ExplorationItems":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter([]);
                 if (responeHolder.data) {
                     setTotalExplorationItems(responeHolder.data.data.total);
-                    setPriceRangeExplorationItems({
-                        min: responeHolder.data.data.min_price,
-                        max: responeHolder.data.data.max_price,
-                    });
                     stateSetter(responeHolder.data.data.tokens);
                 }
                 if (responeHolder.data == null) {
                     setTotalExplorationItems(0);
                 }
-                setLoadingProgressBar(100)
+                setLoadingProgressBar(100);
                 break;
 
             case "LoadMoreItems":
@@ -230,13 +259,13 @@ export const ExplorerPage = () => {
                         ...responeHolder.data.data.tokens,
                     ]);
                 }
-                setLoadingProgressBar(100)
+                setLoadingProgressBar(100);
                 break;
 
             case "AllCollections":
                 responeHolder = await functionTrigger(triggerInputObject);
                 stateSetter(responeHolder.data.data);
-                setLoadingProgressBar(100)
+                setLoadingProgressBar(100);
                 break;
 
             default:
@@ -258,7 +287,7 @@ export const ExplorerPage = () => {
                                 <div
                                     onClick={() => {
                                         setSaleTypeSelected("Auction");
-                                        setTypeFilter(`Auction`);
+                                        setParam("status", "Auction");
                                     }}
                                     className="explorer-modal__box--content_item-saleType"
                                     style={
@@ -277,7 +306,7 @@ export const ExplorerPage = () => {
                                 <div
                                     onClick={() => {
                                         setSaleTypeSelected("List");
-                                        setTypeFilter(`List`);
+                                        setParam("status", "List");
                                     }}
                                     className="explorer-modal__box--content_item-saleType"
                                     style={
@@ -314,9 +343,10 @@ export const ExplorerPage = () => {
                             <div className="explorer-modal__box--content">
                                 <div className="explorer-modal__box--content_item-sort">
                                     <div
-                                        onClick={() =>
-                                            setSortTypeSelected("asc")
-                                        }
+                                        onClick={() => {
+                                            setSortTypeSelected("asc");
+                                            setParam("sort", "asc");
+                                        }}
                                         style={
                                             sortTypeSelected == "asc"
                                                 ? { background: "#2081e2" }
@@ -330,9 +360,10 @@ export const ExplorerPage = () => {
                                         </span>
                                     </div>
                                     <div
-                                        onClick={() =>
-                                            setSortTypeSelected("desc")
-                                        }
+                                        onClick={() => {
+                                            setSortTypeSelected("desc");
+                                            setParam("sort", "desc");
+                                        }}
                                         style={
                                             sortTypeSelected == "desc"
                                                 ? { background: "#2081e2" }
@@ -368,9 +399,10 @@ export const ExplorerPage = () => {
                             <div className="explorer-modal__box--content">
                                 <div className="explorer-modal__box--content_item-sort">
                                     <div
-                                        onClick={() =>
-                                            setShowVerifiedItems(false)
-                                        }
+                                        onClick={() => {
+                                            setShowVerifiedItems(false);
+                                            setParam("is_verified", "false");
+                                        }}
                                         style={
                                             !showVerifiedItems
                                                 ? { background: "#2081e2" }
@@ -384,9 +416,10 @@ export const ExplorerPage = () => {
                                         </span>
                                     </div>
                                     <div
-                                        onClick={() =>
-                                            setShowVerifiedItems(true)
-                                        }
+                                        onClick={() => {
+                                            setShowVerifiedItems(true);
+                                            setParam("is_verified", "true");
+                                        }}
                                         style={
                                             showVerifiedItems
                                                 ? { background: "#2081e2" }
@@ -395,7 +428,8 @@ export const ExplorerPage = () => {
                                     >
                                         <span>Verified</span>
                                         <span>
-                                            Only NFTs from verified projects will be shown
+                                            Only NFTs from verified projects
+                                            will be shown
                                         </span>
                                     </div>
                                 </div>
@@ -464,7 +498,9 @@ export const ExplorerPage = () => {
                                                     setSelectedCollections(
                                                         filtered
                                                     );
-                                                    setCollectionFilter("");
+                                                    removeParam(
+                                                        "collection_id"
+                                                    );
                                                     setSearchInputValue("");
                                                 }}
                                             >
@@ -506,8 +542,9 @@ export const ExplorerPage = () => {
                                                                     `${item.name}`,
                                                                 ]
                                                             );
-                                                            setCollectionFilter(
-                                                                `${item.id}`
+                                                            setParam(
+                                                                "collection_id",
+                                                                String(item.id)
                                                             );
                                                             setSearchInputValue(
                                                                 ""
@@ -541,8 +578,24 @@ export const ExplorerPage = () => {
                                                         {item.name.length > 10
                                                             ? `${item.name.substr(
                                                                   0,
-                                                                  isMobile() ? 10 : 40
-                                                              )}${isMobile() ? item.name.length > 10 ? '...' : '' : item.name.length > 40 ? '...' : ''}`
+                                                                  isMobile()
+                                                                      ? 10
+                                                                      : 40
+                                                              )}${
+                                                                  isMobile()
+                                                                      ? item
+                                                                            .name
+                                                                            .length >
+                                                                        10
+                                                                          ? "..."
+                                                                          : ""
+                                                                      : item
+                                                                            .name
+                                                                            .length >
+                                                                        40
+                                                                      ? "..."
+                                                                      : ""
+                                                              }`
                                                             : item.name}
                                                     </span>
                                                 </div>
@@ -581,15 +634,20 @@ export const ExplorerPage = () => {
                                         onInput={(e) => {
                                             let et = e.target as any;
                                             setPriceRangeSelector(et.value);
+                                            setParam(
+                                                "price_value",
+                                                String(et.value)
+                                            );
                                         }}
                                     />
                                 </div>
 
                                 <div className="explorer-modal__box--content_item-priceRangeType">
                                     <span
-                                        onClick={() =>
-                                            setPriceLimitationType("More")
-                                        }
+                                        onClick={() => {
+                                            setPriceLimitationType("More");
+                                            setParam("price_filter", "More");
+                                        }}
                                         style={
                                             priceLimitationType == "More"
                                                 ? { background: "#2081e2" }
@@ -599,9 +657,10 @@ export const ExplorerPage = () => {
                                         More than
                                     </span>
                                     <span
-                                        onClick={() =>
-                                            setPriceLimitationType("Less")
-                                        }
+                                        onClick={() => {
+                                            setPriceLimitationType("Less");
+                                            setParam("price_filter", "Less");
+                                        }}
                                         style={
                                             priceLimitationType == "Less"
                                                 ? { background: "#2081e2" }
@@ -685,13 +744,7 @@ export const ExplorerPage = () => {
     let loadMoreItems = (
         lastTimestamp: any,
         currentPage: any,
-        nextPage: any,
-        priceNominalFilter: any,
-        priceSortFilter: any,
-        typeFilter : any,
-        collectionFilter : any,
-        sortTypeFilter : any,
-        statusFilter : any
+        nextPage: any
     ) => {
         dataProcessor(
             getExplorationItemsRequestTrigger,
@@ -699,12 +752,12 @@ export const ExplorerPage = () => {
                 lastTimestamp,
                 currentPage,
                 nextPage,
-                priceNominalFilter,
-                priceSortFilter,
-                typeFilter,
-                collectionFilter,
-                sortTypeFilter,
-                statusFilter
+                priceNominalFilter: getParam("price_value"),
+                priceSortFilter: getParam("price_filter"),
+                typeFilter: getParam("status"),
+                collectionFilter: getParam("collection_id"),
+                sortTypeFilter: getParam("sort"),
+                statusFilter: getParam("is_verified"),
             },
             explorationItems,
             setExplorationItems,
@@ -720,7 +773,7 @@ export const ExplorerPage = () => {
         setHasMoreData(true);
         setCurrentPage(1);
         setNextPage(2);
-        setLoadingProgressBar(10)
+        setLoadingProgressBar(10);
 
         dataProcessor(
             getExplorationItemsRequestTrigger,
@@ -728,12 +781,12 @@ export const ExplorerPage = () => {
                 lastTimestamp: "0",
                 currentPage: "1",
                 nextPage: "1",
-                priceNominalFilter: priceRangeSelector,
-                priceSortFilter: priceLimitationType,
-                typeFilter : typeFilter,
-                collectionFilter : collectionFilter,
-                sortTypeFilter : sortTypeSelected,
-                statusFilter : showVerifiedItems
+                priceNominalFilter: getParam("price_value"),
+                priceSortFilter: getParam("price_filter"),
+                typeFilter: getParam("status"),
+                collectionFilter: getParam("collection_id"),
+                sortTypeFilter: getParam("sort"),
+                statusFilter: getParam("is_verified"),
             },
             explorationItems,
             setExplorationItems,
@@ -749,22 +802,72 @@ export const ExplorerPage = () => {
             {},
             "AllCollections"
         );
-    }, [
-        typeFilter,
-        priceRangeSelector,
-        priceLimitationType,
-        collectionFilter,
-        sortTypeSelected,
-        showVerifiedItems
-    ]);
+    }, [urlParameters]);
 
     useEffect(() => {
         setFilteredCollections(allCollections);
     }, [allCollections]);
 
+    useEffect(() => {
+        filteredCollections.map((item: any) => {
+            if (
+                getParam("collection_id") &&
+                !selectedCollections.includes(item.name)
+            ) {
+                if (item.id.toString() == getParam("collection_id")) {
+                    setSelectedCollections([item.name]);
+                }
+            }
+        });
+
+        if (getParam("status")) {
+            setSaleTypeSelected(getParam("status"));
+        }
+
+        if (getParam("price_value")) {
+            setPriceRangeSelector(getParam("price_value"));
+        }
+
+        if (getParam("price_filter")) {
+            setPriceLimitationType(getParam("price_filter"));
+        }
+
+        if (getParam("sort")) {
+            setSortTypeSelected(getParam("sort"));
+        }
+
+        if (getParam("is_verified")) {
+            setShowVerifiedItems(getParam("is_verified") != "false");
+        } else {
+            setShowVerifiedItems(true);
+        }
+    });
+
+    let removeFilters = () => {
+        removeParam("status");
+        removeParam("collection_id");
+        removeParam("price_value");
+        removeParam("price_filter");
+        removeParam("sort");
+        removeParam("is_verified");
+
+        setSaleTypeSelected("List");
+        setPriceRangeSelector(0);
+        setPriceLimitationType("More");
+        setSortTypeSelected("desc");
+        setSelectedCollections([]);
+        setShowVerifiedItems(true);
+
+        setUrlParameters(params.toString());
+    };
+
     return (
         <React.Fragment>
-        <LoadingBar color='#2081e2' progress={loadingProgressBar} onLoaderFinished={() => setLoadingProgressBar(0)}/>
+            <LoadingBar
+                color="#2081e2"
+                progress={loadingProgressBar}
+                onLoaderFinished={() => setLoadingProgressBar(0)}
+            />
             {showModal && openModal(activeModal)}
             {showSideMenu && openSideMenu()}
             <div className="explorer-container">
@@ -875,18 +978,7 @@ export const ExplorerPage = () => {
                             <span>Items Found</span>
                             <span>for exploring</span>
                         </div>
-                        <div
-                            onClick={() => {
-                                setSaleTypeSelected("List");
-                                setTypeFilter('List')
-                                setPriceRangeSelector(0);
-                                setPriceLimitationType("More");
-                                setSortTypeSelected("desc");
-                                setCollectionFilter("");
-                                setSelectedCollections([]);
-                                setShowVerifiedItems(true)
-                            }}
-                        >
+                        <div onClick={() => removeFilters()}>
                             <FontAwesomeIcon icon={faIcons.faTrash} />
                         </div>
                     </div>
@@ -999,7 +1091,9 @@ export const ExplorerPage = () => {
                                     />{" "}
                                     Verified Status
                                 </button>
-                                {showVerifiedItems == false ? <span></span> : null}
+                                {showVerifiedItems == false ? (
+                                    <span></span>
+                                ) : null}
                             </div>
                         </div>
                     </div>
@@ -1013,17 +1107,8 @@ export const ExplorerPage = () => {
                             </div>
                         </div>
                         <div
-                        className="explorer-filterBox__topMenu--btn"
-                            onClick={() => {
-                                setSaleTypeSelected("List");
-                                setTypeFilter('List')
-                                setPriceRangeSelector(0);
-                                setPriceLimitationType("More");
-                                setSortTypeSelected("desc");
-                                setCollectionFilter("");
-                                setSelectedCollections([]);
-                                setShowVerifiedItems(true)
-                            }}
+                            className="explorer-filterBox__topMenu--btn"
+                            onClick={() => removeFilters()}
                         >
                             <FontAwesomeIcon icon={faIcons.faTrash} />
                         </div>
@@ -1034,15 +1119,13 @@ export const ExplorerPage = () => {
                         dataLength={explorationItems.length}
                         next={() =>
                             loadMoreItems(
-                                explorationItems[explorationItems.length - 1] ? explorationItems[ explorationItems.length - 1 ].token.lastMarketTimestamp : null,
+                                explorationItems[explorationItems.length - 1]
+                                    ? explorationItems[
+                                          explorationItems.length - 1
+                                      ].token.lastMarketTimestamp
+                                    : null,
                                 currentPage,
-                                nextPage,
-                                priceRangeSelector,
-                                priceLimitationType,
-                                typeFilter,
-                                collectionFilter,
-                                sortTypeSelected,
-                                showVerifiedItems
+                                nextPage
                             )
                         }
                         hasMore={hasMoreData}
@@ -1086,7 +1169,11 @@ export const ExplorerPage = () => {
 };
 
 export default ExplorerPage;
-function priceNominalFilter(arg0: any, currentPage: any, nextPage: any, priceNominalFilter: any): any {
+function priceNominalFilter(
+    arg0: any,
+    currentPage: any,
+    nextPage: any,
+    priceNominalFilter: any
+): any {
     throw new Error("Function not implemented.");
 }
-
