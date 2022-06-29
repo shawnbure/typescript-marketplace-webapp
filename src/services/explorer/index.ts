@@ -16,31 +16,37 @@ export const explorerApi = createApi({
     }),
 
     endpoints: (builder) => ({
-        
         getExplorationItems: builder.mutation<any, any>({
-            query: ({lastTimestamp, 
-                currentPage, 
-                nextPage, 
-                priceNominalFilter, 
-                priceSortFilter, 
-                typeFilter, 
-                collectionFilter, 
-                sortTypeFilter, 
-                statusFilter
+            query: ({
+                lastTimestamp,
+                currentPage,
+                nextPage,
+                priceNominalFilter = "0",
+                priceSortFilter = "More",
+                typeFilter = "List",
+                collectionFilter = "",
+                sortTypeFilter = "desc",
+                statusFilter = "true",
             }): FetchArgs => {
-
                 const customRequestArg: FetchArgs = {
                     method: GET,
-                    url: `/${mainPath}/all/${lastTimestamp}/${currentPage}/${nextPage}?filter=price_nominal|${priceNominalFilter}|${ priceSortFilter == "More" ? ">" : "<" }%3BAND%3Bstatus%7C${typeFilter}%7C%3D${ collectionFilter.length > 0 ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D` : `` }&sort=last_market_timestamp|${sortTypeFilter}&limit=30${statusFilter ? `&collectionFilter=is_verified|true|=` : ``}`
+                    url: `/${mainPath}/all/${lastTimestamp}/${currentPage}/${nextPage}?filter=price_nominal|${priceNominalFilter}|${
+                        priceSortFilter == "More" ? ">" : "<"
+                    }%3BAND%3Bstatus%7C${typeFilter}%7C=${
+                        collectionFilter.length
+                            ? `%3BAND%3Bcollection_id%7C${collectionFilter}%7C%3D`
+                            : ``
+                    }&sort=last_market_timestamp|${sortTypeFilter}&limit=30${
+                        statusFilter == "true"
+                            ? `&collectionFilter=is_verified|true|=`
+                            : ``
+                    }`,
                 };
 
                 return customRequestArg;
             },
         }),
-        
     }),
 });
 
-export const {
-    useGetExplorationItemsMutation,
-} = explorerApi;
+export const { useGetExplorationItemsMutation } = explorerApi;
