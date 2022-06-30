@@ -407,8 +407,6 @@ export const ActivityPage = (props:any) => {
 
     // Query Filtering Functions
 
-    const params = new URLSearchParams(window.location.search); // Initialize query controller
-
     const pushParams = () => { window.history.pushState({}, "", `?${params.toString()}`); };
 
     const setParam = (parameter: any, value: any) => {
