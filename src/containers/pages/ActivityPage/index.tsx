@@ -407,20 +407,34 @@ export const ActivityPage = (props: any) => {
 
     // Query Filtering Functions
 
-    const pushParams = () => { window.history.pushState({}, "", `?${params.toString()}`); };
+    const pushParams = () => {
+        window.history.pushState({}, "", `?${params.toString()}`);
+    };
 
     const setParam = (parameter: any, value: any) => {
-        if (!params.has(parameter)) { params.append(parameter, value); }
-        else { removeParam(parameter); params.append(parameter, value); }
-        pushParams(); setUrlParameters(params.toString());
+        if (!params.has(parameter)) {
+            params.append(parameter, value);
+        } else {
+            removeParam(parameter);
+            params.append(parameter, value);
+        }
+        pushParams();
+        setUrlParameters(params.toString());
     };
 
     const removeParam = (parameter: any) => {
-        if (params.has(parameter)) { params.delete(parameter); }
-        pushParams(); setUrlParameters(params.toString());
+        if (params.has(parameter)) {
+            params.delete(parameter);
+        }
+        pushParams();
+        setUrlParameters(params.toString());
     };
 
-    const getParam = (parameter: any) => { if (params.has(parameter)) { return params.get(parameter); } };
+    const getParam = (parameter: any) => {
+        if (params.has(parameter)) {
+            return params.get(parameter);
+        }
+    };
 
     // -------------------
 
