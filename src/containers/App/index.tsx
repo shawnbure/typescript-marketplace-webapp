@@ -213,7 +213,7 @@ export const App: () => JSX.Element = () => {
                         </Route>
 
                         <Route path={routePaths.collection} exact={true}>
-                            <CollectionPage setLoadStage={setLoadBarValue} />
+                            <CollectionPage setLoadStage={setLoadBarValue} loadStage={loadBarValue} />
                         </Route>
 
                         <Route

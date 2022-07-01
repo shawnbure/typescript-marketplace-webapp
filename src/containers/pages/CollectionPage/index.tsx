@@ -8,6 +8,7 @@ import Select from "react-select";
 
 //Images
 import egldIcon from "./../../../assets/img/egld-icon.png";
+import tokenNoImage from "./../../../assets/img/token-sample-img.png";
 
 import * as Dapp from "@elrondnetwork/dapp";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
@@ -36,7 +37,7 @@ import { MINT } from "constants/actions";
 import { useGetActivitiesLogMutation } from "services/activity";
 import moment from "moment";
 
-export const CollectionPage: (props: any) => any = (props:any) => {
+export const CollectionPage: (props: any) => any = (props: any) => {
     const { loggedIn, address: userWalletAddress } = Dapp.useContext();
     const { collectionId } = useParams<UrlParameters>();
     const [buyLimit, setBuyLimit] = useState<number>(0);
@@ -44,7 +45,7 @@ export const CollectionPage: (props: any) => any = (props:any) => {
     const queryString = window.location.search;
     const { pathname } = useLocation();
 
-    let { setLoadStage } = props
+    let { setLoadStage, loadStage } = props;
 
     // Defines
     let [scrollTopPosition, setScrollTopPosition] = useState(320);
@@ -305,6 +306,8 @@ export const CollectionPage: (props: any) => any = (props:any) => {
             traitTypes[trait] = activeTraitValues;
         });
 
+        console.log(selectedTraits);
+
         return collectionTraits.map((item: any) => {
             let st = selectedTraits as any;
             return (
@@ -475,7 +478,7 @@ export const CollectionPage: (props: any) => any = (props:any) => {
     };
 
     useEffect(() => {
-        setLoadStage(10)
+        setLoadStage(10);
         getCollectionInfoTrigger({ collectionId: collectionId });
 
         getCollectionByIdTrigger({ collectionId: collectionId })
@@ -491,7 +494,7 @@ export const CollectionPage: (props: any) => any = (props:any) => {
 
     useEffect(() => {
         if (collectionDataLoaded) {
-            setLoadStage(100)
+            setLoadStage(100);
             if (
                 collectionData?.data?.creatorWalletAddress == userWalletAddress
             ) {
@@ -509,7 +512,7 @@ export const CollectionPage: (props: any) => any = (props:any) => {
     }, [selectedTraits]);
 
     useEffect(() => {
-        setLoadStage(10)
+        setLoadStage(10);
         const doThis = async () => {
             let responeHolder = (await getActivitiesLogRequestTrigger({
                 timestamp: 0,
@@ -517,8 +520,8 @@ export const CollectionPage: (props: any) => any = (props:any) => {
                 nextPage: 1,
                 collectionFilter: String(collectionData?.data?.collection?.id),
             })) as any;
-            if(responeHolder?.data?.data?.activities) {
-                setLoadStage(100)
+            if (responeHolder?.data?.data?.activities) {
+                setLoadStage(100);
             }
             setCollectionActivities(responeHolder?.data?.data?.activities);
         };
@@ -556,7 +559,7 @@ export const CollectionPage: (props: any) => any = (props:any) => {
 
         setTracking(!tracking);
     };
-    
+
     // Style Of Tratis Selectors
     const selectStyle = {
         control: (base: any, state: any) => ({
@@ -668,14 +671,24 @@ export const CollectionPage: (props: any) => any = (props:any) => {
                         <div className="collection-modal_traits">
                             <div className="collection-modal_traits--title">
                                 <span>Filters</span>
-                                <span
-                                    onClick={() => {
-                                        setOverlay(false);
-                                        setFiltersModal(false);
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={faIcons.faTimes} />
-                                </span>
+                                <div>
+                                    <button
+                                        onClick={() => setSelectedTraits({})}
+                                    >
+                                        Reset
+                                    </button>
+
+                                    <span
+                                        onClick={() => {
+                                            setOverlay(false);
+                                            setFiltersModal(false);
+                                        }}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faIcons.faTimes}
+                                        />
+                                    </span>
+                                </div>
                             </div>
 
                             <div className="collection-modal_traits--content">
@@ -703,69 +716,82 @@ export const CollectionPage: (props: any) => any = (props:any) => {
                                     collectionData?.data?.collection
                                         ?.contractAddress
                                 ) &&
-                                    Boolean(
+                                Boolean(
+                                    collectionData?.data?.collection
+                                        ?.maxSupply > 0
+                                ) &&
+                                Boolean(
+                                    collectionData?.data?.collection
+                                        ?.mintStartDate == 0 ||
                                         collectionData?.data?.collection
-                                            ?.maxSupply > 0
-                                    ) &&
-                                    Boolean(
-                                        collectionData?.data?.collection
-                                            ?.mintStartDate == 0 ||
-                                            collectionData?.data?.collection
-                                                ?.mintStartDate <
-                                                new Date().getTime()
-                                    ) && (
-                                        <>
-                                            <span>Tokens to Mint</span>
-                                            <span>
-                                                (Max 10 per Transaction)
-                                            </span>
-                                            <input
-                                                onChange={(e: any) => {
-                                                    setRequestedNumberOfTokens(
-                                                        e.target.value
-                                                    );
-                                                }}
-                                                value={requestedNumberOfTokens}
-                                                type="number"
-                                                placeholder="Enter number of tokens"
-                                            />
-                                            <span>
-                                                For {requestedNumberOfTokens}{" "}
-                                                tokens you will pay{" "}
-                                                {(
-                                                    requestedNumberOfTokens *
-                                                    collectionData?.data
-                                                        ?.collection
-                                                        ?.mintPricePerTokenNominal
-                                                ).toFixed(3)}{" "}
-                                                EGLD
-                                            </span>
-                                            <button onClick={handleMintTokens}>
-                                                Mint Now
-                                            </button>
-                                            <div className="collection-modal_mint--content_info">
-                                                <div>
-                                                    <span>
-                                                        {getCollectionInfoData
-                                                            ?.data?.totalSold ||
-                                                            0}
-                                                    </span>
-                                                    <span>Minted</span>
-                                                </div>
-
-                                                <div>
-                                                    <span>
-                                                        {
-                                                            getCollectionInfoData
-                                                                ?.data
-                                                                ?.maxSupply
-                                                        }
-                                                    </span>
-                                                    <span>Max Supply</span>
-                                                </div>
+                                            ?.mintStartDate <
+                                            new Date().getTime()
+                                ) ? (
+                                    <>
+                                        <span>Tokens to Mint</span>
+                                        <span>(Max 10 per Transaction)</span>
+                                        <input
+                                            onChange={(e: any) => {
+                                                setRequestedNumberOfTokens(
+                                                    e.target.value
+                                                );
+                                            }}
+                                            value={requestedNumberOfTokens}
+                                            type="number"
+                                            placeholder="Enter number of tokens"
+                                        />
+                                        <span>
+                                            For {requestedNumberOfTokens} tokens
+                                            you will pay{" "}
+                                            {(
+                                                requestedNumberOfTokens *
+                                                collectionData?.data?.collection
+                                                    ?.mintPricePerTokenNominal
+                                            ).toFixed(3)}{" "}
+                                            EGLD
+                                        </span>
+                                        <button onClick={handleMintTokens}>
+                                            Mint Now
+                                        </button>
+                                        <div className="collection-modal_mint--content_info">
+                                            <div>
+                                                <span>
+                                                    {getCollectionInfoData?.data
+                                                        ?.totalSold || 0}
+                                                </span>
+                                                <span>Minted</span>
                                             </div>
-                                        </>
-                                    )}
+
+                                            <div>
+                                                <span>
+                                                    {
+                                                        getCollectionInfoData
+                                                            ?.data?.maxSupply
+                                                    }
+                                                </span>
+                                                <span>Max Supply</span>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : loadStage == 100 ? (
+                                    <p
+                                        style={{
+                                            fontSize: "16px",
+                                            padding: "10% 0",
+                                        }}
+                                    >
+                                        Minting the token is disabled
+                                    </p>
+                                ) : (
+                                    <p
+                                        style={{
+                                            fontSize: "16px",
+                                            padding: "10% 0",
+                                        }}
+                                    >
+                                        Loading...
+                                    </p>
+                                )}
 
                                 {Boolean(
                                     collectionData?.data?.collection
@@ -791,6 +817,10 @@ export const CollectionPage: (props: any) => any = (props:any) => {
                         data-tip={description}
                         className="collection-details_picture"
                         src={`${collectionData?.data?.collection?.profileImageLink}`}
+                        onError={(e) => {
+                            let tar = e.target as any;
+                            tar.src = tokenNoImage;
+                        }}
                         alt="profile"
                     />
 
@@ -799,12 +829,14 @@ export const CollectionPage: (props: any) => any = (props:any) => {
                         <span>
                             Created by{" "}
                             <Link to={`/profile/${creatorWalletAddress}`}>
-                                {creatorName ||
-                                    shorterAddress(
-                                        creatorWalletAddress || "",
-                                        4,
-                                        4
-                                    )}{" "}
+                                {creatorName.length > 12
+                                    ? creatorName.substr(0, 12) + "..."
+                                    : creatorName ||
+                                      shorterAddress(
+                                          creatorWalletAddress || "",
+                                          4,
+                                          4
+                                      )}
                             </Link>
                         </span>
                     </div>
@@ -964,6 +996,7 @@ export const CollectionPage: (props: any) => any = (props:any) => {
                         className="collection-main_banner"
                         style={{
                             backgroundImage: `url(${collectionData?.data?.collection?.coverImageLink})`,
+                            backgroundColor: `#2081e2`,
                         }}
                     />
 
@@ -975,7 +1008,11 @@ export const CollectionPage: (props: any) => any = (props:any) => {
                         }}
                     >
                         <div
-                            className="collection-main_tokens"
+                            className={
+                                tokens?.length > 0
+                                    ? "collection-main_tokens"
+                                    : "collection-main_noTokens"
+                            }
                             style={{
                                 padding: "40px 40px 0 40px",
                                 overflow: `${
@@ -988,37 +1025,62 @@ export const CollectionPage: (props: any) => any = (props:any) => {
                                 }`,
                             }}
                         >
-                            {tokens?.map((token: any, index: any) => (
-                                <Link
-                                    to={`/token/${collectionId}/${token.nonce}`}
-                                >
-                                    <div
-                                        className="collection-main_token"
-                                        style={{
-                                            backgroundImage: `url(${token.imageLink})`,
-                                        }}
+                            {tokens?.length > 0 ? (
+                                tokens?.map((token: any, index: any) => (
+                                    <Link
+                                        to={`/token/${collectionId}/${token.nonce}`}
                                     >
-                                        <div>
-                                            <span>{token.tokenName}</span>
-                                            {tokensShowType == "Price" ? (
-                                                <span>
-                                                    <img src={egldIcon} />
-                                                    {token?.priceNominal}{" "}
-                                                    <span>EGLD</span>
-                                                </span>
-                                            ) : (
-                                                <span>
-                                                    Rank{" "}
-                                                    <p>{token?.rank || "-"}</p>
-                                                </span>
-                                            )}
-                                            <button>Buy</button>
+                                        <div
+                                            className="collection-main_token"
+                                            style={{
+                                                backgroundImage: `url(${token.imageLink})`,
+                                                backgroundColor: "#202225",
+                                            }}
+                                        >
+                                            <div>
+                                                <span>{token.tokenName}</span>
+                                                {tokensShowType == "Price" ? (
+                                                    <span>
+                                                        <img src={egldIcon} />
+                                                        {
+                                                            token?.priceNominal
+                                                        }{" "}
+                                                        <span>EGLD</span>
+                                                    </span>
+                                                ) : (
+                                                    <span>
+                                                        Rank{" "}
+                                                        <p>
+                                                            {token?.rank || "-"}
+                                                        </p>
+                                                    </span>
+                                                )}
+                                                <button>Buy</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            ))}
+                                    </Link>
+                                ))
+                            ) : loadStage == 100 ? (
+                                <p
+                                    style={{
+                                        fontSize: "16px",
+                                        padding: "25% 0 0 0",
+                                    }}
+                                >
+                                    There is no item
+                                </p>
+                            ) : (
+                                <p
+                                    style={{
+                                        fontSize: "16px",
+                                        padding: "25% 0 0 0",
+                                    }}
+                                >
+                                    Loading...
+                                </p>
+                            )}
 
-                            {hasLoadMore && tokens?.length > 0 && (
+                            {hasLoadMore && tokens?.length > 7 && (
                                 <div
                                     className="collection-main_tokens--loadMore"
                                     onClick={() => {
@@ -1117,29 +1179,56 @@ export const CollectionPage: (props: any) => any = (props:any) => {
                     </div>
 
                     <div className="collection-filters_activities">
-                        {collectionActivities?.map((item: any, index: any) => {
-                            if (index < 4) {
-                                return (
-                                    <div className="collection-filters_activities--item">
-                                        <span>{item?.transaction?.type}</span>
+                        {collectionActivities?.length > 0 ? (
+                            collectionActivities?.map(
+                                (item: any, index: any) => {
+                                    if (index < 4) {
+                                        return (
+                                            <div className="collection-filters_activities--item">
+                                                <span>
+                                                    {item?.transaction?.type}
+                                                </span>
 
-                                        <img src={item?.token?.imageLink} />
+                                                <img
+                                                    src={item?.token?.imageLink}
+                                                />
 
-                                        <div>
-                                            <span>
-                                                {item?.token?.tokenName}
-                                            </span>
-                                            <span>
-                                                {moment(
-                                                    item.transaction.timestamp *
-                                                        1000
-                                                ).fromNow()}
-                                            </span>
-                                        </div>
-                                    </div>
-                                );
-                            }
-                        })}
+                                                <div>
+                                                    <span>
+                                                        {item?.token?.tokenName}
+                                                    </span>
+                                                    <span>
+                                                        {moment(
+                                                            item.transaction
+                                                                .timestamp *
+                                                                1000
+                                                        ).fromNow()}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                }
+                            )
+                        ) : loadStage == 100 ? (
+                            <p
+                                style={{
+                                    fontSize: "13px",
+                                    padding: "48% 0 0 0",
+                                }}
+                            >
+                                There is no activity report
+                            </p>
+                        ) : (
+                            <p
+                                style={{
+                                    fontSize: "13px",
+                                    padding: "48% 0 0 0",
+                                }}
+                            >
+                                Loading...
+                            </p>
+                        )}
                     </div>
 
                     <a
