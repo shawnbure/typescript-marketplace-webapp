@@ -3,7 +3,7 @@ FROM node:14 as builder
 WORKDIR /app
 ARG PORT
 ENV PATH /app/node_modules/.bin:$PATH
-ENV PORT ${PORT} 
+ENV PORT=$PORT 
 ENV NODE_ENV production
 RUN apt update
 RUN apt install git
@@ -17,4 +17,4 @@ RUN npm install -g serve
 COPY . .
 RUN NODE_ENV=production REACT_APP_NODE_ENV=production yarn build:main
 
-ENTRYPOINT [ "serve","-l",${PORT}, "-s", "build" ]
+ENTRYPOINT [ "serve","-l", 4000, "-s", "build" ]
