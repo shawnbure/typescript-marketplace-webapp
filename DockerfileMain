@@ -17,4 +17,4 @@ RUN npm install -g serve
 COPY . .
 RUN NODE_ENV=production REACT_APP_NODE_ENV=production yarn build:main
 
-ENTRYPOINT [ "serve","-l", 4000, "-s", "build" ]
+ENTRYPOINT [ "serve", "-s", "build" ]

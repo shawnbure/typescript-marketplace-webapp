@@ -35,6 +35,7 @@ jobs:
           docker build -t "$PROJECT_ID"/"$IMAGE":"$TAG"  \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_TOKEN="$GITHUB_TOKEN" \
+            --build-arg PORT=$HTTP_PORT \
             --build-arg GITHUB_REF="$GITHUB_REF" -f ./DockerfileMain .
 
           docker tag "$PROJECT_ID"/"$IMAGE":"$TAG" "$REGISTRY_HOSTNAME"/"$PROJECT_ID"/"$IMAGE":"$TAG"
